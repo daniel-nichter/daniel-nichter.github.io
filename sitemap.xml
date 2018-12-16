@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
+    <loc>https://hackmongo.com/post/three-golang-channel-red-flags/</loc>
+    <lastmod>2018-12-16T13:00:00-03:00</lastmod>
+  </url>
+
+  <url>
     <loc>https://hackmongo.com/post/component-based-software-design/</loc>
     <lastmod>2018-12-02T00:00:00+00:00</lastmod>
   </url>
@@ -122,6 +127,12 @@
   </url>
 
   <url>
+    <loc>https://hackmongo.com/tags/channels/</loc>
+    <lastmod>2018-12-16T13:00:00-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+
+  <url>
     <loc>https://hackmongo.com/tags/checklist/</loc>
     <lastmod>2017-09-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -159,7 +170,7 @@
 
   <url>
     <loc>https://hackmongo.com/tags/design-pattern/</loc>
-    <lastmod>2018-02-04T19:30:00-07:00</lastmod>
+    <lastmod>2018-12-16T13:00:00-03:00</lastmod>
     <priority>0</priority>
   </url>
 
@@ -189,7 +200,7 @@
 
   <url>
     <loc>https://hackmongo.com/tags/golang/</loc>
-    <lastmod>2018-07-22T18:00:00-03:00</lastmod>
+    <lastmod>2018-12-16T13:00:00-03:00</lastmod>
     <priority>0</priority>
   </url>
 
@@ -207,7 +218,7 @@
 
   <url>
     <loc>https://hackmongo.com/</loc>
-    <lastmod>2018-12-02T00:00:00+00:00</lastmod>
+    <lastmod>2018-12-16T13:00:00-03:00</lastmod>
     <priority>0</priority>
   </url>
 
@@ -255,7 +266,7 @@
 
   <url>
     <loc>https://hackmongo.com/post/</loc>
-    <lastmod>2018-12-02T00:00:00+00:00</lastmod>
+    <lastmod>2018-12-16T13:00:00-03:00</lastmod>
     <priority>0</priority>
   </url>
 
@@ -286,6 +297,12 @@
   <url>
     <loc>https://hackmongo.com/tags/schwartz/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
+    <priority>0</priority>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/tags/sender-closer/</loc>
+    <lastmod>2018-12-16T13:00:00-03:00</lastmod>
     <priority>0</priority>
   </url>
 

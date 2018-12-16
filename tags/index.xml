@@ -48,6 +48,15 @@
     </item>
 
     <item>
+      <title>Channels</title>
+      <link>https://hackmongo.com/tags/channels/</link>
+      <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
+
+      <guid>https://hackmongo.com/tags/channels/</guid>
+      <description></description>
+    </item>
+
+    <item>
       <title>Checklist</title>
       <link>https://hackmongo.com/tags/checklist/</link>
       <pubDate>Sun, 17 Sep 2017 00:00:00 +0000</pubDate>
@@ -104,7 +113,7 @@
     <item>
       <title>Design Pattern</title>
       <link>https://hackmongo.com/tags/design-pattern/</link>
-      <pubDate>Sun, 04 Feb 2018 19:30:00 -0700</pubDate>
+      <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
 
       <guid>https://hackmongo.com/tags/design-pattern/</guid>
       <description></description>
@@ -149,7 +158,7 @@
     <item>
       <title>Golang</title>
       <link>https://hackmongo.com/tags/golang/</link>
-      <pubDate>Sun, 22 Jul 2018 18:00:00 -0300</pubDate>
+      <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
 
       <guid>https://hackmongo.com/tags/golang/</guid>
       <description></description>
@@ -269,6 +278,15 @@
       <pubDate>Sun, 28 Jan 2018 11:20:00 -0700</pubDate>
 
       <guid>https://hackmongo.com/tags/schwartz/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>Sender Closer</title>
+      <link>https://hackmongo.com/tags/sender-closer/</link>
+      <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
+
+      <guid>https://hackmongo.com/tags/sender-closer/</guid>
       <description></description>
     </item>
 

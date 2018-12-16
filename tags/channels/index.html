@@ -5,14 +5,14 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Hack Mongo</title>
-  <meta property="og:title" content="Hack Mongo" />
-  <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmongo.com/" />
+  <title>Channels</title>
+  <meta property="og:title" content="Channels" />
+  <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmongo.com/tags/channels/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack Mongo" />
 
   <meta name="generator" content="Hugo 0.40.1" />
-  <link rel="canonical" href="https://hackmongo.com/" />
+  <link rel="canonical" href="https://hackmongo.com/tags/channels/" />
   <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap-toc.min.css" />
@@ -74,24 +74,17 @@
 </nav>
 
 
-  <div role="main" class="container main-content">
+  <div class="container" role="main">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
         <div class="posts-list">
-
 
             <article class="post-preview">
               <a href="https://hackmongo.com/post/three-golang-channel-red-flags/">
                 <h1 class="post-title">3 Golang Channel Red Flags</h1>
 
               </a>
-              <div class="post-entry">
-
-		              Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&rsquo;t close the channel isn&rsquo;t aware the channel is closed, so send and receive on the closed channel don&rsquo;t have the intended effect.
-                  <a href="https://hackmongo.com/post/three-golang-channel-red-flags/" class="post-read-more">Read more...</a>
-
-              </div>
               <div class="post-meta">
 
 
@@ -115,42 +108,6 @@
            </article>
 
         </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <hr>
-
-
-        <li><time>2018-12-02</time>&nbsp;<a href="https://hackmongo.com/post/component-based-software-design/">Component-based Software Design</a></li>
-
-        <li><time>2018-07-22</time>&nbsp;<a href="https://hackmongo.com/post/when-mysql-goes-away/">When MySQL Goes Away</a></li>
-
-        <li><time>2018-05-13</time>&nbsp;<a href="https://hackmongo.com/post/thinking-in-go/">Thinking in Go</a></li>
-
-        <li><time>2018-02-04</time>&nbsp;<a href="https://hackmongo.com/post/bootloader-design-pattern/">Bootloader Design Pattern</a></li>
-
-        <li><time>2018-01-28</time>&nbsp;<a href="https://hackmongo.com/post/database-scalability-contention-and-crosstalk/">Database Scalability: Contention and Crosstalk</a></li>
-
-        <li><time>2018-01-23</time>&nbsp;<a href="https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/">Crash-safe MySQL Replication</a></li>
-
-        <li><time>2017-12-31</time>&nbsp;<a href="https://hackmongo.com/post/tech-workers-are-good-people/">Tech Workers Are Good People</a></li>
-
-        <li><time>2017-12-10</time>&nbsp;<a href="https://hackmongo.com/post/approaching-a-new-software-project/">Approaching a New Software Project</a></li>
-
-        <li><time>2017-11-12</time>&nbsp;<a href="https://hackmongo.com/post/ideas-leaders-and-engineers/">Ideas, Leaders, and Engineers</a></li>
-
-        <li><time>2017-09-17</time>&nbsp;<a href="https://hackmongo.com/post/five-point-checklist-for-excellent-software/">Five-Point Checklist for Excellent Software</a></li>
-
-        <li><time>2017-09-05</time>&nbsp;<a href="https://hackmongo.com/post/designing-tools-for-integration/">Designing Tools for Integration</a></li>
-
-        <li><time>2017-08-20</time>&nbsp;<a href="https://hackmongo.com/post/how-to-test-the-database/">How To Test the Database</a></li>
-
-        <li><time>2017-08-01</time>&nbsp;<a href="https://hackmongo.com/post/design-before-implementation/">Design Before Implementation</a></li>
-
-        <li><time>2017-06-17</time>&nbsp;<a href="https://hackmongo.com/post/reading-os-exec-cmd-output-without-race-conditions/">Reading os/exec.Cmd Output Without Race Conditions</a></li>
-
-        <li><time>2017-06-11</time>&nbsp;<a href="https://hackmongo.com/post/custom-mongodb-replica-set-write-concern/">Custom MongoDB Replica Set Write Concern</a></li>
 
       </div>
     </div>

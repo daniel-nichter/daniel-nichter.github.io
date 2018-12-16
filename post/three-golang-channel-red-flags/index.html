@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>3 Golang Channel Red Flags</title>
+  <meta property="og:title" content="3 Golang Channel Red Flags" />
+  <meta name="description" content="Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&rsquo;t close the channel isn&rsquo;t aware the channel is closed, so send and receive on the closed channel don&rsquo;t have the intended effect.">
+  <meta property="og:description" content="Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&rsquo;t close the channel isn&rsquo;t aware the channel is closed, so send and receive on the closed channel don&rsquo;t have the intended effect.">
+  <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmongo.com/post/three-golang-channel-red-flags/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack Mongo" />
+
+  <meta name="generator" content="Hugo 0.40.1" />
+  <link rel="canonical" href="https://hackmongo.com/post/three-golang-channel-red-flags/" />
+  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
+  <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" href="https://hackmongo.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmongo.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Design</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/golang-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/page/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">3 Golang Channel Red Flags</h1>
+
+        <div class="post-meta">
+
+
+  <div>Dec 16, 2018</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/golang">#golang</a>
+
+        <a href="/tags/channels">#channels</a>
+
+        <a href="/tags/sender-closer">#sender-closer</a>
+
+        <a href="/tags/design-pattern">#design pattern</a>
+
+
+  </div>
+</div>
+
+
+
+
+<h2 id="red-flag-1-more-than-one-close">Red Flag 1: More Than One close()</h2>
+
+<p>When reviewing code that uses channels, first thing I do is search for <code>close()</code> on every channel. More than one <code>close()</code> is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&rsquo;t close the channel isn&rsquo;t aware the channel is closed, so send and receive on the closed channel don&rsquo;t have the intended effect.</p>
+
+<p>Ideally, there is one and only one <code>close()</code> of a channel. Although code paths leading to that one <code>close()</code> can be numerous (e.g. app stops by OS signal, or controlled user shutdown, or handling a fatal error, etc.), it&rsquo;s a lot easier to reasonable about and test, especially if a bug still causes a panic on close of closed channel. Design-wise, this is a type of &ldquo;single responsibility&rdquo;: it makes it clear which code is responsible for closing the channel.</p>
+
+<h2 id="red-flag-2-chan-used-to-send-and-receive">Red Flag 2: Chan Used to Send and Receive</h2>
+
+<p>Go supports <code>recvFoo &lt;- fooChan</code> and <code>fooChan &lt;- sendFoo</code>, but this is not commonly done, in my experience. I consider this a red flag because it&rsquo;s like a network connection: it requires a communication protocol and flow control. Unless those are clearly designed, a bidirectional channel can lead to elusive bugs. Therefore, we need answers to protocol questions like:</p>
+
+<ul>
+<li>Request and response (like HTTP)?</li>
+<li>Async with no ack? (i.e. fire and forget)</li>
+<li>Async with ack? If yes, how are out-of-order acks handled?</li>
+<li>Initial handshake? (in some protocols, the server initiates the handshake after the client connects)</li>
+<li>Which end closes the channel and when?</li>
+<li>Half-open &ldquo;connection&rdquo; handling? (one end goes away unexpectedly)</li>
+</ul>
+
+<p>I think the legitimate use cases for bidirectional Go channels are rare.</p>
+
+<h2 id="red-flag-3-chan-used-for-communication-and-coordination">Red Flag 3: Chan Used for Communication and Coordination</h2>
+
+<p>Using a channel for communication and coordination is usually a red flag. Communication is the well known Go adage: <a href="https://blog.golang.org/share-memory-by-communicating">Share Memory By Communicating</a>. Coordination (aka synchronization) is handling concurrency, multiple goroutines, etc. (e.g. <a href="https://blog.golang.org/pipelines">Go Concurrency Patterns: Pipelines and cancellation</a> and the links at the end).</p>
+
+<p>There is a use case for communication and coordination, which I&rsquo;ll cover next, but in general mixing the two is often a sign that the purpose of the channel is not clear, which leads to bugs and panics. For example, if the channel is closed before communication is done, the program will panic sending on a closed channel. Or, receivers might block unexpectedly and silently deadlock the program (if there are no recv timeouts).</p>
+
+<p>Since channels are lightweight, use more to keep their purpose clear. I often used <code>doneChan chan interface{}</code> as a coordination channel for lower-level code to signal that it is done (<code>defer close(doneChan)</code>). This signal is effectively broadcast to N-many higher-level code &ldquo;listeners&rdquo;:</p>
+
+<pre><code class="language-go">switch {
+case &lt;-doneChan:
+    // lower-level code is done
+default:
+    // it's still running
+}
+</code></pre>
+
+<p>All code checking <code>doneChan</code> like that will be notified when the lower-level code is done. This is how <a href="https://golang.org/pkg/context/#Context">Context.Done()</a> is used. The reverse works, too: high-level code makes and passes <code>stopChan chan interface{}</code> to N-many lower-level code, then the high-level code closes <code>stopChan</code> to stop all the lower-level code. This is <a href="https://golang.org/pkg/context/">Context</a> in general. Channels like these are pure coordination; their purpose is clear. They are not conflated like <code>stopChan chan bool</code> and doing <code>stopChan &lt;- true</code>: does this communicate that the receiver should stop, or that the sender has stopped?</p>
+
+<p>By contrast, pure communication channels like <code>primeNumbers chan int</code> are very clear and <a href="http://www.cs.uakron.edu/~chanc/CS490/SeniorSeminar2012/Lecture%202%20-%20Program%20Style/programming%20style.pdf">intention-revealing</a>. It is not (or should not) be used to coordinate goroutines like <code>stopChan</code>.</p>
+
+<p>However, as mentioned earlier, there is a use case for both communication and coordination: the sender-closer pattern:</p>
+
+<pre><code class="language-go">// https://blog.golang.org/pipelines
+func gen(nums ...int) &lt;-chan int {
+    out := make(chan int, len(nums))
+    for _, n := range nums {
+        out &lt;- n
+    }
+    close(out)
+    return out
+}
+</code></pre>
+
+<p>The returned channel, <code>out</code>, is closed when done so that the caller knows there are no more numbers. That example illustrates the point, but it&rsquo;s not the best choice in general. Let&rsquo;s look closer at the sender-closer pattern.</p>
+
+<h3 id="sender-closer-pattern">Sender-Closer Pattern</h3>
+
+<p>If the example above was real code, it would be better without the channel:</p>
+
+<pre><code class="language-go">func gen(nums ...int) []int {
+    n := make([]int, len(nums))
+    copy(n, nums)
+    return n
+}
+</code></pre>
+
+<p>Return a slice of int, not a chan. The code is simpler, probably a lot faster, and much easier to test. The last point is key: testing. To test if the return value is correct is trivial. But to test <code>chan int</code> requires the test to drain the channel into a slice, then test that slice. In short: <code>chan int</code> is overkill in this and most cases like this.</p>
+
+<p>The sender-closer pattern is best used when at least one of the following is true:</p>
+
+<ol>
+<li>High cost of each value, <em>or</em></li>
+<li>High number and size of values</li>
+</ol>
+
+<p>If the cost of fetching each value is high (e.g. slow network request, expensive database query, etc.), then it&rsquo;s best to fetch them only as need and when needed. The channel size is effectively a prefetch buffer: zero (non-buffered) if the cost is low and we can fetch in near real-time, on-demand; or &gt; 0 if the cost is high and we want to fetch a few in advance to ensure the caller/receiver doesn&rsquo;t wait too long. This approach is more useful when combined with a coordination channel to allow the caller/receiver to stop early. In that case, we avoid fetching costly values that won&rsquo;t be used.</p>
+
+<p>Or, if the number and size of values is very high, then it&rsquo;s best to stream via the channel than attempt large memory allocations. &ldquo;Large memory&rdquo; is relative to the app, hardware, frequency of use, etc.</p>
+
+<p>The sender-closer pattern is practically required if both are true: many, large, costly values. A perfect example is <a href="https://godoc.org/github.com/go-mysql/slowlog#FileParser.Events">FileParser.Events()</a> which parses a MySQL slow query log. Parsing is slow (costly) and there can be several gigabytes of events. Streaming events via a channel is the only feasible solution. And the docs are clear: &ldquo;The channel is closed when there are no more events.&rdquo;</p>
+
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmongo.com/post/component-based-software-design/" data-toggle="tooltip" data-placement="top" title="Component-based Software Design">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2018 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmongo.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmongo.com/js/jquery-3.2.1.min.js"></script>
+<script src="https://hackmongo.com/js/bootstrap.min.js"></script>
+<script src="https://hackmongo.com/js/bootstrap-toc.min.js"></script>
+<script src="https://hackmongo.com/js/highlight.min.js"></script>
+<script src="https://hackmongo.com/js/main.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+  </body>
+</html>
