@@ -147,6 +147,15 @@
     </item>
 
     <item>
+      <title>Go Metrics</title>
+      <link>https://hackmongo.com/tags/go-metrics/</link>
+      <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/tags/go-metrics/</guid>
+      <description></description>
+    </item>
+
+    <item>
       <title>Godoc</title>
       <link>https://hackmongo.com/tags/godoc/</link>
       <pubDate>Sun, 13 May 2018 09:00:00 -0700</pubDate>
@@ -201,6 +210,24 @@
     </item>
 
     <item>
+      <title>Linear Interpolation</title>
+      <link>https://hackmongo.com/tags/linear-interpolation/</link>
+      <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/tags/linear-interpolation/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>Metrics</title>
+      <link>https://hackmongo.com/tags/metrics/</link>
+      <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/tags/metrics/</guid>
+      <description></description>
+    </item>
+
+    <item>
       <title>Mongodb</title>
       <link>https://hackmongo.com/tags/mongodb/</link>
       <pubDate>Sun, 11 Jun 2017 00:00:00 +0000</pubDate>
@@ -219,11 +246,29 @@
     </item>
 
     <item>
+      <title>Nearest Rank</title>
+      <link>https://hackmongo.com/tags/nearest-rank/</link>
+      <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/tags/nearest-rank/</guid>
+      <description></description>
+    </item>
+
+    <item>
       <title>Os/Exec</title>
       <link>https://hackmongo.com/tags/os/exec/</link>
       <pubDate>Sat, 17 Jun 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/tags/os/exec/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>Percentiles</title>
+      <link>https://hackmongo.com/tags/percentiles/</link>
+      <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/tags/percentiles/</guid>
       <description></description>
     </item>
 

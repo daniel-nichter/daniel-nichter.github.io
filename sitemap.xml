@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
+    <loc>https://hackmongo.com/page/percentiles/</loc>
+    <lastmod>2019-02-10T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
     <loc>https://hackmongo.com/post/three-golang-channel-red-flags/</loc>
     <lastmod>2018-12-16T13:00:00-03:00</lastmod>
   </url>
@@ -193,6 +198,12 @@
   </url>
 
   <url>
+    <loc>https://hackmongo.com/tags/go-metrics/</loc>
+    <lastmod>2019-02-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+
+  <url>
     <loc>https://hackmongo.com/tags/godoc/</loc>
     <lastmod>2018-05-13T09:00:00-07:00</lastmod>
     <priority>0</priority>
@@ -218,7 +229,7 @@
 
   <url>
     <loc>https://hackmongo.com/</loc>
-    <lastmod>2018-12-16T13:00:00-03:00</lastmod>
+    <lastmod>2019-02-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
 
@@ -235,6 +246,18 @@
   </url>
 
   <url>
+    <loc>https://hackmongo.com/tags/linear-interpolation/</loc>
+    <lastmod>2019-02-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/tags/metrics/</loc>
+    <lastmod>2019-02-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+
+  <url>
     <loc>https://hackmongo.com/tags/mongodb/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -247,6 +270,12 @@
   </url>
 
   <url>
+    <loc>https://hackmongo.com/tags/nearest-rank/</loc>
+    <lastmod>2019-02-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+
+  <url>
     <loc>https://hackmongo.com/tags/os/exec/</loc>
     <lastmod>2017-06-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -254,7 +283,13 @@
 
   <url>
     <loc>https://hackmongo.com/page/</loc>
-    <lastmod>2018-01-21T19:00:00-07:00</lastmod>
+    <lastmod>2019-02-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/tags/percentiles/</loc>
+    <lastmod>2019-02-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
 
