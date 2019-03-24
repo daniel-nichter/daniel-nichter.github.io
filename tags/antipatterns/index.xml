@@ -27,8 +27,7 @@
 
       <guid>https://hackmongo.com/page/golang-antipatterns/</guid>
       <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&amp;rsquo;s a better way that&amp;rsquo;s both functionally equivalent and idiomatic.
-These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, an Importance is listed for each antipattern:
-   Importance Guideline     low Easy to make better later, so it can wait   medium Becomes more difficult to change the longer it remains, so make it better as soon as possible   high Make it better right now because it reflects and effects deep technical choices that are difficult to change later    All examples are from real code but anonymized and simplified.</description>
+These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</description>
     </item>
 
   </channel>

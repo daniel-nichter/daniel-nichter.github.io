@@ -8,11 +8,9 @@
   <title>Go Antipatterns</title>
   <meta property="og:title" content="Go Antipatterns" />
   <meta name="description" content="Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&rsquo;s a better way that&rsquo;s both functionally equivalent and idiomatic.
-These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, an Importance is listed for each antipattern:
-   Importance Guideline     low Easy to make better later, so it can wait   medium Becomes more difficult to change the longer it remains, so make it better as soon as possible   high Make it better right now because it reflects and effects deep technical choices that are difficult to change later    All examples are from real code but anonymized and simplified.">
+These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.">
   <meta property="og:description" content="Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&rsquo;s a better way that&rsquo;s both functionally equivalent and idiomatic.
-These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, an Importance is listed for each antipattern:
-   Importance Guideline     low Easy to make better later, so it can wait   medium Becomes more difficult to change the longer it remains, so make it better as soon as possible   high Make it better right now because it reflects and effects deep technical choices that are difficult to change later    All examples are from real code but anonymized and simplified.">
+These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.">
   <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmongo.com/page/golang-antipatterns/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack Mongo" />
@@ -104,37 +102,13 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
 
 <p>These Go lang antipatterns are inspired by <a href="https://pragprog.com/book/bksqla/sql-antipatterns">SQL Antipatterns</a>. Antipattern Go code is syntactically correct, but there&rsquo;s a better way that&rsquo;s both functionally equivalent and <a href="https://hackmongo.com/page/idiomatic-go/">idiomatic</a>.</p>
 
-<p>These are guidelines not absolutes. For example, <a href="#generic-package">Generic Package</a> is common in practice and often difficult to avoid. Spending significant time trying to rename a <code>util</code> package can quickly amount to bikeshedding. Therefore, an <em>Importance</em> is listed for each antipattern:</p>
+<p>These are guidelines not absolutes. For example, <a href="#generic-package">Generic Package</a> is common in practice and often difficult to avoid. Spending significant time trying to rename a <code>util</code> package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</p>
 
-<table>
-<thead>
-<tr>
-<th>Importance</th>
-<th>Guideline</th>
-</tr>
-</thead>
+<h2 id="critical">Critical</h2>
 
-<tbody>
-<tr>
-<td>low</td>
-<td>Easy to make better later, so it can wait</td>
-</tr>
+<p>Critical antipatterns affect fundamental, difficult-to-change aspects of software design, functionality, or testing. As such, they are difficult to change later, so they should be fixed immediately.</p>
 
-<tr>
-<td>medium</td>
-<td>Becomes more difficult to change the longer it remains, so make it better as soon as possible</td>
-</tr>
-
-<tr>
-<td>high</td>
-<td>Make it better right now because it reflects and effects deep technical choices that are difficult to change later</td>
-</tr>
-</tbody>
-</table>
-
-<p>All examples are from real code but anonymized and simplified.</p>
-
-<h2 id="writable-read-only-value">Writable Read-only Value</h2>
+<h3 id="writable-read-only-value">Writable Read-only Value</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -148,13 +122,11 @@ func Load(&amp;config)
 func Load(config)
 </code></pre>
 
-<p><em>Importance: high</em></p>
-
 <p>If an argument should not be modified, then don&rsquo;t allow it to be modified by passing a pointer; instead, by the argument by value. This prevents accidental modification and signals to developers that the function doesn&rsquo;t modify the argument. But when a function is intended to modify the argument, pass a pointer to signal this to developers.</p>
 
 <p>Another way to think about this: if Load() should not modify the caller&rsquo;s config, then preclude even the possibility by passing config by value. Otherwise, subtle and difficult bugs are possible when Load() mutates the config in wrong or unexpected ways causing the app to break or, worse, run like it&rsquo;s ok for awhile then crash later.</p>
 
-<h2 id="promiscuous-interface">Promiscuous Interface</h2>
+<h3 id="promiscuous-interface">Promiscuous Interface</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -173,11 +145,9 @@ type ObjectFinder interface {
 }
 </code></pre>
 
-<p><em>Importance: high</em></p>
-
 <p>Interfaces provide <em>discrete</em> functionality; they &ldquo;specify the behavior of an object: if something can do this, then it can be used here.&rdquo; (<a href="https://golang.org/doc/effective_go.html">Effective Go</a>) Methods like Query() allow the interface to do anything, making it difficult to test and mock. It also tends to leak logic: for the antipattern, the caller must know how to query for specific objects, but this logic (query syntax and semantics) is most likely not within the purview of the caller. It&rsquo;s better to encapsulate this logic in the implementation of the interface. This makes the caller simpler (it doesn&rsquo;t have to know query logic), and it decouples the caller from query logic which allow the logic to change without without breaking the caller.</p>
 
-<h2 id="labyrinthine-structure">Labyrinthine Structure</h2>
+<h3 id="labyrinthine-structure">Labyrinthine Structure</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -201,13 +171,11 @@ type ServiceSSLConfig struct {
 }
 </code></pre>
 
-<p><em>Importance: high</em></p>
-
 <p>Structures should be shallow, preferably no more than three levels deep, especially when embedding is used. Structure and field names should be unique and descriptive. No proper example is given for the example above because it&rsquo;s too conflated for clarification, probably resulting from an inherently flawed data model. To be done properly, we would need first to clarify the data model.</p>
 
 <p>To highlight the antipattern, think about how KeyFile would be accessed from a Module object. It requires a nontrivial and unnecessary amount of attention to detail because of embedding and repeated use of &ldquo;Config&rdquo;.</p>
 
-<h2 id="hidden-goroutine">Hidden Goroutine</h2>
+<h3 id="hidden-goroutine">Hidden Goroutine</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -231,11 +199,9 @@ func Cleanup() {
 go Cleanup()
 </code></pre>
 
-<p><em>Importance: high</em></p>
-
 <p>All code should be necessary and sufficient. The Cleanup() function in the antipattern is not necessary. The better implementation is sufficient (and still necessary). Additionally, the antipattern breaks developer expectation by hiding the goroutine because, in general, function calls are expected to be synchronous. When a function does nothing but launch a goroutine, it is asynchronous. Functions can and should launch goroutines, but not only this. The better solution is unambiguous, explicit. It also allows Cleanup() to be called synchronously if needed, whereas the antipattern precludes this possibility (as well as testing).</p>
 
-<h2 id="new-and-do">New and Do</h2>
+<h3 id="new-and-do">New and Do</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -263,8 +229,6 @@ func (f *Foo) Connect() error {
 }
 </code></pre>
 
-<p><em>Importance: high</em></p>
-
 <p>NewFoo() in the antipattern does two things: it creates a new Foo object <em>and</em> it connects (to whatever; a database, for example). That functions should do one thing is a widely accepted principle (related: <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">Single Responsibility Principle</a>).</p>
 
 <p>The antipattern also creates a tight coupling between object creation and connection, meaning the caller cannot create a Foo object and connect later, which is common when objects are not created by the caller but, for example, by a <a href="https://en.wikipedia.org/wiki/Factory_method_pattern">factory method</a>. In this case, the factory should only create Foo and let the caller connect Foo when and where necessary.</p>
@@ -277,7 +241,7 @@ func (f *Foo) Connect() error {
 
 <p>Notice also that the better example doesn&rsquo;t return an error. Unless an object is complex (and if too complex, perhaps it&rsquo;s doing too much and should be multiple, simpler objects), creation should be guaranteed, hence no return error. This means creation should be little more than initializing and assigning variables.</p>
 
-<h2 id="guarded-channel">Guarded Channel</h2>
+<h3 id="guarded-channel">Guarded Channel</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -297,15 +261,36 @@ case v = &lt;-theChan:
 }
 </code></pre>
 
-<p><em>Importance: high</em></p>
-
 <p>Channels do not need concurrency control because channels <em>are</em> concurrency control (among other uses). Guarding a channel is an antipattern because channels do not need to be guarded when used properly. Moreover, channels have an internal mutex, so the result is a mutex on a mutex.</p>
 
 <p>A better example depends on why the channel is being guarded. One possibility: the channel is overloaded, i.e. used for communicating and concurrency control. Communicating means that <code>v</code> is used by the code. Concurrency control means that closing <code>theChan</code> is used to signal that the receiver (probably a goroutine) should terminate. In this case, the solution is two channels: <code>theChan</code> to communicate, and <code>stopChan</code> to signal.</p>
 
 <p>To avoid this antipattern for communicating channels, it helps to think of a channel as pipe which, magically, does not spill its contents. Thanks to that magic, you can change either end of the pipe (sender or receiver) without guarding the pipe itself. (You might need to guard the sender or receiver to change them safely.)</p>
 
-<h2 id="superfluous-function">Superfluous Function</h2>
+<h3 id="opaque-error">Opaque Error</h3>
+
+<pre><code class="language-go">//
+// Antipattern
+//
+return fmt.Errorf(&quot;replication not running on db.localhost&quot;)
+</code></pre>
+
+<pre><code class="language-go">//
+// Better
+//
+return fmt.Errorf(&quot;replication not running on db.localhost: Slave_IO_Running = No, expected Yes (check SHOW SLAVE STATUS)&quot;)
+
+</code></pre>
+
+<p>Opaque errors hide the &ldquo;why&rdquo; from the user: <em>why</em> is the code returning this error? There is always a &ldquo;why&rdquo;: what the code expects but fails to obtain. Not including the &ldquo;why&rdquo; in the error message is a critical antipattern because it leaves the user without insight when they need it the most, i.e. when things are not working. The antipattern example narrows the problem to replication, which is a start, but it does not state why replication is not running according to its checks; there could be many reasons why. The better example states which check failed and gives the user a hint what to do next.</p>
+
+<p>In this simple example the different is not huge, but in complex, distributed systems great error messages are invaluable. Especially in dynamic environments where the system might auto-correct, the user can investigate but see nothing wrong&mdash;a <a href="https://en.wikipedia.org/wiki/Heisenbug">heisenbug</a>. If the error is fleeting or sporadic, the &ldquo;why&rdquo; of a great error message gives us the clues we need to isolate the cause.</p>
+
+<h2 id="important">Important</h2>
+
+<p>Important antipatterns affect overall software design and on-going maintenance. They do not need to be fixed immediately, but they should be prioritized and regularly improved to keep the code flexible.</p>
+
+<h3 id="superfluous-function">Superfluous Function</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -328,11 +313,9 @@ func (t *T) other() error {
         // ...
 </code></pre>
 
-<p><em>Importance: medium</em></p>
-
 <p>All code should be necessary and sufficient. Function run() in the antipattern is not necessary; other() can and should call runRemote(). Wrapper functions like run() are only necessary when they perform common/shared logic for callers (plural), like handling the error. This antipattern is stronger if there is only one caller, in which case runRemote() should definitely be called the one place where it is needed.</p>
 
-<h2 id="superfluous-structure">Superfluous Structure</h2>
+<h3 id="superfluous-structure">Superfluous Structure</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -352,11 +335,9 @@ func (r *Redis) Info() RawMetrics
 func (r *Redis) Info() map[string]string
 </code></pre>
 
-<p><em>Importance: medium</em></p>
-
 <p>The simplest and most direct use of data types and structures yields code that&rsquo;s easier to follow and test because there are no superfluous parts. RawMetrics, with no other fields, serves no purpose. If other fields are planned/expected (and <a href="https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it">YAGNI</a> isn&rsquo;t a stronger argument), a code comment should note it. Otherwise, it&rsquo;s better to keep it simple and return the native data type: map[string]string.</p>
 
-<h2 id="transient-argument">Transient Argument</h2>
+<h3 id="transient-argument">Transient Argument</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -378,11 +359,9 @@ func GetNodes(er Ranger) []string {
 }
 </code></pre>
 
-<p><em>Importance: medium</em></p>
-
 <p>An argument is transient if not directly used by the function; the function only passes it to other function calls. The argument is literally only passing through the function, hence it is &ldquo;transient&rdquo;. The antipattern also exhibits the &ldquo;Promiscuous Interface&rdquo; antipattern, and the better solution uses a well-defined interface to avoid the transient argument by encapsulating the query logic in the Ranger implementation.</p>
 
-<h2 id="runaway-arguments">Runaway Arguments</h2>
+<h3 id="runaway-arguments">Runaway Arguments</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -422,31 +401,9 @@ func NewFoo(cfg FooConfig) *Foo {
 }
 </code></pre>
 
-<p><em>Importance: high</em></p>
-
 <p>Functions should have at most four positional arguments. Having more is difficult for humans to remember and, if data type are the same, humans might confuse the order of arguments and cause subtle bugs (e.g. passing <code>firstName, middleName, lastName</code> instead of <code>lastName, firstName, middleName</code>). Use a struct to represent more than four arguments. This has two important benefits: the arguments can and should be documented, and it&rsquo;s &ldquo;future-proof&rdquo;: adding new arguments is backward-compatible. The arguments struct should be immutable.</p>
 
-<h2 id="c-style-pointer">C-style Pointer</h2>
-
-<pre><code class="language-go">//
-// Antipattern
-//
-var fileName *string
-var files *[]FileInfo
-</code></pre>
-
-<pre><code class="language-go">//
-// Better
-//
-var fileName string
-var files []FileInfo
-</code></pre>
-
-<p><em>Importance: medium</em></p>
-
-<p>It&rsquo;s not typical and usually not necessary to use pointers to scalars, slices, or maps in Go. There are exceptions (see <a href="https://dhdersch.github.io/golang/2016/01/23/golang-when-to-use-string-pointers.html">GoLang: When to use string pointers</a>), but excessive use of pointers indicates Go being written like C (or C++ or Java) where pointers are more commonplace. In Go, the ubiquitous (and correct) use of pointers is to structures (<code>func(t *T)</code>, <code>return &amp;T{}</code>, <code>var t = &amp;T{}</code>, etc.) and pointer methods (<code>func (t *T) Foo()</code>).</p>
-
-<h2 id="type-hiding">Type Hiding</h2>
+<h3 id="type-hiding">Type Hiding</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -465,11 +422,31 @@ type Job struct { ... }
 func List([]Job)
 </code></pre>
 
-<p><em>Importance: medium</em></p>
-
 <p>Unless a custom <a href="https://golang.org/pkg/sort/">sort</a> on Jobs is required, Jobs should not be used because it hides the underlying data type (Job) and requires one to remember that Jobs is just []Job. Better to keep it simple and explicit: use []Job directly.</p>
 
-<h2 id="generic-package">Generic Package</h2>
+<h2 id="stylistic">Stylistic</h2>
+
+<p>Stylistic antipatterns are low priority, easy to change later without having to rewrite much, or any, code.</p>
+
+<h3 id="c-style-pointer">C-style Pointer</h3>
+
+<pre><code class="language-go">//
+// Antipattern
+//
+var fileName *string
+var files *[]FileInfo
+</code></pre>
+
+<pre><code class="language-go">//
+// Better
+//
+var fileName string
+var files []FileInfo
+</code></pre>
+
+<p>It&rsquo;s not typical and usually not necessary to use pointers to scalars, slices, or maps in Go. There are exceptions (see <a href="https://dhdersch.github.io/golang/2016/01/23/golang-when-to-use-string-pointers.html">GoLang: When to use string pointers</a>), but excessive use of pointers indicates Go being written like C (or C++ or Java) where pointers are more commonplace. In Go, the ubiquitous (and correct) use of pointers is to structures (<code>func(t *T)</code>, <code>return &amp;T{}</code>, <code>var t = &amp;T{}</code>, etc.) and pointer methods (<code>func (t *T) Foo()</code>).</p>
+
+<h3 id="generic-package">Generic Package</h3>
 
 <pre><code class="language-go">//
 // Antipattern
@@ -481,8 +458,6 @@ import (
     &quot;app/db&quot;
 )
 </code></pre>
-
-<p><em>Importance: low</em></p>
 
 <p>A package provides functionality around a logical and isolated part of the system. &ldquo;What can pkg X do?&rdquo; is the question we ask of that part. &ldquo;How we do X&rdquo; is an implementation detail that&rsquo;s leaked by generic package names. Of course, naming things is difficult, and generic packages are common, but we should nonetheless attempt to clarify their purpose and place in the app with a more domain-specific package name.</p>
 
