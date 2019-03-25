@@ -93,30 +93,26 @@
 
 
             <article class="post-preview">
-              <a href="https://hackmongo.com/post/three-golang-channel-red-flags/">
-                <h1 class="post-title">3 Golang Channel Red Flags</h1>
-
+              <a href="https://hackmongo.com/post/three-golang-error-types/">
+                <h1 class="post-title">3 Golang Error Types</h1>
+                <h3 class="post-subtitle">Error message, package variable, custom type</h3>
               </a>
               <div class="post-entry">
 
-		              Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&rsquo;t close the channel isn&rsquo;t aware the channel is closed, so send and receive on the closed channel don&rsquo;t have the intended effect.
-                  <a href="https://hackmongo.com/post/three-golang-channel-red-flags/" class="post-read-more">Read more...</a>
+		              This is not a post about Go error handling, it&rsquo;s a post about Go error &ldquo;types&rdquo;: three different ways to construct and use the built-in error interface type. error is deceptively simple. When used in the ways described here, it allows us to design meaningful errors and error handling in large Go programs. Errors should be first-class citizens because when things break (and they always do), errors are the first&mdash;and often only&mdash;information we have.
+                  <a href="https://hackmongo.com/post/three-golang-error-types/" class="post-read-more">Read more...</a>
 
               </div>
               <div class="post-meta">
 
 
-  <div>Dec 16, 2018</div>
+  <div>Mar 25, 2019</div>
   <div class="blog-tags">
 
 
         <a href="/tags/golang">#golang</a>
 
-        <a href="/tags/channels">#channels</a>
-
-        <a href="/tags/sender-closer">#sender-closer</a>
-
-        <a href="/tags/design-pattern">#design pattern</a>
+        <a href="/tags/errors">#errors</a>
 
 
   </div>
@@ -132,6 +128,8 @@
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <hr>
 
+
+        <li><time>2018-12-16</time>&nbsp;<a href="https://hackmongo.com/post/three-golang-channel-red-flags/">3 Golang Channel Red Flags</a></li>
 
         <li><time>2018-12-02</time>&nbsp;<a href="https://hackmongo.com/post/component-based-software-design/">Component-based Software Design</a></li>
 
