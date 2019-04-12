@@ -221,7 +221,7 @@
     <item>
       <title>Metrics</title>
       <link>https://hackmongo.com/tags/metrics/</link>
-      <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
 
       <guid>https://hackmongo.com/tags/metrics/</guid>
       <description></description>
@@ -233,6 +233,15 @@
       <pubDate>Sun, 11 Jun 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/tags/mongodb/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>Monitoring</title>
+      <link>https://hackmongo.com/tags/monitoring/</link>
+      <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
+
+      <guid>https://hackmongo.com/tags/monitoring/</guid>
       <description></description>
     </item>
 
@@ -377,6 +386,15 @@
       <pubDate>Sun, 20 Aug 2017 11:20:00 -0700</pubDate>
 
       <guid>https://hackmongo.com/tags/testing/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>Time Series</title>
+      <link>https://hackmongo.com/tags/time-series/</link>
+      <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
+
+      <guid>https://hackmongo.com/tags/time-series/</guid>
       <description></description>
     </item>
 
