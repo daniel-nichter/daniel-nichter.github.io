@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sla on Hack Mongo</title>
+    <link>https://hackmongo.com/tags/sla/</link>
+    <description>Recent content in Sla on Hack Mongo</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 29 Jun 2019 19:00:00 -0300</lastBuildDate>
+
+	<atom:link href="https://hackmongo.com/tags/sla/index.xml" rel="self" type="application/rss+xml" />
+
+
+    <item>
+      <title>Response Time SLA</title>
+      <link>https://hackmongo.com/post/response-time-sla/</link>
+      <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
+
+      <guid>https://hackmongo.com/post/response-time-sla/</guid>
+      <description>Response time (or latency) percentiles are a ubiquitous measure of system performance. The P999 (99.9th percentile) is a high bar, so it&amp;rsquo;s a good metric to determine an SLA. For example, my team runs a system with an 800 millisecond response time SLA determined by the P999. To meet that SLA, 99.9% of all requests must take &amp;lt;= 800ms. The system meets the SLA, but here&amp;rsquo;s its P999 graph:</description>
+    </item>
+
+  </channel>
+</rss>

@@ -192,6 +192,15 @@
     </item>
 
     <item>
+      <title>Histograms</title>
+      <link>https://hackmongo.com/tags/histograms/</link>
+      <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
+
+      <guid>https://hackmongo.com/tags/histograms/</guid>
+      <description></description>
+    </item>
+
+    <item>
       <title>Integration</title>
       <link>https://hackmongo.com/tags/integration/</link>
       <pubDate>Tue, 05 Sep 2017 00:00:00 +0000</pubDate>
@@ -221,7 +230,7 @@
     <item>
       <title>Metrics</title>
       <link>https://hackmongo.com/tags/metrics/</link>
-      <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
+      <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
 
       <guid>https://hackmongo.com/tags/metrics/</guid>
       <description></description>
@@ -275,7 +284,7 @@
     <item>
       <title>Percentiles</title>
       <link>https://hackmongo.com/tags/percentiles/</link>
-      <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
 
       <guid>https://hackmongo.com/tags/percentiles/</guid>
       <description></description>
@@ -350,6 +359,15 @@
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
 
       <guid>https://hackmongo.com/tags/silicon-valley/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>Sla</title>
+      <link>https://hackmongo.com/tags/sla/</link>
+      <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
+
+      <guid>https://hackmongo.com/tags/sla/</guid>
       <description></description>
     </item>
 

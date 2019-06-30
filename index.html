@@ -93,29 +93,30 @@
 
 
             <article class="post-preview">
-              <a href="https://hackmongo.com/post/path-and-dimension-metrics/">
-                <h1 class="post-title">Path and Dimension Metrics</h1>
-                <h3 class="post-subtitle">Strategies for identifying and organizing data points</h3>
+              <a href="https://hackmongo.com/post/response-time-sla/">
+                <h1 class="post-title">Response Time SLA</h1>
+                <h3 class="post-subtitle">Percentiles, histograms, and missed SLA counters</h3>
               </a>
               <div class="post-entry">
 
-		              The two most common strategies for identifying and organizing data points that comprise metric time series are path and dimension. This post is geared towards engineers who have never been introduced to the subject. Implementing metrics from the ground up, or adding new metrics to an existing system, can be overwhelming in nontrivial systems. Understanding these two strategies simplifies one&rsquo;s efforts.
-Path-based Metrics Path-based metrics are the historical norm:
-                  <a href="https://hackmongo.com/post/path-and-dimension-metrics/" class="post-read-more">Read more...</a>
+		              Response time (or latency) percentiles are a ubiquitous measure of system performance. The P999 (99.9th percentile) is a high bar, so it&rsquo;s a good metric to determine an SLA. For example, my team runs a system with an 800 millisecond response time SLA determined by the P999. To meet that SLA, 99.9% of all requests must take &lt;= 800ms. The system meets the SLA, but here&rsquo;s its P999 graph:
+                  <a href="https://hackmongo.com/post/response-time-sla/" class="post-read-more">Read more...</a>
 
               </div>
               <div class="post-meta">
 
 
-  <div>Apr 12, 2019</div>
+  <div>Jun 29, 2019</div>
   <div class="blog-tags">
 
 
         <a href="/tags/metrics">#metrics</a>
 
-        <a href="/tags/monitoring">#monitoring</a>
+        <a href="/tags/percentiles">#percentiles</a>
 
-        <a href="/tags/time-series">#time series</a>
+        <a href="/tags/histograms">#histograms</a>
+
+        <a href="/tags/sla">#sla</a>
 
 
   </div>
@@ -131,6 +132,8 @@ Path-based Metrics Path-based metrics are the historical norm:
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <hr>
 
+
+        <li><time>2019-04-12</time>&nbsp;<a href="https://hackmongo.com/post/path-and-dimension-metrics/">Path and Dimension Metrics</a></li>
 
         <li><time>2019-03-25</time>&nbsp;<a href="https://hackmongo.com/post/three-golang-error-types/">3 Golang Error Types</a></li>
 
