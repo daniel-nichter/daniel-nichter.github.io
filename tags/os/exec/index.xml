@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Os/Exec on Hack Mongo</title>
+    <title>os/exec on Hack Mongo</title>
     <link>https://hackmongo.com/tags/os/exec/</link>
-    <description>Recent content in Os/Exec on Hack Mongo</description>
+    <description>Recent content in os/exec on Hack Mongo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 17 Jun 2017 00:00:00 +0000</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sat, 17 Jun 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/reading-os-exec-cmd-output-without-race-conditions/</guid>
-      <description>Golang Weekly issue 164 features a nice article, Advanced command execution in Go with os/exec, which details several ways of working with os/exec, especially how to read STDOUT and STDERR while the command is running. This common task is commonly done wrong, where &amp;ldquo;wrong&amp;rdquo; means &amp;ldquo;the code has a race condition&amp;rdquo;. This blog post shows how to read STDOUT and STDERR from an os/exec.Cmd while it&amp;rsquo;s running and without race conditions.</description>
+      <description>Golang Weekly issue 164 features a nice article, Advanced command execution in Go with os/exec, which details several ways of working with os/exec, especially how to read STDOUT and STDERR while the command is running. This common task is commonly done wrong, where &amp;ldquo;wrong&amp;rdquo; means &amp;ldquo;the code has a race condition&amp;rdquo;. This blog post shows how to read STDOUT and STDERR from an os/exec.Cmd while it&#39;s running and without race conditions.</description>
     </item>
 
   </channel>

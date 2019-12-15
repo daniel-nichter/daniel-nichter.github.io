@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Hack Mongo</title>
@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Hack Mongo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 29 Jun 2019 19:00:00 -0300</lastBuildDate>
+    <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
 
 	<atom:link href="https://hackmongo.com/post/index.xml" rel="self" type="application/rss+xml" />
 
+
+    <item>
+      <title>Fixing Ghosted GTIDs</title>
+      <link>https://hackmongo.com/post/fixing-ghosted-gtids/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/post/fixing-ghosted-gtids/</guid>
+      <description>MySQL auto-positioning is an integral part of replication with GTID, but it&#39;s neither required nor guaranteed to work. It&#39;s possible to enable GTIDs but disable auto-positioning, and it&#39;s possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.</description>
+    </item>
 
     <item>
       <title>Response Time SLA</title>
@@ -17,7 +26,8 @@
       <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
 
       <guid>https://hackmongo.com/post/response-time-sla/</guid>
-      <description>Response time (or latency) percentiles are a ubiquitous measure of system performance. The P999 (99.9th percentile) is a high bar, so it&amp;rsquo;s a good metric to determine an SLA. For example, my team runs a system with an 800 millisecond response time SLA determined by the P999. To meet that SLA, 99.9% of all requests must take &amp;lt;= 800ms. The system meets the SLA, but here&amp;rsquo;s its P999 graph:</description>
+      <description>Response time (or latency) percentiles are a ubiquitous measure of system performance. The P999 (99.9th percentile) is a high bar, so it&#39;s a good metric to determine an SLA. For example, my team runs a system with an 800 millisecond response time SLA determined by the P999. To meet that SLA, 99.9% of all requests must take &amp;lt;= 800ms. The system meets the SLA, but here&#39;s its P999 graph:
+Looks bad, but the system is meeting the SLA.</description>
     </item>
 
     <item>
@@ -26,8 +36,9 @@
       <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
 
       <guid>https://hackmongo.com/post/path-and-dimension-metrics/</guid>
-      <description>The two most common strategies for identifying and organizing data points that comprise metric time series are path and dimension. This post is geared towards engineers who have never been introduced to the subject. Implementing metrics from the ground up, or adding new metrics to an existing system, can be overwhelming in nontrivial systems. Understanding these two strategies simplifies one&amp;rsquo;s efforts.
-Path-based Metrics Path-based metrics are the historical norm:</description>
+      <description>The two most common strategies for identifying and organizing data points that comprise metric time series are path and dimension. This post is geared towards engineers who have never been introduced to the subject. Implementing metrics from the ground up, or adding new metrics to an existing system, can be overwhelming in nontrivial systems. Understanding these two strategies simplifies one&#39;s efforts.
+Path-based Metrics Path-based metrics are the historical norm:
+host.prod1.disk-free.sda host.</description>
     </item>
 
     <item>
@@ -36,7 +47,7 @@ Path-based Metrics Path-based metrics are the historical norm:</description>
       <pubDate>Mon, 25 Mar 2019 11:00:00 -0400</pubDate>
 
       <guid>https://hackmongo.com/post/three-golang-error-types/</guid>
-      <description>This is not a post about Go error handling, it&amp;rsquo;s a post about Go error &amp;ldquo;types&amp;rdquo;: three different ways to construct and use the built-in error interface type. error is deceptively simple. When used in the ways described here, it allows us to design meaningful errors and error handling in large Go programs. Errors should be first-class citizens because when things break (and they always do), errors are the first&amp;mdash;and often only&amp;mdash;information we have.</description>
+      <description>This is not a post about Go error handling, it&#39;s a post about Go error &amp;ldquo;types&amp;rdquo;: three different ways to construct and use the built-in error interface type. error is deceptively simple. When used in the ways described here, it allows us to design meaningful errors and error handling in large Go programs. Errors should be first-class citizens because when things break (and they always do), errors are the first—and often only—information we have.</description>
     </item>
 
     <item>
@@ -45,7 +56,7 @@ Path-based Metrics Path-based metrics are the historical norm:</description>
       <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
 
       <guid>https://hackmongo.com/post/three-golang-channel-red-flags/</guid>
-      <description>Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&amp;rsquo;t close the channel isn&amp;rsquo;t aware the channel is closed, so send and receive on the closed channel don&amp;rsquo;t have the intended effect.</description>
+      <description>Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&#39;t close the channel isn&#39;t aware the channel is closed, so send and receive on the closed channel don&#39;t have the intended effect.</description>
     </item>
 
     <item>
@@ -54,7 +65,7 @@ Path-based Metrics Path-based metrics are the historical norm:</description>
       <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/component-based-software-design/</guid>
-      <description>Software systems are difficult to design because code does not delineate and organize itself. Even experienced engineers can struggle to design a system because there are many solutions but it&amp;rsquo;s not clear which is the best. Compounding the difficulty: engineers know that code can work fine even if, internally, it&amp;rsquo;s an unorganized highly-entangled mess. We want code to be well-organized, but we don&amp;rsquo;t know how to make it so. Component-based design is the solution.</description>
+      <description>Software systems are difficult to design because code does not delineate and organize itself. Even experienced engineers can struggle to design a system because there are many solutions but it&#39;s not clear which is the best. Compounding the difficulty: engineers know that code can work fine even if, internally, it&#39;s an unorganized highly-entangled mess. We want code to be well-organized, but we don&#39;t know how to make it so. Component-based design is the solution.</description>
     </item>
 
     <item>
@@ -64,7 +75,7 @@ Path-based Metrics Path-based metrics are the historical norm:</description>
 
       <guid>https://hackmongo.com/post/when-mysql-goes-away/</guid>
       <description>Handling MySQL errors in Go is not easy. There are a lot of MySQL server error codes, and the Go MySQL driver as its own errors, and Go database/sql has its own errors, and errors can bubble up from other packages, like net.OpError. Consequently, Go programs tend not to handle errors. Instead, they simply report errors:
-err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err }  And then the error is logged or reported somewhere.</description>
+err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err } And then the error is logged or reported somewhere.</description>
     </item>
 
     <item>
@@ -85,7 +96,7 @@ Programming languages have aspects which affect how we think, design, and implem
       <guid>https://hackmongo.com/post/bootloader-design-pattern/</guid>
       <description>Extensibility is a lofty goal for software design, and difficult to achieve. The Wikipedia article notes:
  Extensible design in software engineering is to accept that not everything can be designed in advance.
- That&amp;rsquo;s a paradox because it entails that extensible design does not accept that extensibility can be designed in advance! Fortunately, there&amp;rsquo;s at least one solution that can be intentionally designed and implemented in advance. I call it the &amp;ldquo;Bootloader&amp;rdquo; design pattern.</description>
+ That&#39;s a paradox because it entails that extensible design does not accept that extensibility can be designed in advance! Fortunately, there&#39;s at least one solution that can be intentionally designed and implemented in advance. I call it the &amp;ldquo;Bootloader&amp;rdquo; design pattern.</description>
     </item>
 
     <item>
@@ -104,7 +115,7 @@ We presume that a database can scale to almost 100% of system capacity, and max 
       <pubDate>Tue, 23 Jan 2018 18:40:00 -0700</pubDate>
 
       <guid>https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/</guid>
-      <description>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it&amp;rsquo;s not consistently understood or applied. The MySQL manual on the topic, 16.3.2 Handling an Unexpected Halt of a Replication Slave, is correct and authoritative, but unless you grok MySQL replication that page doesn&amp;rsquo;t make it obvious why crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient.</description>
+      <description>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it&#39;s not consistently understood or applied. The MySQL manual on the topic, 16.3.2 Handling an Unexpected Halt of a Replication Slave, is correct and authoritative, but unless you grok MySQL replication that page doesn&#39;t make it obvious why crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient.</description>
     </item>
 
     <item>
@@ -113,7 +124,7 @@ We presume that a database can scale to almost 100% of system capacity, and max 
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
 
       <guid>https://hackmongo.com/post/tech-workers-are-good-people/</guid>
-      <description>The Other Tech Bubble is a provocative and interesting read. The author clearly has a lot of experience with Silicon Valley and has done their homework. There are many good insights, like &amp;ldquo;They&amp;rsquo;re still asking if it&amp;rsquo;s possible to do something, and not whether they should.&amp;rdquo; But there are two claims and one ambiguity that need to be addressed.
+      <description>The Other Tech Bubble is a provocative and interesting read. The author clearly has a lot of experience with Silicon Valley and has done their homework. There are many good insights, like &amp;ldquo;They&#39;re still asking if it&#39;s possible to do something, and not whether they should.&amp;rdquo; But there are two claims and one ambiguity that need to be addressed.
 Villains The first claim is:
  In 2008, it was Wall Street bankers.</description>
     </item>
@@ -124,7 +135,7 @@ Villains The first claim is:
       <pubDate>Sun, 10 Dec 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/approaching-a-new-software-project/</guid>
-      <description>Approaching a new software project is difficult for two reasons. First, there&amp;rsquo;s no &amp;ldquo;guiding star&amp;rdquo;, no objective starting point. The developer can begin from and proceed in many directions, which makes choosing difficult. They want to proceed in a good direction from the start, not wasting time or effort, but how can they make a good choice without a guide or the benefit of experience? Being forced to choose and move ahead, the choice is often made randomly rather than methodically.</description>
+      <description>Approaching a new software project is difficult for two reasons. First, there&#39;s no &amp;ldquo;guiding star&amp;rdquo;, no objective starting point. The developer can begin from and proceed in many directions, which makes choosing difficult. They want to proceed in a good direction from the start, not wasting time or effort, but how can they make a good choice without a guide or the benefit of experience? Being forced to choose and move ahead, the choice is often made randomly rather than methodically.</description>
     </item>
 
     <item>
@@ -133,9 +144,9 @@ Villains The first claim is:
       <pubDate>Sun, 12 Nov 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/ideas-leaders-and-engineers/</guid>
-      <description>The Senior Engineer&amp;rsquo;s Guide to Helping Others Make Decisions is a good read and good advice. I would summarize the advice as:
- &amp;ldquo;Seek first to understand, then to be understood&amp;rdquo; (Dr. Stephen Covey) Lead and guide, don&amp;rsquo;t micromanage Embrace change, which entails embracing other people&amp;rsquo;s thinking and way of doing things  In the first dialog, the senior engineer fails those three points.
-Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
+      <description>The Senior Engineer&#39;s Guide to Helping Others Make Decisions is a good read and good advice. I would summarize the advice as:
+ &amp;ldquo;Seek first to understand, then to be understood&amp;rdquo; (Dr. Stephen Covey) Lead and guide, don&#39;t micromanage Embrace change, which entails embracing other people&#39;s thinking and way of doing things  In the first dialog, the senior engineer fails those three points.
+Av&#39;s blog post made me think&amp;hellip;</description>
     </item>
 
     <item>
@@ -144,7 +155,7 @@ Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
       <pubDate>Sun, 17 Sep 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/five-point-checklist-for-excellent-software/</guid>
-      <description>I&amp;rsquo;ve never met a developer who hasn&amp;rsquo;t read or reviewed a lot of code written by other developers. If there&amp;rsquo;s one truism in the field of software of engineering it&amp;rsquo;s that the process is collaborative. Unless you write and never release software, other people will read the code, and they&amp;rsquo;re most likely reading it not for a fun bedtime story but because they need to understand and probably fix or modify it.</description>
+      <description>I&#39;ve never met a developer who hasn&#39;t read or reviewed a lot of code written by other developers. If there&#39;s one truism in the field of software of engineering it&#39;s that the process is collaborative. Unless you write and never release software, other people will read the code, and they&#39;re most likely reading it not for a fun bedtime story but because they need to understand and probably fix or modify it.</description>
     </item>
 
     <item>
@@ -153,7 +164,7 @@ Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
       <pubDate>Tue, 05 Sep 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/designing-tools-for-integration/</guid>
-      <description>When we write a new tool to do X, it&amp;rsquo;s common to program the tool to do X in one way. When X is trivial or very narrow in scope, this makes sense, and programming any more would fall prey to over-engineering. However, when the tool does many things (all logically related, else it falls prey to bloat and/or feature-creep), there quickly becomes many ways to accomplish those many things.</description>
+      <description>When we write a new tool to do X, it&#39;s common to program the tool to do X in one way. When X is trivial or very narrow in scope, this makes sense, and programming any more would fall prey to over-engineering. However, when the tool does many things (all logically related, else it falls prey to bloat and/or feature-creep), there quickly becomes many ways to accomplish those many things. No problem, we program all those things, too, but during my tool-making career I&#39;ve learned two things:</description>
     </item>
 
     <item>
@@ -162,7 +173,7 @@ Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
       <pubDate>Sun, 20 Aug 2017 11:20:00 -0700</pubDate>
 
       <guid>https://hackmongo.com/post/how-to-test-the-database/</guid>
-      <description>&amp;ldquo;How do I test the database?&amp;rdquo; is a question I&amp;rsquo;ve been asked by colleagues many times. There&amp;rsquo;s a good, clean solution, but let&amp;rsquo;s first step back from what seems to be the problem to unpack why &amp;ldquo;testing the database&amp;rdquo; is not special (but nonetheless important). In other words: colleagues don&amp;rsquo;t ask, &amp;ldquo;How do I test such-and-such package?&amp;rdquo;, because that&amp;rsquo;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</description>
+      <description>&amp;ldquo;How do I test the database?&amp;rdquo; is a question I&#39;ve been asked by colleagues many times. There&#39;s a good, clean solution, but let&#39;s first step back from what seems to be the problem to unpack why &amp;ldquo;testing the database&amp;rdquo; is not special (but nonetheless important). In other words: colleagues don&#39;t ask, &amp;ldquo;How do I test such-and-such package?&amp;quot;, because that&#39;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</description>
     </item>
 
     <item>
@@ -180,7 +191,7 @@ Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
       <pubDate>Sat, 17 Jun 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/reading-os-exec-cmd-output-without-race-conditions/</guid>
-      <description>Golang Weekly issue 164 features a nice article, Advanced command execution in Go with os/exec, which details several ways of working with os/exec, especially how to read STDOUT and STDERR while the command is running. This common task is commonly done wrong, where &amp;ldquo;wrong&amp;rdquo; means &amp;ldquo;the code has a race condition&amp;rdquo;. This blog post shows how to read STDOUT and STDERR from an os/exec.Cmd while it&amp;rsquo;s running and without race conditions.</description>
+      <description>Golang Weekly issue 164 features a nice article, Advanced command execution in Go with os/exec, which details several ways of working with os/exec, especially how to read STDOUT and STDERR while the command is running. This common task is commonly done wrong, where &amp;ldquo;wrong&amp;rdquo; means &amp;ldquo;the code has a race condition&amp;rdquo;. This blog post shows how to read STDOUT and STDERR from an os/exec.Cmd while it&#39;s running and without race conditions.</description>
     </item>
 
     <item>
@@ -191,7 +202,7 @@ Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
       <guid>https://hackmongo.com/post/custom-mongodb-replica-set-write-concern/</guid>
       <description>One of the great things about MongoDB is write concern:
  Write concern describes the level of acknowledgement requested from MongoDB for write operations to a standalone mongod or to replica sets or to sharded clusters.
- Awesome! I want 1 write ack from any secondary in the primary DC so when the primary crashes we&amp;rsquo;re guaranteed to have an up-to-date secondary in the primary DC ready to be elected primary.</description>
+ Awesome! I want 1 write ack from any secondary in the primary DC so when the primary crashes we&#39;re guaranteed to have an up-to-date secondary in the primary DC ready to be elected primary.</description>
     </item>
 
   </channel>

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Antipatterns on Hack Mongo</title>
+    <title>antipatterns on Hack Mongo</title>
     <link>https://hackmongo.com/tags/antipatterns/</link>
-    <description>Recent content in Antipatterns on Hack Mongo</description>
+    <description>Recent content in antipatterns on Hack Mongo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 21 Jan 2018 19:00:00 -0700</lastBuildDate>
@@ -26,7 +26,7 @@
       <pubDate>Sat, 03 Jun 2017 18:51:14 -0700</pubDate>
 
       <guid>https://hackmongo.com/page/golang-antipatterns/</guid>
-      <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&amp;rsquo;s a better way that&amp;rsquo;s both functionally equivalent and idiomatic.
+      <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&#39;s a better way that&#39;s both functionally equivalent and idiomatic.
 These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</description>
     </item>
 

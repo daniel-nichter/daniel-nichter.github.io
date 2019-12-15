@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Errors on Hack Mongo</title>
+    <title>errors on Hack Mongo</title>
     <link>https://hackmongo.com/tags/errors/</link>
-    <description>Recent content in Errors on Hack Mongo</description>
+    <description>Recent content in errors on Hack Mongo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 25 Mar 2019 11:00:00 -0400</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Mon, 25 Mar 2019 11:00:00 -0400</pubDate>
 
       <guid>https://hackmongo.com/post/three-golang-error-types/</guid>
-      <description>This is not a post about Go error handling, it&amp;rsquo;s a post about Go error &amp;ldquo;types&amp;rdquo;: three different ways to construct and use the built-in error interface type. error is deceptively simple. When used in the ways described here, it allows us to design meaningful errors and error handling in large Go programs. Errors should be first-class citizens because when things break (and they always do), errors are the first&amp;mdash;and often only&amp;mdash;information we have.</description>
+      <description>This is not a post about Go error handling, it&#39;s a post about Go error &amp;ldquo;types&amp;rdquo;: three different ways to construct and use the built-in error interface type. error is deceptively simple. When used in the ways described here, it allows us to design meaningful errors and error handling in large Go programs. Errors should be first-class citizens because when things break (and they always do), errors are the first—and often only—information we have.</description>
     </item>
 
     <item>
@@ -27,7 +27,7 @@
 
       <guid>https://hackmongo.com/post/when-mysql-goes-away/</guid>
       <description>Handling MySQL errors in Go is not easy. There are a lot of MySQL server error codes, and the Go MySQL driver as its own errors, and Go database/sql has its own errors, and errors can bubble up from other packages, like net.OpError. Consequently, Go programs tend not to handle errors. Instead, they simply report errors:
-err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err }  And then the error is logged or reported somewhere.</description>
+err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err } And then the error is logged or reported somewhere.</description>
     </item>
 
   </channel>

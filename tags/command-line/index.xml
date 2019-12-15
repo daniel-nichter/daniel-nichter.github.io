@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Command Line on Hack Mongo</title>
+    <title>command-line on Hack Mongo</title>
     <link>https://hackmongo.com/tags/command-line/</link>
-    <description>Recent content in Command Line on Hack Mongo</description>
+    <description>Recent content in command-line on Hack Mongo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 21 Jan 2018 19:00:00 -0700</lastBuildDate>

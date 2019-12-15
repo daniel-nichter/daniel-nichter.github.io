@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>auto-pos on Hack Mongo</title>
+    <link>https://hackmongo.com/tags/auto-pos/</link>
+    <description>Recent content in auto-pos on Hack Mongo</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
+
+	<atom:link href="https://hackmongo.com/tags/auto-pos/index.xml" rel="self" type="application/rss+xml" />
+
+
+    <item>
+      <title>Fixing Ghosted GTIDs</title>
+      <link>https://hackmongo.com/post/fixing-ghosted-gtids/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/post/fixing-ghosted-gtids/</guid>
+      <description>MySQL auto-positioning is an integral part of replication with GTID, but it&#39;s neither required nor guaranteed to work. It&#39;s possible to enable GTIDs but disable auto-positioning, and it&#39;s possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.</description>
+    </item>
+
+  </channel>
+</rss>

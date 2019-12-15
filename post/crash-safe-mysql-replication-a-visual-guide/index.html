@@ -13,7 +13,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack Mongo" />
 
-  <meta name="generator" content="Hugo 0.40.1" />
+  <meta name="generator" content="Hugo 0.60.0" />
   <link rel="canonical" href="https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/" />
   <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
@@ -113,14 +113,9 @@
 </div>
 
 
-
-
-<p>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it&rsquo;s not consistently understood or applied. The MySQL manual on the topic, <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-solutions-unexpected-slave-halt.html">16.3.2 Handling an Unexpected Halt of a Replication Slave</a>, is correct and authoritative, but unless you grok MySQL replication that page doesn&rsquo;t make it obvious <em>why</em> crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient. The aim of this blog post is total enlightenment, a full crash-safe-spiritual awakening. Light the censers and let us begin at the beginning&hellip;</p>
-
-<h2 id="tl-dr">TL;DR</h2>
-
+        <p>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it's not consistently understood or applied. The MySQL manual on the topic, <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-solutions-unexpected-slave-halt.html">16.3.2 Handling an Unexpected Halt of a Replication Slave</a>, is correct and authoritative, but unless you grok MySQL replication that page doesn't make it obvious <em>why</em> crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient. The aim of this blog post is total enlightenment, a full crash-safe-spiritual awakening. Light the censers and let us begin at the beginning&hellip;</p>
+<h2 id="tldr">TL;DR</h2>
 <p>Presuming,</p>
-
 <ul>
 <li>MySQL 5.6 or later</li>
 <li>Single-threaded replication</li>
@@ -128,116 +123,79 @@
 <li><em>Not</em> GTID (discussed below)</li>
 <li>MySQL crashes [1]</li>
 </ul>
-
-<p><small>[1] The manual distinguishes crash types: server (MySQL) vs. OS. <em>There are no crash-safe guarantees for an OS crash!</em> MySQL can&rsquo;t guarantee anything for lower-level failures, like OS and hardware crashes. However, my experience is that crash-safe replication often saves the replica even for lower-level failures. But remember: the only guarantee is for MySQL crashes, nothing else.</small></p>
-
+<p><small>[1] The manual distinguishes crash types: server (MySQL) vs. OS. <em>There are no crash-safe guarantees for an OS crash!</em> MySQL can't guarantee anything for lower-level failures, like OS and hardware crashes. However, my experience is that crash-safe replication often saves the replica even for lower-level failures. But remember: the only guarantee is for MySQL crashes, nothing else.</small></p>
 <p>only two settings are necessary and sufficient:</p>
-
 <ul>
 <li><code>relay_log_info_repository = TABLE</code></li>
 <li><code>relay_log_recovery = ON</code></li>
 </ul>
-
-<p>That seems too simple to believe, so let&rsquo;s dive into the how and why.</p>
-
-<h2 id="how-and-why-crash-safe-replication-works">How and Why Crash-safe Replication Works</h2>
-
-<p><img src="/img/mysql-crash-safe-replication.svg" alt="MySQL Crash-safe Replication" /></p>
-
-<p>Only the green elements are involved in crash-safe replication. You can see the two required settings are green, but other related settings are white because they do <em>not</em> effect crash-safe replication. They&rsquo;re related but not necessary. Let&rsquo;s walk through the process and focus on what the necessary and sufficient:</p>
-
+<p>That seems too simple to believe, so let's dive into the how and why.</p>
+<h2 id="how-and-why-crashsafe-replication-works">How and Why Crash-safe Replication Works</h2>
+<p><img src="/img/mysql-crash-safe-replication.svg" alt="MySQL Crash-safe Replication"></p>
+<p>Only the green elements are involved in crash-safe replication. You can see the two required settings are green, but other related settings are white because they do <em>not</em> effect crash-safe replication. They're related but not necessary. Let's walk through the process and focus on what the necessary and sufficient:</p>
 <ol>
 <li>IO thread writes binlog data from master to a relay log on replica.</li>
 <li>IO thread updates <a href="https://dev.mysql.com/doc/refman/5.7/en/slave-logs-status.html">master info</a> table, depending on <code>sync_master_info</code>. This is called &ldquo;master info&rdquo; because replica relay logs correspond to master binlogs.</li>
 <li>SQL thread reads a transaction from a relay log.</li>
 <li>SQL thread executes the transaction which writes to the database <em>and</em>, in the same transaction, writes to (updates) <a href="https://dev.mysql.com/doc/refman/5.7/en/slave-logs-status.html">relay log info</a> table. This is called &ldquo;relay log info&rdquo; because it corresponds to replica relay logs.</li>
 </ol>
-
-<p>Step 4 is where the magic happens. Let&rsquo;s zoom in:</p>
-
-<p><img src="/img/mysql-crash-safe-trx.svg" alt="MySQL Crash-safe Transaction" /></p>
-
-<p>The SQL thread has <em>two</em> transactions: the green is the user&rsquo;s transaction from the relay log, and the blue is the relay log coordinates corresponding to the user&rsquo;s transaction. The SQL thread combines these into a single transaction and executes it as usual. MySQL and InnoDB form a reliable, ACID-compliant database, so we&rsquo;re guaranteed that relay log info accurately reflects applied user transactions; the two cannot come apart because they are committed in the same transaction.</p>
-
-<p>In this example, if the relay log info table has the values in blue, we&rsquo;re guaranteed that the database is consistent up to and including the user transaction in green, no more and no less.</p>
-
+<p>Step 4 is where the magic happens. Let's zoom in:</p>
+<p><img src="/img/mysql-crash-safe-trx.svg" alt="MySQL Crash-safe Transaction"></p>
+<p>The SQL thread has <em>two</em> transactions: the green is the user's transaction from the relay log, and the blue is the relay log coordinates corresponding to the user's transaction. The SQL thread combines these into a single transaction and executes it as usual. MySQL and InnoDB form a reliable, ACID-compliant database, so we're guaranteed that relay log info accurately reflects applied user transactions; the two cannot come apart because they are committed in the same transaction.</p>
+<p>In this example, if the relay log info table has the values in blue, we're guaranteed that the database is consistent up to and including the user transaction in green, no more and no less.</p>
 <h2 id="crash">Crash</h2>
-
 <p>When MySQL crashes and starts again, it detects the crash and begins to recover because <code>relay_log_recovery = ON</code>. This is a simplification but it serves the purpose here. Recovery relies on two simple but important facts:</p>
-
 <ol>
 <li>The SQL thread position is always &lt;= the IO thread position</li>
 <li>The SQL thread position is authoritative wrt committed transactions</li>
 </ol>
-
-<p>Number 1 is necessarily true because the SQL thread cannot read data that doesn&rsquo;t exist. In other words: the SQL thread is always behind and chasing the IO thread. Sometimes the SQL thread catches up (the two are equal), but the SQL thread cannot surpass the IO thread. Number 2 follows because we don&rsquo;t really care where the IO thread is, we care where the SQL thread is because it&rsquo;s executing transactions, writing data. Let&rsquo;s visualize it:</p>
-
-<p><img src="/img/mysql-crash-safe-relay-log.svg" alt="MySQL Crash-safe Relay Log" /></p>
-
-<p>Blue means committed, green means executing. <code>pos</code> is an offset, so the second transaction starts at file offset 100. On the left, the IO thread has fetched three transactions, and the SQL thread is in the middle of executing the second. Since the SQL thread has <em>not</em> committed the second transaction, the relay log info contains <code>pos: 100</code> (end of first transaction, start of second) because only the first transaction has been committed. When MySQL crashes and restarts, it recovers by setting both IO and SQL threads back to <code>pos: 100</code> and discarding relay log data after this pos (the second and third transactions). The IO thread will re-fetch the data and, once it does, the SQL thread will resume executing from <code>pos: 100</code>. Yes, the SQL thread will re-execute the second transaction, but that&rsquo;s ok because it was not committed before the crash. MySQL and InnoDB are awesome!</p>
-
+<p>Number 1 is necessarily true because the SQL thread cannot read data that doesn't exist. In other words: the SQL thread is always behind and chasing the IO thread. Sometimes the SQL thread catches up (the two are equal), but the SQL thread cannot surpass the IO thread. Number 2 follows because we don't really care where the IO thread is, we care where the SQL thread is because it's executing transactions, writing data. Let's visualize it:</p>
+<p><img src="/img/mysql-crash-safe-relay-log.svg" alt="MySQL Crash-safe Relay Log"></p>
+<p>Blue means committed, green means executing. <code>pos</code> is an offset, so the second transaction starts at file offset 100. On the left, the IO thread has fetched three transactions, and the SQL thread is in the middle of executing the second. Since the SQL thread has <em>not</em> committed the second transaction, the relay log info contains <code>pos: 100</code> (end of first transaction, start of second) because only the first transaction has been committed. When MySQL crashes and restarts, it recovers by setting both IO and SQL threads back to <code>pos: 100</code> and discarding relay log data after this pos (the second and third transactions). The IO thread will re-fetch the data and, once it does, the SQL thread will resume executing from <code>pos: 100</code>. Yes, the SQL thread will re-execute the second transaction, but that's ok because it was not committed before the crash. MySQL and InnoDB are awesome!</p>
 <h2 id="unnecessary-settings">Unnecessary Settings</h2>
-
-<p>From the previous two sections, it&rsquo;s more clear why other settings are unnecessary. Let&rsquo;s address them specifically:</p>
-
+<p>From the previous two sections, it's more clear why other settings are unnecessary. Let's address them specifically:</p>
 <ul>
-<li><p><code>%master_info%</code>: These settings play <em>no role</em> in crash-safe replication or recovery. Master info (in table or file) seems to have no functional purpose. This is especially true with <code>relay_log_recovery = ON</code> which makes relay logs disposable, so IO thread status (which updates master info) no longer matters. Master info is also out of date unless <code>sync_master_info</code> is a very low value (like 1), but a very low value should <em>not</em> be used because it can cause too much overhead (on storage, replication, or both). Moreover, master info is available and always up-to-date in <code>SHOW SLAVE STATUS</code>. So master info (in table or file) seems to have no purpose, but since the variables exist nonetheless I suggest <code>master_info_repository = TABLE</code> for uniformity with <code>relay_log_info_repository = TABLE</code>, and <code>syn_master_info = 0</code> (the default value).</p></li>
-
-<li><p><code>sync_relay_log_info</code>: With <code>relay_log_info_repository = TABLE</code> (one of two necessary and sufficient settings), <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-slave.html#sysvar_sync_relay_log_info">the manual for this variable</a> says it&rsquo;s &ldquo;effectively ignored&rdquo;. This makes sense because, as described and illustrated above, the SQL thread updates the relay log info table automatically with every user transaction, so there&rsquo;s no need for additional syncs. Note, however: &ldquo;effectively ignored&rdquo; is unclear. From my experience, MySQL seems to always respect this variable, so setting it to 1 can cause heavy lag if the master is doing high levels of transactions per second. In short: leave <code>sync_relay_log_info</code> set to default (usually 10000), or at least 1000; do <em>not</em> set to 1 for crash-safe replication.</p></li>
-
-<li><p><code>sync_relay_log</code> (not shown): This setting is <em>not</em> required for crash-safe replication because with <code>relay_log_recovery = ON</code> relay logs are disposable, therefore we don&rsquo;t need to explicitly sync them to disk. I suggest leaving this settings on its default, 0 or 10,000 (depending on MySQL version); do <em>not</em> set to 1 even though the manual says, &ldquo;A value of 1 is the safest choice because in the event of a crash you lose at most one event from the relay log.&rdquo; because, again, with <code>relay_log_recovery = ON</code> relay logs are disposable.</p></li>
+<li>
+<p><code>%master_info%</code>: These settings play <em>no role</em> in crash-safe replication or recovery. Master info (in table or file) seems to have no functional purpose. This is especially true with <code>relay_log_recovery = ON</code> which makes relay logs disposable, so IO thread status (which updates master info) no longer matters. Master info is also out of date unless <code>sync_master_info</code> is a very low value (like 1), but a very low value should <em>not</em> be used because it can cause too much overhead (on storage, replication, or both). Moreover, master info is available and always up-to-date in <code>SHOW SLAVE STATUS</code>. So master info (in table or file) seems to have no purpose, but since the variables exist nonetheless I suggest <code>master_info_repository = TABLE</code> for uniformity with <code>relay_log_info_repository = TABLE</code>, and <code>syn_master_info = 0</code> (the default value).</p>
+</li>
+<li>
+<p><code>sync_relay_log_info</code>: With <code>relay_log_info_repository = TABLE</code> (one of two necessary and sufficient settings), <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-slave.html#sysvar_sync_relay_log_info">the manual for this variable</a> says it's &ldquo;effectively ignored&rdquo;. This makes sense because, as described and illustrated above, the SQL thread updates the relay log info table automatically with every user transaction, so there's no need for additional syncs. Note, however: &ldquo;effectively ignored&rdquo; is unclear. From my experience, MySQL seems to always respect this variable, so setting it to 1 can cause heavy lag if the master is doing high levels of transactions per second. In short: leave <code>sync_relay_log_info</code> set to default (usually 10000), or at least 1000; do <em>not</em> set to 1 for crash-safe replication.</p>
+</li>
+<li>
+<p><code>sync_relay_log</code> (not shown): This setting is <em>not</em> required for crash-safe replication because with <code>relay_log_recovery = ON</code> relay logs are disposable, therefore we don't need to explicitly sync them to disk. I suggest leaving this settings on its default, 0 or 10,000 (depending on MySQL version); do <em>not</em> set to 1 even though the manual says, &ldquo;A value of 1 is the safest choice because in the event of a crash you lose at most one event from the relay log.&rdquo; because, again, with <code>relay_log_recovery = ON</code> relay logs are disposable.</p>
+</li>
 </ul>
-
 <h2 id="disposable-relay-logs">Disposable Relay Logs</h2>
-
 <p>Making relay logs disposable with <code>relay_log_recovery = ON</code> has two implications DBAs need to consider:</p>
-
 <ol>
 <li>The master must keep binlogs long enough for crashed replicas to recover. If the master is purging binlogs too soon, or a DBA purges binlogs for some reason, a crashed replica might not be able to recover automatically. If that happens, the replica to be rebuilt completely (restore backup, etc.).</li>
 <li>Fetching binlogs from master could cause load on the master or the network if the binlogs are huge.</li>
 </ol>
-
 <h2 id="gtid">GTID</h2>
-
-<p>In addition to normal replication mechanisms (binary/relay logs, IO/SQL threads, master/relay log info), GTID-based replication relies on the <em>replica&rsquo;s</em> binary logs. [2] Therefore, two additional settings are required:</p>
-
+<p>In addition to normal replication mechanisms (binary/relay logs, IO/SQL threads, master/relay log info), GTID-based replication relies on the <em>replica's</em> binary logs. [2] Therefore, two additional settings are required:</p>
 <ul>
 <li><code>sync_binlog = 1</code></li>
 <li><code>innodb_flush_log_at_trx_commit = 1</code></li>
 </ul>
-
-<p><small>[2] MySQL 5.7 allows GTID-based replication without replica binary logs (<code>log_slave_updates = FALSE</code>), but for simplicity let&rsquo;s presume the common case: replicas having their own binary logs.</small></p>
-
-<p>These settings should <em>always</em> be used, and they are necessary for crash-safe GTID-based replication because they almost guarantee that replica binary logs are kept in sync with applied transactions. I say &ldquo;almost&rdquo; because, although binary logs are considered authoritative, they are separate data from the data they reflect, so there&rsquo;s a chance the two can come apart. However, with these settings that chance is so small that it&rsquo;s usually treated as a guarantee.</p>
-
-<p>With GTID-based replication, MySQL must know which <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-gtids-concepts.html">GTID sets</a> have been executed so it doesn&rsquo;t execute them again. Executed GTID sets are written to binary logs, so when MySQL starts it scans its binary logs to determine which GTID sets have been executed; this initializes <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-gtids.html#sysvar_gtid_executed">gtid_executed</a> and <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-gtids.html#sysvar_gtid_purged">gtid_purged</a>.</p>
-
-<p>After scanning binary logs to reinitialize <code>gtid_executed</code> and <code>gtid_purged</code>, MySQL is ready to deal with binary and relay logs again. Let&rsquo;s limit the discussion to the settings listed here because the manual says:</p>
-
+<p><small>[2] MySQL 5.7 allows GTID-based replication without replica binary logs (<code>log_slave_updates = FALSE</code>), but for simplicity let's presume the common case: replicas having their own binary logs.</small></p>
+<p>These settings should <em>always</em> be used, and they are necessary for crash-safe GTID-based replication because they almost guarantee that replica binary logs are kept in sync with applied transactions. I say &ldquo;almost&rdquo; because, although binary logs are considered authoritative, they are separate data from the data they reflect, so there's a chance the two can come apart. However, with these settings that chance is so small that it's usually treated as a guarantee.</p>
+<p>With GTID-based replication, MySQL must know which <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-gtids-concepts.html">GTID sets</a> have been executed so it doesn't execute them again. Executed GTID sets are written to binary logs, so when MySQL starts it scans its binary logs to determine which GTID sets have been executed; this initializes <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-gtids.html#sysvar_gtid_executed">gtid_executed</a> and <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-gtids.html#sysvar_gtid_purged">gtid_purged</a>.</p>
+<p>After scanning binary logs to reinitialize <code>gtid_executed</code> and <code>gtid_purged</code>, MySQL is ready to deal with binary and relay logs again. Let's limit the discussion to the settings listed here because the manual says:</p>
 <blockquote>
 <p>When using GTIDs and MASTER_AUTO_POSITION, set <code>relay_log_recovery=1</code>. With this configuration the setting of <code>relay_log_info_repository</code> and other variables does not impact on [sic] recovery.</p>
 </blockquote>
-
-<p>Let&rsquo;s visualize it:</p>
-
-<p><img src="/img/mysql-crash-safe-gtid.svg" alt="MySQL Crash-safe GTD" /></p>
-
-<p>Like the previous crash example, blue is committed and green is executing, but unlike the previous crash example, transactions are identified by GTID values like <code>ABC:5</code> (real GTID are much longer) and there are no relay log pos. The first transaction (<code>ABC:3</code>) has been committed and logged in the replica&rsquo;s binary log, and the second transaction (<code>ABC:4</code>) is being executed when the replica crashes. The simplified recovery sequence is:</p>
-
+<p>Let's visualize it:</p>
+<p><img src="/img/mysql-crash-safe-gtid.svg" alt="MySQL Crash-safe GTD"></p>
+<p>Like the previous crash example, blue is committed and green is executing, but unlike the previous crash example, transactions are identified by GTID values like <code>ABC:5</code> (real GTID are much longer) and there are no relay log pos. The first transaction (<code>ABC:3</code>) has been committed and logged in the replica's binary log, and the second transaction (<code>ABC:4</code>) is being executed when the replica crashes. The simplified recovery sequence is:</p>
 <ol>
 <li>Start scanning master binary logs for last GTID set in replica binary logs: <code>ABC:3</code></li>
 <li>Keep scanning master binary logs until <code>ABC:3</code> is found</li>
 <li>IO thread re-fetches binlog data starting at next transaction</li>
 </ol>
-
-<p>With <code>MASTER_AUTO_POSITION = 1</code> (shown as <code>Auto_Position: 1</code> in <code>SHOW SLAVE STATUS</code>) and <code>relay_log_recovery = ON</code>, MySQL ignores relay logs <em>and</em> relay log info (SQL thread file and pos); instead, it searches the master&rsquo;s binary logs for the first GTID set <em>not</em> executed. The IO thread re-fetches binlogs from that location (in the master&rsquo;s binary log), and replication resumes as normal. With GTID-based replication, binary and relay log files still exist and function the same, but the focus for the DBA (and tooling) is executed/purged GTID sets.</p>
-
-<p><code>MASTER_AUTO_POSITION = 0</code> is possible but not advisable. The manual says next to nothing about this situation. I&rsquo;ve seen it once in a cluster that enabled GTID temporarily. It&rsquo;s best to avoid. Upgrade all nodes in the cluster to GTID (and use the settings listed here), or none of them (and use traditional replication with crash-safe settings).</p>
-
+<p>With <code>MASTER_AUTO_POSITION = 1</code> (shown as <code>Auto_Position: 1</code> in <code>SHOW SLAVE STATUS</code>) and <code>relay_log_recovery = ON</code>, MySQL ignores relay logs <em>and</em> relay log info (SQL thread file and pos); instead, it searches the master's binary logs for the first GTID set <em>not</em> executed. The IO thread re-fetches binlogs from that location (in the master's binary log), and replication resumes as normal. With GTID-based replication, binary and relay log files still exist and function the same, but the focus for the DBA (and tooling) is executed/purged GTID sets.</p>
+<p><code>MASTER_AUTO_POSITION = 0</code> is possible but not advisable. The manual says next to nothing about this situation. I've seen it once in a cluster that enabled GTID temporarily. It's best to avoid. Upgrade all nodes in the cluster to GTID (and use the settings listed here), or none of them (and use traditional replication with crash-safe settings).</p>
 <h2 id="quick-reference">Quick Reference</h2>
-
 <p>For crash-safe single-threaded MySQL replication, the necessary and sufficient settings are:</p>
-
 <ul>
 <li>MySQL 5.6 or later</li>
 <li>InnoDB tables only</li>
@@ -247,9 +205,7 @@
 <li><code>innodb_flush_log_at_trx_commit = 1</code></li>
 <li><code>MASTER_AUTO_POSITION = 1</code> if GTID</li>
 </ul>
-
 <p>And the authoritative source for applied transactions is:</p>
-
 <table>
 <thead>
 <tr>
@@ -257,7 +213,6 @@
 <th>GTID</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>SQL thread coordinates in <code>mysql.slave_relay_log_info</code></td>
@@ -265,13 +220,9 @@
 </tr>
 </tbody>
 </table>
-
-<hr />
-
+<hr>
 <h2 id="credits">Credits</h2>
-
 <p>Thank you to,</p>
-
 <ul>
 <li>Ryan Lowe</li>
 <li>Emily Slocombe</li>
@@ -280,33 +231,32 @@
 <li><a href="https://www.percona.com/blog/author/gryp/">Kenny Gryp</a></li>
 <li><a href="http://code.openark.org/blog/">Shlomi Noach</a></li>
 <li>Jean-François Gagné
-
 <ul>
 <li><a href="https://blog.booking.com/better_crash_safe_replication_for_mysql.html">Better Crash-safe replication for MySQL</a></li>
 <li><a href="http://jfg-mysql.blogspot.nl/2016/08/discussion-about-sync-master-info-and-replication-parameters.html">A discussion about sync-master-info and other replication parameters</a></li>
-</ul></li>
+</ul>
+</li>
 <li>Evan Elias
-
 <ul>
 <li><a href="https://code.facebook.com/posts/1542273532669494/lessons-from-deploying-mysql-gtid-at-scale/">Lessons from Deploying MySQL GTID at Scale</a></li>
-</ul></li>
+</ul>
+</li>
 <li>Mats Kindahl
-
 <ul>
 <li><a href="http://mysqlmusings.blogspot.com/2011/04/crash-safe-replication.html">Crash-safe Replication</a></li>
-</ul></li>
+</ul>
+</li>
 <li>MySQL Server Blog
-
 <ul>
 <li><a href="https://mysqlserverteam.com/relay-log-recovery-when-sql-threads-position-is-unavailable/">Relay Log Recovery when SQL Thread’s Position is Unavailable</a></li>
-</ul></li>
+</ul>
+</li>
 <li>Percona
-
 <ul>
 <li><a href="https://www.percona.com/blog/2013/09/13/enabling-crash-safe-slaves-with-mysql-5-6/">Enabling crash-safe slaves with MySQL 5.6</a></li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <p>who provided direct and indirect help via discussions, blog posts, etc.</p>
 
       </article>
@@ -328,7 +278,7 @@
 
           <div class="disqus-comments">
             <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
 
 

@@ -11,7 +11,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack Mongo" />
 
-  <meta name="generator" content="Hugo 0.40.1" />
+  <meta name="generator" content="Hugo 0.60.0" />
   <link rel="canonical" href="https://hackmongo.com/" />
   <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
@@ -85,93 +85,95 @@
 </nav>
 
 
-  <div role="main" class="container main-content">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div role="main" class="container main-content">
+	<div class="row">
+		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+			<div class="posts-list">
 
-        <div class="posts-list">
+					<article class="post-preview">
+						<a href="https://hackmongo.com/post/fixing-ghosted-gtids/">
+							<h1 class="post-title">Fixing Ghosted GTIDs</h1>
+
+								<h3 class="post-subtitle">When MySQL GTID auto-positioning fails</h3>
+
+						</a>
+						<div class="post-entry">
+
+								MySQL auto-positioning is an integral part of replication with GTID, but it's neither required nor guaranteed to work. It's possible to enable GTIDs but disable auto-positioning, and it's possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.
+								<a href="https://hackmongo.com/post/fixing-ghosted-gtids/" class="post-read-more">Read more...</a>
+
+						</div>
+						<div class="post-meta">
 
 
-            <article class="post-preview">
-              <a href="https://hackmongo.com/post/response-time-sla/">
-                <h1 class="post-title">Response Time SLA</h1>
-                <h3 class="post-subtitle">Percentiles, histograms, and missed SLA counters</h3>
-              </a>
-              <div class="post-entry">
-
-		              Response time (or latency) percentiles are a ubiquitous measure of system performance. The P999 (99.9th percentile) is a high bar, so it&rsquo;s a good metric to determine an SLA. For example, my team runs a system with an 800 millisecond response time SLA determined by the P999. To meet that SLA, 99.9% of all requests must take &lt;= 800ms. The system meets the SLA, but here&rsquo;s its P999 graph:
-                  <a href="https://hackmongo.com/post/response-time-sla/" class="post-read-more">Read more...</a>
-
-              </div>
-              <div class="post-meta">
-
-
-  <div>Jun 29, 2019</div>
+  <div>Dec 15, 2019</div>
   <div class="blog-tags">
 
 
-        <a href="/tags/metrics">#metrics</a>
+        <a href="/tags/mysql">#mysql</a>
 
-        <a href="/tags/percentiles">#percentiles</a>
+        <a href="/tags/replication">#replication</a>
 
-        <a href="/tags/histograms">#histograms</a>
+        <a href="/tags/gtid">#gtid</a>
 
-        <a href="/tags/sla">#sla</a>
+        <a href="/tags/auto-pos">#auto-pos</a>
 
 
   </div>
 </div>
 
 
-           </article>
+					</article>
 
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <hr>
+			</div>
+		</div>
+	</div>
 
+	<div class="row">
+		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+			<hr>
 
-        <li><time>2019-04-12</time>&nbsp;<a href="https://hackmongo.com/post/path-and-dimension-metrics/">Path and Dimension Metrics</a></li>
+				<li><time>2019-06-29</time>&nbsp;<a href="https://hackmongo.com/post/response-time-sla/">Response Time SLA</a></li>
 
-        <li><time>2019-03-25</time>&nbsp;<a href="https://hackmongo.com/post/three-golang-error-types/">3 Golang Error Types</a></li>
+				<li><time>2019-04-12</time>&nbsp;<a href="https://hackmongo.com/post/path-and-dimension-metrics/">Path and Dimension Metrics</a></li>
 
-        <li><time>2018-12-16</time>&nbsp;<a href="https://hackmongo.com/post/three-golang-channel-red-flags/">3 Golang Channel Red Flags</a></li>
+				<li><time>2019-03-25</time>&nbsp;<a href="https://hackmongo.com/post/three-golang-error-types/">3 Golang Error Types</a></li>
 
-        <li><time>2018-12-02</time>&nbsp;<a href="https://hackmongo.com/post/component-based-software-design/">Component-based Software Design</a></li>
+				<li><time>2018-12-16</time>&nbsp;<a href="https://hackmongo.com/post/three-golang-channel-red-flags/">3 Golang Channel Red Flags</a></li>
 
-        <li><time>2018-07-22</time>&nbsp;<a href="https://hackmongo.com/post/when-mysql-goes-away/">When MySQL Goes Away</a></li>
+				<li><time>2018-12-02</time>&nbsp;<a href="https://hackmongo.com/post/component-based-software-design/">Component-based Software Design</a></li>
 
-        <li><time>2018-05-13</time>&nbsp;<a href="https://hackmongo.com/post/thinking-in-go/">Thinking in Go</a></li>
+				<li><time>2018-07-22</time>&nbsp;<a href="https://hackmongo.com/post/when-mysql-goes-away/">When MySQL Goes Away</a></li>
 
-        <li><time>2018-02-04</time>&nbsp;<a href="https://hackmongo.com/post/bootloader-design-pattern/">Bootloader Design Pattern</a></li>
+				<li><time>2018-05-13</time>&nbsp;<a href="https://hackmongo.com/post/thinking-in-go/">Thinking in Go</a></li>
 
-        <li><time>2018-01-28</time>&nbsp;<a href="https://hackmongo.com/post/database-scalability-contention-and-crosstalk/">Database Scalability: Contention and Crosstalk</a></li>
+				<li><time>2018-02-04</time>&nbsp;<a href="https://hackmongo.com/post/bootloader-design-pattern/">Bootloader Design Pattern</a></li>
 
-        <li><time>2018-01-23</time>&nbsp;<a href="https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/">Crash-safe MySQL Replication</a></li>
+				<li><time>2018-01-28</time>&nbsp;<a href="https://hackmongo.com/post/database-scalability-contention-and-crosstalk/">Database Scalability: Contention and Crosstalk</a></li>
 
-        <li><time>2017-12-31</time>&nbsp;<a href="https://hackmongo.com/post/tech-workers-are-good-people/">Tech Workers Are Good People</a></li>
+				<li><time>2018-01-23</time>&nbsp;<a href="https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/">Crash-safe MySQL Replication</a></li>
 
-        <li><time>2017-12-10</time>&nbsp;<a href="https://hackmongo.com/post/approaching-a-new-software-project/">Approaching a New Software Project</a></li>
+				<li><time>2017-12-31</time>&nbsp;<a href="https://hackmongo.com/post/tech-workers-are-good-people/">Tech Workers Are Good People</a></li>
 
-        <li><time>2017-11-12</time>&nbsp;<a href="https://hackmongo.com/post/ideas-leaders-and-engineers/">Ideas, Leaders, and Engineers</a></li>
+				<li><time>2017-12-10</time>&nbsp;<a href="https://hackmongo.com/post/approaching-a-new-software-project/">Approaching a New Software Project</a></li>
 
-        <li><time>2017-09-17</time>&nbsp;<a href="https://hackmongo.com/post/five-point-checklist-for-excellent-software/">Five-Point Checklist for Excellent Software</a></li>
+				<li><time>2017-11-12</time>&nbsp;<a href="https://hackmongo.com/post/ideas-leaders-and-engineers/">Ideas, Leaders, and Engineers</a></li>
 
-        <li><time>2017-09-05</time>&nbsp;<a href="https://hackmongo.com/post/designing-tools-for-integration/">Designing Tools for Integration</a></li>
+				<li><time>2017-09-17</time>&nbsp;<a href="https://hackmongo.com/post/five-point-checklist-for-excellent-software/">Five-Point Checklist for Excellent Software</a></li>
 
-        <li><time>2017-08-20</time>&nbsp;<a href="https://hackmongo.com/post/how-to-test-the-database/">How To Test the Database</a></li>
+				<li><time>2017-09-05</time>&nbsp;<a href="https://hackmongo.com/post/designing-tools-for-integration/">Designing Tools for Integration</a></li>
 
-        <li><time>2017-08-01</time>&nbsp;<a href="https://hackmongo.com/post/design-before-implementation/">Design Before Implementation</a></li>
+				<li><time>2017-08-20</time>&nbsp;<a href="https://hackmongo.com/post/how-to-test-the-database/">How To Test the Database</a></li>
 
-        <li><time>2017-06-17</time>&nbsp;<a href="https://hackmongo.com/post/reading-os-exec-cmd-output-without-race-conditions/">Reading os/exec.Cmd Output Without Race Conditions</a></li>
+				<li><time>2017-08-01</time>&nbsp;<a href="https://hackmongo.com/post/design-before-implementation/">Design Before Implementation</a></li>
 
-        <li><time>2017-06-11</time>&nbsp;<a href="https://hackmongo.com/post/custom-mongodb-replica-set-write-concern/">Custom MongoDB Replica Set Write Concern</a></li>
+				<li><time>2017-06-17</time>&nbsp;<a href="https://hackmongo.com/post/reading-os-exec-cmd-output-without-race-conditions/">Reading os/exec.Cmd Output Without Race Conditions</a></li>
 
-      </div>
-    </div>
-  </div>
+				<li><time>2017-06-11</time>&nbsp;<a href="https://hackmongo.com/post/custom-mongodb-replica-set-write-concern/">Custom MongoDB Replica Set Write Concern</a></li>
+
+		</div>
+	</div>
+</div>
 
     <footer>
   <p class="copyright text-muted">

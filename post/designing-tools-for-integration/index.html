@@ -13,7 +13,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack Mongo" />
 
-  <meta name="generator" content="Hugo 0.40.1" />
+  <meta name="generator" content="Hugo 0.60.0" />
   <link rel="canonical" href="https://hackmongo.com/post/designing-tools-for-integration/" />
   <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
@@ -111,237 +111,186 @@
 </div>
 
 
-
-
-<p>When we write a new tool to do X, it&rsquo;s common to program the tool to do X in one way. When X is trivial or very narrow in scope, this makes sense, and programming any more would fall prey to over-engineering. However, when the tool does many things (all logically related, else it falls prey to bloat and/or feature-creep), there quickly becomes many ways to accomplish those many things. No problem, we program all those things, too, but during my tool-making career I&rsquo;ve learned two things:</p>
-
+        <p>When we write a new tool to do X, it's common to program the tool to do X in one way. When X is trivial or very narrow in scope, this makes sense, and programming any more would fall prey to over-engineering. However, when the tool does many things (all logically related, else it falls prey to bloat and/or feature-creep), there quickly becomes many ways to accomplish those many things. No problem, we program all those things, too, but during my tool-making career I've learned two things:</p>
 <ul>
 <li>Environments vary widely</li>
 <li>Users are creative</li>
 </ul>
-
-<p>Combined, these lessons implore us to design tools that are extensible and customizable&ndash;tools that do more and work differently than we originally envision while still performing their basic, built-in functions. It&rsquo;s a tall order: &ldquo;Do X&hellip; oh and please also allow me do Q and R with X&rdquo;, where we have no idea what &ldquo;Q&rdquo; and &ldquo;R&rdquo; are. Here&rsquo;s a concrete example: my team is developing an open-source tool which has no built-in authentication (because we can&rsquo;t program every possible auth mechanism) but nonetheless needs to use company-specific, internal auth mechanisms. Oh and we also want the tool to automatically detect and use the correct internal VIP based on whether the user runs the tool in dev, stage, or production. Easy, right? Yeah, actually it is, and this article describes how.</p>
-
+<p>Combined, these lessons implore us to design tools that are extensible and customizable&ndash;tools that do more and work differently than we originally envision while still performing their basic, built-in functions. It's a tall order: &ldquo;Do X&hellip; oh and please also allow me do Q and R with X&rdquo;, where we have no idea what &ldquo;Q&rdquo; and &ldquo;R&rdquo; are. Here's a concrete example: my team is developing an open-source tool which has no built-in authentication (because we can't program every possible auth mechanism) but nonetheless needs to use company-specific, internal auth mechanisms. Oh and we also want the tool to automatically detect and use the correct internal VIP based on whether the user runs the tool in dev, stage, or production. Easy, right? Yeah, actually it is, and this article describes how.</p>
 <h1 id="factories">Factories</h1>
-
-<p>I have a predilection for <a href="https://en.wikipedia.org/wiki/Factory_method_pattern">factories</a> (see also <a href="https://msdn.microsoft.com/en-us/library/ee817667.aspx">Exploring the Factory Design Pattern</a>). My advice to developers wrt factories: learn them, love them, use them. Factories are normally used to create clean code, but they&rsquo;re also useful for creating extensible, customizable code by allowing the user to provide their own factory which overrides the tool&rsquo;s default, built-in factory.</p>
-
-<p>Going back to the concrete example mentioned earlier, with respect to auth, we&rsquo;re dealing with a <a href="https://golang.org/pkg/net/http/#Client">*http.Client</a>. The tool needs to create one, so we use a factory:</p>
-
-<pre><code class="language-go">type HTTPClientFactory interface {
-    Make(Context) (*http.Client, error)
+<p>I have a predilection for <a href="https://en.wikipedia.org/wiki/Factory_method_pattern">factories</a> (see also <a href="https://msdn.microsoft.com/en-us/library/ee817667.aspx">Exploring the Factory Design Pattern</a>). My advice to developers wrt factories: learn them, love them, use them. Factories are normally used to create clean code, but they're also useful for creating extensible, customizable code by allowing the user to provide their own factory which overrides the tool's default, built-in factory.</p>
+<p>Going back to the concrete example mentioned earlier, with respect to auth, we're dealing with a <a href="https://golang.org/pkg/net/http/#Client">*http.Client</a>. The tool needs to create one, so we use a factory:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">HTTPClientFactory</span> <span style="color:#66d9ef">interface</span> {
+    <span style="color:#a6e22e">Make</span>(<span style="color:#a6e22e">Context</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Client</span>, <span style="color:#66d9ef">error</span>)
 }
-</code></pre>
-
-<p>We&rsquo;ll look at <code>Context</code> later. For now, the point is: the tool exposes an interface for this factory, which allows us to publish the tool with a default HTTP client factory that makes a default <code>*http.Client</code>, but then we wrap the tool with internal code that has an HTTP client factory that works with our internal auth mechanisms. The tool doesn&rsquo;t know and doesnt care, but now it can auth in our environment.</p>
-
+</code></pre></div><p>We'll look at <code>Context</code> later. For now, the point is: the tool exposes an interface for this factory, which allows us to publish the tool with a default HTTP client factory that makes a default <code>*http.Client</code>, but then we wrap the tool with internal code that has an HTTP client factory that works with our internal auth mechanisms. The tool doesn't know and doesnt care, but now it can auth in our environment.</p>
 <p>Of course, not <em>everything</em> needs to be created via a factory. Use where you think the user could and would want to provide their own factory.</p>
-
 <p><mark>Define factory interfaces that create internal objects and services. Provide default factories but use custom (user-provided) factories when set.</mark></p>
-
 <h1 id="hooks">Hooks</h1>
-
-<p>Factories are one third of the solution. Another third is <a href="https://en.wikipedia.org/wiki/Hooking">hooks</a>. I could write a whole post just on hooks, but for now I&rsquo;ll keep it simple and just say: to make a tool extensible and customizable, define and declare hooks throughout the main code flow. Users are creative, and being able to hook into the tool allows them to alter and affect how the tool works. This is different than factories because once an object or service is created, the user can&rsquo;t control how the tool uses it. With hooks, nothing is created; the user is altering code flow to the extent made possible by the hooks.</p>
-
+<p>Factories are one third of the solution. Another third is <a href="https://en.wikipedia.org/wiki/Hooking">hooks</a>. I could write a whole post just on hooks, but for now I'll keep it simple and just say: to make a tool extensible and customizable, define and declare hooks throughout the main code flow. Users are creative, and being able to hook into the tool allows them to alter and affect how the tool works. This is different than factories because once an object or service is created, the user can't control how the tool uses it. With hooks, nothing is created; the user is altering code flow to the extent made possible by the hooks.</p>
 <p>Back to the concrete example, I mentioned that we want the tool to auto-detect and set an internal VIP based on the environment (dev, stage, prod). The open-source tool we publish has zero knowledge of either our VIPs or our environments, but it provides a hook:</p>
-
-<pre><code class="language-go">type Hooks struct {
-    AfterParseOptions func(*config.Options)
-    // more hooks...
-}
-</code></pre>
-
-<p>As the hook name implies, it&rsquo;s called (if set) after parsing command-line options, which is what <code>*config.Options</code> contains. Passing a pointer is intentional; it reveals the code&rsquo;s intention that the hook can change the options. If we only wanted the hook to inspect the options, a pointer would not be passed. Consequently, in our internal wrapper code, we define a hook like (pseudo-code):</p>
-
-<pre><code class="language-go">h := app.Hooks{
-    AfterParseOptions: func(o *config.Options) {
-        if o.Env == &quot;&quot; {
-            // --env not given, auto-detect and set
-            o.Env = env
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Hooks</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#a6e22e">AfterParseOptions</span> <span style="color:#66d9ef">func</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Options</span>)
+    <span style="color:#75715e">// more hooks...
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>As the hook name implies, it's called (if set) after parsing command-line options, which is what <code>*config.Options</code> contains. Passing a pointer is intentional; it reveals the code's intention that the hook can change the options. If we only wanted the hook to inspect the options, a pointer would not be passed. Consequently, in our internal wrapper code, we define a hook like (pseudo-code):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">h</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Hooks</span>{
+    <span style="color:#a6e22e">AfterParseOptions</span>: <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">o</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Options</span>) {
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">Env</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;&#34;</span> {
+            <span style="color:#75715e">// --env not given, auto-detect and set
+</span><span style="color:#75715e"></span>            <span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">Env</span> = <span style="color:#a6e22e">env</span>
         }
 
-        if o.Addr == &quot;&quot; {
-	    // --addr not given, set based on --env
-            switch o.Env {
-            case &quot;stage&quot;:
-                o.Addr = &quot;https://stage-vip&quot;
-            case &quot;prod&quot;:
-                o.Addr = &quot;https://prod-vip&quot;
-            default:
-                o.Addr = &quot;http://localhost&quot;
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">Addr</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;&#34;</span> {
+	    <span style="color:#75715e">// --addr not given, set based on --env
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">Env</span> {
+            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;stage&#34;</span>:
+                <span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">Addr</span> = <span style="color:#e6db74">&#34;https://stage-vip&#34;</span>
+            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;prod&#34;</span>:
+                <span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">Addr</span> = <span style="color:#e6db74">&#34;https://prod-vip&#34;</span>
+            <span style="color:#66d9ef">default</span>:
+                <span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">Addr</span> = <span style="color:#e6db74">&#34;http://localhost&#34;</span>
             }
         }
     },
 }
-</code></pre>
-
-<p>After parsing command-line options, the tool calls this hook and the hook sets <code>--addr</code> and <code>--env</code>, if not already set, by auto-detecting internal stuff and using internal VIPs. Of course, if the hook breaks these options&rsquo; values, that&rsquo;ll break the tool, but that&rsquo;s the hook&rsquo;s fault, not the tool&rsquo;s.</p>
-
-<p>Give hooks consistent and descriptive names. I find &ldquo;Before&rdquo; and &ldquo;After&rdquo; prefixes work well. Or, if a hook can override a point in the code, then name it according to that point, like &ldquo;LogTheData(data)&rdquo; where only the hook is called (if set) to log the data. (By contrast, before- and after-hooks are always called when set and don&rsquo;t override/replace built-in code execution.&ldquo;)</p>
-
+</code></pre></div><p>After parsing command-line options, the tool calls this hook and the hook sets <code>--addr</code> and <code>--env</code>, if not already set, by auto-detecting internal stuff and using internal VIPs. Of course, if the hook breaks these options&rsquo; values, that'll break the tool, but that's the hook's fault, not the tool's.</p>
+<p>Give hooks consistent and descriptive names. I find &ldquo;Before&rdquo; and &ldquo;After&rdquo; prefixes work well. Or, if a hook can override a point in the code, then name it according to that point, like &ldquo;LogTheData(data)&rdquo; where only the hook is called (if set) to log the data. (By contrast, before- and after-hooks are always called when set and don't override/replace built-in code execution.&quot;)</p>
 <p><mark>Define hooks with consistent and descriptive names throughout the main code flow and call them if set.</mark></p>
-
 <h1 id="context">Context</h1>
-
-<p>The final third of the solution is a global app context. By &ldquo;global&rdquo; I do <em>not</em> mean global var, I mean a single object or data structure used throughout the code, passed to factories and hooks. (It&rsquo;s probably a <a href="https://en.wikipedia.org/wiki/Singleton_pattern">singleton</a>.) The context contains at least the user-defined factories and hooks, but it can and should contain anything else that defines how and &ldquo;where&rdquo; to run the app. An example from the concrete example:</p>
-
-<pre><code class="language-go">// Context represents how to run spinc. A context is passed to spinc.Run().
-// A default context is created in main.go. Wrapper code can integrate with
-// spinc by passing a custom context to spinc.Run(). Integration is done
-// primarily with hooks and factories.
-type Context struct {
-    // Set in main.go or by wrapper
-    In        io.Reader // where to read user input (default: stdin)
-    Out       io.Writer // where to print output (default: stdout)
-    Hooks     Hooks     // for integration with other code
-    Factories Factories // for integration with other code
-
-    // Set automatically in spinc.Run()
-    Options  config.Options // command line options (--addr, etc.)
-    Command  config.Command // command and args, if any (&quot;start &lt;request&gt;&quot;, etc.)
-    RMClient rm.Client      // Request Manager client
-}
-</code></pre>
-
-<p>Our tool&rsquo;s context currently has those seven things. We can ignore <code>RMClient</code> and <code>Command</code> for now, and we&rsquo;ve already discussed <code>Options</code>, <code>Factories</code>, and <code>Hooks</code>, so let&rsquo;s consider <code>In</code> and <code>Out</code>. As the helpful code comments say, these define STDIN and STDOUT. Why? By default, the tool prompts on STDIN and prints on STDOUT, and the user probably doesn&rsquo;t want to change this, but tests do. To test interactive input on STDIN, use an <code>io.Reader</code> controlled by the test. And same with STDOUT: tests have their own STDOUT, so to test the output of the tool, use an <code>io.Writer</code> controlled by the test.</p>
-
-<p>These seven things define how and where to run the app: read from <code>In</code>, print to <code>Out</code>, calls <code>Hooks</code> if set, use the <code>Factories</code> to make objects/services, all the command-line options are represented by <code>Options</code>, <code>Command</code> is whatever command the tool is supposed to do, and use <code>RMClient</code> to talk with that API. With different combinations of these things, i.e. with different contexts, the tool works in differnet ways while still doing whatever it&rsquo;s supposed to do. With one context, it&rsquo;s a full default run: command line, terminal, network calls to the API, etc. With another context, it&rsquo;s running inside a test. And with a user-provided context, who knows what it&rsquo;s doing. Maybe <code>Out</code> is writing to a dot matrix printer, and <code>In</code> is channeling the spirit of W. Richard Stevens.</p>
-
+<p>The final third of the solution is a global app context. By &ldquo;global&rdquo; I do <em>not</em> mean global var, I mean a single object or data structure used throughout the code, passed to factories and hooks. (It's probably a <a href="https://en.wikipedia.org/wiki/Singleton_pattern">singleton</a>.) The context contains at least the user-defined factories and hooks, but it can and should contain anything else that defines how and &ldquo;where&rdquo; to run the app. An example from the concrete example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Context represents how to run spinc. A context is passed to spinc.Run().
+</span><span style="color:#75715e"></span><span style="color:#75715e">// A default context is created in main.go. Wrapper code can integrate with
+</span><span style="color:#75715e"></span><span style="color:#75715e">// spinc by passing a custom context to spinc.Run(). Integration is done
+</span><span style="color:#75715e"></span><span style="color:#75715e">// primarily with hooks and factories.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Context</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#75715e">// Set in main.go or by wrapper
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">In</span>        <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Reader</span> <span style="color:#75715e">// where to read user input (default: stdin)
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Out</span>       <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Writer</span> <span style="color:#75715e">// where to print output (default: stdout)
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Hooks</span>     <span style="color:#a6e22e">Hooks</span>     <span style="color:#75715e">// for integration with other code
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Factories</span> <span style="color:#a6e22e">Factories</span> <span style="color:#75715e">// for integration with other code
+</span><span style="color:#75715e"></span>
+    <span style="color:#75715e">// Set automatically in spinc.Run()
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Options</span>  <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Options</span> <span style="color:#75715e">// command line options (--addr, etc.)
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Command</span>  <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Command</span> <span style="color:#75715e">// command and args, if any (&#34;start &lt;request&gt;&#34;, etc.)
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">RMClient</span> <span style="color:#a6e22e">rm</span>.<span style="color:#a6e22e">Client</span>      <span style="color:#75715e">// Request Manager client
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>Our tool's context currently has those seven things. We can ignore <code>RMClient</code> and <code>Command</code> for now, and we've already discussed <code>Options</code>, <code>Factories</code>, and <code>Hooks</code>, so let's consider <code>In</code> and <code>Out</code>. As the helpful code comments say, these define STDIN and STDOUT. Why? By default, the tool prompts on STDIN and prints on STDOUT, and the user probably doesn't want to change this, but tests do. To test interactive input on STDIN, use an <code>io.Reader</code> controlled by the test. And same with STDOUT: tests have their own STDOUT, so to test the output of the tool, use an <code>io.Writer</code> controlled by the test.</p>
+<p>These seven things define how and where to run the app: read from <code>In</code>, print to <code>Out</code>, calls <code>Hooks</code> if set, use the <code>Factories</code> to make objects/services, all the command-line options are represented by <code>Options</code>, <code>Command</code> is whatever command the tool is supposed to do, and use <code>RMClient</code> to talk with that API. With different combinations of these things, i.e. with different contexts, the tool works in differnet ways while still doing whatever it's supposed to do. With one context, it's a full default run: command line, terminal, network calls to the API, etc. With another context, it's running inside a test. And with a user-provided context, who knows what it's doing. Maybe <code>Out</code> is writing to a dot matrix printer, and <code>In</code> is channeling the spirit of W. Richard Stevens.</p>
 <p><mark>Use a single app context object/struct that defines how and where to run the app. Pass the context to factories, hooks, and other code.</mark></p>
-
 <h1 id="wrapper">Wrapper</h1>
-
-<p>Let&rsquo;s put it all together and demonstrate how we can wrap the tool to extend and customize its functionality via hooks, factories, and context. First, the tool has three files:</p>
-
+<p>Let's put it all together and demonstrate how we can wrap the tool to extend and customize its functionality via hooks, factories, and context. First, the tool has three files:</p>
 <p><em>app/app.go</em></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">app</span>
 
-<pre><code class="language-go">package app
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Context</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#a6e22e">In</span>        <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Reader</span> <span style="color:#75715e">// where to read user input (default: stdin)
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Out</span>       <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Writer</span> <span style="color:#75715e">// where to print output (default: stdout)
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Hooks</span>     <span style="color:#a6e22e">Hooks</span>     <span style="color:#75715e">// for integration with other code
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Factories</span> <span style="color:#a6e22e">Factories</span> <span style="color:#75715e">// for integration with other code
+</span><span style="color:#75715e"></span>
+    <span style="color:#a6e22e">Options</span>  <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Options</span> <span style="color:#75715e">// command line options (--addr, etc.)
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Command</span>  <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Command</span> <span style="color:#75715e">// command and args, if any (&#34;start &lt;request&gt;&#34;, etc.)
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">RMClient</span> <span style="color:#a6e22e">rm</span>.<span style="color:#a6e22e">Client</span>      <span style="color:#75715e">// Request Manager client
+</span><span style="color:#75715e"></span>}
 
-type Context struct {
-    In        io.Reader // where to read user input (default: stdin)
-    Out       io.Writer // where to print output (default: stdout)
-    Hooks     Hooks     // for integration with other code
-    Factories Factories // for integration with other code
-
-    Options  config.Options // command line options (--addr, etc.)
-    Command  config.Command // command and args, if any (&quot;start &lt;request&gt;&quot;, etc.)
-    RMClient rm.Client      // Request Manager client
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Command</span> <span style="color:#66d9ef">interface</span> {
+    <span style="color:#a6e22e">Prepare</span>() <span style="color:#66d9ef">error</span>
+    <span style="color:#a6e22e">Run</span>() <span style="color:#66d9ef">error</span>
 }
 
-type Command interface {
-    Prepare() error
-    Run() error
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CommandFactory</span> <span style="color:#66d9ef">interface</span> {
+    <span style="color:#a6e22e">Make</span>(<span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">Context</span>) (<span style="color:#a6e22e">Command</span>, <span style="color:#66d9ef">error</span>)
 }
 
-type CommandFactory interface {
-    Make(string, Context) (Command, error)
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">HTTPClientFactory</span> <span style="color:#66d9ef">interface</span> {
+    <span style="color:#a6e22e">Make</span>(<span style="color:#a6e22e">Context</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Client</span>, <span style="color:#66d9ef">error</span>)
 }
 
-type HTTPClientFactory interface {
-    Make(Context) (*http.Client, error)
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Factories</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#a6e22e">HTTPClient</span> <span style="color:#a6e22e">HTTPClientFactory</span>
+    <span style="color:#a6e22e">Command</span>    <span style="color:#a6e22e">CommandFactory</span>
 }
 
-type Factories struct {
-    HTTPClient HTTPClientFactory
-    Command    CommandFactory
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Hooks</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#a6e22e">AfterParseOptions</span> <span style="color:#66d9ef">func</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Options</span>)
+    <span style="color:#a6e22e">CommandRunResult</span>  <span style="color:#66d9ef">func</span>(<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>)
 }
-
-type Hooks struct {
-    AfterParseOptions func(*config.Options)
-    CommandRunResult  func(interface{}, error)
-}
-</code></pre>
-
-<p>app/app.go defines everything: factory and hook interfaces, context, and other &ldquo;global&rdquo; app things. The wrapper code will import this.</p>
-
+</code></pre></div><p>app/app.go defines everything: factory and hook interfaces, context, and other &ldquo;global&rdquo; app things. The wrapper code will import this.</p>
 <p><em>spinc.go</em></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">spinc</span>
 
-<pre><code class="language-go">package spinc
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Run</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Context</span>) {
+    <span style="color:#75715e">// Where the program runs
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// Use and set ctx as needed
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// Pass ctx to factories and hooks
+</span><span style="color:#75715e"></span>
+    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Hooks</span>.<span style="color:#a6e22e">AfterParseOptions</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+        <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Hooks</span>.<span style="color:#a6e22e">AfterParseOptions</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">o</span>)
 
-func Run(ctx app.Context) {
-    // Where the program runs
-    // Use and set ctx as needed
-    // Pass ctx to factories and hooks
-
-    if ctx.Hooks.AfterParseOptions != nil {
-        ctx.Hooks.AfterParseOptions(&amp;o)
-
-        // Dump options to see if hook changed them
-        if o.Debug {
-            app.Debug(&quot;options: %#v\n&quot;, o)
+        <span style="color:#75715e">// Dump options to see if hook changed them
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">Debug</span> {
+            <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Debug</span>(<span style="color:#e6db74">&#34;options: %#v\n&#34;</span>, <span style="color:#a6e22e">o</span>)
         }
     }
 
 
-    httpClient, err := ctx.Factories.HTTPClient.Make(*ctx)
-    if err != nil {
-        // handle
-    }
-    ctx.RMClient = rm.NewClient(httpClient, ctx.Options.Addr)
+    <span style="color:#a6e22e">httpClient</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Factories</span>.<span style="color:#a6e22e">HTTPClient</span>.<span style="color:#a6e22e">Make</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">ctx</span>)
+    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+        <span style="color:#75715e">// handle
+</span><span style="color:#75715e"></span>    }
+    <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">RMClient</span> = <span style="color:#a6e22e">rm</span>.<span style="color:#a6e22e">NewClient</span>(<span style="color:#a6e22e">httpClient</span>, <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Options</span>.<span style="color:#a6e22e">Addr</span>)
 }
-</code></pre>
-
-<p>spinc.go is the root-level package (our tool is called &ldquo;spinc&rdquo;). It contains all the code the usually goes in main.go and, instead, puts it in <code>Run()</code> which has a single arg: the app context. To run the tool, wrapper code calls <code>spinc.Run()</code>, passing it a custom context.</p>
-
+</code></pre></div><p>spinc.go is the root-level package (our tool is called &ldquo;spinc&rdquo;). It contains all the code the usually goes in main.go and, instead, puts it in <code>Run()</code> which has a single arg: the app context. To run the tool, wrapper code calls <code>spinc.Run()</code>, passing it a custom context.</p>
 <p><em>bin/main.go</em></p>
-
-<pre><code class="language-go">func main() {
-    defaultContext := app.Context{
-        In:        os.Stdin,
-        Out:       os.Stdout,
-        Hooks:     app.Hooks{},
-        Factories: app.Factories{},
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#a6e22e">defaultContext</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Context</span>{
+        <span style="color:#a6e22e">In</span>:        <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Stdin</span>,
+        <span style="color:#a6e22e">Out</span>:       <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Stdout</span>,
+        <span style="color:#a6e22e">Hooks</span>:     <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Hooks</span>{},
+        <span style="color:#a6e22e">Factories</span>: <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Factories</span>{},
     }
-    spinc.Run(defaultContext)
+    <span style="color:#a6e22e">spinc</span>.<span style="color:#a6e22e">Run</span>(<span style="color:#a6e22e">defaultContext</span>)
 }
-</code></pre>
-
-<p>Of course, we still have a main.go because wrapper code is optional. By default, when spinc is built, main.go simply calls <code>spinc.Run()</code> which a default context, yielding a default run (print to STDOUT, read from STDIN, etc.). Unlike the code snippets above, <code>main()</code> here is complete: it only calls <code>spin.Run()</code> because that&rsquo;s where all the real work is done. This makes testing easier, too: tests can call <code>spinc.Run()</code> with a test-specific app context.</p>
-
-<p>Those three files (plus many more packages not shown) build the default tool. Now let&rsquo;s look at how we wrap the tool to create a custom build of the tool:</p>
-
+</code></pre></div><p>Of course, we still have a main.go because wrapper code is optional. By default, when spinc is built, main.go simply calls <code>spinc.Run()</code> which a default context, yielding a default run (print to STDOUT, read from STDIN, etc.). Unlike the code snippets above, <code>main()</code> here is complete: it only calls <code>spin.Run()</code> because that's where all the real work is done. This makes testing easier, too: tests can call <code>spinc.Run()</code> with a test-specific app context.</p>
+<p>Those three files (plus many more packages not shown) build the default tool. Now let's look at how we wrap the tool to create a custom build of the tool:</p>
 <p><em>main.go</em> (in a private/internal code repo)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">authHTTPClientFactory</span> <span style="color:#66d9ef">struct</span> {}
 
-<pre><code class="language-go">type authHTTPClientFactory struct {}
-
-func (f authHTTPClientFactory) Make(ctx app.Context) (*http.Client, error) {
-    switch ctx.Options.Env {
-    case &quot;dev&quot;:
-        return &amp;http.Client{}, nil // no auth
-    case &quot;stage&quot;, &quot;prod&quot;:
-        return auth.NewHTTPClient(ctx.Options.Addr), nil
-    default:
-        panic(&quot;Invalid env: &quot; + ctx.Options.Env)
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">f</span> <span style="color:#a6e22e">authHTTPClientFactory</span>) <span style="color:#a6e22e">Make</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Context</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Client</span>, <span style="color:#66d9ef">error</span>) {
+    <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Options</span>.<span style="color:#a6e22e">Env</span> {
+    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;dev&#34;</span>:
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Client</span>{}, <span style="color:#66d9ef">nil</span> <span style="color:#75715e">// no auth
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;stage&#34;</span>, <span style="color:#e6db74">&#34;prod&#34;</span>:
+        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">auth</span>.<span style="color:#a6e22e">NewHTTPClient</span>(<span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Options</span>.<span style="color:#a6e22e">Addr</span>), <span style="color:#66d9ef">nil</span>
+    <span style="color:#66d9ef">default</span>:
+        panic(<span style="color:#e6db74">&#34;Invalid env: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Options</span>.<span style="color:#a6e22e">Env</span>)
     }
 }
 
-func main() {
-    h := app.Hooks{
-        AfterParseOptions: func(o *config.Options) {
-            // Do the code shown earlier for this hook
-        },
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#a6e22e">h</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Hooks</span>{
+        <span style="color:#a6e22e">AfterParseOptions</span>: <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">o</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Options</span>) {
+            <span style="color:#75715e">// Do the code shown earlier for this hook
+</span><span style="color:#75715e"></span>        },
     }
 
-    f := app.Factories{
-        HTTPClient: &amp;authHTTPClientFactory{},
+    <span style="color:#a6e22e">f</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Factories</span>{
+        <span style="color:#a6e22e">HTTPClient</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">authHTTPClientFactory</span>{},
     }
 
-    ctx := app.Context{
-        In:        os.Stdin,
-        Out:       os.Stdout,
-        Hooks:     h,
-        Factories: f,
+    <span style="color:#a6e22e">ctx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Context</span>{
+        <span style="color:#a6e22e">In</span>:        <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Stdin</span>,
+        <span style="color:#a6e22e">Out</span>:       <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Stdout</span>,
+        <span style="color:#a6e22e">Hooks</span>:     <span style="color:#a6e22e">h</span>,
+        <span style="color:#a6e22e">Factories</span>: <span style="color:#a6e22e">f</span>,
     }
 
-    spinc.Run(ctx)
+    <span style="color:#a6e22e">spinc</span>.<span style="color:#a6e22e">Run</span>(<span style="color:#a6e22e">ctx</span>)
 }
-</code></pre>
-
-<p>The wrapper main.go defines an HTTP client factory that makes secure, auth-required HTTP clients, and it sets the <code>AfterParseOptions</code> hook to modify <code>--addr</code> and <code>--env</code> as discussed earlier. Then it creates a custom <code>app.Context</code> with its custom factories and hook and passes it to <code>spinc.Run()</code> to run the tool. The default <code>bin/main.go</code> isn&rsquo;t used; the wrapper <code>main.go</code> takes its place. Everything else in the tool is the same. The wrapper cannot affect the tool beyond what&rsquo;s possible with the app context. And since this is Go, everything is strongly-typed and checked at compile time which reduces integration-related bugs to run time.</p>
-
+</code></pre></div><p>The wrapper main.go defines an HTTP client factory that makes secure, auth-required HTTP clients, and it sets the <code>AfterParseOptions</code> hook to modify <code>--addr</code> and <code>--env</code> as discussed earlier. Then it creates a custom <code>app.Context</code> with its custom factories and hook and passes it to <code>spinc.Run()</code> to run the tool. The default <code>bin/main.go</code> isn't used; the wrapper <code>main.go</code> takes its place. Everything else in the tool is the same. The wrapper cannot affect the tool beyond what's possible with the app context. And since this is Go, everything is strongly-typed and checked at compile time which reduces integration-related bugs to run time.</p>
 <h1 id="conclusion">Conclusion</h1>
-
-<p>This approach is neither new nor appropriate in all cases. There are other ways to allow for integration, to allow users to extend and customize a tool, but factories, hooks, and a global app context are very useful. One advantage to this approach is that it&rsquo;s easy to maintain forward compatibility: <em>new</em> factories and hooks do not affect previous releases because they&rsquo;re all optional, so wrapper code remains blissfully unaware. Of course, like most integrations, once a thing is released, it can&rsquo;t be changed (unless you don&rsquo;t care about backwards-compatibility), so be sparing and careful&ndash;start small&ndash;with the factories, hooks, and other app context things that the code exposes.</p>
+<p>This approach is neither new nor appropriate in all cases. There are other ways to allow for integration, to allow users to extend and customize a tool, but factories, hooks, and a global app context are very useful. One advantage to this approach is that it's easy to maintain forward compatibility: <em>new</em> factories and hooks do not affect previous releases because they're all optional, so wrapper code remains blissfully unaware. Of course, like most integrations, once a thing is released, it can't be changed (unless you don't care about backwards-compatibility), so be sparing and careful&ndash;start small&ndash;with the factories, hooks, and other app context things that the code exposes.</p>
 
       </article>
       <hr>
@@ -362,7 +311,7 @@ func main() {
 
           <div class="disqus-comments">
             <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
 
 

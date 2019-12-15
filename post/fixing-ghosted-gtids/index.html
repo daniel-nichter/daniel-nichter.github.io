@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Fixing Ghosted GTIDs</title>
+  <meta property="og:title" content="Fixing Ghosted GTIDs" />
+  <meta name="description" content="When MySQL GTID auto-positioning fails">
+  <meta property="og:description" content="When MySQL GTID auto-positioning fails">
+  <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmongo.com/post/fixing-ghosted-gtids/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack Mongo" />
+
+  <meta name="generator" content="Hugo 0.60.0" />
+  <link rel="canonical" href="https://hackmongo.com/post/fixing-ghosted-gtids/" />
+  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
+  <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" href="https://hackmongo.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmongo.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Design</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/golang-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/page/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">metrics</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Fixing Ghosted GTIDs</h1>
+        <h3 class="post-subtitle">When MySQL GTID auto-positioning fails</h2>
+        <div class="post-meta">
+
+
+  <div>Dec 15, 2019</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/replication">#replication</a>
+
+        <a href="/tags/gtid">#gtid</a>
+
+        <a href="/tags/auto-pos">#auto-pos</a>
+
+
+  </div>
+</div>
+
+
+        <p><a href="https://dev.mysql.com/doc/refman/8.0/en/replication-gtids-auto-positioning.html">MySQL auto-positioning</a> is an integral part of replication with GTID, but it's neither required nor guaranteed to work. It's possible to enable GTIDs but disable auto-positioning, and it's possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.</p>
+<p>Quick background: I recently fixed a handful of clusters (running MySQL 5.6) which had one or more replica with <code>Master_Auto_Position=OFF</code>, but all using GTIDs. Worse, some replicas could not auto-pos on other replicas, breaking with this error in <code>SHOW SLAVE STATUS</code> when <code>CHANGE MASTER TO MASTER_AUTO_POSITION=1</code> was attempted:</p>
+<blockquote>
+<p>Last_IO_Error: Got fatal error 1236 from master when reading data from binary log: &lsquo;The slave is connecting using CHANGE MASTER TO MASTER_AUTO_POSITION = 1, but the master has purged binary logs containing GTIDs that the slave requires.&rsquo;</p>
+</blockquote>
+<p>That error, while accurate, isn't helpful because it doesn't say <em>which</em> GTIDs are missing. According to the <a href="https://dev.mysql.com/doc/refman/5.7/en/replication-gtids-auto-positioning.html">MySQL manual</a>, as of 5.7 the missing GTIDs are logged in the master's error. (In my opinion, that's the wrong place to log them. The error happens on the replica, so the missing GTIDs should be logged on the replica.) But I was fixing 5.6 instances, so the missing GTIDs weren't logged anywhere. Here's a little script that uses <code>GTID_SUBTRACT()</code> to print the missing GTIDs if the first node (arg) cannot auto-position on the second:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>
+DESCRIPTION<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Exit 0 if node1 can auto-position on node2.&#34;</span>
+
+set -eu
+
+usage<span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+  echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">usage: </span>$0<span style="color:#e6db74"> [options] node1 node2</span><span style="color:#e6db74">&#34;</span>
+  echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">      </span><span style="color:#e6db74">${</span>DESCRIPTION<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>                                           1&gt;&amp;<span style="color:#ae81ff">2</span>
+  echo <span style="color:#e6db74">&#34;      -a      Enable auto-pos if node1 can auto-post on node2 &#34;</span> 1&gt;&amp;<span style="color:#ae81ff">2</span>
+  echo <span style="color:#e6db74">&#34;      -h      Print this help&#34;</span>                                  1&gt;&amp;<span style="color:#ae81ff">2</span>
+  exit $1
+<span style="color:#f92672">}</span>
+
+ENABLE_AUTO_POS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>
+
+<span style="color:#66d9ef">while</span> getopts <span style="color:#e6db74">&#34;a&#34;</span> opt; <span style="color:#66d9ef">do</span>
+  <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;</span>$opt<span style="color:#e6db74">&#34;</span> in
+    a<span style="color:#f92672">)</span> ENABLE_AUTO_POS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;yes&#34;</span>
+       shift
+       ;;
+    h<span style="color:#f92672">)</span> usage <span style="color:#ae81ff">0</span> ;;
+    *<span style="color:#f92672">)</span> usage <span style="color:#ae81ff">1</span> ;;
+  <span style="color:#66d9ef">esac</span>
+<span style="color:#66d9ef">done</span>
+
+node1<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+node2<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$2<span style="color:#e6db74">&#34;</span>
+
+gtid_purged<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mysql -h $node2 -sse <span style="color:#e6db74">&#34;SELECT @@global.gtid_purged&#34;</span><span style="color:#66d9ef">)</span>
+gtid_missing<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mysql -h $node1 -sse <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">SELECT GTID_SUBTRACT(&#39;</span>$gtid_purged<span style="color:#e6db74">&#39;, @@global.gtid_executed)</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span><span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$gtid_missing<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span><span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+  echo <span style="color:#e6db74">&#34;</span>$node1<span style="color:#e6db74"> cannot auto-position on </span>$node2<span style="color:#e6db74">, missing GTID sets </span>$gtid_missing<span style="color:#e6db74">&#34;</span> &gt;&amp;<span style="color:#ae81ff">2</span>
+  exit <span style="color:#ae81ff">1</span>
+<span style="color:#66d9ef">fi</span>
+
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span><span style="color:#f92672">[</span> $ENABLE_AUTO_POS <span style="color:#f92672">]</span><span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+  echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">OK, </span>$node1<span style="color:#e6db74"> can auto-position on </span>$node2<span style="color:#e6db74">, enabling...</span><span style="color:#e6db74">&#34;</span>
+  mysql -h $node1 -e <span style="color:#e6db74">&#34;STOP SLAVE; CHANGE MASTER TO MASTER_AUTO_POSITION=1; START SLAVE;&#34;</span>
+  sleep <span style="color:#ae81ff">1</span>
+  mysql -h $node1 -e <span style="color:#e6db74">&#34;SHOW SLAVE STATUS\G&#34;</span>
+  echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Auto-position enabled on </span>$node1<span style="color:#e6db74">. Verify replica is running in output above.</span><span style="color:#e6db74">&#34;</span>
+<span style="color:#66d9ef">else</span>
+  echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">OK, </span>$node1<span style="color:#e6db74"> can auto-position on </span>$node2<span style="color:#e6db74">. Use option -a to enable, or execute:</span><span style="color:#e6db74">&#34;</span>
+  echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">    mysql -h </span>$node1<span style="color:#e6db74"> -e \&#34;STOP SLAVE; CHANGE MASTER TO MASTER_AUTO_POSITION=1; START SLAVE;\&#34;</span><span style="color:#e6db74">&#34;</span>
+  echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">    mysql -h </span>$node1<span style="color:#e6db74"> -e \&#34;SHOW SLAVE STATUS\G\&#34;</span><span style="color:#e6db74">&#34;</span>
+<span style="color:#66d9ef">fi</span>
+</code></pre></div><p>Let's say we want <code>node2</code> to replicate from <code>node1</code> with auto-positioning. <code>SHOW SLAVE STATUS</code> on each node reports the following <code>Executed_Gtid_Set</code> values:</p>
+<pre><code>node1: 7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052064794-5054955706
+
+node2: 7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052104638-5054955706
+</code></pre><p>Can <code>node2</code> replicate from <code>node1</code> with auto-pos? (In other words, can't <code>node2</code> auto-pos on <code>node1</code>?) The answer is &ldquo;no&rdquo;, and the script above would print:</p>
+<blockquote>
+<p>node2 cannot auto-position on node1, missing GTID sets 7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052064794-5052104637&rdquo;</p>
+</blockquote>
+<p>GTID sets can be overwhelming to humans because they're large, long sets. (See <a href="https://bugs.mysql.com/bug.php?id=92836">MySQL bug #92836</a>.) Let's highlight the difference in the GTIDs sets above:</p>
+<p>node1: 7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052<mark>064794</mark>-5054955706</p>
+<p>node2: 7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052<mark>104638</mark>-5054955706</p>
+<p>The first part of node2's GTID is greater (104638 &gt; 064794) which means node2 has <em>less</em> GTIDs than node1. If that sounds confusing, here's why: GTIDs are sequentially numbered transactions. Let's simplify:</p>
+<p>node1: 1-10</p>
+<p>node2: 5-10</p>
+<p>node1 has ten transactions: 1 through 10. node2 has only six transactions: 5 through 10; it's missing transactions 1 through 4</p>
+<p>The real node2 above is missing transactions 5052064794 through 5052104637, as the script would print. Consequently, when node2 attempts to auto-position on node1, it tries to fetch the missing GTIDs from node1 but fails because node1 has already purged them from its binary logs. This causes replication error &ldquo;Last_IO_Error: Got fatal error 1236 from master &hellip;&rdquo; on node2.</p>
+<h2 id="ghosted-gtids">Ghosted GTIDs</h2>
+<p>Here's the strange thing: why is node2 missing GTIDs at the start or middle of the set? Using the simplified sets again, how did node2 execute transactions 5-10 but miss 1-4? Presumably, if node2 is identical to node1 despite missing GTIDs 1-4 (which you can verify with <a href="https://www.percona.com/doc/percona-toolkit/LATEST/pt-table-checksum.html">pt-table-checksum</a>), then node2 either has the changes from 1-4 or those changes were overwritten by 5-10. I don't know how or why this situation arises (probably due to cloning new replicas to replace failed ones in combination with purging binary logs), but I call these types of missing and nonrecoverable GTIDS &ldquo;ghosted GTIDs&rdquo;.</p>
+<p>Before showing how to fix ghosted GTIDs, it's <em>extremely important</em> to decided if it's safe to ignore the missing GTIDs. If unsure, or if the one node is not already replicating from the other, err on the side of caution and re-clone the node. Don't risk messing around with GTID sets unless you're sure. If one node is replicating from the other, use <a href="https://www.percona.com/doc/percona-toolkit/LATEST/pt-table-checksum.html">pt-table-checksum</a> to verify that they're in sync and identical. If true, then the fix is safe.</p>
+<h2 id="the-fix">The Fix</h2>
+<p>GTIDs are stored in binary logs because these (bin logs) are the only official, source-of-truth record of changes. (Configure MySQL with <code>sync_binlog = 1</code>!) Consequently, bin logs and global variables <code>gtid_purged</code> and <code>gtid_executed</code> are linked. To fix ghosted GTIDs, we need to rewrite <code>gtid_executed</code> which means we need to <code>RESET MASTER</code> to purge the binary logs. In effect, we're telling MySQL to forget the past and let us rewrite history.</p>
+<p><em><strong>WARNING</strong></em>: <code>RESET MASTER</code> breaks downstream replicas!</p>
+<p>Because of that warning, the first step is to isolate the node to fix. Continuing the example above, this means isolating node2 so that nothing replicates from it. For example, if node3 was replicating from node2, we would need to make node3 replicate from node1, else the fix on node2 would break node3 and we would have to re-clone node3 after fixing node2.</p>
+<p>Once the node to fix is isolated (it's a standalone replica with nothing replicating from it), execute:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#75715e">-- All on replica to fix...
+</span><span style="color:#75715e"></span>
+STOP SLAVE;
+
+<span style="color:#75715e">-- Be sure replication has stopped applying changes
+</span><span style="color:#75715e"></span><span style="color:#75715e">-- (usually instantaneous unless SQL thread is very busy)
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">SHOW</span> SLAVE STATUS<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
+
+<span style="color:#75715e">-- Copy-paste full value of Executed_Gtid_Set to a text editor
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">RESET</span> MASTER;
+<span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">GLOBAL</span> gtid_executed<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">&lt;see below&gt;</span><span style="color:#e6db74">&#39;</span>
+
+CHANGE MASTER <span style="color:#66d9ef">TO</span> MASTER_AUTO_POSITION<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>;
+
+<span style="color:#66d9ef">RESET</span> SLAVE; <span style="color:#75715e">-- forget position because we&#39;re about to auto-position...
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">START</span> SLAVE;
+
+<span style="color:#66d9ef">SHOW</span> SLAVE STATUS<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
+
+<span style="color:#75715e">-- Verify replication is OK
+</span></code></pre></div><p><code>&lt;see below&gt;</code> is the copy-pasted value from <code>Executed_Gtid_Set</code> rewritten to include the missing GTID sets. For example, from node2 we copy-paste <code>7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052104638-5054955706</code> which has three parts:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">server</span> <span style="color:#a6e22e">UUID</span>  <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span><span style="color:#a6e22e">b07bfca</span><span style="color:#f92672">-</span><span style="color:#a6e22e">d4d9</span><span style="color:#f92672">-</span><span style="color:#ae81ff">11</span><span style="color:#a6e22e">e5</span><span style="color:#f92672">-</span><span style="color:#a6e22e">b97a</span><span style="color:#f92672">-</span><span style="color:#a6e22e">fe46eb913463</span>
+<span style="color:#a6e22e">first</span> <span style="color:#a6e22e">trx</span> <span style="color:#a6e22e">ID</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5052104638</span>
+<span style="color:#a6e22e">last</span> <span style="color:#a6e22e">trx</span> <span style="color:#a6e22e">ID</span>  <span style="color:#f92672">=</span> <span style="color:#ae81ff">5054955706</span>
+</code></pre></div><p>The missing GTID set is <code>7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052064794-5052104637</code>, also three parts:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">server</span> <span style="color:#a6e22e">UUDID</span>      <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span><span style="color:#a6e22e">b07bfca</span><span style="color:#f92672">-</span><span style="color:#a6e22e">d4d9</span><span style="color:#f92672">-</span><span style="color:#ae81ff">11</span><span style="color:#a6e22e">e5</span><span style="color:#f92672">-</span><span style="color:#a6e22e">b97a</span><span style="color:#f92672">-</span><span style="color:#a6e22e">fe46eb913463</span>
+<span style="color:#a6e22e">missing</span> <span style="color:#a6e22e">trx</span> <span style="color:#a6e22e">begin</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5052064794</span>
+<span style="color:#a6e22e">missing</span> <span style="color:#a6e22e">trx</span> <span style="color:#a6e22e">end</span>   <span style="color:#f92672">=</span> <span style="color:#ae81ff">5052104637</span>
+</code></pre></div><p>The rewritten GTID set is <code>server UUID:missing trx begin-last trx ID</code>, which is <code>7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052064794-5054955706</code>. Be sure to rewrite the GTID sets for all server UUIDs with missing GTIDs. This example shows only one server UUID, but there can be many, even for server UUIDs that no longer exist.</p>
+<p>Before rewriting history, node2 started with transaction (trx) ID 5,052,104,638. But node1 has earlier transactions that it can't send to node2 because they're already purged from the binary logs on node1. So we rewrote node2's history to match node1's history: node2 starts with trx ID 5,052,064,794, same as node1. Now when node2 attempts to auto-pos on node1, there won't be any missing GTIDs because they start with the same trx ID.</p>
+
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmongo.com/post/response-time-sla/" data-toggle="tooltip" data-placement="top" title="Response Time SLA">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2019 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmongo.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmongo.com/js/jquery-3.2.1.min.js"></script>
+<script src="https://hackmongo.com/js/bootstrap.min.js"></script>
+<script src="https://hackmongo.com/js/bootstrap-toc.min.js"></script>
+<script src="https://hackmongo.com/js/highlight.min.js"></script>
+<script src="https://hackmongo.com/js/main.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+  </body>
+</html>

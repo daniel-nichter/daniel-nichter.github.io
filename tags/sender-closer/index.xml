@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sender Closer on Hack Mongo</title>
+    <title>sender-closer on Hack Mongo</title>
     <link>https://hackmongo.com/tags/sender-closer/</link>
-    <description>Recent content in Sender Closer on Hack Mongo</description>
+    <description>Recent content in sender-closer on Hack Mongo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 16 Dec 2018 13:00:00 -0300</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
 
       <guid>https://hackmongo.com/post/three-golang-channel-red-flags/</guid>
-      <description>Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&amp;rsquo;t close the channel isn&amp;rsquo;t aware the channel is closed, so send and receive on the closed channel don&amp;rsquo;t have the intended effect.</description>
+      <description>Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&#39;t close the channel isn&#39;t aware the channel is closed, so send and receive on the closed channel don&#39;t have the intended effect.</description>
     </item>
 
   </channel>

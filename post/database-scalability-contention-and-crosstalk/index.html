@@ -13,7 +13,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack Mongo" />
 
-  <meta name="generator" content="Hugo 0.40.1" />
+  <meta name="generator" content="Hugo 0.60.0" />
   <link rel="canonical" href="https://hackmongo.com/post/database-scalability-contention-and-crosstalk/" />
   <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
@@ -115,18 +115,11 @@
 </div>
 
 
-
-
-<p>New engineers might not know and experienced engineers might not believe that database systems do not and cannot scale gracefully to 100% system capacity but, rather and counterintutively, exhibit <em>retrograde</em> performance at some point less than 100% system capacity. The reasonable presumption is:</p>
-
-<p><img src="/img/db-scalability-myth.svg" alt="Database Scalability Myth" /></p>
-
+        <p>New engineers might not know and experienced engineers might not believe that database systems do not and cannot scale gracefully to 100% system capacity but, rather and counterintutively, exhibit <em>retrograde</em> performance at some point less than 100% system capacity. The reasonable presumption is:</p>
+<p><img src="/img/db-scalability-myth.svg" alt="Database Scalability Myth"></p>
 <p>We presume that a database can scale to almost 100% of system capacity, and max performance is a small fraction at the very top (right, orange slice) because, after all, the system itself needs some resources to run itself. But the reality of database scalability is far less optimistic:</p>
-
-<p><img src="/img/db-scalability-reality.svg" alt="Database Scalability Reality" /></p>
-
+<p><img src="/img/db-scalability-reality.svg" alt="Database Scalability Reality"></p>
 <p>Most mature database systems (like MySQL) are so efficient at the low end of performance that they are effectively idle (gray slice), and the normal range of capacity (green slice) uses somewhere between 15% to 65% of system capacity. After that, max performance (orange slice) is a smaller zone of acceptable performance: about 65% to 75%. When operating at max performance, the database begins to exhibit one or more signs of performance and scalability limits:</p>
-
 <ul>
 <li>Increased 95th or 99th percentile response time</li>
 <li>Increased request timeouts</li>
@@ -134,36 +127,22 @@
 <li>Decreased high-level throughput</li>
 <li>Inexplicable slowness</li>
 </ul>
-
 <p>Before I dive into those and retrograde performance, let me give you the TL;DR and answer to &ldquo;why&rdquo;:</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.vividcortex.com/resources/universal-scalability-law/">Practical Scalability Analysis with the Universal Scalability Law</a></p>
-
+<p>    <a href="https://www.vividcortex.com/resources/universal-scalability-law/">Practical Scalability Analysis with the Universal Scalability Law</a></p>
 <p>Download and carefully read that e-book. It explains and proves why.</p>
-
 <h2 id="signs-of-performance-and-scalability-limits">Signs of Performance and Scalability Limits</h2>
-
-<p>The first sign is usually the literal first sign: increased 95th or 99th percentile response time. A well-designed system running on a mature database system will begin to respond more slowly at max performance for the simple, intuitive reason: the system is struggling to respond to all queries; it&rsquo;s still working, just more slowly. This is usually not surprising; engineers expect this.</p>
-
-<p>The second sign, increased request timeouts, is also a result of a well-designed system. If response time becomes too high then timeout, don&rsquo;t leave user waiting too long. This is usually not surprising; engineers expect this (if they program timeouts into the system).</p>
-
+<p>The first sign is usually the literal first sign: increased 95th or 99th percentile response time. A well-designed system running on a mature database system will begin to respond more slowly at max performance for the simple, intuitive reason: the system is struggling to respond to all queries; it's still working, just more slowly. This is usually not surprising; engineers expect this.</p>
+<p>The second sign, increased request timeouts, is also a result of a well-designed system. If response time becomes too high then timeout, don't leave user waiting too long. This is usually not surprising; engineers expect this (if they program timeouts into the system).</p>
 <p>Flatline and whipsaw metrics are the fun and interesting signs. See if you can spot them in these graphs:</p>
-
-<p><img src="/img/mysql-limit-cpu.png" alt="MySQL Limit: CPU" />
-<img src="/img/mysql-limit-qps.png" alt="MySQL Limit: QPS" />
-<img src="/img/mysql-limit-threads-running.png" alt="MySQL Limit: Threads Running" /></p>
-
-<p>Of course, I&rsquo;m joking: the flatlines in the first two graphs and the whipsawing in the last graph are obvious. These are from a real, high-end system running on dedicated physical hardware: 16 cores (32 virtual), 256 G RAM, and high-end storage. In short: powerful hardware. So what&rsquo;s the problem? <strong>Past 20 threads running, real-world MySQL scalability becomes questionable.</strong> You might get a steady 30 threads running, but I wouldn&rsquo;t expect more. You can push it far higher, as the last graph shows, but it won&rsquo;t help or, worse, it will cause retrograde performance. 75% system capacity for this hardware is 24 cores, which fits reality for both general and MySQL scalability. We&rsquo;ll come back to these charts later.</p>
-
-<p>The last two signs, decreased high-level throughput and inexplicable slowness, often go hand-in-hand. Let&rsquo;s pretend this system sends emails. At a high level, throughput is emails sent per second. At max performance, this metric will flatline or decrease because MySQL becomes a bottleneck. Hopefully, the system is instrumented well enough to isolate MySQL as the bottleneck vs. some other component (cache, code logic, network, storage, etc.). If that&rsquo;s the case, then the engineer will know to look at MySQL metrics and most likely see other signs. But sometimes we&rsquo;re not so lucky and the system is inexplicably slow. Other signs don&rsquo;t always manifest (or they&rsquo;re not measured, but that should be rare for production systems), and all engineers see is slowness everywhere and nowhere because they don&rsquo;t know or believe that the database cannot scale gracefully to 100% system capacity. So they see, like in the graphs above, sustained high QPS and <em>a lot</em> of threads running, but the system is still slow. They think, &ldquo;How can MySQL be working <em>so hard</em> yet doing <em>so little</em>?&rdquo; The answer: <a href="https://www.vividcortex.com/resources/universal-scalability-law/">Practical Scalability Analysis with the Universal Scalability Law</a>.</p>
-
-<p>Ironically, a system that can &ldquo;work so hard yet do so little&rdquo; at max performance is a well-designed and implemented system because it doesn&rsquo;t crash and it mostly avoids retrograde performance. Less well-designed systems allow themselves to be pushed into the red&ndash;retrograde performance&ndash;and begin doing less and less until they crash.</p>
-
+<p><img src="/img/mysql-limit-cpu.png" alt="MySQL Limit: CPU">
+<img src="/img/mysql-limit-qps.png" alt="MySQL Limit: QPS">
+<img src="/img/mysql-limit-threads-running.png" alt="MySQL Limit: Threads Running"></p>
+<p>Of course, I'm joking: the flatlines in the first two graphs and the whipsawing in the last graph are obvious. These are from a real, high-end system running on dedicated physical hardware: 16 cores (32 virtual), 256 G RAM, and high-end storage. In short: powerful hardware. So what's the problem? <strong>Past 20 threads running, real-world MySQL scalability becomes questionable.</strong> You might get a steady 30 threads running, but I wouldn't expect more. You can push it far higher, as the last graph shows, but it won't help or, worse, it will cause retrograde performance. 75% system capacity for this hardware is 24 cores, which fits reality for both general and MySQL scalability. We'll come back to these charts later.</p>
+<p>The last two signs, decreased high-level throughput and inexplicable slowness, often go hand-in-hand. Let's pretend this system sends emails. At a high level, throughput is emails sent per second. At max performance, this metric will flatline or decrease because MySQL becomes a bottleneck. Hopefully, the system is instrumented well enough to isolate MySQL as the bottleneck vs. some other component (cache, code logic, network, storage, etc.). If that's the case, then the engineer will know to look at MySQL metrics and most likely see other signs. But sometimes we're not so lucky and the system is inexplicably slow. Other signs don't always manifest (or they're not measured, but that should be rare for production systems), and all engineers see is slowness everywhere and nowhere because they don't know or believe that the database cannot scale gracefully to 100% system capacity. So they see, like in the graphs above, sustained high QPS and <em>a lot</em> of threads running, but the system is still slow. They think, &ldquo;How can MySQL be working <em>so hard</em> yet doing <em>so little</em>?&rdquo; The answer: <a href="https://www.vividcortex.com/resources/universal-scalability-law/">Practical Scalability Analysis with the Universal Scalability Law</a>.</p>
+<p>Ironically, a system that can &ldquo;work so hard yet do so little&rdquo; at max performance is a well-designed and implemented system because it doesn't crash and it mostly avoids retrograde performance. Less well-designed systems allow themselves to be pushed into the red&ndash;retrograde performance&ndash;and begin doing less and less until they crash.</p>
 <h2 id="solution">Solution</h2>
-
-<p>When a system begins to exhibit signs of performance and scalability limits: <em>stop</em>. Don&rsquo;t push it harder because it won&rsquo;t help or, worse, it will cause retrograde performance. Truth is: there is no magical solution at this point. Rather, it might help to <em>decrease</em> load (throughput, requests, queue consumers, worker threads, etc.). This is the counterintuitive advice that&rsquo;s often difficult to accept but after reading and understanding the math in <a href="https://www.vividcortex.com/resources/universal-scalability-law/">Practical Scalability Analysis with the Universal Scalability Law</a> you&rsquo;ll understand why it&rsquo;s true. The graphs above also demonstrate the proof: at 12pm load was <em>decreased</em> which caused a big drop in CPU usage but a slight <em>increase</em> in QPS! It also ended the whipsawing of threads running, and system engineers told me high-level throughput increased slightly, too! Proof that a system can do more with less.</p>
-
-<p>The real, long-term solution is a true performance audit, deep-dive, and fix. That&rsquo;s a huge topic. It could result in anything from query optimization to sharding to new, more powerful hardware.</p>
+<p>When a system begins to exhibit signs of performance and scalability limits: <em>stop</em>. Don't push it harder because it won't help or, worse, it will cause retrograde performance. Truth is: there is no magical solution at this point. Rather, it might help to <em>decrease</em> load (throughput, requests, queue consumers, worker threads, etc.). This is the counterintuitive advice that's often difficult to accept but after reading and understanding the math in <a href="https://www.vividcortex.com/resources/universal-scalability-law/">Practical Scalability Analysis with the Universal Scalability Law</a> you'll understand why it's true. The graphs above also demonstrate the proof: at 12pm load was <em>decreased</em> which caused a big drop in CPU usage but a slight <em>increase</em> in QPS! It also ended the whipsawing of threads running, and system engineers told me high-level throughput increased slightly, too! Proof that a system can do more with less.</p>
+<p>The real, long-term solution is a true performance audit, deep-dive, and fix. That's a huge topic. It could result in anything from query optimization to sharding to new, more powerful hardware.</p>
 
       </article>
       <hr>
@@ -184,7 +163,7 @@
 
           <div class="disqus-comments">
             <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
 
 

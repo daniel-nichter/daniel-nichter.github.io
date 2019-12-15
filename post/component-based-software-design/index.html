@@ -13,7 +13,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack Mongo" />
 
-  <meta name="generator" content="Hugo 0.40.1" />
+  <meta name="generator" content="Hugo 0.60.0" />
   <link rel="canonical" href="https://hackmongo.com/post/component-based-software-design/" />
   <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
@@ -111,22 +111,13 @@
 </div>
 
 
-
-
-<p>Software systems are difficult to design because code does not delineate and organize itself. Even experienced engineers can struggle to design a system because there are many solutions but it&rsquo;s not clear which is the best. Compounding the difficulty: engineers know that code can work fine even if, internally, it&rsquo;s an unorganized highly-entangled mess. We want code to be well-organized, but we don&rsquo;t know how to make it so. <a href="https://en.wikipedia.org/wiki/Component-based_software_engineering">Component-based design</a> is the solution.</p>
-
+        <p>Software systems are difficult to design because code does not delineate and organize itself. Even experienced engineers can struggle to design a system because there are many solutions but it's not clear which is the best. Compounding the difficulty: engineers know that code can work fine even if, internally, it's an unorganized highly-entangled mess. We want code to be well-organized, but we don't know how to make it so. <a href="https://en.wikipedia.org/wiki/Component-based_software_engineering">Component-based design</a> is the solution.</p>
 <p>The goal of this blog post is to change the way you think about, design, and implement software. Component-based design (CBD) is the solution, and thinking in CBD terms has two results: it makes it easier to design software, and it produces better software.</p>
-
 <p>CBD makes it easier to design software because you are already steeped in component-based design: most (perhaps all?) physical and biological systems are component-based. In your body, organs are components. How many can you name and say what they do? Biological systems are too complex for a blog post, so instead we will look at refrigerators, cars, and light bulbs.</p>
-
 <p>CBD produces better software because it breaks down large problems into smaller problems. The smaller the scope, the easier it is to program correctly and bug-free. <mark>Small, well-written components are the foundation of large, well-designed systems.</mark></p>
-
-<p>Before we look at refrigerators, let&rsquo;s state more clearly what we mean by a &ldquo;well-designed software system&rdquo;.</p>
-
-<h2 id="well-designed-software-system">Well-designed Software System</h2>
-
-<p>What makes software systems well-designed? From a high level, what are the aspects and principles that we recognize in well-designed systems? Here&rsquo;s my list:</p>
-
+<p>Before we look at refrigerators, let's state more clearly what we mean by a &ldquo;well-designed software system&rdquo;.</p>
+<h2 id="welldesigned-software-system">Well-designed Software System</h2>
+<p>What makes software systems well-designed? From a high level, what are the aspects and principles that we recognize in well-designed systems? Here's my list:</p>
 <ol>
 <li><em>Delineation</em>: Components are delineated and align &ldquo;at the seams&rdquo;</li>
 <li><em>Identity</em>: Each component has a clear and unified purpose</li>
@@ -135,14 +126,11 @@
 <li><em>Testing</em>: Thorough unit testing with high (&gt;70%) test coverage</li>
 <li><em>Comments</em>: Succinct yet thorough code comments</li>
 <li><em>Patterns</em>: Evidence of software patterns and reuse</li>
-<li><em>Boring</em>: At low level or small scope, code is so easy to understand it&rsquo;s boring</li>
+<li><em>Boring</em>: At low level or small scope, code is so easy to understand it's boring</li>
 <li><em>NS</em>: Code at every level is necessary and sufficient</li>
 </ol>
-
-<p>When a software systems exhibits those points, it is difficult <em>not</em> to be well-designed. Points 1-4 motivate a well-designed system from the top down, i.e. from the level of design down to the choice and implementation of components. Points 1 and 2 are the most important; we&rsquo;ll see why later in this section. Points 5-8 motivate a well-designed system from the bottom up, i.e. from the level of actual code up to their intended design and implementation within a component. Point 9 applies globally: every component should be necessary and sufficient, and every line of code within every component should be necessary and sufficient.</p>
-
+<p>When a software systems exhibits those points, it is difficult <em>not</em> to be well-designed. Points 1-4 motivate a well-designed system from the top down, i.e. from the level of design down to the choice and implementation of components. Points 1 and 2 are the most important; we'll see why later in this section. Points 5-8 motivate a well-designed system from the bottom up, i.e. from the level of actual code up to their intended design and implementation within a component. Point 9 applies globally: every component should be necessary and sufficient, and every line of code within every component should be necessary and sufficient.</p>
 <p>In my experience, no engineer would disagree with those points. But to illustrate them further, consider their opposites:</p>
-
 <ul>
 <li>Components overlap, difficult to tell them apart</li>
 <li>Components do many different, unrelated things</li>
@@ -154,21 +142,15 @@
 <li>A single function is difficult to understand</li>
 <li>Unnecessary or duplicate code and logic</li>
 </ul>
-
-<p>Sound familiar? We&rsquo;ve all seen code that exemplifies the second list. It is difficult for a system to be well-designed if exhibiting too many of those counterpoints.</p>
-
+<p>Sound familiar? We've all seen code that exemplifies the second list. It is difficult for a system to be well-designed if exhibiting too many of those counterpoints.</p>
 <p><em>Delineation</em> and <em>Identity</em> are the most important aspects of a well-designed system because they define components. What is a component of any system if not separate (delineated) and identifiable? This sounds trivially true, but in software it is very often not true. To illustrate this further, imagine how a human body might be implemented in software. An engineer might design the heart and liver as a single component by reasoning that, since blood passes through both as a necessary part of their function, they are a &ldquo;blood processing&rdquo; component:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">blood</span>
 
-<pre><code class="language-go">package blood
-
-type Processor interface {
-    Pump(rate float64) error
-    Detoxify() error
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Processor</span> <span style="color:#66d9ef">interface</span> {
+    <span style="color:#a6e22e">Pump</span>(<span style="color:#a6e22e">rate</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">error</span>
+    <span style="color:#a6e22e">Detoxify</span>() <span style="color:#66d9ef">error</span>
 }
-</code></pre>
-
-<p>That is a delineated component, so it&rsquo;s a good start, but its identity is conflated. The identify of a component is its <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">single responsibility</a>. To test identity, try to answer the question &ldquo;What does it do?&rdquo; in a single sentence that accurately and completely captures its high-level responsibility. For <code>blood.Processor</code>, saying, &ldquo;It processes blood.&rdquo;, is neither accurate nor complete because &ldquo;processes&rdquo; is too vague. In software, most components &ldquo;process&rdquo;, &ldquo;store&rdquo;, &ldquo;transfer&rdquo;, &ldquo;calculate&rdquo;, and other generic computing terms. These are not always bad design, but they should be thoroughly scrutinized by the team to see if a generically-named component is really several specific components. Let&rsquo;s further this example by adding to <code>blood.Processor</code> another method: <code>Oxygenate() error</code>. The lungs oxygenate blood. This is a type of processing, but now <code>blood.Processor</code> is quite conflated because in this example we know that liver, heart, and lungs are very different components. A better design is:</p>
-
+</code></pre></div><p>That is a delineated component, so it's a good start, but its identity is conflated. The identify of a component is its <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">single responsibility</a>. To test identity, try to answer the question &ldquo;What does it do?&rdquo; in a single sentence that accurately and completely captures its high-level responsibility. For <code>blood.Processor</code>, saying, &ldquo;It processes blood.&quot;, is neither accurate nor complete because &ldquo;processes&rdquo; is too vague. In software, most components &ldquo;process&rdquo;, &ldquo;store&rdquo;, &ldquo;transfer&rdquo;, &ldquo;calculate&rdquo;, and other generic computing terms. These are not always bad design, but they should be thoroughly scrutinized by the team to see if a generically-named component is really several specific components. Let's further this example by adding to <code>blood.Processor</code> another method: <code>Oxygenate() error</code>. The lungs oxygenate blood. This is a type of processing, but now <code>blood.Processor</code> is quite conflated because in this example we know that liver, heart, and lungs are very different components. A better design is:</p>
 <pre><code>package blood
 
 type Pumper interface {
@@ -199,112 +181,70 @@ type Breather interface {
     // Return current VO2 max rate.
     VO2() float64
 }
-</code></pre>
-
-<p>Huge difference! Two of which are important. First, for each component we can better answer the identity test question:</p>
-
+</code></pre><p>Huge difference! Two of which are important. First, for each component we can better answer the identity test question:</p>
 <ul>
 <li><code>blood.Pumper</code> pumps blood.</li>
 <li><code>blood.Cleaner</code> cleans blood.</li>
 <li><code>air.Breather</code> oxygenates blood.</li>
 </ul>
-
 <p>Those answers are deceptively simple, yet accurate and complete because the second important difference is: <mark>a well-designed component can have a simple responsibility and necessarily complex functionality.</mark> This is usually the case. Well-designed components like <code>blood.Pumper</code>, <code>blood.Cleaner</code>, and <code>air.Breather</code> are simple and stable from the high level of design <em>and</em> allow sophisticated functionality. (This is closely related to the <a href="https://stackify.com/solid-design-open-closed-principle/">open/closed principle</a>.) The reverse (complex responsibility and simple functionality) indicates a poorly-designed component, like <code>blood.Processor</code>, which is likely to become more conflated.</p>
-
 <p><small>Also note that the well-designed components have domain-specific (not generic computing) names: pump, clean, breathe. This is a good indication of proper design because they make sense in the domain: a human body.</small></p>
-
-<p>System design looks easy in examples like this, but it is much more difficult in real-world applications. As previously stated, component-based designed (especially with <em>Delineation</em> and <em>Identity</em>) makes it easier to design software and produces better software. So let&rsquo;s learn more about CBD by looking at refrigerators.</p>
-
-<h2 id="refrigerators-cars-light-bulbs">Refrigerators, Cars, &amp; Light Bulbs</h2>
-
-<p>Although software systems are intangible, we can learn a lot from physical systems. Refrigerators are a good example because they are simple, reliable, and quite an engineering marvel when you think about it: a self-contained box with only one connection (power cord) keeps one area 0&deg;C and another (the freezer) below freezing. And what does the user have to do? Nothing. Just plug it in. And how long does it &ldquo;Just Work&rdquo;? Typically, we expect a good fridge to last at least 10 years.</p>
-
-<p><img src="/img/refrigeration-components-diagram.gif" alt="6 Main Components of a Refrigeration System" /></p>
-
+<p>System design looks easy in examples like this, but it is much more difficult in real-world applications. As previously stated, component-based designed (especially with <em>Delineation</em> and <em>Identity</em>) makes it easier to design software and produces better software. So let's learn more about CBD by looking at refrigerators.</p>
+<h2 id="refrigerators-cars--light-bulbs">Refrigerators, Cars, &amp; Light Bulbs</h2>
+<p>Although software systems are intangible, we can learn a lot from physical systems. Refrigerators are a good example because they are simple, reliable, and quite an engineering marvel when you think about it: a self-contained box with only one connection (power cord) keeps one area 0°C and another (the freezer) below freezing. And what does the user have to do? Nothing. Just plug it in. And how long does it &ldquo;Just Work&rdquo;? Typically, we expect a good fridge to last at least 10 years.</p>
+<p><img src="/img/refrigeration-components-diagram.gif" alt="6 Main Components of a Refrigeration System"></p>
 <p>The diagram above is from <a href="https://www.bartlettltd.co.uk/blog/6-main-components-refrigeration-system/">The 6 Main Components of a Refrigeration System</a>. Please read that blog post.</p>
-
 <p>Refrigerators are more simple than most software systems. A fridge does not have to process thousands of financial transactions per second. But new cars are arguably more complex than most software systems. If cars were only driven slowly on smooth, flat roads in good weather, they would be a lot easier to engineer. But reality is far more challenging, and a car must be able to handle everything: rough roads, pouring rain, snow, desert heat, high altitudes (where air is thin), slow speed (in town) and fast speed (open highway), sudden stops, one driver or heavily loaded, minor collisions, and even major collisions (car: destroyed; occupants: alive). And yet for handling all that, what does the user have to do? Only learn to drive, add fuel, and take it in for occasional maintenance. That is incredible.</p>
-
 <p>At first, cars and refrigerators seem to have little in common. Cars have most refrigerator components, but the real point is: both systems are component-based.</p>
-
 <p>Take a few moments to think about physical and biological systems. Are any <em>not</em> organized around components? Even a simple light bulb has discrete components: <a href="https://www.bulbs.com/learning/basechart.aspx">base</a>, <a href="https://www.bulbs.com/learning/shapesandsizes.aspx">bulb</a>, and <a href="https://www.bulbs.com/learning/filaments.aspx">filament</a>. Each of those three can and do vary. I have thought about this for weeks and cannot find a single physical or biological system  <em>not</em> organized around components. Granted, some have odd or poorly-conceived components, but nothing is perfect.</p>
-
-<p>Small, well-written components are the foundation of large, well-designed systems. We must think of and see software systems in terms of components. This is challenging because software is intangible. A mechanical engineer can hold the components of a refrigerator, physically put them together and take them apart, and literally see if and how they fit. The expansion valve in hand is the same expansion valve in the refrigerator. It either fits and works, or it doesn&rsquo;t. Software is different: we write code that compiles with other code we did not write, and the resulting binary runs in an environment which is only partly known to us. The software equivalent of the expansion valve in hand is never the same expansion valve in a running system.</p>
-
+<p>Small, well-written components are the foundation of large, well-designed systems. We must think of and see software systems in terms of components. This is challenging because software is intangible. A mechanical engineer can hold the components of a refrigerator, physically put them together and take them apart, and literally see if and how they fit. The expansion valve in hand is the same expansion valve in the refrigerator. It either fits and works, or it doesn't. Software is different: we write code that compiles with other code we did not write, and the resulting binary runs in an environment which is only partly known to us. The software equivalent of the expansion valve in hand is never the same expansion valve in a running system.</p>
 <p>The inherent challenges of software in a running system are why component-based design is the solution: it is easier to reason about and fix small components than a monolithic, entangled system. Thankfully, physical systems are component-based, so when the expansion valve fails, we replace it, not the whole refrigerator. And when the alternator fails, we replace it, not the whole engine. And when the filament burns out&hellip; interestingly, we replace the whole light bulb. Perhaps replaceable filament (even LEDs) are a better design?</p>
-
-<p>Component-based software design is easier said than done. Let&rsquo;s look at an example: the data layer.</p>
-
+<p>Component-based software design is easier said than done. Let's look at an example: the data layer.</p>
 <h2 id="the-data-layer">The Data Layer</h2>
-
-<p>In my experience, the data layer is almost universal in software systems. It can also be called the database layer, the (data) model, data access (objects), or simply data persistence. When designing a system, the question on an engineer&rsquo;s mind is: &ldquo;How and where do we persist data?&rdquo; In a layered architecture, this is usually the bottom layer. In <a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">Model-view-controller</a>, this is the model. In Go lang systems, this can be a db package. In Java systems, this can be diffused into classes with an ORM like <a href="http://hibernate.org/">Hibernate</a>.</p>
-
-<p>Let&rsquo;s look at a real example: <a href="https://www.tutorialspoint.com/ruby-on-rails/rails-directory-structure.htm">Ruby on Rails directory structure</a>:</p>
-
+<p>In my experience, the data layer is almost universal in software systems. It can also be called the database layer, the (data) model, data access (objects), or simply data persistence. When designing a system, the question on an engineer's mind is: &ldquo;How and where do we persist data?&rdquo; In a layered architecture, this is usually the bottom layer. In <a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">Model-view-controller</a>, this is the model. In Go lang systems, this can be a db package. In Java systems, this can be diffused into classes with an ORM like <a href="http://hibernate.org/">Hibernate</a>.</p>
+<p>Let's look at a real example: <a href="https://www.tutorialspoint.com/ruby-on-rails/rails-directory-structure.htm">Ruby on Rails directory structure</a>:</p>
 <ul>
 <li><code>app/helpers</code> − The helpers subdirectory holds any helper classes used to assist the model, view, and controller classes. This helps to keep the model, view, and controller code small, focused, and uncluttered.</li>
-<li><code>app/models</code> − The models subdirectory holds the classes that model and wrap the data stored in our application&rsquo;s database. In most frameworks, this part of the application can grow pretty messy, tedious, verbose, and error-prone. Rails makes it dead simple!</li>
+<li><code>app/models</code> − The models subdirectory holds the classes that model and wrap the data stored in our application's database. In most frameworks, this part of the application can grow pretty messy, tedious, verbose, and error-prone. Rails makes it dead simple!</li>
 <li><code>components</code> − This directory holds components, tiny self-contained applications that bundle model, view, and controller.</li>
 <li><code>db</code> − Usually, your Rails application will have model objects that access relational database tables. You can manage the relational database with scripts you create and place in this directory.</li>
 </ul>
-
-<p>For small or highly-focused systems, there is nothing wrong with this framework, i.e. this directory structure and convention for organizing code. But it does not scale for large, complex systems. If you have tried to design or scale a large system within this framework (or any with a distinct data layer), you have probably already encountered two problems. First: <a href="https://www.c-sharpcorner.com/blogs/cross-cutting-concepts-in-a-multilayer-application">cross cutting</a>. Please read that blog post. I agree with the author&rsquo;s solution:</p>
-
+<p>For small or highly-focused systems, there is nothing wrong with this framework, i.e. this directory structure and convention for organizing code. But it does not scale for large, complex systems. If you have tried to design or scale a large system within this framework (or any with a distinct data layer), you have probably already encountered two problems. First: <a href="https://www.c-sharpcorner.com/blogs/cross-cutting-concepts-in-a-multilayer-application">cross cutting</a>. Please read that blog post. I agree with the author's solution:</p>
 <blockquote>
 <p>The cross cutting codes are injected to the other layers by different ways of injecting (constructor , getter or setter, method ) or using by dependency injection.</p>
 </blockquote>
-
 <p>However, one cross-cutters leads to many, resulting in layers that look more <code>#</code> than <code>=</code>. Another common problem: the &ldquo;architecture sinkhole anti-pattern&rdquo;, which you can read about in <a href="https://www.oreilly.com/library/view/software-architecture-patterns/9781491971437/">Software Architecture Patterns</a> (page 7).</p>
-
-<p>Every technical solution has its problems (yes, even component-based design), so I would not dismiss the data layer and frameworks like this for purely technical reasons. However, the technical problems allude to a deeper, philosophical problem: <em>organization by kind</em>. Controllers, models, helpers, views, and (confusingly) components which bundle those together&mdash;these are lumped together by kind. Think of physical systems again. Are any organized by kind? Are the wheels of a car in the same place? Are the windows of a building in the same place? Are the bones in your body in the same place? <mark>Organization by kind in an ontological exercise. It is not software design.</mark></p>
-
+<p>Every technical solution has its problems (yes, even component-based design), so I would not dismiss the data layer and frameworks like this for purely technical reasons. However, the technical problems allude to a deeper, philosophical problem: <em>organization by kind</em>. Controllers, models, helpers, views, and (confusingly) components which bundle those together—these are lumped together by kind. Think of physical systems again. Are any organized by kind? Are the wheels of a car in the same place? Are the windows of a building in the same place? Are the bones in your body in the same place? <mark>Organization by kind in an ontological exercise. It is not software design.</mark></p>
 <p>Organization by kind is the antithesis of component-based design. When engineers struggle to design (or refactor) a system, the problem is often being stuck in an implicit or explicit system of organization by kind, like data layers or MVC, respectively. The solution is to rethink the system in terms of components not kinds.</p>
-
 <h2 id="from-layer-to-component">From Layer to Component</h2>
-
 <p>We must think of and see software systems in terms of components. Forget the data layer. Data is not a layer; the whole system is data. Everything is data. Data is everywhere.</p>
+<p>To illustrate, let's use the <a href="https://godoc.org/github.com/square/spincycle/request-manager/joblog">joblog</a> component of Spin Cycle, a large open-source project my colleagues and I are developing. The fact that we can study the <code>joblog</code> in isolation is a direct result and benefit of component-based design. Spin Cycle has many components, but we can ignore them. We only need to know that the <code>joblog</code> stores job log entries (JLE). (That's another good example of the identity test question.) It is sufficient background to say that Spin Cycle runs <em>requests</em>: infrastructure tasks, like &ldquo;allocate host&rdquo;, which are accomplished by a series of discrete jobs. Each job is logged by the <code>joblog</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">joblog</span>
 
-<p>To illustrate, let&rsquo;s use the <a href="https://godoc.org/github.com/square/spincycle/request-manager/joblog">joblog</a> component of Spin Cycle, a large open-source project my colleagues and I are developing. The fact that we can study the <code>joblog</code> in isolation is a direct result and benefit of component-based design. Spin Cycle has many components, but we can ignore them. We only need to know that the <code>joblog</code> stores job log entries (JLE). (That&rsquo;s another good example of the identity test question.) It is sufficient background to say that Spin Cycle runs <em>requests</em>: infrastructure tasks, like &ldquo;allocate host&rdquo;, which are accomplished by a series of discrete jobs. Each job is logged by the <code>joblog</code>:</p>
-
-<pre><code class="language-go">package joblog
-
-type Store interface {
-    Create(requestId string, jle proto.JobLog) (proto.JobLog, error)
-    Get(requestId string, jobId string) (proto.JobLog, error)
-    GetFull(requestId string) ([]proto.JobLog, error)
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Store</span> <span style="color:#66d9ef">interface</span> {
+    <span style="color:#a6e22e">Create</span>(<span style="color:#a6e22e">requestId</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">jle</span> <span style="color:#a6e22e">proto</span>.<span style="color:#a6e22e">JobLog</span>) (<span style="color:#a6e22e">proto</span>.<span style="color:#a6e22e">JobLog</span>, <span style="color:#66d9ef">error</span>)
+    <span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">requestId</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">jobId</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">proto</span>.<span style="color:#a6e22e">JobLog</span>, <span style="color:#66d9ef">error</span>)
+    <span style="color:#a6e22e">GetFull</span>(<span style="color:#a6e22e">requestId</span> <span style="color:#66d9ef">string</span>) ([]<span style="color:#a6e22e">proto</span>.<span style="color:#a6e22e">JobLog</span>, <span style="color:#66d9ef">error</span>)
 }
 
-func NewStore(db *sql.DB) Store
-</code></pre>
-
-<p>The code above is the whole <code>joblog</code> component. It is tiny, but it illustrates many points. First and to the main point: no data layer or model. To appreciate this, consider instead how it would be organized in the Ruby on Rails framework:</p>
-
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewStore</span>(<span style="color:#a6e22e">db</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">DB</span>) <span style="color:#a6e22e">Store</span>
+</code></pre></div><p>The code above is the whole <code>joblog</code> component. It is tiny, but it illustrates many points. First and to the main point: no data layer or model. To appreciate this, consider instead how it would be organized in the Ruby on Rails framework:</p>
 <ul>
 <li>app/helpers/joblog.rb</li>
 <li>app/models/joblog.rb</li>
 <li>components/joblog.rb (?)</li>
 <li>db/joblog (?)</li>
 </ul>
-
-<p><code>models/joblob.rb</code> seems straightforward, and I suppose the logic of fetching JLE fits in <code>helpers/joblog.rb</code>. Or should everything be in <code>component/joblog.rb</code>? I&rsquo;m not sure about <code>db/</code>, but it seems relevant because we will need a database to persist the JLE. &mdash; But wait, do you see what is happening? We are having an ontological debate: model vs. helper vs. component. This is the wrong debate because it forces us to organize by kind and design the system for the framework rather than delineating the system into necessary and sufficient components with single responsibilities.</p>
-
+<p><code>models/joblob.rb</code> seems straightforward, and I suppose the logic of fetching JLE fits in <code>helpers/joblog.rb</code>. Or should everything be in <code>component/joblog.rb</code>? I'm not sure about <code>db/</code>, but it seems relevant because we will need a database to persist the JLE. — But wait, do you see what is happening? We are having an ontological debate: model vs. helper vs. component. This is the wrong debate because it forces us to organize by kind and design the system for the framework rather than delineating the system into necessary and sufficient components with single responsibilities.</p>
 <p><mark>Design components to fit the system. Do not design the system to fit a framework.</mark></p>
-
 <h3 id="but-what-about">But what about&hellip;</h3>
-
 <p><em>Architectural patterns?</em> These are important, but they usually apply at a higher level of design. For example, the <a href="https://martinfowler.com/articles/microservices.html">microservices architectural pattern</a> does not help design a specific system, it is a pattern related to systems and interactions of systems. While a specific system might be a microservice, that architecture is higher-level than the components that make up the microservice. The same is true for other architectural patterns, like the event-driven pattern. However, other architectural patterns do apply to, or at least influence, system design. For example, the layered architecture indirectly designs a system by organizing common functionality (presentation, business logic, data access, etc.) into layers. And the microkernel architecture pattern requires a microkernel in the system design, so it is much lower-level than the microservices pattern. This blog post is about the internal design and organization of a system, so architectural patterns, while important, are out of scope.</p>
-
 <p><em>Software design patterns?</em> These are important, but they usually apply at a lower level of design. However, like architectural patterns, there are some software patterns, like the <a href="https://docs.microsoft.com/en-us/dotnet/standard/microservices-architecture/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design">repository pattern</a>, that apply to system design. The <code>joblog.Store</code> example above is a repository. But generally speaking, when designing system components, software patterns are implementation details of components.</p>
-
-<p><em>Classes and OO?</em> Classes, packages, objects, interfaces&mdash;all these apply at a lower level of design. However, these and system design go hand-in-hand because the former implement the latter. A rough hierarchy from high-level to low-level: architectural patterns &gt; components &gt; software patterns &gt; classes/objects/interfaces &gt; functions/methods &gt; lines of code. This blog post focuses on components, but a book-length treatment of system design would address every level. Therefore, component-based design does not negate or replace class design, it&rsquo;s simply another topic.</p>
-
-<p><em>ORMs</em>? Depends on how they are used. Often, they are used to provide an implicit, semi-transparent data layer by automatically storing and retrieving objects. Problem is, this tends not to scale, resulting in code to adapt the system to the ORM and vice versa. If the adapter code is contained within and hidden behind the interface of a component, that&rsquo;s ok; but if it begins to cross component boundaries, then the system design is being made to fit the ORM, which is not good.</p>
-
+<p><em>Classes and OO?</em> Classes, packages, objects, interfaces—all these apply at a lower level of design. However, these and system design go hand-in-hand because the former implement the latter. A rough hierarchy from high-level to low-level: architectural patterns &gt; components &gt; software patterns &gt; classes/objects/interfaces &gt; functions/methods &gt; lines of code. This blog post focuses on components, but a book-length treatment of system design would address every level. Therefore, component-based design does not negate or replace class design, it's simply another topic.</p>
+<p><em>ORMs</em>? Depends on how they are used. Often, they are used to provide an implicit, semi-transparent data layer by automatically storing and retrieving objects. Problem is, this tends not to scale, resulting in code to adapt the system to the ORM and vice versa. If the adapter code is contained within and hidden behind the interface of a component, that's ok; but if it begins to cross component boundaries, then the system design is being made to fit the ORM, which is not good.</p>
 <p><em>Cross-cutting concerns?</em> Logging and auth are two common cross-cutting concerns. Component-based design plus <a href="https://stackify.com/dependency-inversion-principle/">dependency inversion</a> plus a (pseudo or real) <a href="https://sourcemaking.com/design_patterns/singleton">singleton</a> provide a clean solution. And if the cross-cutter needs to vary, e.g. context-based structured logging, add <a href="https://stackify.com/dependency-injection/">dependency injection</a>, too. That sounds fancy, but really it just means: pass a single instantiation of the component responsible for the cross-cutting functionality to other components. Notice how component-based designs and <a href="https://en.wikipedia.org/wiki/SOLID">SOLID principles</a> align with respect to abstractions: components require abstractions to form their delineations, and SOLID principles require abstractions to be implemented properly.</p>
-
 <h2 id="conclusion">Conclusion</h2>
-
-<p>The idea for this blog post arose when a colleague asked for suggestions about organizing a system written in Go. <a href="https://en.wikipedia.org/wiki/Component-based_software_engineering">Component-based design</a> is the solution for software systems as well as the ubiquitous design of physical systems. Physical systems have certain limitations which preclude poor design. For example, the tires of a car cannot be grouped together, else the car will not work. Software, however, lacks such limitations, allowing engineers to do almost anything. But the more choices we have, the more difficult it is to know which choice is best. CBD provides constructive limitations: it requires us to break down the system into components, then build it back up from parts (components) to whole (system). Without limitations, engineers can and often do jump right to implementing the whole. After all, engineers are hired to write code, so write code! But we know the usual result: an unorganized, highly-entangled mess. Eschewing limitations is easier, but to create well-designed software&mdash;the rare kind of software that&rsquo;s a delight to work with and stands the test of time&mdash;think component-based design.</p>
+<p>The idea for this blog post arose when a colleague asked for suggestions about organizing a system written in Go. <a href="https://en.wikipedia.org/wiki/Component-based_software_engineering">Component-based design</a> is the solution for software systems as well as the ubiquitous design of physical systems. Physical systems have certain limitations which preclude poor design. For example, the tires of a car cannot be grouped together, else the car will not work. Software, however, lacks such limitations, allowing engineers to do almost anything. But the more choices we have, the more difficult it is to know which choice is best. CBD provides constructive limitations: it requires us to break down the system into components, then build it back up from parts (components) to whole (system). Without limitations, engineers can and often do jump right to implementing the whole. After all, engineers are hired to write code, so write code! But we know the usual result: an unorganized, highly-entangled mess. Eschewing limitations is easier, but to create well-designed software—the rare kind of software that's a delight to work with and stands the test of time—think component-based design.</p>
 
       </article>
       <hr>
@@ -325,7 +265,7 @@ func NewStore(db *sql.DB) Store
 
           <div class="disqus-comments">
             <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
 
 

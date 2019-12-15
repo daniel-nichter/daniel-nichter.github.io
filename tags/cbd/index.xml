@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Cbd on Hack Mongo</title>
+    <title>CBD on Hack Mongo</title>
     <link>https://hackmongo.com/tags/cbd/</link>
-    <description>Recent content in Cbd on Hack Mongo</description>
+    <description>Recent content in CBD on Hack Mongo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 02 Dec 2018 00:00:00 +0000</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/component-based-software-design/</guid>
-      <description>Software systems are difficult to design because code does not delineate and organize itself. Even experienced engineers can struggle to design a system because there are many solutions but it&amp;rsquo;s not clear which is the best. Compounding the difficulty: engineers know that code can work fine even if, internally, it&amp;rsquo;s an unorganized highly-entangled mess. We want code to be well-organized, but we don&amp;rsquo;t know how to make it so. Component-based design is the solution.</description>
+      <description>Software systems are difficult to design because code does not delineate and organize itself. Even experienced engineers can struggle to design a system because there are many solutions but it&#39;s not clear which is the best. Compounding the difficulty: engineers know that code can work fine even if, internally, it&#39;s an unorganized highly-entangled mess. We want code to be well-organized, but we don&#39;t know how to make it so. Component-based design is the solution.</description>
     </item>
 
   </channel>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Pages on Hack Mongo</title>
@@ -35,7 +35,7 @@
       <pubDate>Sat, 03 Jun 2017 18:51:14 -0700</pubDate>
 
       <guid>https://hackmongo.com/page/golang-antipatterns/</guid>
-      <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&amp;rsquo;s a better way that&amp;rsquo;s both functionally equivalent and idiomatic.
+      <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&#39;s a better way that&#39;s both functionally equivalent and idiomatic.
 These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</description>
     </item>
 
@@ -45,7 +45,7 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
       <pubDate>Sat, 03 Jun 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/page/idiomatic-go/</guid>
-      <description> Idiomatic Go Canon can·on&amp;nbsp;&amp;nbsp;/ˈkanən/&amp;nbsp;&amp;nbsp;noun : a general law, rule, principle, or criterion by which something is judged
+      <description>Idiomatic Go Canon can·on /ˈkanən/ noun : a general law, rule, principle, or criterion by which something is judged
 These texts explicitly and implicitly define idiomatic Go code. Read, memorize, and refer to them often. Use them to settle debates.
  Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names  Recommended  Go Code Review Comments Best practices for a new Go developer Reducing Type Hierarchies  </description>
     </item>
@@ -57,7 +57,7 @@ These texts explicitly and implicitly define idiomatic Go code. Read, memorize, 
 
       <guid>https://hackmongo.com/page/about/</guid>
       <description>Hack Mongo Hack Mongo is my personal blog about databases, the Go programming language, and software design. The name is a reference to Hack MySQL, another site/blog I maintained for ten years (2005-2015) while building a career with MySQL. Today, the new frontier is MongoDB, hence the new name: Hack Mongo.
-The content of this site is inspired by two things. First is my job: I work at Square. Working with thousands of databases, hundreds of microservices, and engineers across the company, I&amp;rsquo;m fortunate to always have new challenges and opportunities to both learn and mentor.</description>
+The content of this site is inspired by two things. First is my job: I work at Square. Working with thousands of databases, hundreds of microservices, and engineers across the company, I&#39;m fortunate to always have new challenges and opportunities to both learn and mentor.</description>
     </item>
 
   </channel>

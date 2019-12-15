@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Domain Model on Hack Mongo</title>
+    <title>domain model on Hack Mongo</title>
     <link>https://hackmongo.com/tags/domain-model/</link>
-    <description>Recent content in Domain Model on Hack Mongo</description>
+    <description>Recent content in domain model on Hack Mongo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 10 Dec 2017 00:00:00 +0000</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sun, 10 Dec 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/approaching-a-new-software-project/</guid>
-      <description>Approaching a new software project is difficult for two reasons. First, there&amp;rsquo;s no &amp;ldquo;guiding star&amp;rdquo;, no objective starting point. The developer can begin from and proceed in many directions, which makes choosing difficult. They want to proceed in a good direction from the start, not wasting time or effort, but how can they make a good choice without a guide or the benefit of experience? Being forced to choose and move ahead, the choice is often made randomly rather than methodically.</description>
+      <description>Approaching a new software project is difficult for two reasons. First, there&#39;s no &amp;ldquo;guiding star&amp;rdquo;, no objective starting point. The developer can begin from and proceed in many directions, which makes choosing difficult. They want to proceed in a good direction from the start, not wasting time or effort, but how can they make a good choice without a guide or the benefit of experience? Being forced to choose and move ahead, the choice is often made randomly rather than methodically.</description>
     </item>
 
   </channel>
