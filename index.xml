@@ -6,10 +6,20 @@
     <description>Recent content on Hack Mongo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 12 Jan 2020 00:00:00 +0000</lastBuildDate>
 
 	<atom:link href="https://hackmongo.com/index.xml" rel="self" type="application/rss+xml" />
 
+
+    <item>
+      <title>Queries Effect Performance</title>
+      <link>https://hackmongo.com/post/queries-effect-performance/</link>
+      <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/post/queries-effect-performance/</guid>
+      <description>Queries effect database performance. That&#39;s not a typo: &amp;ldquo;effect&amp;rdquo; not &amp;ldquo;affect&amp;rdquo;. The difference is not a word game but an important way to think about database performance.
+Many things can affect performance. For example, if the system runs out of memory then starts swapping which causes high disk IO latency, that will negatively affect performance. But external factors like that notwithstanding (i.e. when hardware and MySQL are normal and stable), it&#39;s important to understand that queries effect performance.</description>
+    </item>
 
     <item>
       <title>Fixing Ghosted GTIDs</title>

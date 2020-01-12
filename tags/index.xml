@@ -6,10 +6,37 @@
     <description>Recent content in Tags on Hack Mongo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 12 Jan 2020 00:00:00 +0000</lastBuildDate>
 
 	<atom:link href="https://hackmongo.com/tags/index.xml" rel="self" type="application/rss+xml" />
 
+
+    <item>
+      <title>mysql</title>
+      <link>https://hackmongo.com/tags/mysql/</link>
+      <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/tags/mysql/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>performance</title>
+      <link>https://hackmongo.com/tags/performance/</link>
+      <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/tags/performance/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>queries</title>
+      <link>https://hackmongo.com/tags/queries/</link>
+      <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/tags/queries/</guid>
+      <description></description>
+    </item>
 
     <item>
       <title>auto-pos</title>
@@ -26,15 +53,6 @@
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/tags/gtid/</guid>
-      <description></description>
-    </item>
-
-    <item>
-      <title>mysql</title>
-      <link>https://hackmongo.com/tags/mysql/</link>
-      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
-
-      <guid>https://hackmongo.com/tags/mysql/</guid>
       <description></description>
     </item>
 

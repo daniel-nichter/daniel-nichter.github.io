@@ -91,32 +91,29 @@
 			<div class="posts-list">
 
 					<article class="post-preview">
-						<a href="https://hackmongo.com/post/fixing-ghosted-gtids/">
-							<h1 class="post-title">Fixing Ghosted GTIDs</h1>
-
-								<h3 class="post-subtitle">When MySQL GTID auto-positioning fails</h3>
+						<a href="https://hackmongo.com/post/queries-effect-performance/">
+							<h1 class="post-title">Queries Effect Performance</h1>
 
 						</a>
 						<div class="post-entry">
 
-								MySQL auto-positioning is an integral part of replication with GTID, but it's neither required nor guaranteed to work. It's possible to enable GTIDs but disable auto-positioning, and it's possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.
-								<a href="https://hackmongo.com/post/fixing-ghosted-gtids/" class="post-read-more">Read more...</a>
+								Queries effect database performance. That's not a typo: &ldquo;effect&rdquo; not &ldquo;affect&rdquo;. The difference is not a word game but an important way to think about database performance.
+Many things can affect performance. For example, if the system runs out of memory then starts swapping which causes high disk IO latency, that will negatively affect performance. But external factors like that notwithstanding (i.e. when hardware and MySQL are normal and stable), it's important to understand that queries effect performance.
+								<a href="https://hackmongo.com/post/queries-effect-performance/" class="post-read-more">Read more...</a>
 
 						</div>
 						<div class="post-meta">
 
 
-  <div>Dec 15, 2019</div>
+  <div>Jan 12, 2020</div>
   <div class="blog-tags">
 
 
         <a href="/tags/mysql">#mysql</a>
 
-        <a href="/tags/replication">#replication</a>
+        <a href="/tags/performance">#performance</a>
 
-        <a href="/tags/gtid">#gtid</a>
-
-        <a href="/tags/auto-pos">#auto-pos</a>
+        <a href="/tags/queries">#queries</a>
 
 
   </div>
@@ -132,6 +129,8 @@
 	<div class="row">
 		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 			<hr>
+
+				<li><time>2019-12-15</time>&nbsp;<a href="https://hackmongo.com/post/fixing-ghosted-gtids/">Fixing Ghosted GTIDs</a></li>
 
 				<li><time>2019-06-29</time>&nbsp;<a href="https://hackmongo.com/post/response-time-sla/">Response Time SLA</a></li>
 
@@ -177,7 +176,7 @@
 
     <footer>
   <p class="copyright text-muted">
-    Copyright 2019 Daniel Nichter
+    Copyright 2020 Daniel Nichter
   </p>
   <p><a href="https://github.com/daniel-nichter"><img src="https://hackmongo.com/img/mark-github.svg"></a></p>
 </footer>

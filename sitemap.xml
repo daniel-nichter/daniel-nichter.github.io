@@ -3,6 +3,41 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
+    <loc>https://hackmongo.com/</loc>
+    <lastmod>2020-01-12T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/tags/mysql/</loc>
+    <lastmod>2020-01-12T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/tags/performance/</loc>
+    <lastmod>2020-01-12T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/post/</loc>
+    <lastmod>2020-01-12T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/tags/queries/</loc>
+    <lastmod>2020-01-12T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/post/queries-effect-performance/</loc>
+    <lastmod>2020-01-12T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/tags/</loc>
+    <lastmod>2020-01-12T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
     <loc>https://hackmongo.com/tags/auto-pos/</loc>
     <lastmod>2019-12-15T00:00:00+00:00</lastmod>
   </url>
@@ -18,27 +53,7 @@
   </url>
 
   <url>
-    <loc>https://hackmongo.com/</loc>
-    <lastmod>2019-12-15T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmongo.com/tags/mysql/</loc>
-    <lastmod>2019-12-15T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmongo.com/post/</loc>
-    <lastmod>2019-12-15T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
     <loc>https://hackmongo.com/tags/replication/</loc>
-    <lastmod>2019-12-15T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmongo.com/tags/</loc>
     <lastmod>2019-12-15T00:00:00+00:00</lastmod>
   </url>
 
