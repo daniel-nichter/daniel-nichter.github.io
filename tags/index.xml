@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on Hack Mongo</title>
+    <title>Tags on Hack Mongo/MySQL</title>
     <link>https://hackmongo.com/tags/</link>
-    <description>Recent content in Tags on Hack Mongo</description>
+    <description>Recent content in Tags on Hack Mongo/MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 12 Jan 2020 00:00:00 +0000</lastBuildDate>
@@ -417,15 +417,6 @@
     </item>
 
     <item>
-      <title>os/exec</title>
-      <link>https://hackmongo.com/tags/os/exec/</link>
-      <pubDate>Sat, 17 Jun 2017 00:00:00 +0000</pubDate>
-
-      <guid>https://hackmongo.com/tags/os/exec/</guid>
-      <description></description>
-    </item>
-
-    <item>
       <title>race condition</title>
       <link>https://hackmongo.com/tags/race-condition/</link>
       <pubDate>Sat, 17 Jun 2017 00:00:00 +0000</pubDate>
@@ -467,6 +458,15 @@
       <pubDate>Sun, 11 Jun 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/tags/write-concern/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>os/exec</title>
+      <link>https://hackmongo.com/tags/os/exec/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmongo.com/tags/os/exec/</guid>
       <description></description>
     </item>
 

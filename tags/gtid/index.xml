@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>gtid on Hack Mongo</title>
+    <title>gtid on Hack Mongo/MySQL</title>
     <link>https://hackmongo.com/tags/gtid/</link>
-    <description>Recent content in gtid on Hack Mongo</description>
+    <description>Recent content in gtid on Hack Mongo/MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/fixing-ghosted-gtids/</guid>
-      <description>MySQL auto-positioning is an integral part of replication with GTID, but it&#39;s neither required nor guaranteed to work. It&#39;s possible to enable GTIDs but disable auto-positioning, and it&#39;s possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.</description>
+      <description>MySQL auto-positioning is an integral part of replication with GTID, but it&amp;rsquo;s neither required nor guaranteed to work. It&amp;rsquo;s possible to enable GTIDs but disable auto-positioning, and it&amp;rsquo;s possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.</description>
     </item>
 
     <item>
@@ -26,7 +26,7 @@
       <pubDate>Tue, 23 Jan 2018 18:40:00 -0700</pubDate>
 
       <guid>https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/</guid>
-      <description>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it&#39;s not consistently understood or applied. The MySQL manual on the topic, 16.3.2 Handling an Unexpected Halt of a Replication Slave, is correct and authoritative, but unless you grok MySQL replication that page doesn&#39;t make it obvious why crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient.</description>
+      <description>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it&amp;rsquo;s not consistently understood or applied. The MySQL manual on the topic, 16.3.2 Handling an Unexpected Halt of a Replication Slave, is correct and authoritative, but unless you grok MySQL replication that page doesn&amp;rsquo;t make it obvious why crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient.</description>
     </item>
 
   </channel>

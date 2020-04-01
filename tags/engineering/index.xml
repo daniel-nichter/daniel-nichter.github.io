@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>engineering on Hack Mongo</title>
+    <title>engineering on Hack Mongo/MySQL</title>
     <link>https://hackmongo.com/tags/engineering/</link>
-    <description>Recent content in engineering on Hack Mongo</description>
+    <description>Recent content in engineering on Hack Mongo/MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 12 Nov 2017 00:00:00 +0000</lastBuildDate>
@@ -17,9 +17,9 @@
       <pubDate>Sun, 12 Nov 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/ideas-leaders-and-engineers/</guid>
-      <description>The Senior Engineer&#39;s Guide to Helping Others Make Decisions is a good read and good advice. I would summarize the advice as:
- &amp;ldquo;Seek first to understand, then to be understood&amp;rdquo; (Dr. Stephen Covey) Lead and guide, don&#39;t micromanage Embrace change, which entails embracing other people&#39;s thinking and way of doing things  In the first dialog, the senior engineer fails those three points.
-Av&#39;s blog post made me think&amp;hellip;</description>
+      <description>The Senior Engineer&amp;rsquo;s Guide to Helping Others Make Decisions is a good read and good advice. I would summarize the advice as:
+ &amp;ldquo;Seek first to understand, then to be understood&amp;rdquo; (Dr. Stephen Covey) Lead and guide, don&amp;rsquo;t micromanage Embrace change, which entails embracing other people&amp;rsquo;s thinking and way of doing things  In the first dialog, the senior engineer fails those three points.
+Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
     </item>
 
   </channel>

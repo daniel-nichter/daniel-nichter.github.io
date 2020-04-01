@@ -11,11 +11,11 @@
   <meta property="og:description" content="Handling MySQL errors with go-mysql/errors">
   <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmongo.com/post/when-mysql-goes-away/" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Hack Mongo" />
+  <meta property="og:site_name" content="Hack Mongo/MySQL" />
 
-  <meta name="generator" content="Hugo 0.60.0" />
+  <meta name="generator" content="Hugo 0.68.3" />
   <link rel="canonical" href="https://hackmongo.com/post/when-mysql-goes-away/" />
-  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
+  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo/MySQL">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap-toc.min.css" />
   <link rel="stylesheet" href="https://hackmongo.com/css/atom-one-dark.css" />
@@ -32,7 +32,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo</a>
+      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo/MySQL</a>
     </div>
 
     <div class="collapse navbar-collapse" id="main-navbar">
@@ -116,7 +116,7 @@
 <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
 }
-</code></pre></div><p>And then the error is logged or reported somewhere. This is as poor as it common, and it's extremely common. A robust program handles the error: retry the query if possible; or report a more specific error; else, report the unhandled error. But robust MySQL error handling in Go requires very specific knowledge and experience that is beyond the reasonable purview of app developers.</p>
+</code></pre></div><p>And then the error is logged or reported somewhere. This is as poor as it common, and it&rsquo;s extremely common. A robust program handles the error: retry the query if possible; or report a more specific error; else, report the unhandled error. But robust MySQL error handling in Go requires very specific knowledge and experience that is beyond the reasonable purview of app developers.</p>
 <p>I created <a href="https://github.com/go-mysql/errors">go-mysql/errors</a> to make robust error handling easier. The key word is &ldquo;easier&rdquo; not &ldquo;easy&rdquo; because in the course of writing this package I rediscovered how weird MySQL error handling in Go can be, and that is what we explore in this blog post.</p>
 <h2 id="scope">Scope</h2>
 <p>First, we must narrow the scope. We cannot and should not handle <em>all</em> errors. In my experience, well-behaved production apps do not encounter 99% of MySQL errors. The 1% of errors encountered are:</p>
@@ -125,13 +125,13 @@
 <li>MySQL is read-only</li>
 <li>Duplicate key error</li>
 </ul>
-<p>From bottom to top, starting with duplicate (dupe) key errors. This could be the subject of a separate blog post, so I won't go into much detail here. In short, an application should be designed to handle dupe key errors. This requires clear design around the primary key and secondary indexes of every table, and considering when/where/why duplicate data could exist, and finally: what to do about it. Sometimes, duplicate data is not an error but expected, part of normal operation. In that case, <a href="https://godoc.org/github.com/go-mysql/errors#pkg-variables">ErrDupeKey</a> is not really an error. A robust application handles duplicate key errors.</p>
-<p>MySQL being read-only often indicates a transient operation, like a failover, that is changing which MySQL instance is active/primary/writable. Presuming MySQL is supposed to be writable, <a href="https://godoc.org/github.com/go-mysql/errors#pkg-variables">ErrReadOnly</a> is more signal than error, the signal being: &ldquo;Wait and retry.&rdquo; Every non-clustering high availability solution for MySQL (that I'm aware of) requires toggling read-only for operations. Consequently, <code>ErrReadOnly</code> is very common in production. However, apps do not always handle it because you need to know the specific MySQL error code — I don't even remember it and I've been using MySQL for almost 15 years! Another gotcha: there are <em>two</em> MySQL error codes that mean &ldquo;read-only&rdquo;. With <a href="https://godoc.org/github.com/go-mysql/errors">go-mysql/errors</a> they are both reported as <code>ErrReadOnly</code>, which I find to be a lot easier to remember.</p>
-<p>When MySQL &ldquo;goes away&rdquo; (becomes unavailable) [1], it's anyone's guess which error results or whether it's actually a MySQL error and not something else. A robust application must know and handle the error, usually by waiting and retrying. Sometimes, telling the user to try again is acceptable. Other times, it can cause user anxiety if, for example, the user is sending money. In this case, the application must retry if MySQL &ldquo;goes away&rdquo; which, like read-only, is very common in production for high availability operations. <a href="https://godoc.org/github.com/go-mysql/errors#CanRetry">CanRetry</a> simplifies this: it returns true for all MySQL connection- and query-related errors, including <code>ErrReadOnly</code>. It presumes MySQL should and will be online soon.</p>
-<p><small>[1] &ldquo;MySQL has gone away&rdquo; is wording from <a href="http://search.cpan.org/~capttofu/DBD-mysql-4.046/lib/DBD/mysql.pm">Perl DBD::mysql</a>. I use it here jokingly because it's anthropomorphic, as if MySQL took a vacation or something.</small></p>
-<p>Connection errors are the focus because the <a href="https://github.com/go-sql-driver/mysql">Go MySQL driver</a> handles them in ways you might not expect but need to know. Let's make MySQL &ldquo;go away&rdquo; and see what happens&hellip;</p>
+<p>From bottom to top, starting with duplicate (dupe) key errors. This could be the subject of a separate blog post, so I won&rsquo;t go into much detail here. In short, an application should be designed to handle dupe key errors. This requires clear design around the primary key and secondary indexes of every table, and considering when/where/why duplicate data could exist, and finally: what to do about it. Sometimes, duplicate data is not an error but expected, part of normal operation. In that case, <a href="https://godoc.org/github.com/go-mysql/errors#pkg-variables">ErrDupeKey</a> is not really an error. A robust application handles duplicate key errors.</p>
+<p>MySQL being read-only often indicates a transient operation, like a failover, that is changing which MySQL instance is active/primary/writable. Presuming MySQL is supposed to be writable, <a href="https://godoc.org/github.com/go-mysql/errors#pkg-variables">ErrReadOnly</a> is more signal than error, the signal being: &ldquo;Wait and retry.&rdquo; Every non-clustering high availability solution for MySQL (that I&rsquo;m aware of) requires toggling read-only for operations. Consequently, <code>ErrReadOnly</code> is very common in production. However, apps do not always handle it because you need to know the specific MySQL error code — I don&rsquo;t even remember it and I&rsquo;ve been using MySQL for almost 15 years! Another gotcha: there are <em>two</em> MySQL error codes that mean &ldquo;read-only&rdquo;. With <a href="https://godoc.org/github.com/go-mysql/errors">go-mysql/errors</a> they are both reported as <code>ErrReadOnly</code>, which I find to be a lot easier to remember.</p>
+<p>When MySQL &ldquo;goes away&rdquo; (becomes unavailable) [1], it&rsquo;s anyone&rsquo;s guess which error results or whether it&rsquo;s actually a MySQL error and not something else. A robust application must know and handle the error, usually by waiting and retrying. Sometimes, telling the user to try again is acceptable. Other times, it can cause user anxiety if, for example, the user is sending money. In this case, the application must retry if MySQL &ldquo;goes away&rdquo; which, like read-only, is very common in production for high availability operations. <a href="https://godoc.org/github.com/go-mysql/errors#CanRetry">CanRetry</a> simplifies this: it returns true for all MySQL connection- and query-related errors, including <code>ErrReadOnly</code>. It presumes MySQL should and will be online soon.</p>
+<p><small>[1] &ldquo;MySQL has gone away&rdquo; is wording from <a href="http://search.cpan.org/~capttofu/DBD-mysql-4.046/lib/DBD/mysql.pm">Perl DBD::mysql</a>. I use it here jokingly because it&rsquo;s anthropomorphic, as if MySQL took a vacation or something.</small></p>
+<p>Connection errors are the focus because the <a href="https://github.com/go-sql-driver/mysql">Go MySQL driver</a> handles them in ways you might not expect but need to know. Let&rsquo;s make MySQL &ldquo;go away&rdquo; and see what happens&hellip;</p>
 <h2 id="error-cases">Error Cases</h2>
-<p>As of Go 1.9 we have <a href="https://golang.org/pkg/database/sql/#Conn">sql.Conn</a>, but go1.9 is less than one year old as of this writing, so it's unlikely the world has done a mass migration from <code>sql.DB</code> to <code>sql.Conn</code>. Therefore, let's start with <a href="https://golang.org/pkg/database/sql/#DB">sql.DB</a> and look at <code>sql.Conn</code> later. All the examples in this section use <code>sql.DB</code>, like:</p>
+<p>As of Go 1.9 we have <a href="https://golang.org/pkg/database/sql/#Conn">sql.Conn</a>, but go1.9 is less than one year old as of this writing, so it&rsquo;s unlikely the world has done a mass migration from <code>sql.DB</code> to <code>sql.Conn</code>. Therefore, let&rsquo;s start with <a href="https://golang.org/pkg/database/sql/#DB">sql.DB</a> and look at <code>sql.Conn</code> later. All the examples in this section use <code>sql.DB</code>, like:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#e6db74">&#34;mysql&#34;</span>, <span style="color:#e6db74">&#34;user:password@/dbname&#34;</span>)
 <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">QueryRow</span>(<span style="color:#e6db74">&#34;SELECT connection_id()&#34;</span>).<span style="color:#a6e22e">Scan</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">id</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
 </code></pre></div><p><code>db</code> is a <code>sql.DB</code> connection pool managed by the driver, <a href="https://github.com/go-sql-driver/mysql">go-sql-driver/mysql</a> and <a href="https://golang.org/pkg/database/sql/">database/sql</a>.</p>
@@ -155,7 +155,7 @@
 </tr>
 </tbody>
 </table>
-<p>When MySQL is offline (i.e. not running or unreachable for any reason), it's a network error. If MySQL was offline before any use of the <code>sql.DB</code>, this is the only error. For example, if an app comes online before MySQL does, the app will get <code>ErrCannotConnect</code> errors. But probably more common is the next error case&hellip;</p>
+<p>When MySQL is offline (i.e. not running or unreachable for any reason), it&rsquo;s a network error. If MySQL was offline before any use of the <code>sql.DB</code>, this is the only error. For example, if an app comes online before MySQL does, the app will get <code>ErrCannotConnect</code> errors. But probably more common is the next error case&hellip;</p>
 <h4 id="when-mysql-goes-away">When MySQL Goes Away</h4>
 <table>
 <thead>
@@ -171,8 +171,8 @@
 </tr>
 </tbody>
 </table>
-<p>If MySQL was online and the <code>sql.DB</code> had successfully connected and executed anything, then MySQL goes offline, it's a generic &ldquo;invalid connection&rdquo; error. <code>ErrConnLost</code> makes this more clear: the app was connected to MySQL, but now it's not.</p>
-<p>&ldquo;Why was the connection lost?&quot;, is a common question app developers want the driver to answer, but it cannot because the cause/reason is outside the driver. In other words: the driver doesn't know. Here are some possible reasons:</p>
+<p>If MySQL was online and the <code>sql.DB</code> had successfully connected and executed anything, then MySQL goes offline, it&rsquo;s a generic &ldquo;invalid connection&rdquo; error. <code>ErrConnLost</code> makes this more clear: the app was connected to MySQL, but now it&rsquo;s not.</p>
+<p>&ldquo;Why was the connection lost?&quot;, is a common question app developers want the driver to answer, but it cannot because the cause/reason is outside the driver. In other words: the driver doesn&rsquo;t know. Here are some possible reasons:</p>
 <ul>
 <li>MySQL was stopped manually by a human</li>
 <li>MySQL was stopped automatically by tooling</li>
@@ -184,7 +184,7 @@
 <li>Human error</li>
 <li>Machine error</li>
 </ul>
-<p>MySQL could be perfectly fine, but the salient fact for the app is: the MySQL connection has been lost. The app should try to reconnect (in a controlled manner; don't cause a <a href="https://en.wikipedia.org/wiki/Thundering_herd_problem">thundering herd</a>).</p>
+<p>MySQL could be perfectly fine, but the salient fact for the app is: the MySQL connection has been lost. The app should try to reconnect (in a controlled manner; don&rsquo;t cause a <a href="https://en.wikipedia.org/wiki/Thundering_herd_problem">thundering herd</a>).</p>
 <h4 id="when-mysql-shuts-down">When MySQL Shuts Down</h4>
 <table>
 <thead>
@@ -200,7 +200,7 @@
 </tr>
 </tbody>
 </table>
-<p>MySQL returns a specific error code when shutting down: 1053. My experience has been that most people don't know this and even fewer handle it. Even the driver does not handle it, which means it does not mark the connection invalid. This will be explained later in section &ldquo;Dead Connection Pool&rdquo;. The end result will be a lost connection, hence <code>ErrConnLost</code>.</p>
+<p>MySQL returns a specific error code when shutting down: 1053. My experience has been that most people don&rsquo;t know this and even fewer handle it. Even the driver does not handle it, which means it does not mark the connection invalid. This will be explained later in section &ldquo;Dead Connection Pool&rdquo;. The end result will be a lost connection, hence <code>ErrConnLost</code>.</p>
 <h4 id="when-the-connection-is-killed">When The Connection Is Killed</h4>
 <table>
 <thead>
@@ -233,17 +233,17 @@
 </tr>
 </tbody>
 </table>
-<p><code>KILL QUERY</code> causes a specific error code (1317), but I think the default error message (above) is a little vague because &ldquo;interrupted&rdquo; implies that the interrupted thing will resume after the interruption. It's like, &ldquo;We interrupt this program to bring you breaking news&hellip;&quot;, implies that the program will resume after the breaking new. The query will <em>not</em> resume; the app must re-execute the query. This error does not affect the transaction, so the app does not need to roll back. Only the one query that gets this error was killed. Previous queries and their results, the transaction, and the connection are all ok.</p>
+<p><code>KILL QUERY</code> causes a specific error code (1317), but I think the default error message (above) is a little vague because &ldquo;interrupted&rdquo; implies that the interrupted thing will resume after the interruption. It&rsquo;s like, &ldquo;We interrupt this program to bring you breaking news&hellip;&quot;, implies that the program will resume after the breaking new. The query will <em>not</em> resume; the app must re-execute the query. This error does not affect the transaction, so the app does not need to roll back. Only the one query that gets this error was killed. Previous queries and their results, the transaction, and the connection are all ok.</p>
 <h2 id="dead-connection-pool-dcp">Dead Connection Pool (DCP)</h2>
 <p>When MySQL goes offline, there will be N number of <code>ErrConnLost</code> errors, where N = <a href="https://golang.org/pkg/database/sql/#DB.SetMaxOpenConns">MaxOpenConns</a>, followed by <code>ErrCannotConnect</code> errors until MySQL is back online.</p>
-<p>Understanding DCP behavior is important. If N = 100 and MySQL goes offline, the app will get at most 100 <code>ErrConnLost</code>, then <code>ErrCannotConnect</code>. (&ldquo;At most&rdquo; because the driver only opens connections as needed. If N = 100 but only 50 connections were needed, then only 50 <code>ErrConnLost</code>.) This happens because the driver does not automatically retry lost (invalid) connections. First, it marks the connection &ldquo;invalid&rdquo; and returns an error. Later, when the invalid connection is reused, the driver tries to reconnect and that's when it returns <code>ErrCannotConnect</code>. This means apps will produce a flurry of <code>ErrConnLost</code> overlapping with some <code>ErrCannotConnect</code> until the connection pool is dead: all connections are marked invalid.</p>
+<p>Understanding DCP behavior is important. If N = 100 and MySQL goes offline, the app will get at most 100 <code>ErrConnLost</code>, then <code>ErrCannotConnect</code>. (&ldquo;At most&rdquo; because the driver only opens connections as needed. If N = 100 but only 50 connections were needed, then only 50 <code>ErrConnLost</code>.) This happens because the driver does not automatically retry lost (invalid) connections. First, it marks the connection &ldquo;invalid&rdquo; and returns an error. Later, when the invalid connection is reused, the driver tries to reconnect and that&rsquo;s when it returns <code>ErrCannotConnect</code>. This means apps will produce a flurry of <code>ErrConnLost</code> overlapping with some <code>ErrCannotConnect</code> until the connection pool is dead: all connections are marked invalid.</p>
 <p><em>Exception</em>: the driver does not handle &ldquo;Error 1053: Server shutdown in progress&rdquo;, so it does not mark the connection invalid. Consequently, this error does not account toward N <code>ErrConnLost</code> errors. For example, with N = 1 the errors are:</p>
 <ol>
 <li><code>ErrConnLost</code> (&ldquo;Error 1053: Server shutdown in progress&rdquo;)</li>
 <li><code>ErrConnLost</code> (&ldquo;invalid connection&rdquo;)</li>
 <li><code>ErrCannotConnect</code></li>
 </ol>
-<p>There is no <code>ErrServerShutdown</code> because it's not actionable: by the time the app receives error 1053, the connection is already lost.</p>
+<p>There is no <code>ErrServerShutdown</code> because it&rsquo;s not actionable: by the time the app receives error 1053, the connection is already lost.</p>
 <h2 id="sqlconn-go19">sql.Conn (go1.9+)</h2>
 <table>
 <thead>
@@ -291,7 +291,7 @@
 </table>
 <p>The first error is the same and expected because we killed the connection. <code>sql.DB</code> recovers immediately (&ldquo;Query OK&rdquo;), but <code>sql.Conn</code> returns a second error before reconnecting and executing the query. The second error is false-positive—MySQL is online—but there is no way for an app to determine this. All an app can and should do is retry.</p>
 <h2 id="conclusion">Conclusion</h2>
-<p>Handling, rather than simply reporting, MySQL errors in Go is not trivial. Error cases, dead connection pool behavior, and <code>sql.Conn</code> described here give a sense of the complexities. If you're curious, look at the <a href="https://github.com/go-mysql/errors/blob/master/errors.go">source code</a> for the all the details. If you're a developer using Go and MySQL, <a href="https://github.com/go-mysql/errors">go-mysql/errors</a> will greatly simplify and improve MySQL error handling. It provides more than shown here; check out the <a href="https://godoc.org/github.com/go-mysql/errors">documentation</a>.</p>
+<p>Handling, rather than simply reporting, MySQL errors in Go is not trivial. Error cases, dead connection pool behavior, and <code>sql.Conn</code> described here give a sense of the complexities. If you&rsquo;re curious, look at the <a href="https://github.com/go-mysql/errors/blob/master/errors.go">source code</a> for the all the details. If you&rsquo;re a developer using Go and MySQL, <a href="https://github.com/go-mysql/errors">go-mysql/errors</a> will greatly simplify and improve MySQL error handling. It provides more than shown here; check out the <a href="https://godoc.org/github.com/go-mysql/errors">documentation</a>.</p>
 
       </article>
       <hr>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>metrics on Hack Mongo</title>
+    <title>metrics on Hack Mongo/MySQL</title>
     <link>https://hackmongo.com/tags/metrics/</link>
-    <description>Recent content in metrics on Hack Mongo</description>
+    <description>Recent content in metrics on Hack Mongo/MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 29 Jun 2019 19:00:00 -0300</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
 
       <guid>https://hackmongo.com/post/response-time-sla/</guid>
-      <description>Response time (or latency) percentiles are a ubiquitous measure of system performance. The P999 (99.9th percentile) is a high bar, so it&#39;s a good metric to determine an SLA. For example, my team runs a system with an 800 millisecond response time SLA determined by the P999. To meet that SLA, 99.9% of all requests must take &amp;lt;= 800ms. The system meets the SLA, but here&#39;s its P999 graph:
+      <description>Response time (or latency) percentiles are a ubiquitous measure of system performance. The P999 (99.9th percentile) is a high bar, so it&amp;rsquo;s a good metric to determine an SLA. For example, my team runs a system with an 800 millisecond response time SLA determined by the P999. To meet that SLA, 99.9% of all requests must take &amp;lt;= 800ms. The system meets the SLA, but here&amp;rsquo;s its P999 graph:
 Looks bad, but the system is meeting the SLA.</description>
     </item>
 
@@ -27,7 +27,7 @@ Looks bad, but the system is meeting the SLA.</description>
       <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
 
       <guid>https://hackmongo.com/post/path-and-dimension-metrics/</guid>
-      <description>The two most common strategies for identifying and organizing data points that comprise metric time series are path and dimension. This post is geared towards engineers who have never been introduced to the subject. Implementing metrics from the ground up, or adding new metrics to an existing system, can be overwhelming in nontrivial systems. Understanding these two strategies simplifies one&#39;s efforts.
+      <description>The two most common strategies for identifying and organizing data points that comprise metric time series are path and dimension. This post is geared towards engineers who have never been introduced to the subject. Implementing metrics from the ground up, or adding new metrics to an existing system, can be overwhelming in nontrivial systems. Understanding these two strategies simplifies one&amp;rsquo;s efforts.
 Path-based Metrics Path-based metrics are the historical norm:
 host.prod1.disk-free.sda host.</description>
     </item>

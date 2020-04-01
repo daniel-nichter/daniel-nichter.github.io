@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>checklist on Hack Mongo</title>
+    <title>checklist on Hack Mongo/MySQL</title>
     <link>https://hackmongo.com/tags/checklist/</link>
-    <description>Recent content in checklist on Hack Mongo</description>
+    <description>Recent content in checklist on Hack Mongo/MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 17 Sep 2017 00:00:00 +0000</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sun, 17 Sep 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/five-point-checklist-for-excellent-software/</guid>
-      <description>I&#39;ve never met a developer who hasn&#39;t read or reviewed a lot of code written by other developers. If there&#39;s one truism in the field of software of engineering it&#39;s that the process is collaborative. Unless you write and never release software, other people will read the code, and they&#39;re most likely reading it not for a fun bedtime story but because they need to understand and probably fix or modify it.</description>
+      <description>I&amp;rsquo;ve never met a developer who hasn&amp;rsquo;t read or reviewed a lot of code written by other developers. If there&amp;rsquo;s one truism in the field of software of engineering it&amp;rsquo;s that the process is collaborative. Unless you write and never release software, other people will read the code, and they&amp;rsquo;re most likely reading it not for a fun bedtime story but because they need to understand and probably fix or modify it.</description>
     </item>
 
   </channel>

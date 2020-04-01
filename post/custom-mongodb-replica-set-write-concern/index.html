@@ -11,11 +11,11 @@
   <meta property="og:description" content="For data center-aware write acks">
   <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmongo.com/post/custom-mongodb-replica-set-write-concern/" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Hack Mongo" />
+  <meta property="og:site_name" content="Hack Mongo/MySQL" />
 
-  <meta name="generator" content="Hugo 0.60.0" />
+  <meta name="generator" content="Hugo 0.68.3" />
   <link rel="canonical" href="https://hackmongo.com/post/custom-mongodb-replica-set-write-concern/" />
-  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
+  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo/MySQL">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap-toc.min.css" />
   <link rel="stylesheet" href="https://hackmongo.com/css/atom-one-dark.css" />
@@ -32,7 +32,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo</a>
+      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo/MySQL</a>
     </div>
 
     <div class="collapse navbar-collapse" id="main-navbar">
@@ -117,24 +117,24 @@
 <blockquote>
 <p>Write concern describes the level of acknowledgement requested from MongoDB for write operations to a standalone mongod or to replica sets or to sharded clusters.</p>
 </blockquote>
-<p>Awesome! I want 1 write ack from any secondary in the primary DC so when the primary crashes we're guaranteed to have an up-to-date secondary in the primary DC ready to be elected primary. Here's my production MongoDB replica set:</p>
+<p>Awesome! I want 1 write ack from any secondary in the primary DC so when the primary crashes we&rsquo;re guaranteed to have an up-to-date secondary in the primary DC ready to be elected primary. Here&rsquo;s my production MongoDB replica set:</p>
 <p><img src="/img/mongodb-cluster.svg" alt="MonoDB Cluster"></p>
-<p><em>All</em> queries happen on the current primary. The secondaries in the primary DC are hot-standbys. The p0 (priority-zero) members in the disaster recovery (DR) DC vote but don't become primary in normal failover situations. (We fail over to the DR DC manually when a disaster takes the whole primary DC offline.)</p>
-<p>Here's the problem: the MongoDB manual doesn't make it clear or obvious how to achieve what I want. The answer is a subtle and careful reading of three pages:</p>
+<p><em>All</em> queries happen on the current primary. The secondaries in the primary DC are hot-standbys. The p0 (priority-zero) members in the disaster recovery (DR) DC vote but don&rsquo;t become primary in normal failover situations. (We fail over to the DR DC manually when a disaster takes the whole primary DC offline.)</p>
+<p>Here&rsquo;s the problem: the MongoDB manual doesn&rsquo;t make it clear or obvious how to achieve what I want. The answer is a subtle and careful reading of three pages:</p>
 <ul>
 <li><a href="https://docs.mongodb.com/manual/reference/write-concern/">Write Concern</a></li>
 <li><a href="https://docs.mongodb.com/manual/reference/replica-configuration/">Replica Set Configuration</a></li>
 <li><a href="https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/">Configure Replica Set Tag Set</a></li>
 </ul>
-<p>Here's the TL;DR, the relevant rs config options expressed in Ruby:</p>
+<p>Here&rsquo;s the TL;DR, the relevant rs config options expressed in Ruby:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">rsConfig <span style="color:#f92672">=</span> {
-  <span style="color:#e6db74">:settings</span> <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> {
-    <span style="color:#e6db74">:getLastErrorModes</span>    <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> { <span style="color:#e6db74">:twoack</span> <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> { <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">primary-dc</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672"></span>} },
-    <span style="color:#e6db74">:getLastErrorDefaults</span> <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> { <span style="color:#e6db74">:w</span> <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#e6db74">:twoack</span>, <span style="color:#e6db74">:j</span> <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">true</span>, <span style="color:#e6db74">:wtimeout</span> <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">500</span> <span style="color:#f92672"></span>}
+  <span style="color:#e6db74">:settings</span> <span style="color:#f92672">=&gt;</span> {
+    <span style="color:#e6db74">:getLastErrorModes</span>    <span style="color:#f92672">=&gt;</span> { <span style="color:#e6db74">:twoack</span> <span style="color:#f92672">=&gt;</span> { <span style="color:#e6db74">&#34;primary-dc&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">2</span> } },
+    <span style="color:#e6db74">:getLastErrorDefaults</span> <span style="color:#f92672">=&gt;</span> { <span style="color:#e6db74">:w</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">:twoack</span>, <span style="color:#e6db74">:j</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">true</span>, <span style="color:#e6db74">:wtimeout</span> <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">500</span> }
   }
 }
-</code></pre></div><p>Here's the long version for those of you reading this in bed after a frustrating and unfruitful day at work trying to decipher and piece this together from the MongoDB manual&hellip;</p>
-<p>First, as you no doubt learned from reading <a href="https://docs.mongodb.com/manual/reference/write-concern/">Write Concern</a>, <code>w:</code> can take <code>&lt;number&gt;</code>, <code>&quot;majority&quot;</code>, or <code>&lt;tag set&gt;</code>. At first I thought <code>&quot;majority&quot;</code> was a good idea but here's the problem:</p>
+</code></pre></div><p>Here&rsquo;s the long version for those of you reading this in bed after a frustrating and unfruitful day at work trying to decipher and piece this together from the MongoDB manual&hellip;</p>
+<p>First, as you no doubt learned from reading <a href="https://docs.mongodb.com/manual/reference/write-concern/">Write Concern</a>, <code>w:</code> can take <code>&lt;number&gt;</code>, <code>&quot;majority&quot;</code>, or <code>&lt;tag set&gt;</code>. At first I thought <code>&quot;majority&quot;</code> was a good idea but here&rsquo;s the problem:</p>
 <blockquote>
 <p>Requests acknowledgement that write operations have propagated to the majority of voting nodes, including the primary.</p>
 </blockquote>
@@ -143,7 +143,7 @@
 <blockquote>
 <p>The numeric value in the custom <em>getLastErrorModes</em> write concern refers to the number of <em>unique</em> tag values (in the associated replica set tag) required to satisfy the write concern.</p>
 </blockquote>
-<p>Where &ldquo;<em>unique</em>&rdquo; is emphasized (the blockquote above clobbers it). At first my inclination was to <a href="https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/#add-tag-sets-to-a-replica-set">configure the rs member tags</a> like <code>tags = {&quot;dc&quot;: &quot;primary&quot;}</code> and <code>tags = {&quot;dc&quot;: &quot;secondary&quot;}</code>. Seems logical, right? But it doesn't work because the tag I care about, <code>&quot;dc&quot;: &quot;primary&quot;</code>, is only 1 unique value. What's needed is:</p>
+<p>Where &ldquo;<em>unique</em>&rdquo; is emphasized (the blockquote above clobbers it). At first my inclination was to <a href="https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/#add-tag-sets-to-a-replica-set">configure the rs member tags</a> like <code>tags = {&quot;dc&quot;: &quot;primary&quot;}</code> and <code>tags = {&quot;dc&quot;: &quot;secondary&quot;}</code>. Seems logical, right? But it doesn&rsquo;t work because the tag I care about, <code>&quot;dc&quot;: &quot;primary&quot;</code>, is only 1 unique value. What&rsquo;s needed is:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#e6db74">&#34;primary-dc&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;node-01&#34;</span>
 <span style="color:#e6db74">&#34;primary-dc&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;node-02&#34;</span>
 <span style="color:#e6db74">&#34;primary-dc&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;node-03&#34;</span>
@@ -151,8 +151,8 @@
 <span style="color:#e6db74">&#34;dr-dc&#34;</span><span style="color:#f92672">:</span>      <span style="color:#e6db74">&#34;node-05&#34;</span>
 <span style="color:#e6db74">&#34;dr-dc&#34;</span><span style="color:#f92672">:</span>      <span style="color:#e6db74">&#34;node-06&#34;</span>
 </code></pre></div><p>One of those tags on each of the corresponding members. Now there are 3 unique values for <code>primary-dc</code>, so the custom write concern <code>{ :twoack =&gt; { &quot;primary-dc&quot; =&gt; 2 } }</code> means writes must be acked by at least 2 unique <code>primary-dc</code> values, and since that tag is only on primary DC members, it does what I want.</p>
-<p>To be fair, this is pretty well and clearly documented <a href="https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/#custom-multi-datacenter-write-concerns">here</a>. Problem is: the docs for <a href="https://docs.mongodb.com/manual/reference/write-concern/#w-option">w: &lt;tag set&gt;</a> don't link there. And <a href="https://docs.mongodb.com/manual/reference/write-concern/#replica-sets">here</a> doesn't even mention <code>w: &lt;tag set&gt;</code>.</p>
-<p>OK so we have the custom write concern doc/tag set we need. How do we use it? This is done in the <a href="https://docs.mongodb.com/manual/reference/replica-configuration/">rs config</a> with options <code>getLastErrorModes</code> and <code>getLastErrorDefaults</code> as shown in the Ruby snippet above. I read this whole page, or so I thought because I glossed right over these options because their names having nothing to do with their functions. Here's how I'd rename them:</p>
+<p>To be fair, this is pretty well and clearly documented <a href="https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/#custom-multi-datacenter-write-concerns">here</a>. Problem is: the docs for <a href="https://docs.mongodb.com/manual/reference/write-concern/#w-option">w: &lt;tag set&gt;</a> don&rsquo;t link there. And <a href="https://docs.mongodb.com/manual/reference/write-concern/#replica-sets">here</a> doesn&rsquo;t even mention <code>w: &lt;tag set&gt;</code>.</p>
+<p>OK so we have the custom write concern doc/tag set we need. How do we use it? This is done in the <a href="https://docs.mongodb.com/manual/reference/replica-configuration/">rs config</a> with options <code>getLastErrorModes</code> and <code>getLastErrorDefaults</code> as shown in the Ruby snippet above. I read this whole page, or so I thought because I glossed right over these options because their names having nothing to do with their functions. Here&rsquo;s how I&rsquo;d rename them:</p>
 <pre><code>getLastErrorModes    -&gt;  extendedWriteConcern
 getLastErrorDefaults -&gt;  defaultWriteConcern
 </code></pre><p>Or maybe &ldquo;custom&rdquo; instead of &ldquo;extended&rdquo;. Either way, the first option lets you define a custom write concern which is done with replica set tags. And the second option lets you set the default write concern, in which you set <code>w:</code> to the custom write concern.</p>

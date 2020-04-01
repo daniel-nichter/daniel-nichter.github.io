@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>software design on Hack Mongo</title>
+    <title>software design on Hack Mongo/MySQL</title>
     <link>https://hackmongo.com/tags/software-design/</link>
-    <description>Recent content in software design on Hack Mongo</description>
+    <description>Recent content in software design on Hack Mongo/MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 02 Dec 2018 00:00:00 +0000</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/component-based-software-design/</guid>
-      <description>Software systems are difficult to design because code does not delineate and organize itself. Even experienced engineers can struggle to design a system because there are many solutions but it&#39;s not clear which is the best. Compounding the difficulty: engineers know that code can work fine even if, internally, it&#39;s an unorganized highly-entangled mess. We want code to be well-organized, but we don&#39;t know how to make it so. Component-based design is the solution.</description>
+      <description>Software systems are difficult to design because code does not delineate and organize itself. Even experienced engineers can struggle to design a system because there are many solutions but it&amp;rsquo;s not clear which is the best. Compounding the difficulty: engineers know that code can work fine even if, internally, it&amp;rsquo;s an unorganized highly-entangled mess. We want code to be well-organized, but we don&amp;rsquo;t know how to make it so. Component-based design is the solution.</description>
     </item>
 
     <item>
@@ -38,7 +38,7 @@ Programming languages have aspects which affect how we think, design, and implem
       <guid>https://hackmongo.com/post/bootloader-design-pattern/</guid>
       <description>Extensibility is a lofty goal for software design, and difficult to achieve. The Wikipedia article notes:
  Extensible design in software engineering is to accept that not everything can be designed in advance.
- That&#39;s a paradox because it entails that extensible design does not accept that extensibility can be designed in advance! Fortunately, there&#39;s at least one solution that can be intentionally designed and implemented in advance. I call it the &amp;ldquo;Bootloader&amp;rdquo; design pattern.</description>
+ That&amp;rsquo;s a paradox because it entails that extensible design does not accept that extensibility can be designed in advance! Fortunately, there&amp;rsquo;s at least one solution that can be intentionally designed and implemented in advance. I call it the &amp;ldquo;Bootloader&amp;rdquo; design pattern.</description>
     </item>
 
     <item>
@@ -47,7 +47,7 @@ Programming languages have aspects which affect how we think, design, and implem
       <pubDate>Sun, 10 Dec 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/approaching-a-new-software-project/</guid>
-      <description>Approaching a new software project is difficult for two reasons. First, there&#39;s no &amp;ldquo;guiding star&amp;rdquo;, no objective starting point. The developer can begin from and proceed in many directions, which makes choosing difficult. They want to proceed in a good direction from the start, not wasting time or effort, but how can they make a good choice without a guide or the benefit of experience? Being forced to choose and move ahead, the choice is often made randomly rather than methodically.</description>
+      <description>Approaching a new software project is difficult for two reasons. First, there&amp;rsquo;s no &amp;ldquo;guiding star&amp;rdquo;, no objective starting point. The developer can begin from and proceed in many directions, which makes choosing difficult. They want to proceed in a good direction from the start, not wasting time or effort, but how can they make a good choice without a guide or the benefit of experience? Being forced to choose and move ahead, the choice is often made randomly rather than methodically.</description>
     </item>
 
     <item>
@@ -56,7 +56,7 @@ Programming languages have aspects which affect how we think, design, and implem
       <pubDate>Sun, 17 Sep 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/five-point-checklist-for-excellent-software/</guid>
-      <description>I&#39;ve never met a developer who hasn&#39;t read or reviewed a lot of code written by other developers. If there&#39;s one truism in the field of software of engineering it&#39;s that the process is collaborative. Unless you write and never release software, other people will read the code, and they&#39;re most likely reading it not for a fun bedtime story but because they need to understand and probably fix or modify it.</description>
+      <description>I&amp;rsquo;ve never met a developer who hasn&amp;rsquo;t read or reviewed a lot of code written by other developers. If there&amp;rsquo;s one truism in the field of software of engineering it&amp;rsquo;s that the process is collaborative. Unless you write and never release software, other people will read the code, and they&amp;rsquo;re most likely reading it not for a fun bedtime story but because they need to understand and probably fix or modify it.</description>
     </item>
 
     <item>
@@ -65,7 +65,7 @@ Programming languages have aspects which affect how we think, design, and implem
       <pubDate>Tue, 05 Sep 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmongo.com/post/designing-tools-for-integration/</guid>
-      <description>When we write a new tool to do X, it&#39;s common to program the tool to do X in one way. When X is trivial or very narrow in scope, this makes sense, and programming any more would fall prey to over-engineering. However, when the tool does many things (all logically related, else it falls prey to bloat and/or feature-creep), there quickly becomes many ways to accomplish those many things. No problem, we program all those things, too, but during my tool-making career I&#39;ve learned two things:</description>
+      <description>When we write a new tool to do X, it&amp;rsquo;s common to program the tool to do X in one way. When X is trivial or very narrow in scope, this makes sense, and programming any more would fall prey to over-engineering. However, when the tool does many things (all logically related, else it falls prey to bloat and/or feature-creep), there quickly becomes many ways to accomplish those many things. No problem, we program all those things, too, but during my tool-making career I&amp;rsquo;ve learned two things:</description>
     </item>
 
     <item>
@@ -74,7 +74,7 @@ Programming languages have aspects which affect how we think, design, and implem
       <pubDate>Sun, 20 Aug 2017 11:20:00 -0700</pubDate>
 
       <guid>https://hackmongo.com/post/how-to-test-the-database/</guid>
-      <description>&amp;ldquo;How do I test the database?&amp;rdquo; is a question I&#39;ve been asked by colleagues many times. There&#39;s a good, clean solution, but let&#39;s first step back from what seems to be the problem to unpack why &amp;ldquo;testing the database&amp;rdquo; is not special (but nonetheless important). In other words: colleagues don&#39;t ask, &amp;ldquo;How do I test such-and-such package?&amp;quot;, because that&#39;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</description>
+      <description>&amp;ldquo;How do I test the database?&amp;rdquo; is a question I&amp;rsquo;ve been asked by colleagues many times. There&amp;rsquo;s a good, clean solution, but let&amp;rsquo;s first step back from what seems to be the problem to unpack why &amp;ldquo;testing the database&amp;rdquo; is not special (but nonetheless important). In other words: colleagues don&amp;rsquo;t ask, &amp;ldquo;How do I test such-and-such package?&amp;quot;, because that&amp;rsquo;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</description>
     </item>
 
     <item>

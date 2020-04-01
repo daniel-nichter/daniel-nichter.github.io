@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>testing on Hack Mongo</title>
+    <title>testing on Hack Mongo/MySQL</title>
     <link>https://hackmongo.com/tags/testing/</link>
-    <description>Recent content in testing on Hack Mongo</description>
+    <description>Recent content in testing on Hack Mongo/MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 20 Aug 2017 11:20:00 -0700</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sun, 20 Aug 2017 11:20:00 -0700</pubDate>
 
       <guid>https://hackmongo.com/post/how-to-test-the-database/</guid>
-      <description>&amp;ldquo;How do I test the database?&amp;rdquo; is a question I&#39;ve been asked by colleagues many times. There&#39;s a good, clean solution, but let&#39;s first step back from what seems to be the problem to unpack why &amp;ldquo;testing the database&amp;rdquo; is not special (but nonetheless important). In other words: colleagues don&#39;t ask, &amp;ldquo;How do I test such-and-such package?&amp;quot;, because that&#39;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</description>
+      <description>&amp;ldquo;How do I test the database?&amp;rdquo; is a question I&amp;rsquo;ve been asked by colleagues many times. There&amp;rsquo;s a good, clean solution, but let&amp;rsquo;s first step back from what seems to be the problem to unpack why &amp;ldquo;testing the database&amp;rdquo; is not special (but nonetheless important). In other words: colleagues don&amp;rsquo;t ask, &amp;ldquo;How do I test such-and-such package?&amp;quot;, because that&amp;rsquo;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</description>
     </item>
 
   </channel>

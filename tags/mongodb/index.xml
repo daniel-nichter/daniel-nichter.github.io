@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>mongodb on Hack Mongo</title>
+    <title>mongodb on Hack Mongo/MySQL</title>
     <link>https://hackmongo.com/tags/mongodb/</link>
-    <description>Recent content in mongodb on Hack Mongo</description>
+    <description>Recent content in mongodb on Hack Mongo/MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 11 Jun 2017 00:00:00 +0000</lastBuildDate>
@@ -19,7 +19,7 @@
       <guid>https://hackmongo.com/post/custom-mongodb-replica-set-write-concern/</guid>
       <description>One of the great things about MongoDB is write concern:
  Write concern describes the level of acknowledgement requested from MongoDB for write operations to a standalone mongod or to replica sets or to sharded clusters.
- Awesome! I want 1 write ack from any secondary in the primary DC so when the primary crashes we&#39;re guaranteed to have an up-to-date secondary in the primary DC ready to be elected primary.</description>
+ Awesome! I want 1 write ack from any secondary in the primary DC so when the primary crashes we&amp;rsquo;re guaranteed to have an up-to-date secondary in the primary DC ready to be elected primary.</description>
     </item>
 
   </channel>

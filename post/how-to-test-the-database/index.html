@@ -11,11 +11,11 @@
   <meta property="og:description" content="It&#39;s important but not special">
   <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmongo.com/post/how-to-test-the-database/" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Hack Mongo" />
+  <meta property="og:site_name" content="Hack Mongo/MySQL" />
 
-  <meta name="generator" content="Hugo 0.60.0" />
+  <meta name="generator" content="Hugo 0.68.3" />
   <link rel="canonical" href="https://hackmongo.com/post/how-to-test-the-database/" />
-  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
+  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo/MySQL">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap-toc.min.css" />
   <link rel="stylesheet" href="https://hackmongo.com/css/atom-one-dark.css" />
@@ -32,7 +32,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo</a>
+      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo/MySQL</a>
     </div>
 
     <div class="collapse navbar-collapse" id="main-navbar">
@@ -111,44 +111,44 @@
 </div>
 
 
-        <p>&ldquo;How do I test the database?&rdquo; is a question I've been asked by colleagues many times. There's a good, clean solution, but let's first step back from what seems to be the problem to unpack why &ldquo;testing the database&rdquo; is not special (but nonetheless important). In other words: colleagues don't ask, &ldquo;How do I test such-and-such package?&quot;, because that's common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</p>
+        <p>&ldquo;How do I test the database?&rdquo; is a question I&rsquo;ve been asked by colleagues many times. There&rsquo;s a good, clean solution, but let&rsquo;s first step back from what seems to be the problem to unpack why &ldquo;testing the database&rdquo; is not special (but nonetheless important). In other words: colleagues don&rsquo;t ask, &ldquo;How do I test such-and-such package?&quot;, because that&rsquo;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</p>
 <h2 id="challenges">Challenges</h2>
 <h3 id="external-system">External System</h3>
-<p>One reason testing the database seems difficult is because it's an external system. The developer probably has an instance running on their laptop, but what about the CI system, staging, and production? Staging and prod presumably already have database instances, so the real challenge is programmatically setting up and tearing down a database in the test suites. The answer is: sandbox. <a href="https://mysqlsandbox.net/">MySQL Sandbox</a> is a great example. In general, there are four solutions:</p>
+<p>One reason testing the database seems difficult is because it&rsquo;s an external system. The developer probably has an instance running on their laptop, but what about the CI system, staging, and production? Staging and prod presumably already have database instances, so the real challenge is programmatically setting up and tearing down a database in the test suites. The answer is: sandbox. <a href="https://mysqlsandbox.net/">MySQL Sandbox</a> is a great example. In general, there are four solutions:</p>
 <ol>
 <li>Preexisting sandbox solution (like MySQL Sandbox)</li>
 <li>Roll your own sandbox with scripting (e.g. Bash) and the database binaries</li>
 <li>Spin up db instances in the cloud (e.g. Amazon RDS, Google Cloud SQL, etc.)</li>
 <li>If using a hosted CI solution, see if they offer database instances</li>
 </ol>
-<p>It can be a lot of upfront work, but if set up well it's usually not much to maintain going forward, and the benefits more than surpass the initial effort. It's even possible (and sometimes necessary) to test against multiple versions of the database. So set up for multiple db versions and variations. You'll thank yourself later.</p>
-<h3 id="codedatabase-separation">Code-Database Separation</h3>
+<p>It can be a lot of upfront work, but if set up well it&rsquo;s usually not much to maintain going forward, and the benefits more than surpass the initial effort. It&rsquo;s even possible (and sometimes necessary) to test against multiple versions of the database. So set up for multiple db versions and variations. You&rsquo;ll thank yourself later.</p>
+<h3 id="code-database-separation">Code-Database Separation</h3>
 <p>A second reason testing the database seems difficult is less about the database and more about the code that uses the database. The problem arises when the code under test makes a database call:</p>
 <p><img src="/img/db-call.svg" alt="Database Call"></p>
-<p>This mélange is very common and tends to works ok when kept this simple, but there are issues and a better way. The primary issue is: what is being tested? Presumably the function logic, but implicitly and indirectly the complete database access is being tested, too. By &ldquo;complete&rdquo; I mean the code calling the database, the query, the database itself, and the data from (or to) the database. When there's a bug in this function, it could be related to database access, or function logic given the data, or both due to concurrency, race conditions, database locking, database transactions, etc. (We'll explore this later.) Consequently, function logic and database access are tightly coupled, and tight coupling is usually poor software design. So what's a better way?</p>
+<p>This mélange is very common and tends to works ok when kept this simple, but there are issues and a better way. The primary issue is: what is being tested? Presumably the function logic, but implicitly and indirectly the complete database access is being tested, too. By &ldquo;complete&rdquo; I mean the code calling the database, the query, the database itself, and the data from (or to) the database. When there&rsquo;s a bug in this function, it could be related to database access, or function logic given the data, or both due to concurrency, race conditions, database locking, database transactions, etc. (We&rsquo;ll explore this later.) Consequently, function logic and database access are tightly coupled, and tight coupling is usually poor software design. So what&rsquo;s a better way?</p>
 <h2 id="a-better-way">A Better Way</h2>
-<p>Put aside databases for a moment, and let's think about programs and data flow:</p>
+<p>Put aside databases for a moment, and let&rsquo;s think about programs and data flow:</p>
 <p><img src="/img/data-in-data-out.svg" alt="Data In, Data Out"></p>
-<p>Programs are largely &ldquo;data in, data out&rdquo;. Data (input) is passed to a function (or some block of code) which acts on the data and returns other data (output). Of course, there's a lot more to code than this (mutating data, storing data, transferring data, etc.), but when it comes to databases this is usually what's happening. (<em>Usually</em>, but not always, which we'll explore later.)</p>
+<p>Programs are largely &ldquo;data in, data out&rdquo;. Data (input) is passed to a function (or some block of code) which acts on the data and returns other data (output). Of course, there&rsquo;s a lot more to code than this (mutating data, storing data, transferring data, etc.), but when it comes to databases this is usually what&rsquo;s happening. (<em>Usually</em>, but not always, which we&rsquo;ll explore later.)</p>
 <p>Therefore: <mark>separate data from logic, where &ldquo;data&rdquo; entails all code necessary to fetch or store the data.</mark></p>
 <p><img src="/img/testing-data-in-data-out.svg" alt="Testing Data In, Data Out"></p>
 <p>The image above illustrates a better way to test &ldquo;Some Function&rdquo; by factoring out the &ldquo;Database Call&rdquo; and, instead, passing input data into the function and testing its output data. The input data is, of course, whatever the &ldquo;Database Call&rdquo; call would fetch. This requires more work to create real or mock input data, but the benefits outweigh the effort.</p>
-<p>One benefit is: testing the function is faster (no database call) and cleaner. By &ldquo;cleaner&rdquo; I mean that the test tests only whatever the function is supposed to do. If there's a bug in the function, it cannot be database-related. This makes the function easier to understand, reasonable about, fix, and maintain. Your future self and future coworkers will thank you!</p>
-<p>A second benefit is: we can test edge conditions and bad data. Databases usually contain and enforce good data, so trying to coerce a database to contain and return bad data for the sake of testing adds extra work to an already tedious process. But without the database, we're free to pass in a dumpster fire of input data and see how the poor &lsquo;ol function copes.</p>
-<p>Strangely, the real world is neither perfect nor ideal, so this clean separation isn't always possible, but it remains nevertheless the goal.</p>
-<h3 id="but-wait-theres-more">But Wait, There's More!</h3>
-<p>The data-logic separation goes beyond databases. For example, another testing challenge developers ask me about is testing system commands. Let's imagine a program need to work with <code>ifconfig</code>. So the program needs to</p>
+<p>One benefit is: testing the function is faster (no database call) and cleaner. By &ldquo;cleaner&rdquo; I mean that the test tests only whatever the function is supposed to do. If there&rsquo;s a bug in the function, it cannot be database-related. This makes the function easier to understand, reasonable about, fix, and maintain. Your future self and future coworkers will thank you!</p>
+<p>A second benefit is: we can test edge conditions and bad data. Databases usually contain and enforce good data, so trying to coerce a database to contain and return bad data for the sake of testing adds extra work to an already tedious process. But without the database, we&rsquo;re free to pass in a dumpster fire of input data and see how the poor &lsquo;ol function copes.</p>
+<p>Strangely, the real world is neither perfect nor ideal, so this clean separation isn&rsquo;t always possible, but it remains nevertheless the goal.</p>
+<h3 id="but-wait-theres-more">But Wait, There&rsquo;s More!</h3>
+<p>The data-logic separation goes beyond databases. For example, another testing challenge developers ask me about is testing system commands. Let&rsquo;s imagine a program need to work with <code>ifconfig</code>. So the program needs to</p>
 <ol>
 <li>Run <code>ifconfig</code> to get its output</li>
 <li>Parse the output</li>
 <li>Do something with the parsed output</li>
 </ol>
-<p>The end goal is #3, so often there will be one function which does #3 by also doing #1 and #2. This is more challenging to test than a database because <code>ifconfig</code> output differs, and the path to the binary can differ, too. Controlling all this in a test when it's all lumped into one function is usually not possible. The solution is the same: separate the data and the logic.</p>
-<p>In this example, #1 is akin to the database. It's an external system that yields data. So isolate that code. Have a function or package or something that does nothing more than run <code>ifconfig</code> and return its <em>raw</em> output. Then have a second function or package that takes output from #1 (i.e. raw <code>ifconfig</code> output) as input, parses it, and returns a data structure. Finally, a third func/pkg takes that data structure as input and does whatever #3 is supposed to do. The 2nd and 3rd funcs/pkgs will be easy to test. Testing the fun/pkg that actually runs <code>ifconfig</code> can be tricky if it has to work on a wide spectrum of systems, but the challenge is nonetheless tractable.</p>
+<p>The end goal is #3, so often there will be one function which does #3 by also doing #1 and #2. This is more challenging to test than a database because <code>ifconfig</code> output differs, and the path to the binary can differ, too. Controlling all this in a test when it&rsquo;s all lumped into one function is usually not possible. The solution is the same: separate the data and the logic.</p>
+<p>In this example, #1 is akin to the database. It&rsquo;s an external system that yields data. So isolate that code. Have a function or package or something that does nothing more than run <code>ifconfig</code> and return its <em>raw</em> output. Then have a second function or package that takes output from #1 (i.e. raw <code>ifconfig</code> output) as input, parses it, and returns a data structure. Finally, a third func/pkg takes that data structure as input and does whatever #3 is supposed to do. The 2nd and 3rd funcs/pkgs will be easy to test. Testing the fun/pkg that actually runs <code>ifconfig</code> can be tricky if it has to work on a wide spectrum of systems, but the challenge is nonetheless tractable.</p>
 <h1 id="testing-the-database-for-real">Testing the Database, For Real</h1>
 <p>At some point we should test complete database access. Redrawing the previous image (above):</p>
 <p><img src="/img/testing-the-database.svg" alt="Testing the Database"></p>
-<p>For dev and CI, the database is a sandbox instance. For stage and production it's a stable instance. In all cases, the database should be <em>real</em>. For example, if MySQL, then &ldquo;real&rdquo; means actually running <code>mysqld</code>. I stress &ldquo;real&rdquo; for two reasons.</p>
+<p>For dev and CI, the database is a sandbox instance. For stage and production it&rsquo;s a stable instance. In all cases, the database should be <em>real</em>. For example, if MySQL, then &ldquo;real&rdquo; means actually running <code>mysqld</code>. I stress &ldquo;real&rdquo; for two reasons.</p>
 <h4 id="myriad-aspects">Myriad Aspects</h4>
 <p>First, even simple data stores like <a href="https://redis.io/">Redis</a> are subtle and nuanced in non-obvious ways. Relational databases like MySQL and feature-rich document stores like MongoDB have myriad aspects that affect the code under test:</p>
 <ul>
@@ -164,10 +164,10 @@
 <li>Bugs in the database</li>
 <li>Connection timeouts and limits</li>
 </ul>
-<p>And more. There's no way for a test to simulate those aspects of the database, which is why it's important to test the database for real. But as we've been discussing, <em>only</em> the database access should be tested: load test data into the db, test the function that fetches that data, and make sure the function returns the correct data.</p>
+<p>And more. There&rsquo;s no way for a test to simulate those aspects of the database, which is why it&rsquo;s important to test the database for real. But as we&rsquo;ve been discussing, <em>only</em> the database access should be tested: load test data into the db, test the function that fetches that data, and make sure the function returns the correct data.</p>
 <p>More challenging but still possible is to test the code while inducing some of the database aspects listed above. For example, after loading test data into the db, the test could make a separate connection to the db and lock all the rows, then call the code under test to see if it times out properly.</p>
 <h4 id="please-do-not-wrap-the-database-driver">Please Do Not Wrap the Database Driver</h4>
-<p>Second reason I stress &ldquo;real&rdquo;: <em>please, do not wrap the database driver</em>. Do not attempt to escape the extra work of setting up sandbox instances and dealing with the myriad aspects of a real database by wrapping the database client driver so that you can pass code under test a mock driver that simulates database access. This is a pretty extreme measure, so if you haven't seen it, it's like:</p>
+<p>Second reason I stress &ldquo;real&rdquo;: <em>please, do not wrap the database driver</em>. Do not attempt to escape the extra work of setting up sandbox instances and dealing with the myriad aspects of a real database by wrapping the database client driver so that you can pass code under test a mock driver that simulates database access. This is a pretty extreme measure, so if you haven&rsquo;t seen it, it&rsquo;s like:</p>
 <p><img src="/img/db-driver-wrapper.svg" alt="Database Driver Wrapper"></p>
 <p>At top, you have only the database driver with, for example, two methods: <code>Connect()</code> and <code>Query()</code>. At bottom, you have what strives to be a transparent wrapper, <code>MyDriver</code>, around the real driver. <code>MyDriver</code> has the same methods at <code>DbDriver</code> (not shown), so its code is mostly:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">my</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">MyDriver</span>) <span style="color:#a6e22e">Connect</span>() {
@@ -177,28 +177,28 @@
 <span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">my</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">MyDriver</span>) <span style="color:#a6e22e">Query</span>() {
     <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">my</span>.<span style="color:#a6e22e">realDriver</span>.<span style="color:#a6e22e">Query</span>()
 }
-</code></pre></div><p>Why do this? The intent is to define an interface that <code>MyDriver</code> implements, then pass around the interface type (instead of the low-level <code>DbDriver</code> type) which allows us to have a <code>MockDriver</code> for testing. Good intention but, in my humble opinion, 1) its <em>way</em> more work and trouble than it's worth especially because 2) there's a better, more clean design.</p>
+</code></pre></div><p>Why do this? The intent is to define an interface that <code>MyDriver</code> implements, then pass around the interface type (instead of the low-level <code>DbDriver</code> type) which allows us to have a <code>MockDriver</code> for testing. Good intention but, in my humble opinion, 1) its <em>way</em> more work and trouble than it&rsquo;s worth especially because 2) there&rsquo;s a better, more clean design.</p>
 <blockquote>
-<p>But what about one of my favorite adages: &ldquo;Most problems in software can be solved by one more layer of abstraction.&quot;? Yes, this is one more layer of abstraction, but that adage doesn't mean &ldquo;abstract whatever, wherever.&rdquo;</p>
+<p>But what about one of my favorite adages: &ldquo;Most problems in software can be solved by one more layer of abstraction.&quot;? Yes, this is one more layer of abstraction, but that adage doesn&rsquo;t mean &ldquo;abstract whatever, wherever.&rdquo;</p>
 </blockquote>
-<p>Take a look at the <a href="https://golang.org/pkg/database/sql/">Go SQL driver</a>. Wrapping that fully is a lot of work, and getting it right (i.e. not introducing bugs in the wrapper), is a lot of work. All that work when we don't even need the wrapper. Going back to <code>GetData()</code> (above), that method (with a better name) is or should be part of a package or component that provides higher-level, domain-specific functionality. Let's pretend it's a <a href="https://msdn.microsoft.com/en-us/library/ff649690.aspx">repository</a>:</p>
+<p>Take a look at the <a href="https://golang.org/pkg/database/sql/">Go SQL driver</a>. Wrapping that fully is a lot of work, and getting it right (i.e. not introducing bugs in the wrapper), is a lot of work. All that work when we don&rsquo;t even need the wrapper. Going back to <code>GetData()</code> (above), that method (with a better name) is or should be part of a package or component that provides higher-level, domain-specific functionality. Let&rsquo;s pretend it&rsquo;s a <a href="https://msdn.microsoft.com/en-us/library/ff649690.aspx">repository</a>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DataRepo</span> <span style="color:#66d9ef">interface</span> {
     <span style="color:#a6e22e">GetData</span>()
 }
 
 <span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#75715e">// Implementations of DataRepo
-</span><span style="color:#75715e"></span><span style="color:#75715e">//
+</span><span style="color:#75715e">// Implementations of DataRepo
+</span><span style="color:#75715e">//
 </span><span style="color:#75715e"></span>
 <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MySQLDataRepo</span> <span style="color:#66d9ef">struct</span> {}
 <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FileDataRepo</span>  <span style="color:#66d9ef">struct</span> {}
 <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MockDataRepo</span>  <span style="color:#66d9ef">struct</span> {}
-</code></pre></div><p>That's all very generic and poorly named, but you get the point. <code>MySQLDataRepo</code> uses the low-level driver whereas the other implementations do not. To test the database for real, we test <code>MySQLDataRepo</code>.</p>
-<h1 id="when-the-database-isnt-data">When the Database Isn't Data</h1>
-<p>Earlier I mentioned &ldquo;Programs are largely &ldquo;data in, data out&rdquo;. &hellip; when it comes to databases this is usually what's happening. (<em>Usually</em>, but not always, which we'll explore later.)&quot;. Let's explore this now.</p>
+</code></pre></div><p>That&rsquo;s all very generic and poorly named, but you get the point. <code>MySQLDataRepo</code> uses the low-level driver whereas the other implementations do not. To test the database for real, we test <code>MySQLDataRepo</code>.</p>
+<h1 id="when-the-database-isnt-data">When the Database Isn&rsquo;t Data</h1>
+<p>Earlier I mentioned &ldquo;Programs are largely &ldquo;data in, data out&rdquo;. &hellip; when it comes to databases this is usually what&rsquo;s happening. (<em>Usually</em>, but not always, which we&rsquo;ll explore later.)&quot;. Let&rsquo;s explore this now.</p>
 <p>Apart from its data, a database is just another service, and as such it needs to be configured. For example: replication. So what if we need to programmatically configure and enable replication? In that case, we need a service.</p>
 <p><img src="/img/data-logic-service.svg" alt="Data, Logic, Service"></p>
-<p>We've talked extensively about data and logic; a third broad category is &ldquo;service&rdquo;. Almost everything in a program is one of these three, so it's a helpful way to think about and breakdown a program from a <em>very</em> high level. In other words, we ask: &ldquo;Is this a matter of data, logic, or service?&rdquo; A service, as its name implies, provides some kind of service, i.e. it <em>does</em> something. A service is defined by what it <em>does</em>, whereas data is defined by its structure and content (i.e. the data itself), and logic is defined by its rules, flow control, etc. (I'm glossing a lot since this blog post is already pretty long.)</p>
+<p>We&rsquo;ve talked extensively about data and logic; a third broad category is &ldquo;service&rdquo;. Almost everything in a program is one of these three, so it&rsquo;s a helpful way to think about and breakdown a program from a <em>very</em> high level. In other words, we ask: &ldquo;Is this a matter of data, logic, or service?&rdquo; A service, as its name implies, provides some kind of service, i.e. it <em>does</em> something. A service is defined by what it <em>does</em>, whereas data is defined by its structure and content (i.e. the data itself), and logic is defined by its rules, flow control, etc. (I&rsquo;m glossing a lot since this blog post is already pretty long.)</p>
 <p>Therefore, when MySQL is being treated as a service (and not a source of data), create a new service in the code like:</p>
 <pre><code>type MySQLConfigurator interface {
     EnableReplication()
@@ -210,10 +210,10 @@
 
 type RealMySQLConfigurator struct {}
 type MockMySQLConfigurator struct {}
-</code></pre><p>Again, poorly named but you get the point. <code>RealMySQLConfigurator</code> would actually connect to MySQL and attempt to do whatever, whereas <code>MockMySQLConfigurator</code> can be used to test code that uses a <code>MySQLConfigurator</code> because that code, being cleanly separated and unconcerned with implementation details, doesn't need a real MySQL instance. This also allows us to simulate service failures in <code>MockMySQLConfigurator</code>, which is typically very difficult with a real database.</p>
+</code></pre><p>Again, poorly named but you get the point. <code>RealMySQLConfigurator</code> would actually connect to MySQL and attempt to do whatever, whereas <code>MockMySQLConfigurator</code> can be used to test code that uses a <code>MySQLConfigurator</code> because that code, being cleanly separated and unconcerned with implementation details, doesn&rsquo;t need a real MySQL instance. This also allows us to simulate service failures in <code>MockMySQLConfigurator</code>, which is typically very difficult with a real database.</p>
 <h1 id="conclusion">Conclusion</h1>
 <p>There are good, clean solutions for testing the database. If the database is a source of data (the usual case), factor out data access (e.g. <a href="https://msdn.microsoft.com/en-us/library/ff649690.aspx">repository</a>). If the database is being treated as a service, create a service class/package/component that exposes service abilities and hides the implementation details (e.g. actually reconfiguring the database).</p>
-<p>As with most software design and development, a clean solution is a matter of separating the &ldquo;parts&rdquo;, concerns, roles, and responsibilities. One way to help do this from a very high level is thinking of software in terms of data, logic, and services. When code mixes these too much—for example, a function that handles both data (access) and logic on that data—you'll know it because it will feel difficult to test. That feeling is &ldquo;code push-back&rdquo;, or &ldquo;the code pushing back&rdquo; (or &ldquo;code smell&rdquo;). Don't ignore it; there's a better way, as hopefully this post began to demonstrate.</p>
+<p>As with most software design and development, a clean solution is a matter of separating the &ldquo;parts&rdquo;, concerns, roles, and responsibilities. One way to help do this from a very high level is thinking of software in terms of data, logic, and services. When code mixes these too much—for example, a function that handles both data (access) and logic on that data—you&rsquo;ll know it because it will feel difficult to test. That feeling is &ldquo;code push-back&rdquo;, or &ldquo;the code pushing back&rdquo; (or &ldquo;code smell&rdquo;). Don&rsquo;t ignore it; there&rsquo;s a better way, as hopefully this post began to demonstrate.</p>
 
       </article>
       <hr>

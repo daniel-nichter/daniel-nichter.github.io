@@ -7,15 +7,15 @@
 
   <title>3 Golang Channel Red Flags</title>
   <meta property="og:title" content="3 Golang Channel Red Flags" />
-  <meta name="description" content="Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&#39;t close the channel isn&#39;t aware the channel is closed, so send and receive on the closed channel don&#39;t have the intended effect.">
-  <meta property="og:description" content="Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&#39;t close the channel isn&#39;t aware the channel is closed, so send and receive on the closed channel don&#39;t have the intended effect.">
+  <meta name="description" content="Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&rsquo;t close the channel isn&rsquo;t aware the channel is closed, so send and receive on the closed channel don&rsquo;t have the intended effect.">
+  <meta property="og:description" content="Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&rsquo;t close the channel isn&rsquo;t aware the channel is closed, so send and receive on the closed channel don&rsquo;t have the intended effect.">
   <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmongo.com/post/three-golang-channel-red-flags/" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Hack Mongo" />
+  <meta property="og:site_name" content="Hack Mongo/MySQL" />
 
-  <meta name="generator" content="Hugo 0.60.0" />
+  <meta name="generator" content="Hugo 0.68.3" />
   <link rel="canonical" href="https://hackmongo.com/post/three-golang-channel-red-flags/" />
-  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
+  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo/MySQL">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap-toc.min.css" />
   <link rel="stylesheet" href="https://hackmongo.com/css/atom-one-dark.css" />
@@ -32,7 +32,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo</a>
+      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo/MySQL</a>
     </div>
 
     <div class="collapse navbar-collapse" id="main-navbar">
@@ -114,10 +114,10 @@
 
 
         <h2 id="red-flag-1-more-than-one-close">Red Flag 1: More Than One close()</h2>
-<p>When reviewing code that uses channels, first thing I do is search for <code>close()</code> on every channel. More than one <code>close()</code> is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn't close the channel isn't aware the channel is closed, so send and receive on the closed channel don't have the intended effect.</p>
-<p>Ideally, there is one and only one <code>close()</code> of a channel. Although code paths leading to that one <code>close()</code> can be numerous (e.g. app stops by OS signal, or controlled user shutdown, or handling a fatal error, etc.), it's a lot easier to reasonable about and test, especially if a bug still causes a panic on close of closed channel. Design-wise, this is a type of &ldquo;single responsibility&rdquo;: it makes it clear which code is responsible for closing the channel.</p>
+<p>When reviewing code that uses channels, first thing I do is search for <code>close()</code> on every channel. More than one <code>close()</code> is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&rsquo;t close the channel isn&rsquo;t aware the channel is closed, so send and receive on the closed channel don&rsquo;t have the intended effect.</p>
+<p>Ideally, there is one and only one <code>close()</code> of a channel. Although code paths leading to that one <code>close()</code> can be numerous (e.g. app stops by OS signal, or controlled user shutdown, or handling a fatal error, etc.), it&rsquo;s a lot easier to reasonable about and test, especially if a bug still causes a panic on close of closed channel. Design-wise, this is a type of &ldquo;single responsibility&rdquo;: it makes it clear which code is responsible for closing the channel.</p>
 <h2 id="red-flag-2-chan-used-to-send-and-receive">Red Flag 2: Chan Used to Send and Receive</h2>
-<p>Go supports <code>recvFoo &lt;- fooChan</code> and <code>fooChan &lt;- sendFoo</code>, but this is not commonly done, in my experience. I consider this a red flag because it's like a network connection: it requires a communication protocol and flow control. Unless those are clearly designed, a bidirectional channel can lead to elusive bugs. Therefore, we need answers to protocol questions like:</p>
+<p>Go supports <code>recvFoo &lt;- fooChan</code> and <code>fooChan &lt;- sendFoo</code>, but this is not commonly done, in my experience. I consider this a red flag because it&rsquo;s like a network connection: it requires a communication protocol and flow control. Unless those are clearly designed, a bidirectional channel can lead to elusive bugs. Therefore, we need answers to protocol questions like:</p>
 <ul>
 <li>Request and response (like HTTP)?</li>
 <li>Async with no ack? (i.e. fire and forget)</li>
@@ -129,7 +129,7 @@
 <p>I think the legitimate use cases for bidirectional Go channels are rare.</p>
 <h2 id="red-flag-3-chan-used-for-communication-and-coordination">Red Flag 3: Chan Used for Communication and Coordination</h2>
 <p>Using a channel for communication and coordination is usually a red flag. Communication is the well known Go adage: <a href="https://blog.golang.org/share-memory-by-communicating">Share Memory By Communicating</a>. Coordination (aka synchronization) is handling concurrency, multiple goroutines, etc. (e.g. <a href="https://blog.golang.org/pipelines">Go Concurrency Patterns: Pipelines and cancellation</a> and the links at the end).</p>
-<p>There is a use case for communication and coordination, which I'll cover next, but in general mixing the two is often a sign that the purpose of the channel is not clear, which leads to bugs and panics. For example, if the channel is closed before communication is done, the program will panic sending on a closed channel. Or, receivers might block unexpectedly and silently deadlock the program (if there are no recv timeouts).</p>
+<p>There is a use case for communication and coordination, which I&rsquo;ll cover next, but in general mixing the two is often a sign that the purpose of the channel is not clear, which leads to bugs and panics. For example, if the channel is closed before communication is done, the program will panic sending on a closed channel. Or, receivers might block unexpectedly and silently deadlock the program (if there are no recv timeouts).</p>
 <p>Since channels are lightweight, use more to keep their purpose clear. I often used <code>doneChan chan interface{}</code> as a coordination channel for lower-level code to signal that it is done (<code>defer close(doneChan)</code>). This signal is effectively broadcast to N-many higher-level code &ldquo;listeners&rdquo;:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">switch</span> {
 <span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">doneChan</span>:
@@ -149,8 +149,8 @@
     close(<span style="color:#a6e22e">out</span>)
     <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">out</span>
 }
-</code></pre></div><p>The returned channel, <code>out</code>, is closed when done so that the caller knows there are no more numbers. That example illustrates the point, but it's not the best choice in general. Let's look closer at the sender-closer pattern.</p>
-<h3 id="sendercloser-pattern">Sender-Closer Pattern</h3>
+</code></pre></div><p>The returned channel, <code>out</code>, is closed when done so that the caller knows there are no more numbers. That example illustrates the point, but it&rsquo;s not the best choice in general. Let&rsquo;s look closer at the sender-closer pattern.</p>
+<h3 id="sender-closer-pattern">Sender-Closer Pattern</h3>
 <p>If the example above was real code, it would be better without the channel:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">gen</span>(<span style="color:#a6e22e">nums</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">int</span>) []<span style="color:#66d9ef">int</span> {
     <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">int</span>, len(<span style="color:#a6e22e">nums</span>))
@@ -163,8 +163,8 @@
 <li>High cost of each value, <em>or</em></li>
 <li>High number and size of values</li>
 </ol>
-<p>If the cost of fetching each value is high (e.g. slow network request, expensive database query, etc.), then it's best to fetch them only as need and when needed. The channel size is effectively a prefetch buffer: zero (non-buffered) if the cost is low and we can fetch in near real-time, on-demand; or &gt; 0 if the cost is high and we want to fetch a few in advance to ensure the caller/receiver doesn't wait too long. This approach is more useful when combined with a coordination channel to allow the caller/receiver to stop early. In that case, we avoid fetching costly values that won't be used.</p>
-<p>Or, if the number and size of values is very high, then it's best to stream via the channel than attempt large memory allocations. &ldquo;Large memory&rdquo; is relative to the app, hardware, frequency of use, etc.</p>
+<p>If the cost of fetching each value is high (e.g. slow network request, expensive database query, etc.), then it&rsquo;s best to fetch them only as need and when needed. The channel size is effectively a prefetch buffer: zero (non-buffered) if the cost is low and we can fetch in near real-time, on-demand; or &gt; 0 if the cost is high and we want to fetch a few in advance to ensure the caller/receiver doesn&rsquo;t wait too long. This approach is more useful when combined with a coordination channel to allow the caller/receiver to stop early. In that case, we avoid fetching costly values that won&rsquo;t be used.</p>
+<p>Or, if the number and size of values is very high, then it&rsquo;s best to stream via the channel than attempt large memory allocations. &ldquo;Large memory&rdquo; is relative to the app, hardware, frequency of use, etc.</p>
 <p>The sender-closer pattern is practically required if both are true: many, large, costly values. A perfect example is <a href="https://godoc.org/github.com/go-mysql/slowlog#FileParser.Events">FileParser.Events()</a> which parses a MySQL slow query log. Parsing is slow (costly) and there can be several gigabytes of events. Streaming events via a channel is the only feasible solution. And the docs are clear: &ldquo;The channel is closed when there are no more events.&rdquo;</p>
 
       </article>

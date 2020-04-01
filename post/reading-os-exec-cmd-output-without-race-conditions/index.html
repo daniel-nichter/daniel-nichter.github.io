@@ -11,11 +11,11 @@
   <meta property="og:description" content="And without cmd.StdoutPipe">
   <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmongo.com/post/reading-os-exec-cmd-output-without-race-conditions/" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Hack Mongo" />
+  <meta property="og:site_name" content="Hack Mongo/MySQL" />
 
-  <meta name="generator" content="Hugo 0.60.0" />
+  <meta name="generator" content="Hugo 0.68.3" />
   <link rel="canonical" href="https://hackmongo.com/post/reading-os-exec-cmd-output-without-race-conditions/" />
-  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo">
+  <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo/MySQL">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap-toc.min.css" />
   <link rel="stylesheet" href="https://hackmongo.com/css/atom-one-dark.css" />
@@ -32,7 +32,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo</a>
+      <a class="navbar-brand" href="https://hackmongo.com/">Hack Mongo/MySQL</a>
     </div>
 
     <div class="collapse navbar-collapse" id="main-navbar">
@@ -111,12 +111,12 @@
 </div>
 
 
-        <p><a href="https://golangweekly.com/issues/164">Golang Weekly issue 164</a> features a nice article, <a href="https://blog.kowalczyk.info/article/wOYk/advanced-command-execution-in-go-with-osexec.html">Advanced command execution in Go with os/exec</a>, which details several ways of working with <a href="https://golang.org/pkg/os/exec/">os/exec</a>, especially how to read STDOUT and STDERR while the command is running. This common task is commonly done wrong, where &ldquo;wrong&rdquo; means &ldquo;the code has a race condition&rdquo;. This blog post shows how to read STDOUT and STDERR from an <code>os/exec.Cmd</code> while it's running and <em>without</em> race conditions.</p>
+        <p><a href="https://golangweekly.com/issues/164">Golang Weekly issue 164</a> features a nice article, <a href="https://blog.kowalczyk.info/article/wOYk/advanced-command-execution-in-go-with-osexec.html">Advanced command execution in Go with os/exec</a>, which details several ways of working with <a href="https://golang.org/pkg/os/exec/">os/exec</a>, especially how to read STDOUT and STDERR while the command is running. This common task is commonly done wrong, where &ldquo;wrong&rdquo; means &ldquo;the code has a race condition&rdquo;. This blog post shows how to read STDOUT and STDERR from an <code>os/exec.Cmd</code> while it&rsquo;s running and <em>without</em> race conditions.</p>
 <h3 id="problem">Problem</h3>
-<p>The Internet is rife solutions like Krzysztof provides (but afaik no one has provided them in one place and so thoroughly, so his post is a good read nonetheless), but let's test one:</p>
+<p>The Internet is rife solutions like Krzysztof provides (but afaik no one has provided them in one place and so thoroughly, so his post is a good read nonetheless), but let&rsquo;s test one:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#75715e">// cmd.go
-</span><span style="color:#75715e"></span><span style="color:#75715e">//
+</span><span style="color:#75715e">// cmd.go
+</span><span style="color:#75715e">//
 </span><span style="color:#75715e"></span><span style="color:#f92672">package</span> <span style="color:#a6e22e">cmd</span>
 
 <span style="color:#f92672">import</span> (
@@ -162,8 +162,8 @@
 	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\nout:\n%s\nerr:\n%s\n&#34;</span>, <span style="color:#a6e22e">outStr</span>, <span style="color:#a6e22e">errStr</span>)
 }
 </code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#75715e">// cmd_test.go
-</span><span style="color:#75715e"></span><span style="color:#75715e">//
+</span><span style="color:#75715e">// cmd_test.go
+</span><span style="color:#75715e">//
 </span><span style="color:#75715e"></span><span style="color:#f92672">package</span> <span style="color:#a6e22e">cmd</span>
 
 <span style="color:#f92672">import</span> (
@@ -174,7 +174,7 @@
 	<span style="color:#a6e22e">Run</span>()
 }
 
-</code></pre></div><p>Let's <code>go test -race</code> it:</p>
+</code></pre></div><p>Let&rsquo;s <code>go test -race</code> it:</p>
 <pre><code>$ go test -race
 
 ==================
@@ -235,7 +235,7 @@ Goroutine 7 (finished) created at:
 Found 7 data race(s)
 exit status 66
 FAIL	_/opt/dev/test/cmd-output/cmd	1.025s
-</code></pre><p>I'll summarize:</p>
+</code></pre><p>I&rsquo;ll summarize:</p>
 <ul>
 <li>goroutine 6:</li>
 <li>runs cmd</li>
@@ -255,19 +255,19 @@ FAIL	_/opt/dev/test/cmd-output/cmd	1.025s
 <blockquote>
 <p>Wait will close the pipe after seeing the command exit, so most callers need not close the pipe themselves; however, an implication is that it is incorrect to call Wait before all reads from the pipe have completed.</p>
 </blockquote>
-<p>To put it another way: the correct usage is to read everything first, <em>then</em> call <code>Wait</code>. The docs provide an idiomatic example to illustrate. Used correctly, there's no race condition because the simple flow is <code>reads -&gt; (reads stop) -&gt; close -&gt; wirte</code>. Consequently, and unfortunately for what we're trying to achieve, reading <code>StdoutPipe</code> before/during <code>Wait</code> is wrong and causes a race condition.</p>
+<p>To put it another way: the correct usage is to read everything first, <em>then</em> call <code>Wait</code>. The docs provide an idiomatic example to illustrate. Used correctly, there&rsquo;s no race condition because the simple flow is <code>reads -&gt; (reads stop) -&gt; close -&gt; wirte</code>. Consequently, and unfortunately for what we&rsquo;re trying to achieve, reading <code>StdoutPipe</code> before/during <code>Wait</code> is wrong and causes a race condition.</p>
 <h3 id="solution">Solution</h3>
 <p>TL;DR: <a href="https://github.com/go-cmd/cmd">go-cmd/cmd</a></p>
-<p>I agree with Krzysztof: it's important to understand <code>os/exec</code>. Once you do and you want to make things &ldquo;just work&rdquo;, just use <code>go-cmd/cmd</code>; it has <em>100% test coverage</em> and <em>no race conditions</em>, and it can be used synchronously or asynchronously. It also correctly handles process termination, which is a problem far more subtle and infrequently realized let alone handled.</p>
-<p>Here's how <code>go-cmd/cmd</code> handles it (just code snippets):</p>
+<p>I agree with Krzysztof: it&rsquo;s important to understand <code>os/exec</code>. Once you do and you want to make things &ldquo;just work&rdquo;, just use <code>go-cmd/cmd</code>; it has <em>100% test coverage</em> and <em>no race conditions</em>, and it can be used synchronously or asynchronously. It also correctly handles process termination, which is a problem far more subtle and infrequently realized let alone handled.</p>
+<p>Here&rsquo;s how <code>go-cmd/cmd</code> handles it (just code snippets):</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// os/exec.Cmd.StdoutPipe is usually used incorrectly. The docs are clear:
-</span><span style="color:#75715e"></span><span style="color:#75715e">// &#34;it is incorrect to call Wait before all reads from the pipe have completed.&#34;
-</span><span style="color:#75715e"></span><span style="color:#75715e">// Therefore, we can&#39;t read from the pipe in another goroutine because it
-</span><span style="color:#75715e"></span><span style="color:#75715e">// causes a race condition: we&#39;ll read in one goroutine and the original
-</span><span style="color:#75715e"></span><span style="color:#75715e">// goroutine that calls Wait will write on close which is what Wait does.
-</span><span style="color:#75715e"></span><span style="color:#75715e">// The proper solution is using an io.Writer for cmd.Stdout. I couldn&#39;t find
-</span><span style="color:#75715e"></span><span style="color:#75715e">// an io.Writer that&#39;s also safe for concurrent reads (as lines in a []string
-</span><span style="color:#75715e"></span><span style="color:#75715e">// no less), so I created one:
+</span><span style="color:#75715e">// &#34;it is incorrect to call Wait before all reads from the pipe have completed.&#34;
+</span><span style="color:#75715e">// Therefore, we can&#39;t read from the pipe in another goroutine because it
+</span><span style="color:#75715e">// causes a race condition: we&#39;ll read in one goroutine and the original
+</span><span style="color:#75715e">// goroutine that calls Wait will write on close which is what Wait does.
+</span><span style="color:#75715e">// The proper solution is using an io.Writer for cmd.Stdout. I couldn&#39;t find
+</span><span style="color:#75715e">// an io.Writer that&#39;s also safe for concurrent reads (as lines in a []string
+</span><span style="color:#75715e">// no less), so I created one:
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">output</span> <span style="color:#66d9ef">struct</span> {
 	<span style="color:#a6e22e">buf</span>   <span style="color:#f92672">*</span><span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
 	<span style="color:#a6e22e">lines</span> []<span style="color:#66d9ef">string</span>
@@ -302,8 +302,8 @@ FAIL	_/opt/dev/test/cmd-output/cmd	1.025s
 }
 
 <span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#75715e">// Elsewhere in the code...
-</span><span style="color:#75715e"></span><span style="color:#75715e">//
+</span><span style="color:#75715e">// Elsewhere in the code...
+</span><span style="color:#75715e">//
 </span><span style="color:#75715e"></span>
 <span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">exec</span>.<span style="color:#a6e22e">Command</span>(<span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">args</span><span style="color:#f92672">...</span>)
 
@@ -318,8 +318,8 @@ FAIL	_/opt/dev/test/cmd-output/cmd	1.025s
 <span style="color:#75715e">// Safe to call stdout.Lines()
 </span><span style="color:#75715e"></span>
 <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Wait</span>()
-</code></pre></div><p>This this the best way? I don't know. Is it a <em>correct</em> way? I'm 99% certain it is. Does it work? Yes! I've used it extensively in the real world without issues.</p>
-<p><code>go-cmd/cmd</code> saves me a lot of time because it just works. I hope it &ldquo;just works&rdquo; for you, too, and I hope this blog post helps turn the tide of racey solutions to the common and important task of reading STDOUT/STDERR from a Go <code>os/exec.Cmd</code> while it's running.</p>
+</code></pre></div><p>This this the best way? I don&rsquo;t know. Is it a <em>correct</em> way? I&rsquo;m 99% certain it is. Does it work? Yes! I&rsquo;ve used it extensively in the real world without issues.</p>
+<p><code>go-cmd/cmd</code> saves me a lot of time because it just works. I hope it &ldquo;just works&rdquo; for you, too, and I hope this blog post helps turn the tide of racey solutions to the common and important task of reading STDOUT/STDERR from a Go <code>os/exec.Cmd</code> while it&rsquo;s running.</p>
 
       </article>
       <hr>
