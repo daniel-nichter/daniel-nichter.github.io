@@ -11,7 +11,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack Mongo/MySQL" />
 
-  <meta name="generator" content="Hugo 0.68.3" />
+  <meta name="generator" content="Hugo 0.69.0" />
   <link rel="canonical" href="https://hackmongo.com/" />
   <link rel="alternate" href="https://hackmongo.com/index.xml" type="application/rss+xml" title="Hack Mongo/MySQL">
   <link rel="stylesheet" href="https://hackmongo.com/css/bootstrap.min.css">
@@ -96,29 +96,31 @@
 			<div class="posts-list">
 
 					<article class="post-preview">
-						<a href="https://hackmongo.com/post/queries-effect-performance/">
-							<h1 class="post-title">Queries Effect Performance</h1>
+						<a href="https://hackmongo.com/post/mysql-threads-running-how-hard-is-mysql-working/">
+							<h1 class="post-title">MySQL Threads Running</h1>
+
+								<h3 class="post-subtitle">How Hard is MySQL Working?</h3>
 
 						</a>
 						<div class="post-entry">
 
-								Queries effect database performance. That&rsquo;s not a typo: &ldquo;effect&rdquo; not &ldquo;affect&rdquo;. The difference is not a word game but an important way to think about database performance.
-Many things can affect performance. For example, if the system runs out of memory then starts swapping which causes high disk IO latency, that will negatively affect performance. But external factors like that notwithstanding (i.e. when hardware and MySQL are normal and stable), it&rsquo;s important to understand that queries effect performance.
-								<a href="https://hackmongo.com/post/queries-effect-performance/" class="post-read-more">Read more...</a>
+								Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by Threads_running, expressed as a gauge (whereas QPS is a rate). Before discussing Threads_running, let&rsquo;s consider an analogy:
+The image above is a digital instrument cluster from a car. The big circle on the left is the speedometer, and the big circle on the right is the tachometer. Speedometers are familiar to most: they show how fast the car is going.
+								<a href="https://hackmongo.com/post/mysql-threads-running-how-hard-is-mysql-working/" class="post-read-more">Read more...</a>
 
 						</div>
 						<div class="post-meta">
 
 
-  <div>Jan 12, 2020</div>
+  <div>Apr 25, 2020</div>
   <div class="blog-tags">
 
 
         <a href="/tags/mysql">#mysql</a>
 
-        <a href="/tags/performance">#performance</a>
+        <a href="/tags/threads-running">#threads running</a>
 
-        <a href="/tags/queries">#queries</a>
+        <a href="/tags/metrics">#metrics</a>
 
 
   </div>
@@ -134,6 +136,8 @@ Many things can affect performance. For example, if the system runs out of memor
 	<div class="row">
 		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 			<hr>
+
+				<li><time>2020-01-12</time>&nbsp;<a href="https://hackmongo.com/post/queries-effect-performance/">Queries Effect Performance</a></li>
 
 				<li><time>2019-12-15</time>&nbsp;<a href="https://hackmongo.com/post/fixing-ghosted-gtids/">Fixing Ghosted GTIDs</a></li>
 

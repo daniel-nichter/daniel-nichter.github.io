@@ -3,12 +3,42 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-    <loc>https://hackmongo.com/page/about/</loc>
-    <lastmod>2020-04-01T00:00:00+00:00</lastmod>
+    <loc>https://hackmongo.com/</loc>
+    <lastmod>2020-04-25T16:18:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/</loc>
+    <loc>https://hackmongo.com/tags/metrics/</loc>
+    <lastmod>2020-04-25T16:18:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/tags/mysql/</loc>
+    <lastmod>2020-04-25T16:18:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/post/mysql-threads-running-how-hard-is-mysql-working/</loc>
+    <lastmod>2020-04-25T16:18:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/post/</loc>
+    <lastmod>2020-04-25T16:18:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/tags/</loc>
+    <lastmod>2020-04-25T16:18:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/tags/threads-running/</loc>
+    <lastmod>2020-04-25T16:18:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmongo.com/page/about/</loc>
     <lastmod>2020-04-01T00:00:00+00:00</lastmod>
   </url>
 
@@ -18,17 +48,7 @@
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/mysql/</loc>
-    <lastmod>2020-01-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
     <loc>https://hackmongo.com/tags/performance/</loc>
-    <lastmod>2020-01-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmongo.com/post/</loc>
     <lastmod>2020-01-12T00:00:00+00:00</lastmod>
   </url>
 
@@ -39,11 +59,6 @@
 
   <url>
     <loc>https://hackmongo.com/post/queries-effect-performance/</loc>
-    <lastmod>2020-01-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmongo.com/tags/</loc>
     <lastmod>2020-01-12T00:00:00+00:00</lastmod>
   </url>
 
@@ -69,11 +84,6 @@
 
   <url>
     <loc>https://hackmongo.com/tags/histograms/</loc>
-    <lastmod>2019-06-29T19:00:00-03:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmongo.com/tags/metrics/</loc>
     <lastmod>2019-06-29T19:00:00-03:00</lastmod>
   </url>
 
