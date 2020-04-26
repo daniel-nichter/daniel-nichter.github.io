@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>godoc on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/godoc/</link>
-    <description>Recent content in godoc on Hack Mongo/MySQL</description>
+    <title>godoc on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/godoc/</link>
+    <description>Recent content in godoc on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 13 May 2018 09:00:00 -0700</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/godoc/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/godoc/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>Thinking in Go</title>
-      <link>https://hackmongo.com/post/thinking-in-go/</link>
+      <link>https://hackmysql.com/post/thinking-in-go/</link>
       <pubDate>Sun, 13 May 2018 09:00:00 -0700</pubDate>
 
-      <guid>https://hackmongo.com/post/thinking-in-go/</guid>
+      <guid>https://hackmysql.com/post/thinking-in-go/</guid>
       <description>After learning Go, it is necessary to think in Go in order to design and implement well-written, idiomatic Go. This blog post outlines aspects that I think are important for thinking in Go. A full exploration of these aspects could fill a book, but this only an orientation for experienced programmers new to Go.
 Programming languages have aspects which affect how we think, design, and implement software with the language: syntax, documentation, features/capabilities, language type (object-oriented, functional, compiled, etc.</description>
     </item>

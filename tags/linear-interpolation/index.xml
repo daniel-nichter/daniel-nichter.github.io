@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>linear interpolation on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/linear-interpolation/</link>
-    <description>Recent content in linear interpolation on Hack Mongo/MySQL</description>
+    <title>linear interpolation on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/linear-interpolation/</link>
+    <description>Recent content in linear interpolation on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 10 Feb 2019 00:00:00 +0000</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/linear-interpolation/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/linear-interpolation/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>Percentiles</title>
-      <link>https://hackmongo.com/page/percentiles/</link>
+      <link>https://hackmysql.com/page/percentiles/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
 
-      <guid>https://hackmongo.com/page/percentiles/</guid>
+      <guid>https://hackmysql.com/page/percentiles/</guid>
       <description>Percentiles Percentiles are ubiquitous in application performance monitoring, particularly the 95th (P95), 99th (P99), and 99.9th (P999) percentiles. The basic concept is simple: percentile Pn means n% of all values are &amp;lt;= than the Pn value. If the P95 value = 100ms, then 95% of all values are &amp;lt;= 100ms. In other words: 5% of all values are &amp;gt; 100ms. Percentiles discard the top (100-n)% values as outliers for various reasons which are outside the scope of this page.</description>
     </item>
 

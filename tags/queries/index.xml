@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>queries on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/queries/</link>
-    <description>Recent content in queries on Hack Mongo/MySQL</description>
+    <title>queries on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/queries/</link>
+    <description>Recent content in queries on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 12 Jan 2020 00:00:00 +0000</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/queries/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/queries/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>Queries Effect Performance</title>
-      <link>https://hackmongo.com/post/queries-effect-performance/</link>
+      <link>https://hackmysql.com/post/queries-effect-performance/</link>
       <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
 
-      <guid>https://hackmongo.com/post/queries-effect-performance/</guid>
+      <guid>https://hackmysql.com/post/queries-effect-performance/</guid>
       <description>Queries effect database performance. That&amp;rsquo;s not a typo: &amp;ldquo;effect&amp;rdquo; not &amp;ldquo;affect&amp;rdquo;. The difference is not a word game but an important way to think about database performance.
 Many things can affect performance. For example, if the system runs out of memory then starts swapping which causes high disk IO latency, that will negatively affect performance. But external factors like that notwithstanding (i.e. when hardware and MySQL are normal and stable), it&amp;rsquo;s important to understand that queries effect performance.</description>
     </item>

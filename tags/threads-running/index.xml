@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>threads running on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/threads-running/</link>
-    <description>Recent content in threads running on Hack Mongo/MySQL</description>
+    <title>threads running on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/threads-running/</link>
+    <description>Recent content in threads running on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 25 Apr 2020 16:18:00 -0300</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/threads-running/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/threads-running/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>MySQL Threads Running</title>
-      <link>https://hackmongo.com/post/mysql-threads-running-how-hard-is-mysql-working/</link>
+      <link>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</link>
       <pubDate>Sat, 25 Apr 2020 16:18:00 -0300</pubDate>
 
-      <guid>https://hackmongo.com/post/mysql-threads-running-how-hard-is-mysql-working/</guid>
+      <guid>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</guid>
       <description>Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by Threads_running, expressed as a gauge (whereas QPS is a rate). Before discussing Threads_running, let&amp;rsquo;s consider an analogy:
 The image above is a digital instrument cluster from a car. The big circle on the left is the speedometer, and the big circle on the right is the tachometer. Speedometers are familiar to most: they show how fast the car is going.</description>
     </item>

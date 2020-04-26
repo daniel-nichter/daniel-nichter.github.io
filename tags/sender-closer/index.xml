@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>sender-closer on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/sender-closer/</link>
-    <description>Recent content in sender-closer on Hack Mongo/MySQL</description>
+    <title>sender-closer on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/sender-closer/</link>
+    <description>Recent content in sender-closer on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 16 Dec 2018 13:00:00 -0300</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/sender-closer/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/sender-closer/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>3 Golang Channel Red Flags</title>
-      <link>https://hackmongo.com/post/three-golang-channel-red-flags/</link>
+      <link>https://hackmysql.com/post/three-golang-channel-red-flags/</link>
       <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
 
-      <guid>https://hackmongo.com/post/three-golang-channel-red-flags/</guid>
+      <guid>https://hackmysql.com/post/three-golang-channel-red-flags/</guid>
       <description>Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&amp;rsquo;t close the channel isn&amp;rsquo;t aware the channel is closed, so send and receive on the closed channel don&amp;rsquo;t have the intended effect.</description>
     </item>
 

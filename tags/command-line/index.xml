@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>command-line on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/command-line/</link>
-    <description>Recent content in command-line on Hack Mongo/MySQL</description>
+    <title>command-line on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/command-line/</link>
+    <description>Recent content in command-line on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 21 Jan 2018 19:00:00 -0700</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/command-line/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/command-line/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>Command-line Interface Antipatterns</title>
-      <link>https://hackmongo.com/page/cli-antipatterns/</link>
+      <link>https://hackmysql.com/page/cli-antipatterns/</link>
       <pubDate>Sun, 21 Jan 2018 19:00:00 -0700</pubDate>
 
-      <guid>https://hackmongo.com/page/cli-antipatterns/</guid>
+      <guid>https://hackmysql.com/page/cli-antipatterns/</guid>
       <description>Command-line Interface Antipatterns Apps (web, mobile, and native) and APIs do not lessen the need or importance of command-line tools. A beautifully designed command-line user experience is arguably more important and than a graphical UX because the command line is deceptively simple: text on a screen. Wielding mere text on screen is an art akin to wielding mere paint on canvas. This page documents what I believe to be command-line interface (CLI) antipatterns which, in the long or short run, detract from both UX and developer effectiveness.</description>
     </item>
 

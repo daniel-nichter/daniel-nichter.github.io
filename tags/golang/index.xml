@@ -1,79 +1,79 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>golang on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/golang/</link>
-    <description>Recent content in golang on Hack Mongo/MySQL</description>
+    <title>golang on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/golang/</link>
+    <description>Recent content in golang on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 25 Mar 2019 11:00:00 -0400</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/golang/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>3 Golang Error Types</title>
-      <link>https://hackmongo.com/post/three-golang-error-types/</link>
+      <link>https://hackmysql.com/post/three-golang-error-types/</link>
       <pubDate>Mon, 25 Mar 2019 11:00:00 -0400</pubDate>
 
-      <guid>https://hackmongo.com/post/three-golang-error-types/</guid>
+      <guid>https://hackmysql.com/post/three-golang-error-types/</guid>
       <description>This is not a post about Go error handling, it&amp;rsquo;s a post about Go error &amp;ldquo;types&amp;rdquo;: three different ways to construct and use the built-in error interface type. error is deceptively simple. When used in the ways described here, it allows us to design meaningful errors and error handling in large Go programs. Errors should be first-class citizens because when things break (and they always do), errors are the first—and often only—information we have.</description>
     </item>
 
     <item>
       <title>3 Golang Channel Red Flags</title>
-      <link>https://hackmongo.com/post/three-golang-channel-red-flags/</link>
+      <link>https://hackmysql.com/post/three-golang-channel-red-flags/</link>
       <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
 
-      <guid>https://hackmongo.com/post/three-golang-channel-red-flags/</guid>
+      <guid>https://hackmysql.com/post/three-golang-channel-red-flags/</guid>
       <description>Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&amp;rsquo;t close the channel isn&amp;rsquo;t aware the channel is closed, so send and receive on the closed channel don&amp;rsquo;t have the intended effect.</description>
     </item>
 
     <item>
       <title>When MySQL Goes Away</title>
-      <link>https://hackmongo.com/post/when-mysql-goes-away/</link>
+      <link>https://hackmysql.com/post/when-mysql-goes-away/</link>
       <pubDate>Sun, 22 Jul 2018 18:00:00 -0300</pubDate>
 
-      <guid>https://hackmongo.com/post/when-mysql-goes-away/</guid>
+      <guid>https://hackmysql.com/post/when-mysql-goes-away/</guid>
       <description>Handling MySQL errors in Go is not easy. There are a lot of MySQL server error codes, and the Go MySQL driver as its own errors, and Go database/sql has its own errors, and errors can bubble up from other packages, like net.OpError. Consequently, Go programs tend not to handle errors. Instead, they simply report errors:
 err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err } And then the error is logged or reported somewhere.</description>
     </item>
 
     <item>
       <title>Thinking in Go</title>
-      <link>https://hackmongo.com/post/thinking-in-go/</link>
+      <link>https://hackmysql.com/post/thinking-in-go/</link>
       <pubDate>Sun, 13 May 2018 09:00:00 -0700</pubDate>
 
-      <guid>https://hackmongo.com/post/thinking-in-go/</guid>
+      <guid>https://hackmysql.com/post/thinking-in-go/</guid>
       <description>After learning Go, it is necessary to think in Go in order to design and implement well-written, idiomatic Go. This blog post outlines aspects that I think are important for thinking in Go. A full exploration of these aspects could fill a book, but this only an orientation for experienced programmers new to Go.
 Programming languages have aspects which affect how we think, design, and implement software with the language: syntax, documentation, features/capabilities, language type (object-oriented, functional, compiled, etc.</description>
     </item>
 
     <item>
       <title>Reading os/exec.Cmd Output Without Race Conditions</title>
-      <link>https://hackmongo.com/post/reading-os-exec-cmd-output-without-race-conditions/</link>
+      <link>https://hackmysql.com/post/reading-os-exec-cmd-output-without-race-conditions/</link>
       <pubDate>Sat, 17 Jun 2017 00:00:00 +0000</pubDate>
 
-      <guid>https://hackmongo.com/post/reading-os-exec-cmd-output-without-race-conditions/</guid>
+      <guid>https://hackmysql.com/post/reading-os-exec-cmd-output-without-race-conditions/</guid>
       <description>Golang Weekly issue 164 features a nice article, Advanced command execution in Go with os/exec, which details several ways of working with os/exec, especially how to read STDOUT and STDERR while the command is running. This common task is commonly done wrong, where &amp;ldquo;wrong&amp;rdquo; means &amp;ldquo;the code has a race condition&amp;rdquo;. This blog post shows how to read STDOUT and STDERR from an os/exec.Cmd while it&amp;rsquo;s running and without race conditions.</description>
     </item>
 
     <item>
       <title>Go Antipatterns</title>
-      <link>https://hackmongo.com/page/golang-antipatterns/</link>
+      <link>https://hackmysql.com/page/golang-antipatterns/</link>
       <pubDate>Sat, 03 Jun 2017 18:51:14 -0700</pubDate>
 
-      <guid>https://hackmongo.com/page/golang-antipatterns/</guid>
+      <guid>https://hackmysql.com/page/golang-antipatterns/</guid>
       <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&amp;rsquo;s a better way that&amp;rsquo;s both functionally equivalent and idiomatic.
 These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</description>
     </item>
 
     <item>
       <title>Idiomatic Go</title>
-      <link>https://hackmongo.com/page/idiomatic-go/</link>
+      <link>https://hackmysql.com/page/idiomatic-go/</link>
       <pubDate>Sat, 03 Jun 2017 00:00:00 +0000</pubDate>
 
-      <guid>https://hackmongo.com/page/idiomatic-go/</guid>
+      <guid>https://hackmysql.com/page/idiomatic-go/</guid>
       <description>Idiomatic Go Canon can·on /ˈkanən/ noun : a general law, rule, principle, or criterion by which something is judged
 These texts explicitly and implicitly define idiomatic Go code. Read, memorize, and refer to them often. Use them to settle debates.
  Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names  Recommended  Go Code Review Comments Best practices for a new Go developer Reducing Type Hierarchies  </description>

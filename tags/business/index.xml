@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>business on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/business/</link>
-    <description>Recent content in business on Hack Mongo/MySQL</description>
+    <title>business on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/business/</link>
+    <description>Recent content in business on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 31 Dec 2017 09:50:00 -0700</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/business/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/business/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>Tech Workers Are Good People</title>
-      <link>https://hackmongo.com/post/tech-workers-are-good-people/</link>
+      <link>https://hackmysql.com/post/tech-workers-are-good-people/</link>
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
 
-      <guid>https://hackmongo.com/post/tech-workers-are-good-people/</guid>
+      <guid>https://hackmysql.com/post/tech-workers-are-good-people/</guid>
       <description>The Other Tech Bubble is a provocative and interesting read. The author clearly has a lot of experience with Silicon Valley and has done their homework. There are many good insights, like &amp;ldquo;They&amp;rsquo;re still asking if it&amp;rsquo;s possible to do something, and not whether they should.&amp;rdquo; But there are two claims and one ambiguity that need to be addressed.
 Villains The first claim is:
  In 2008, it was Wall Street bankers.</description>
@@ -24,10 +24,10 @@ Villains The first claim is:
 
     <item>
       <title>Ideas, Leaders, and Engineers</title>
-      <link>https://hackmongo.com/post/ideas-leaders-and-engineers/</link>
+      <link>https://hackmysql.com/post/ideas-leaders-and-engineers/</link>
       <pubDate>Sun, 12 Nov 2017 00:00:00 +0000</pubDate>
 
-      <guid>https://hackmongo.com/post/ideas-leaders-and-engineers/</guid>
+      <guid>https://hackmysql.com/post/ideas-leaders-and-engineers/</guid>
       <description>The Senior Engineer&amp;rsquo;s Guide to Helping Others Make Decisions is a good read and good advice. I would summarize the advice as:
  &amp;ldquo;Seek first to understand, then to be understood&amp;rdquo; (Dr. Stephen Covey) Lead and guide, don&amp;rsquo;t micromanage Embrace change, which entails embracing other people&amp;rsquo;s thinking and way of doing things  In the first dialog, the senior engineer fails those three points.
 Av&amp;rsquo;s blog post made me think&amp;hellip;</description>

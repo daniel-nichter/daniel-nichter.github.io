@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>crash-safe on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/crash-safe/</link>
-    <description>Recent content in crash-safe on Hack Mongo/MySQL</description>
+    <title>crash-safe on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/crash-safe/</link>
+    <description>Recent content in crash-safe on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 23 Jan 2018 18:40:00 -0700</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/crash-safe/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/crash-safe/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>Crash-safe MySQL Replication</title>
-      <link>https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/</link>
+      <link>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</link>
       <pubDate>Tue, 23 Jan 2018 18:40:00 -0700</pubDate>
 
-      <guid>https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/</guid>
+      <guid>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</guid>
       <description>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it&amp;rsquo;s not consistently understood or applied. The MySQL manual on the topic, 16.3.2 Handling an Unexpected Halt of a Replication Slave, is correct and authoritative, but unless you grok MySQL replication that page doesn&amp;rsquo;t make it obvious why crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient.</description>
     </item>
 

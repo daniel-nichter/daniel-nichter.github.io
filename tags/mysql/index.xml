@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>mysql on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/mysql/</link>
-    <description>Recent content in mysql on Hack Mongo/MySQL</description>
+    <title>mysql on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/mysql/</link>
+    <description>Recent content in mysql on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 25 Apr 2020 16:18:00 -0300</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>MySQL Threads Running</title>
-      <link>https://hackmongo.com/post/mysql-threads-running-how-hard-is-mysql-working/</link>
+      <link>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</link>
       <pubDate>Sat, 25 Apr 2020 16:18:00 -0300</pubDate>
 
-      <guid>https://hackmongo.com/post/mysql-threads-running-how-hard-is-mysql-working/</guid>
+      <guid>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</guid>
       <description>Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by Threads_running, expressed as a gauge (whereas QPS is a rate). Before discussing Threads_running, let&amp;rsquo;s consider an analogy:
 The image above is a digital instrument cluster from a car. The big circle on the left is the speedometer, and the big circle on the right is the tachometer. Speedometers are familiar to most: they show how fast the car is going.</description>
     </item>
 
     <item>
       <title>Queries Effect Performance</title>
-      <link>https://hackmongo.com/post/queries-effect-performance/</link>
+      <link>https://hackmysql.com/post/queries-effect-performance/</link>
       <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
 
-      <guid>https://hackmongo.com/post/queries-effect-performance/</guid>
+      <guid>https://hackmysql.com/post/queries-effect-performance/</guid>
       <description>Queries effect database performance. That&amp;rsquo;s not a typo: &amp;ldquo;effect&amp;rdquo; not &amp;ldquo;affect&amp;rdquo;. The difference is not a word game but an important way to think about database performance.
 Many things can affect performance. For example, if the system runs out of memory then starts swapping which causes high disk IO latency, that will negatively affect performance. But external factors like that notwithstanding (i.e. when hardware and MySQL are normal and stable), it&amp;rsquo;s important to understand that queries effect performance.</description>
     </item>
 
     <item>
       <title>Fixing Ghosted GTIDs</title>
-      <link>https://hackmongo.com/post/fixing-ghosted-gtids/</link>
+      <link>https://hackmysql.com/post/fixing-ghosted-gtids/</link>
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
 
-      <guid>https://hackmongo.com/post/fixing-ghosted-gtids/</guid>
+      <guid>https://hackmysql.com/post/fixing-ghosted-gtids/</guid>
       <description>MySQL auto-positioning is an integral part of replication with GTID, but it&amp;rsquo;s neither required nor guaranteed to work. It&amp;rsquo;s possible to enable GTIDs but disable auto-positioning, and it&amp;rsquo;s possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.</description>
     </item>
 
     <item>
       <title>When MySQL Goes Away</title>
-      <link>https://hackmongo.com/post/when-mysql-goes-away/</link>
+      <link>https://hackmysql.com/post/when-mysql-goes-away/</link>
       <pubDate>Sun, 22 Jul 2018 18:00:00 -0300</pubDate>
 
-      <guid>https://hackmongo.com/post/when-mysql-goes-away/</guid>
+      <guid>https://hackmysql.com/post/when-mysql-goes-away/</guid>
       <description>Handling MySQL errors in Go is not easy. There are a lot of MySQL server error codes, and the Go MySQL driver as its own errors, and Go database/sql has its own errors, and errors can bubble up from other packages, like net.OpError. Consequently, Go programs tend not to handle errors. Instead, they simply report errors:
 err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err } And then the error is logged or reported somewhere.</description>
     </item>
 
     <item>
       <title>Crash-safe MySQL Replication</title>
-      <link>https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/</link>
+      <link>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</link>
       <pubDate>Tue, 23 Jan 2018 18:40:00 -0700</pubDate>
 
-      <guid>https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/</guid>
+      <guid>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</guid>
       <description>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it&amp;rsquo;s not consistently understood or applied. The MySQL manual on the topic, 16.3.2 Handling an Unexpected Halt of a Replication Slave, is correct and authoritative, but unless you grok MySQL replication that page doesn&amp;rsquo;t make it obvious why crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient.</description>
     </item>
 

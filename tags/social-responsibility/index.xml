@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>social responsibility on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/social-responsibility/</link>
-    <description>Recent content in social responsibility on Hack Mongo/MySQL</description>
+    <title>social responsibility on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/social-responsibility/</link>
+    <description>Recent content in social responsibility on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 31 Dec 2017 09:50:00 -0700</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/social-responsibility/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/social-responsibility/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>Tech Workers Are Good People</title>
-      <link>https://hackmongo.com/post/tech-workers-are-good-people/</link>
+      <link>https://hackmysql.com/post/tech-workers-are-good-people/</link>
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
 
-      <guid>https://hackmongo.com/post/tech-workers-are-good-people/</guid>
+      <guid>https://hackmysql.com/post/tech-workers-are-good-people/</guid>
       <description>The Other Tech Bubble is a provocative and interesting read. The author clearly has a lot of experience with Silicon Valley and has done their homework. There are many good insights, like &amp;ldquo;They&amp;rsquo;re still asking if it&amp;rsquo;s possible to do something, and not whether they should.&amp;rdquo; But there are two claims and one ambiguity that need to be addressed.
 Villains The first claim is:
  In 2008, it was Wall Street bankers.</description>

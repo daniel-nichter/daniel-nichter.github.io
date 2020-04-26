@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>bootloader on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/bootloader/</link>
-    <description>Recent content in bootloader on Hack Mongo/MySQL</description>
+    <title>bootloader on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/bootloader/</link>
+    <description>Recent content in bootloader on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 04 Feb 2018 19:30:00 -0700</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/bootloader/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/bootloader/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>Bootloader Design Pattern</title>
-      <link>https://hackmongo.com/post/bootloader-design-pattern/</link>
+      <link>https://hackmysql.com/post/bootloader-design-pattern/</link>
       <pubDate>Sun, 04 Feb 2018 19:30:00 -0700</pubDate>
 
-      <guid>https://hackmongo.com/post/bootloader-design-pattern/</guid>
+      <guid>https://hackmysql.com/post/bootloader-design-pattern/</guid>
       <description>Extensibility is a lofty goal for software design, and difficult to achieve. The Wikipedia article notes:
  Extensible design in software engineering is to accept that not everything can be designed in advance.
  That&amp;rsquo;s a paradox because it entails that extensible design does not accept that extensibility can be designed in advance! Fortunately, there&amp;rsquo;s at least one solution that can be intentionally designed and implemented in advance. I call it the &amp;ldquo;Bootloader&amp;rdquo; design pattern.</description>

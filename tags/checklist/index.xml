@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>checklist on Hack Mongo/MySQL</title>
-    <link>https://hackmongo.com/tags/checklist/</link>
-    <description>Recent content in checklist on Hack Mongo/MySQL</description>
+    <title>checklist on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/checklist/</link>
+    <description>Recent content in checklist on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 17 Sep 2017 00:00:00 +0000</lastBuildDate>
 
-	<atom:link href="https://hackmongo.com/tags/checklist/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hackmysql.com/tags/checklist/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
       <title>Five-Point Checklist for Excellent Software</title>
-      <link>https://hackmongo.com/post/five-point-checklist-for-excellent-software/</link>
+      <link>https://hackmysql.com/post/five-point-checklist-for-excellent-software/</link>
       <pubDate>Sun, 17 Sep 2017 00:00:00 +0000</pubDate>
 
-      <guid>https://hackmongo.com/post/five-point-checklist-for-excellent-software/</guid>
+      <guid>https://hackmysql.com/post/five-point-checklist-for-excellent-software/</guid>
       <description>I&amp;rsquo;ve never met a developer who hasn&amp;rsquo;t read or reviewed a lot of code written by other developers. If there&amp;rsquo;s one truism in the field of software of engineering it&amp;rsquo;s that the process is collaborative. Unless you write and never release software, other people will read the code, and they&amp;rsquo;re most likely reading it not for a fun bedtime story but because they need to understand and probably fix or modify it.</description>
     </item>
 

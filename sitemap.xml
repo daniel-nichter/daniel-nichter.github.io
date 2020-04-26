@@ -3,417 +3,417 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-    <loc>https://hackmongo.com/</loc>
+    <loc>https://hackmysql.com/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/metrics/</loc>
+    <loc>https://hackmysql.com/tags/metrics/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/mysql/</loc>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/mysql-threads-running-how-hard-is-mysql-working/</loc>
+    <loc>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/</loc>
+    <loc>https://hackmysql.com/post/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/</loc>
+    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/threads-running/</loc>
+    <loc>https://hackmysql.com/tags/threads-running/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/page/about/</loc>
+    <loc>https://hackmysql.com/page/about/</loc>
     <lastmod>2020-04-01T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/page/</loc>
+    <loc>https://hackmysql.com/page/</loc>
     <lastmod>2020-04-01T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/performance/</loc>
+    <loc>https://hackmysql.com/tags/performance/</loc>
     <lastmod>2020-01-12T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/queries/</loc>
+    <loc>https://hackmysql.com/tags/queries/</loc>
     <lastmod>2020-01-12T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/queries-effect-performance/</loc>
+    <loc>https://hackmysql.com/post/queries-effect-performance/</loc>
     <lastmod>2020-01-12T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/auto-pos/</loc>
+    <loc>https://hackmysql.com/tags/auto-pos/</loc>
     <lastmod>2019-12-15T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/fixing-ghosted-gtids/</loc>
+    <loc>https://hackmysql.com/post/fixing-ghosted-gtids/</loc>
     <lastmod>2019-12-15T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/gtid/</loc>
+    <loc>https://hackmysql.com/tags/gtid/</loc>
     <lastmod>2019-12-15T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/replication/</loc>
+    <loc>https://hackmysql.com/tags/replication/</loc>
     <lastmod>2019-12-15T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/histograms/</loc>
+    <loc>https://hackmysql.com/tags/histograms/</loc>
     <lastmod>2019-06-29T19:00:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/percentiles/</loc>
+    <loc>https://hackmysql.com/tags/percentiles/</loc>
     <lastmod>2019-06-29T19:00:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/response-time-sla/</loc>
+    <loc>https://hackmysql.com/post/response-time-sla/</loc>
     <lastmod>2019-06-29T19:00:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/sla/</loc>
+    <loc>https://hackmysql.com/tags/sla/</loc>
     <lastmod>2019-06-29T19:00:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/monitoring/</loc>
+    <loc>https://hackmysql.com/tags/monitoring/</loc>
     <lastmod>2019-04-12T09:00:00-04:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/path-and-dimension-metrics/</loc>
+    <loc>https://hackmysql.com/post/path-and-dimension-metrics/</loc>
     <lastmod>2019-04-12T09:00:00-04:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/time-series/</loc>
+    <loc>https://hackmysql.com/tags/time-series/</loc>
     <lastmod>2019-04-12T09:00:00-04:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/three-golang-error-types/</loc>
+    <loc>https://hackmysql.com/post/three-golang-error-types/</loc>
     <lastmod>2019-03-25T11:00:00-04:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/errors/</loc>
+    <loc>https://hackmysql.com/tags/errors/</loc>
     <lastmod>2019-03-25T11:00:00-04:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/golang/</loc>
+    <loc>https://hackmysql.com/tags/golang/</loc>
     <lastmod>2019-03-25T11:00:00-04:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/go-metrics/</loc>
+    <loc>https://hackmysql.com/tags/go-metrics/</loc>
     <lastmod>2019-02-10T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/linear-interpolation/</loc>
+    <loc>https://hackmysql.com/tags/linear-interpolation/</loc>
     <lastmod>2019-02-10T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/nearest-rank/</loc>
+    <loc>https://hackmysql.com/tags/nearest-rank/</loc>
     <lastmod>2019-02-10T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/page/percentiles/</loc>
+    <loc>https://hackmysql.com/page/percentiles/</loc>
     <lastmod>2019-02-10T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/three-golang-channel-red-flags/</loc>
+    <loc>https://hackmysql.com/post/three-golang-channel-red-flags/</loc>
     <lastmod>2018-12-16T13:00:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/channels/</loc>
+    <loc>https://hackmysql.com/tags/channels/</loc>
     <lastmod>2018-12-16T13:00:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/design-pattern/</loc>
+    <loc>https://hackmysql.com/tags/design-pattern/</loc>
     <lastmod>2018-12-16T13:00:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/sender-closer/</loc>
+    <loc>https://hackmysql.com/tags/sender-closer/</loc>
     <lastmod>2018-12-16T13:00:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/cbd/</loc>
+    <loc>https://hackmysql.com/tags/cbd/</loc>
     <lastmod>2018-12-02T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/component-based-design/</loc>
+    <loc>https://hackmysql.com/tags/component-based-design/</loc>
     <lastmod>2018-12-02T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/component-based-software-design/</loc>
+    <loc>https://hackmysql.com/post/component-based-software-design/</loc>
     <lastmod>2018-12-02T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/software-design/</loc>
+    <loc>https://hackmysql.com/tags/software-design/</loc>
     <lastmod>2018-12-02T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/when-mysql-goes-away/</loc>
+    <loc>https://hackmysql.com/post/when-mysql-goes-away/</loc>
     <lastmod>2018-07-22T18:00:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/godoc/</loc>
+    <loc>https://hackmysql.com/tags/godoc/</loc>
     <lastmod>2018-05-13T09:00:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/thinking-in-go/</loc>
+    <loc>https://hackmysql.com/post/thinking-in-go/</loc>
     <lastmod>2018-05-13T09:00:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/bootloader/</loc>
+    <loc>https://hackmysql.com/tags/bootloader/</loc>
     <lastmod>2018-02-04T19:30:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/bootloader-design-pattern/</loc>
+    <loc>https://hackmysql.com/post/bootloader-design-pattern/</loc>
     <lastmod>2018-02-04T19:30:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/database/</loc>
+    <loc>https://hackmysql.com/tags/database/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/database-scalability-contention-and-crosstalk/</loc>
+    <loc>https://hackmysql.com/post/database-scalability-contention-and-crosstalk/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/gunther/</loc>
+    <loc>https://hackmysql.com/tags/gunther/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/scalability/</loc>
+    <loc>https://hackmysql.com/tags/scalability/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/schwartz/</loc>
+    <loc>https://hackmysql.com/tags/schwartz/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/universal-scalability-law/</loc>
+    <loc>https://hackmysql.com/tags/universal-scalability-law/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/crash-safe/</loc>
+    <loc>https://hackmysql.com/tags/crash-safe/</loc>
     <lastmod>2018-01-23T18:40:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/crash-safe-mysql-replication-a-visual-guide/</loc>
+    <loc>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</loc>
     <lastmod>2018-01-23T18:40:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/antipatterns/</loc>
+    <loc>https://hackmysql.com/tags/antipatterns/</loc>
     <lastmod>2018-01-21T19:00:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/cli/</loc>
+    <loc>https://hackmysql.com/tags/cli/</loc>
     <lastmod>2018-01-21T19:00:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/command-line/</loc>
+    <loc>https://hackmysql.com/tags/command-line/</loc>
     <lastmod>2018-01-21T19:00:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/page/cli-antipatterns/</loc>
+    <loc>https://hackmysql.com/page/cli-antipatterns/</loc>
     <lastmod>2018-01-21T19:00:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/business/</loc>
+    <loc>https://hackmysql.com/tags/business/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/philosophy/</loc>
+    <loc>https://hackmysql.com/tags/philosophy/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/silicon-valley/</loc>
+    <loc>https://hackmysql.com/tags/silicon-valley/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/social-responsibility/</loc>
+    <loc>https://hackmysql.com/tags/social-responsibility/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/tech-workers-are-good-people/</loc>
+    <loc>https://hackmysql.com/post/tech-workers-are-good-people/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/approaching-a-new-software-project/</loc>
+    <loc>https://hackmysql.com/post/approaching-a-new-software-project/</loc>
     <lastmod>2017-12-10T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/domain-model/</loc>
+    <loc>https://hackmysql.com/tags/domain-model/</loc>
     <lastmod>2017-12-10T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/engineering/</loc>
+    <loc>https://hackmysql.com/tags/engineering/</loc>
     <lastmod>2017-11-12T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/ideas-leaders-and-engineers/</loc>
+    <loc>https://hackmysql.com/post/ideas-leaders-and-engineers/</loc>
     <lastmod>2017-11-12T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/leadership/</loc>
+    <loc>https://hackmysql.com/tags/leadership/</loc>
     <lastmod>2017-11-12T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/checklist/</loc>
+    <loc>https://hackmysql.com/tags/checklist/</loc>
     <lastmod>2017-09-17T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/five-point-checklist-for-excellent-software/</loc>
+    <loc>https://hackmysql.com/post/five-point-checklist-for-excellent-software/</loc>
     <lastmod>2017-09-17T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/designing-tools-for-integration/</loc>
+    <loc>https://hackmysql.com/post/designing-tools-for-integration/</loc>
     <lastmod>2017-09-05T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/integration/</loc>
+    <loc>https://hackmysql.com/tags/integration/</loc>
     <lastmod>2017-09-05T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/tools/</loc>
+    <loc>https://hackmysql.com/tags/tools/</loc>
     <lastmod>2017-09-05T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/how-to-test-the-database/</loc>
+    <loc>https://hackmysql.com/post/how-to-test-the-database/</loc>
     <lastmod>2017-08-20T11:20:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/testing/</loc>
+    <loc>https://hackmysql.com/tags/testing/</loc>
     <lastmod>2017-08-20T11:20:00-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/design-before-implementation/</loc>
+    <loc>https://hackmysql.com/post/design-before-implementation/</loc>
     <lastmod>2017-08-01T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/race-condition/</loc>
+    <loc>https://hackmysql.com/tags/race-condition/</loc>
     <lastmod>2017-06-17T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/reading-os-exec-cmd-output-without-race-conditions/</loc>
+    <loc>https://hackmysql.com/post/reading-os-exec-cmd-output-without-race-conditions/</loc>
     <lastmod>2017-06-17T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/post/custom-mongodb-replica-set-write-concern/</loc>
+    <loc>https://hackmysql.com/post/custom-mongodb-replica-set-write-concern/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/mongodb/</loc>
+    <loc>https://hackmysql.com/tags/mongodb/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/replica-set/</loc>
+    <loc>https://hackmysql.com/tags/replica-set/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/tag-set/</loc>
+    <loc>https://hackmysql.com/tags/tag-set/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/write-concern/</loc>
+    <loc>https://hackmysql.com/tags/write-concern/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/page/golang-antipatterns/</loc>
+    <loc>https://hackmysql.com/page/golang-antipatterns/</loc>
     <lastmod>2017-06-03T18:51:14-07:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/page/idiomatic-go/</loc>
+    <loc>https://hackmysql.com/page/idiomatic-go/</loc>
     <lastmod>2017-06-03T00:00:00+00:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmongo.com/tags/os/exec/</loc>
+    <loc>https://hackmysql.com/tags/os/exec/</loc>
   </url>
 
 </urlset>
