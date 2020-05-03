@@ -6,10 +6,40 @@
     <description>Recent content on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Apr 2020 16:18:00 -0300</lastBuildDate>
+    <lastBuildDate>Sun, 03 May 2020 00:00:00 +0000</lastBuildDate>
 
 	<atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
 
+
+    <item>
+      <title>mysqlreport</title>
+      <link>https://hackmysql.com/archive/mysqlreport/</link>
+      <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmysql.com/archive/mysqlreport/</guid>
+      <description>mysqlreport The mysqlreport script has been archived. It is no longer developed or supported.
+You can download it from https://github.com/daniel-nichter/hackmysql.com/tree/master/mysqlreport.</description>
+    </item>
+
+    <item>
+      <title>mysqlsla</title>
+      <link>https://hackmysql.com/archive/mysqlsla/</link>
+      <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmysql.com/archive/mysqlsla/</guid>
+      <description>mysqlsla The mysqlsla script has been archived. It is no longer developed or supported.
+You can download it from https://github.com/daniel-nichter/hackmysql.com/tree/master/mysqlsla.</description>
+    </item>
+
+    <item>
+      <title>mysqlsniffer</title>
+      <link>https://hackmysql.com/archive/mysqlsniffer/</link>
+      <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmysql.com/archive/mysqlsniffer/</guid>
+      <description>mysqlsniffer The mysqlsniffer program has been archived. It is no longer developed or supported.
+You can download it from https://github.com/daniel-nichter/hackmysql.com/tree/master/mysqlsniffer.</description>
+    </item>
 
     <item>
       <title>MySQL Threads Running</title>
