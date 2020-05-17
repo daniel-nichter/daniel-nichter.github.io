@@ -7,7 +7,12 @@
 
   <title>Hack MySQL</title>
   <meta property="og:title" content="Hack MySQL" />
-  <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmysql.com/" />
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
@@ -114,8 +119,7 @@
 						</a>
 						<div class="post-entry">
 
-								Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by Threads_running, expressed as a gauge (whereas QPS is a rate). Before discussing Threads_running, let&rsquo;s consider an analogy:
-The image above is a digital instrument cluster from a car. The big circle on the left is the speedometer, and the big circle on the right is the tachometer. Speedometers are familiar to most: they show how fast the car is going.
+								<p>Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by <em><a href="https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Threads_running">Threads_running</a></em>, expressed as a gauge (whereas QPS is a rate). Before discussing <em>Threads_running</em>, let&rsquo;s consider an analogy:</p>
 								<a href="https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/" class="post-read-more">Read more...</a>
 
 						</div>
@@ -199,11 +203,7 @@ The image above is a digital instrument cluster from a car. The big circle on th
   </p>
   <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>
-<script src="https://hackmysql.com/js/jquery-3.2.1.min.js"></script>
-<script src="https://hackmysql.com/js/bootstrap.min.js"></script>
-<script src="https://hackmysql.com/js/bootstrap-toc.min.js"></script>
-<script src="https://hackmysql.com/js/highlight.min.js"></script>
-<script src="https://hackmysql.com/js/main.js"></script>
+<script src="https://hackmysql.com/js/compressed.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/3.js" site="WJIYGVMB"></script>

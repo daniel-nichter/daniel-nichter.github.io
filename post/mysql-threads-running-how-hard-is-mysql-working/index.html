@@ -9,7 +9,12 @@
   <meta property="og:title" content="MySQL Threads Running" />
   <meta name="description" content="How Hard is MySQL Working?">
   <meta property="og:description" content="How Hard is MySQL Working?">
-  <meta name="author" content="Daniel Nichter"/><meta property="og:url" content="https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/" />
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
@@ -180,7 +185,6 @@
 <p>Real-world experience shows that MySQL does not performance well for most applications past 50 threads running. Back in 2014, MySQL expert Alexey Straganov benchmarked MySQL 5.6 with very high <em>Threads_running</em>: <a href="https://www.percona.com/blog/2014/01/23/percona-server-improve-scalability-percona-thread-pool/">Percona Server: Improve Scalability with Percona Thread Pool</a>. TL;DR: performance peaks at 64 threads running. Those are lab results; real application queries are more challenging than synthetic benchmark queries.</p>
 <p>The solution? Scale out the database by sharding. But that&rsquo;s another long topic.</p>
 <p>Let&rsquo;s end on a positive note. Perhaps the world&rsquo;s foremost expert on MySQL performance is Vadim Tkachenko, and he recently achieved 100,000 threads running: <a href="https://www.percona.com/blog/2019/02/25/mysql-challenge-100k-connections/">MySQL Challenge: 100k Connections</a>. There are no limits.</p>
-
       </article>
       <hr>
       <ul class="pager blog-pager">
@@ -228,11 +232,7 @@
   </p>
   <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>
-<script src="https://hackmysql.com/js/jquery-3.2.1.min.js"></script>
-<script src="https://hackmysql.com/js/bootstrap.min.js"></script>
-<script src="https://hackmysql.com/js/bootstrap-toc.min.js"></script>
-<script src="https://hackmysql.com/js/highlight.min.js"></script>
-<script src="https://hackmysql.com/js/main.js"></script>
+<script src="https://hackmysql.com/js/compressed.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/3.js" site="WJIYGVMB"></script>

@@ -6,6 +6,7 @@
     <description>Recent content in testing on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <copyright>2020 Daniel Nichter</copyright>
     <lastBuildDate>Sun, 20 Aug 2017 11:20:00 -0700</lastBuildDate>
 
 	<atom:link href="https://hackmysql.com/tags/testing/index.xml" rel="self" type="application/rss+xml" />

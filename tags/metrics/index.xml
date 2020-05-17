@@ -6,6 +6,7 @@
     <description>Recent content in metrics on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <copyright>2020 Daniel Nichter</copyright>
     <lastBuildDate>Sat, 25 Apr 2020 16:18:00 -0300</lastBuildDate>
 
 	<atom:link href="https://hackmysql.com/tags/metrics/index.xml" rel="self" type="application/rss+xml" />
@@ -17,8 +18,7 @@
       <pubDate>Sat, 25 Apr 2020 16:18:00 -0300</pubDate>
 
       <guid>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</guid>
-      <description>Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by Threads_running, expressed as a gauge (whereas QPS is a rate). Before discussing Threads_running, let&amp;rsquo;s consider an analogy:
-The image above is a digital instrument cluster from a car. The big circle on the left is the speedometer, and the big circle on the right is the tachometer. Speedometers are familiar to most: they show how fast the car is going.</description>
+      <description>&lt;p&gt;Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by &lt;em&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Threads_running&#34;&gt;Threads_running&lt;/a&gt;&lt;/em&gt;, expressed as a gauge (whereas QPS is a rate). Before discussing &lt;em&gt;Threads_running&lt;/em&gt;, let&amp;rsquo;s consider an analogy:&lt;/p&gt;</description>
     </item>
 
     <item>
