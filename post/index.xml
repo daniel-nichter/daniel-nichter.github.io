@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Sat, 25 Apr 2020 16:18:00 -0300</lastBuildDate>
+    <lastBuildDate>Sun, 31 May 2020 00:00:00 +0000</lastBuildDate>
 
 	<atom:link href="https://hackmysql.com/post/index.xml" rel="self" type="application/rss+xml" />
 
+
+    <item>
+      <title>Gone GTID</title>
+      <link>https://hackmysql.com/post/gone-gtid/</link>
+      <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmysql.com/post/gone-gtid/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html&#34;&gt;GTID-based replication&lt;/a&gt; makes managing replication topology easy: just &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html&#34;&gt;CHANGE MASTER&lt;/a&gt; to any node and voilà. It &lt;a href=&#34;https://hackmysql.com/post/fixing-ghosted-gtids/&#34;&gt;doesn&amp;rsquo;t always work&lt;/a&gt;, but for the most part it does. That&amp;rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &amp;ldquo;OK, sure!&amp;quot;, which is most of the time, you should double check it.&lt;/p&gt;</description>
+    </item>
 
     <item>
       <title>MySQL Threads Running</title>

@@ -111,30 +111,30 @@
 			<div class="posts-list">
 
 					<article class="post-preview">
-						<a href="https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/">
-							<h1 class="post-title">MySQL Threads Running</h1>
+						<a href="https://hackmysql.com/post/gone-gtid/">
+							<h1 class="post-title">Gone GTID</h1>
 
-								<h3 class="post-subtitle">How Hard is MySQL Working?</h3>
+								<h3 class="post-subtitle">When MySQL Writes Go Missing</h3>
 
 						</a>
 						<div class="post-entry">
 
-								<p>Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by <em><a href="https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Threads_running">Threads_running</a></em>, expressed as a gauge (whereas QPS is a rate). Before discussing <em>Threads_running</em>, let&rsquo;s consider an analogy:</p>
-								<a href="https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/" class="post-read-more">Read more...</a>
+								<p><a href="https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html">GTID-based replication</a> makes managing replication topology easy: just <a href="https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html">CHANGE MASTER</a> to any node and voilà. It <a href="https://hackmysql.com/post/fixing-ghosted-gtids/">doesn&rsquo;t always work</a>, but for the most part it does. That&rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &ldquo;OK, sure!&quot;, which is most of the time, you should double check it.</p>
+								<a href="https://hackmysql.com/post/gone-gtid/" class="post-read-more">Read more...</a>
 
 						</div>
 						<div class="post-meta">
 
 
-  <div>Apr 25, 2020</div>
+  <div>May 31, 2020</div>
   <div class="blog-tags">
 
 
         <a href="/tags/mysql">#mysql</a>
 
-        <a href="/tags/threads-running">#threads running</a>
+        <a href="/tags/replication">#replication</a>
 
-        <a href="/tags/metrics">#metrics</a>
+        <a href="/tags/gtid">#gtid</a>
 
 
   </div>
@@ -150,6 +150,8 @@
 	<div class="row">
 		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 			<hr>
+
+				<li><time>2020-04-25</time>&nbsp;<a href="https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/">MySQL Threads Running</a></li>
 
 				<li><time>2020-01-12</time>&nbsp;<a href="https://hackmysql.com/post/queries-effect-performance/">Queries Effect Performance</a></li>
 

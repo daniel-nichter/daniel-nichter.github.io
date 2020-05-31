@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Gone GTID</title>
+  <meta property="og:title" content="Gone GTID" />
+  <meta name="description" content="When MySQL Writes Go Missing">
+  <meta property="og:description" content="When MySQL Writes Go Missing">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/gone-gtid/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+
+  <meta name="generator" content="Hugo 0.69.0" />
+  <link rel="canonical" href="https://hackmysql.com/post/gone-gtid/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Design</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/golang-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/page/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">metrics</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Gone GTID</h1>
+        <h3 class="post-subtitle">When MySQL Writes Go Missing</h2>
+        <div class="post-meta">
+
+
+  <div>May 31, 2020</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/replication">#replication</a>
+
+        <a href="/tags/gtid">#gtid</a>
+
+
+  </div>
+</div>
+
+
+        <p><a href="https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html">GTID-based replication</a> makes managing replication topology easy: just <a href="https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html">CHANGE MASTER</a> to any node and voilà. It <a href="https://hackmysql.com/post/fixing-ghosted-gtids/">doesn&rsquo;t always work</a>, but for the most part it does. That&rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &ldquo;OK, sure!&quot;, which is most of the time, you should double check it.</p>
+<p>The problem begins when one MySQL node crashes and we fail over to another node. Every MySQL DBA should know that MySQL replication is asynchronous by default. Semi-sync replication requires explicit setup. Consequently, async replication means writes can and will be lost if not replicated before a crash.</p>
+<p>Also important to remember: <em><a href="https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/">crash-safe replication</a> only applies to MySQL crashes, not OS or hardware crashes</em>. MySQL can&rsquo;t be held responsible if the data center suddenly loses power.</p>
+<p>Let&rsquo;s consider two diagrams below. The top one shows node 1 (active/writable) replicating to node 2 (or &ldquo;node 2 is replicating <em>from</em> node 1&rdquo;, if you prefer). Node 2 has not yet fetched node 1 writes 5 and 6. Write 5 is in flight, but not in node 2&rsquo;s relay log yet. Writes 3 and 4 are in the rely log, but 3 is being executed and 4 is being written, so neither are in node 2&rsquo;s binary logs yet. Everyone&rsquo;s happy.</p>
+<p><img src="/img/gtid_missing_writes.svg" alt="GTID Missing Writes"></p>
+<p>Then node 1 crashes (maybe the server caught fire <em>just a little</em>) and comes back online. Thanks to GTID-based replication, you can easily make node 1 replicate from the new active node: node 2. But there&rsquo;s a problem: node 1 has two more writes than node 2: writes 5 and 6 (green) that never replicated to node 2 before node 1 combusted.</p>
+<p><mark>MySQL GTID only cares if the <em>replica</em> is missing writes.</mark></p>
+<p>From the MySQL manual <a href="https://dev.mysql.com/doc/refman/8.0/en/replication-gtids-auto-positioning.html">17.1.3.3 GTID Auto-Positioning</a>:</p>
+<blockquote>
+<p>The master responds by sending all transactions recorded in its binary log whose GTID is not included in the GTID set sent by the slave. &hellip; sending the transactions with GTIDs that the slave is missing, and skipping the transactions that were in the GTID set sent by the slave. &hellip; This exchange ensures that the master only sends the transactions with a GTID that the slave has not already received or committed.</p>
+</blockquote>
+<p>Normally, replicas are behind and need to catch up, i.e. they are <em>misssing</em> transactions. That&rsquo;s why the focus is on &ldquo;GTID that the slave has not already received or committed&rdquo;.</p>
+<p>Node 1 is not missing writes with respect to node 2; it has <em>more</em> writes. In other words, node 2 has less writes than node 1, but again: MySQL GTID only cares if the <em>replica</em> is missing writes, and node 2 is not the replica.</p>
+<p>The insidious part of the problem is: you may never know and it may never cause a problem. Node 2 writes 5 and 6 (magenta) may or may not conflict with node 1 writes 5 and 6 (green). If they do, you&rsquo;ll know: replication will break on node 1. If they don&rsquo;t, you&rsquo;ll have unknown data drift which may or may not become a problem over time. (As far as I know, <a href="https://www.percona.com/doc/percona-toolkit/LATEST/pt-table-checksum.html">pt-table-checksum</a> is still the only tool that can detect data drift.)</p>
+<h3 id="but-should-you">But Should You?</h3>
+<p>When I said, &ldquo;you can easily make node 1 replicate from the new active node: node 2&rdquo;, I glossed over a very important question: <em>Should you</em> make node 1 replicate from node 2 after a non-MySQL crash? The safe answer is <em>no</em>.</p>
+<p>The safe course of action is to rebuild node 1 (from a backup or clone from another node). But it <em>might</em> be safe to replicate, and rebuilding can be slow (during which the cluster has reduced redundancy). These two realities combine to make the answer &ldquo;yes&rdquo;, sometimes. In this case, you need to check for missing writes&hellip;</p>
+<h3 id="detecting-missing-writes-with-gtid">Detecting Missing Writes with GTID</h3>
+<p>If you run the Bash script below on nodes 1 and 2 after the crash (bottom diagram) it will exit 1 and report that node 1 has more writes and that node 2 is missing writes <code>node1:5-6</code> (where <code>node1</code> is its UUID).</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>
+DESCRIPTION<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Exit 0 if node1 writes &lt;= node2 writes.&#34;</span>
+
+set -eu
+
+usage<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+  echo <span style="color:#e6db74">&#34;usage: </span>$0<span style="color:#e6db74"> [options] node1 node2&#34;</span>
+  echo <span style="color:#e6db74">&#34;      </span><span style="color:#e6db74">${</span>DESCRIPTION<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>             1&gt;&amp;<span style="color:#ae81ff">2</span>
+  echo <span style="color:#e6db74">&#34;      -h      Print this help&#34;</span>    1&gt;&amp;<span style="color:#ae81ff">2</span>
+  exit $1
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">while</span> getopts <span style="color:#e6db74">&#34;a&#34;</span> opt; <span style="color:#66d9ef">do</span>
+  <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;</span>$opt<span style="color:#e6db74">&#34;</span> in
+    h<span style="color:#f92672">)</span> usage <span style="color:#ae81ff">0</span> ;;
+    *<span style="color:#f92672">)</span> usage <span style="color:#ae81ff">1</span> ;;
+  <span style="color:#66d9ef">esac</span>
+<span style="color:#66d9ef">done</span>
+
+node1<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+node2<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$2<span style="color:#e6db74">&#34;</span>
+
+mysql -h $node1 -sse <span style="color:#e6db74">&#34;SELECT @@hostname, @@server_uuid&#34;</span>
+mysql -h $node2 -sse <span style="color:#e6db74">&#34;SELECT @@hostname, @@server_uuid&#34;</span>
+
+node1writes<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mysql -h $node1 -sse <span style="color:#e6db74">&#34;SELECT @@global.gtid_executed&#34;</span><span style="color:#66d9ef">)</span>
+node2writes<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mysql -h $node2 -sse <span style="color:#e6db74">&#34;SELECT @@global.gtid_executed&#34;</span><span style="color:#66d9ef">)</span>
+
+is_subset<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mysql -h $node2 -sse <span style="color:#e6db74">&#34;SELECT GTID_SUBSET(&#39;</span>$node1writes<span style="color:#e6db74">&#39;, &#39;</span>$node2writes<span style="color:#e6db74">&#39;)&#34;</span><span style="color:#66d9ef">)</span>
+
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$is_subset<span style="color:#e6db74">&#34;</span> !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+  missing_writes<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mysql -h $node2 -sse <span style="color:#e6db74">&#34;SELECT GTID_SUBTRACT(&#39;</span>$node1writes<span style="color:#e6db74">&#39;, &#39;</span>$node2writes<span style="color:#e6db74">&#39;)&#34;</span><span style="color:#66d9ef">)</span>
+  echo <span style="color:#e6db74">&#34;</span>$node1<span style="color:#e6db74"> has more writes than </span>$node2<span style="color:#e6db74">, DO NOT REPLICATE!&#34;</span> &gt;&amp;<span style="color:#ae81ff">2</span>
+  echo <span style="color:#e6db74">&#34;</span>$node2<span style="color:#e6db74"> is missing writes: </span>$missing_writes<span style="color:#e6db74">&#34;</span> &gt;&amp;<span style="color:#ae81ff">2</span>
+  exit <span style="color:#ae81ff">1</span>
+<span style="color:#66d9ef">fi</span>
+
+echo <span style="color:#e6db74">&#34;OK, </span>$node1<span style="color:#e6db74"> writes are a subset of </span>$node2<span style="color:#e6db74"> writes&#34;</span>
+</code></pre></div><p>Read about the <a href="https://dev.mysql.com/doc/refman/8.0/en/gtid-functions.html">GTID functions</a>.</p>
+<h3 id="having-more-writes">Having More Writes</h3>
+<p>The last paragraph of <a href="https://dev.mysql.com/doc/refman/8.0/en/replication-gtids-auto-positioning.html">17.1.3.3 GTID Auto-Positioning</a> talks about the opposite problem: post-crash, node 2 having more node 1 writes than node 1 has in its own binary logs. In other words, node 1 is missing some of its own writes. As the paragraph notes, this can happen if <code>sync_binlog=1</code> is <em>not</em> set.</p>
+<p>As noted in the <a href="https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/#gtid">GTID section of Crash-safe MySQL Replication</a>, <code>sync_binlog=1</code> is required (as is <code>innodb_flush_log_at_trx_commit=1</code>). Without these, we can have a case where, in the top diagram, node 1 write 6 (green) replicates and is applied by node 2 before it&rsquo;s persisted in node 1&rsquo;s binary logs. Then when node 1 replicates from node 2, we run into this problem: node 1 doesn&rsquo;t have it&rsquo;s own write 6 but node 2 does.</p>
+<h2 id="takeaway">Takeaway</h2>
+<p>If you use GTID replication, be careful when restarting replication on a crashed MySQL instance that was previously active (writable). The safest course of action is rebuilding the crashed instance. But if rebuild time compels you not to, be sure to check that all writes (transactions identified by GTID set) from the crashed instance were executed on the new active instance. If so, then it should be safe to replicate, but also run <a href="https://www.percona.com/doc/percona-toolkit/LATEST/pt-table-checksum.html">pt-table-checksum</a> to verify.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/" data-toggle="tooltip" data-placement="top" title="MySQL Threads Running">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2020 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/3.js" site="WJIYGVMB"></script>
+
+
+  </body>
+</html>

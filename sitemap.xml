@@ -3,22 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
+    <loc>https://hackmysql.com/post/gone-gtid/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/gtid/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/replication/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
     <loc>https://hackmysql.com/tags/archive/</loc>
     <lastmod>2020-05-03T00:00:00+00:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/archive/</loc>
-    <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/tags/mysql/</loc>
     <lastmod>2020-05-03T00:00:00+00:00</lastmod>
   </url>
 
@@ -53,22 +78,12 @@
   </url>
 
   <url>
-    <loc>https://hackmysql.com/tags/</loc>
-    <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
     <loc>https://hackmysql.com/tags/metrics/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</loc>
-    <lastmod>2020-04-25T16:18:00-03:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/post/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
   </url>
 
@@ -109,16 +124,6 @@
 
   <url>
     <loc>https://hackmysql.com/post/fixing-ghosted-gtids/</loc>
-    <lastmod>2019-12-15T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/tags/gtid/</loc>
-    <lastmod>2019-12-15T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/tags/replication/</loc>
     <lastmod>2019-12-15T00:00:00+00:00</lastmod>
   </url>
 
