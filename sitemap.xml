@@ -3,17 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-    <loc>https://hackmysql.com/post/gone-gtid/</loc>
-    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
     <loc>https://hackmysql.com/tags/gtid/</loc>
     <lastmod>2020-05-31T00:00:00+00:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/post/mysql-gtid-missing-writes/</loc>
     <lastmod>2020-05-31T00:00:00+00:00</lastmod>
   </url>
 
