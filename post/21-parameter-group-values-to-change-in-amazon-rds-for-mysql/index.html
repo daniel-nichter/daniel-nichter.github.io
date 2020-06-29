@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>21 Parameter Group Values to Change in Amazon RDS for MySQL</title>
+  <meta property="og:title" content="21 Parameter Group Values to Change in Amazon RDS for MySQL" />
+  <meta name="description" content="Amazon RDS for MySQL uses many default values for system variables, but it also sets a few &ldquo;sys vars&rdquo; with different values. As with any database, neither product (MySQL) nor provider (AWS) defaults can best suite all use cases. It&rsquo;s our responsibility to carefully review and set every important system variable. This is tedious and difficult, but I&rsquo;ve done it for you.
+Below are are 21 MySQL 5.7 system variables that I recommend changing by creating a new parameter group.">
+  <meta property="og:description" content="Amazon RDS for MySQL uses many default values for system variables, but it also sets a few &ldquo;sys vars&rdquo; with different values. As with any database, neither product (MySQL) nor provider (AWS) defaults can best suite all use cases. It&rsquo;s our responsibility to carefully review and set every important system variable. This is tedious and difficult, but I&rsquo;ve done it for you.
+Below are are 21 MySQL 5.7 system variables that I recommend changing by creating a new parameter group.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+
+  <meta name="generator" content="Hugo 0.69.0" />
+  <link rel="canonical" href="https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Design</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/golang-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/page/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">metrics</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">21 Parameter Group Values to Change in Amazon RDS for MySQL</h1>
+
+        <div class="post-meta">
+
+
+  <div>Jun 29, 2020</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/aws-rds">#aws-rds</a>
+
+        <a href="/tags/sys-var">#sys-var</a>
+
+        <a href="/tags/parameter-group">#parameter-group</a>
+
+
+  </div>
+</div>
+
+
+        <p><a href="https://aws.amazon.com/rds/mysql/">Amazon RDS for MySQL</a> uses many default values for system variables, but it also sets a few &ldquo;sys vars&rdquo; with different values. As with any database, neither product (MySQL) nor provider (AWS) defaults can best suite all use cases. It&rsquo;s our responsibility to carefully review and set every important system variable. This is tedious and difficult, but I&rsquo;ve done it for you.</p>
+<p>Below are are 21 MySQL 5.7 system variables that I recommend changing by creating a new <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithParamGroups.html">parameter group</a>. This presumes new RDS instances; some of these sys vars cannot be changed easily after provisioning MySQL. This only applies to RDS for MySQL, <em>not</em> Amazon Aurora.</p>
+<p>For each of the 21 MySQL system variables, the MySQL 5.7 default is listed, followed by the Amazon RDS default, followed by my recommended value. For brevity, † = AWS does not specify a value, it defaults to the MySQL 5.7 default value.</p>
+<h2 id="binary-log">Binary Log</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>MySQL 5.7</th>
+<th>AWS</th>
+<th>Recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-binary-log.html#sysvar_binlog_cache_size">binlog_cache_size</a></td>
+<td>32768</td>
+<td>32768</td>
+<td>512000</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-binary-log.html#sysvar_binlog_format">binlog_format</a></td>
+<td>ROW</td>
+<td>MIXED</td>
+<td>ROW</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-binary-log.html#sysvar_binlog_row_image">binlog_row_image</a></td>
+<td>full</td>
+<td>†</td>
+<td>minimal</td>
+</tr>
+</tbody>
+</table>
+<p><code>binlog_cache_size</code>:  The MySQL 5.7 (and AWS) default 32K is probably too low with row-based replication (RBR). With statement-based replication (SBR), you can delete a millions rows with a single binary log event: a single DELETE statement. But with RBR, you get a million binlog events. Consequently, <code>binlog_cache_size</code> can seriously impact performance because binlog changes that don&rsquo;t fit in memory are written to disk, which is very slow by comparison. Combine with <code>binlog_row_image = full</code> and 32K is almost guaranteed to be too small.</p>
+<p>Monitor <a href="https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#statvar_Binlog_cache_disk_use">binlog_cache_disk_use</a> to know if this happens too frequently. &ldquo;Too frequently&rdquo; means &ldquo;when it correlates with degraded performance&rdquo;. A value of 512K is a better start. This cache is allocated per connection, so don&rsquo;t increase it beyond what&rsquo;s measurably necessary.</p>
+<p><code>binlog_format</code>: Row-based replication (RBR) is the standard. Eight years ago (2012) when <a href="https://www.oreilly.com/library/view/high-performance-mysql/9781449332471/">High Performance MySQL, 3rd Edition</a> was published, the consensus was,</p>
+<blockquote>
+<p>In theory, row-based replication is probably better all-around, and in practice it generally works fine for most people.</p>
+</blockquote>
+<p>Today, RBR is proven and reliable; it is no longer theory. The session variable is dynamic, so it can be changed only when and where needed.</p>
+<p><code>binlog_row_image</code>: The MySQL 5.7 default <code>full</code> makes sense as a product default because it works for everything (e.g. binlog tailers), but <code>minimal</code> is a much better default for performance because it&rsquo;s better to replicate only what&rsquo;s needed. On write-intensive tables with BLOB columns, <code>minimal</code> can significantly increase replication throughput and avoid slow <code>binlog_cache_disk_use</code>.</p>
+<h2 id="character-set">Character Set</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>MySQL 5.7</th>
+<th>AWS</th>
+<th>Recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_character_set_server">character_set_server</a></td>
+<td>latin1</td>
+<td>†</td>
+<td>utf8mb4</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_init_connect">init_connect</a></td>
+<td> </td>
+<td>†</td>
+<td>SET NAMES utf8mb4</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/server-options.html#option_mysqld_character-set-client-handshake">skip-character-set-client-handshake</a></td>
+<td>0</td>
+<td>†</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Welcome to the 21st century: we have emoji. In MySQL 8.0 the default is utf8mb4, so it&rsquo;s good planning for the future to set your 5.7 default to utf8mb4, too.</p>
+<p>The latter two might be controversial because they effectively disregard the client and force utf8mb4. This somewhat extreme approach is reaction to character sets often being a point of confusion, and sometimes a point of pain if not handled properly. The confusion and pain result from MySQL having several &ldquo;levels&rdquo; of charsets (e.g. server vs. table) combined with different clients doing different things. End result: I have never met a DBA or software developer who knew with certainty how all the character sets were configured. But with this configuration we can be quite certain: it&rsquo;s all utf8mb4—just utf8mb4.</p>
+<h2 id="gtid">GTID</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>MySQL 5.7</th>
+<th>AWS</th>
+<th>Recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-gtids.html#sysvar_enforce_gtid_consistency">enforce_gtid_consistency</a></td>
+<td>OFF</td>
+<td>†</td>
+<td>ON</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-gtids.html#sysvar_gtid_mode">gtid_mode</a></td>
+<td>OFF</td>
+<td>OFF_PERMISSIVE</td>
+<td>ON_PERMISSIVE</td>
+</tr>
+</tbody>
+</table>
+<p>GTID-based replication is the standard. (Operationally, it&rsquo;s still a little rough in 5.7, but no one misses classic binlog file:pos coordinates.) Ideally, we would set <code>gtid_mode = ON</code>, but the manual says,</p>
+<blockquote>
+<p>Changes from one value to another can only be one step at a time.</p>
+</blockquote>
+<p>Consequently, RDS fails to provision if <code>gtid_mode = ON</code>. Instead, set <code>gtid_mode = ON_PERMISSIVE</code> then immediately post-provision change to <code>ON</code>.</p>
+<h2 id="innodb">InnoDB</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>MySQL 5.7</th>
+<th>AWS</th>
+<th>Recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_flush_log_at_trx_commit">innodb_flush_log_at_trx_commit</a></td>
+<td>1</td>
+<td>†</td>
+<td>1</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_flush_neighbors">innodb_flush_neighbors</a></td>
+<td>1</td>
+<td>†</td>
+<td>0</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_log_buffer_size">innodb_log_buffer_size</a></td>
+<td>16777216</td>
+<td>8388608</td>
+<td>16777216</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_log_file_size">innodb_log_file_size</a></td>
+<td>50331648</td>
+<td>134217728</td>
+<td>268435456</td>
+</tr>
+</tbody>
+</table>
+<p><code>innodb_flush_log_at_trx_commit</code>: This variable is so important, it&rsquo;s worth explicitly settings to <code>1</code> to show that it was not overlooked. <code>innodb_flush_log_at_trx_commit = 1</code> is the &ldquo;D&rdquo; in <a href="https://en.wikipedia.org/wiki/ACID">ACID</a>. <a href="https://www.oreilly.com/library/view/high-performance-mysql/9781449332471/">High Performance MySQL, 3rd Edition</a> said,</p>
+<blockquote>
+<p>Setting innodb_flush_log_at_trx_commit to anything other than 1 can cause you to lose transactions. However, you might find the other settings useful if you don&rsquo;t care about durability (the D in ACID).</p>
+</blockquote>
+<p><code>innodb_flush_neighbors</code>: Flushing dirty neighbor pages was a performance benefit with spinning disks. But with <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html">AWS gp2 and io1</a> (never use &ldquo;magnetic&rdquo; for RDS) we presume it&rsquo;s no longer needed. However, gp2 is not direct-attached storage, so we don&rsquo;t know for sure what affect this variable has.</p>
+<p><code>innodb_log_buffer_size</code>: The MySQL 5.7 default 48MB is almost certainly way too small. The AWS default 128MB is much better. But 256MB is an even better default and still probably too low. A proper value is difficult to compute. Percona had this to say:</p>
+<ul>
+<li><a href="https://www.percona.com/blog/2006/07/03/choosing-proper-innodb_log_file_size/">Choosing proper innodb_log_file_size</a></li>
+<li><a href="https://www.percona.com/blog/2016/05/31/what-is-a-big-innodb_log_file_size/">What is a big innodb_log_file_size?</a></li>
+<li><a href="https://www.percona.com/blog/2017/10/18/chose-mysql-innodb_log_file_size/">How to Choose the MySQL innodb_log_file_size</a></li>
+</ul>
+<p>TL;DR: there&rsquo;s no single, correct answer. I suggest starting at 256MB, measure and adjust as needed.</p>
+<h2 id="performance-schema">Performance Schema</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>MySQL 5.7</th>
+<th>AWS</th>
+<th>Recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/performance-schema-system-variables.html#sysvar_performance_schema">performance_schema</a></td>
+<td>ON</td>
+<td>OFF</td>
+<td>ON</td>
+</tr>
+</tbody>
+</table>
+<p>The <a href="https://dev.mysql.com/doc/refman/5.7/en/performance-schema.html">Performance Schema</a> is an incredibly important source of performance insights. It should always be enabled.</p>
+<h2 id="replication">Replication</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>MySQL 5.7</th>
+<th>AWS</th>
+<th>Recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-slave.html#sysvar_master_info_repository">master-info-repository</a></td>
+<td>FILE</td>
+<td>TABLE</td>
+<td>TABLE</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-slave.html#sysvar_relay_log_info_repository">relay_log_info_repository</a></td>
+<td>FILE</td>
+<td>TABLE</td>
+<td>TABLE</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-slave.html#sysvar_sync_master_info">sync_master_info</a></td>
+<td>10000</td>
+<td>†</td>
+<td>0</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-slave.html#sysvar_sync_relay_log">sync_relay_log</a></td>
+<td>10000</td>
+<td>†</td>
+<td>0</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/replication-options-slave.html#sysvar_sync_relay_log_info">sync_relay_log_info</a></td>
+<td>10000</td>
+<td>†</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>Set these variables for <a href="https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/#gtid">Crash-safe MySQL Replication</a> and performance. <code>relay_log_recovery = ON</code> is also required, which is the non-modifiable AWS default.</p>
+<h2 id="time-zone">Time Zone</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>MySQL 5.7</th>
+<th>AWS</th>
+<th>Recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_time_zone">time_zone</a></td>
+<td>SYSTEM</td>
+<td>†</td>
+<td>UTC</td>
+</tr>
+</tbody>
+</table>
+<p>Like character sets, time zones can be a point of confusion and sometimes pain. Point in case: how do <code>TIMESTAMP</code> and <code>DATETIME</code> columns differ with respect to time zone? The best practice is to use UTC—and only UTC—with MySQL (or any database). Time zones are a presentation issue: do everything in UTC, and convert to a time zone immediately before and after user input/output.</p>
+<h2 id="innodb-io-capacity">InnoDB IO Capacity</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>MySQL 5.7</th>
+<th>AWS</th>
+<th>Recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_io_capacity">innodb_io_capacity</a></td>
+<td>200</td>
+<td>†</td>
+<td>(See table below)</td>
+</tr>
+<tr>
+<td><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_io_capacity_max">innodb_io_capacity_max</a></td>
+<td>2000‡</td>
+<td>†</td>
+<td>(See table below)</td>
+</tr>
+</tbody>
+</table>
+<p><small>‡ &ldquo;If you specify an innodb_io_capacity setting at startup but do not specify a value for innodb_io_capacity_max, innodb_io_capacity_max defaults to twice the value of innodb_io_capacity, with a minimum value of 2000.&rdquo; <a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-configuring-io-capacity.html">https://dev.mysql.com/doc/refman/5.7/en/innodb-configuring-io-capacity.html</a></small></p>
+<p>I saved the most complicated for last: <code>innodb_io_capacity</code> and <code>innodb_io_capacity_max</code>. These system variables are important, but it might surprise you to know that there&rsquo;s little to no consensus on proper values. For example, <a href="https://www.oreilly.com/library/view/high-performance-mysql/9781449332471/">High Performance MySQL, 3rd Edition</a> wrote,</p>
+<blockquote>
+<p>You can also increase the innodb_io_capacity option to between 2000 and 20000, depending on the IOPS your device can actually perform.</p>
+</blockquote>
+<p>It said nothing about <code>innodb_io_capacity_max</code>. A little later, in 2105 <a href="https://www.speedemy.com/17-key-mysql-config-file-settings-mysql-5-7-proof/">MySQL expert Aurimas Mikalauskas</a> wrote:</p>
+<blockquote>
+<p>Best solution – measure random write throughput of your storage and set innodb_io_capacity_max to the maximum you could achieve, and innodb_io_capacity to 50-75% of it, especially if your system is write-intensive.</p>
+</blockquote>
+<p>In January 2019, <a href="https://aws.amazon.com/blogs/database/best-practices-for-configuring-parameters-for-amazon-rds-for-mysql-part-1-parameters-related-to-performance/">Saikat Banerjee, Database Specialist Solutions Architect at AWS</a>, wrote:</p>
+<blockquote>
+<p>For I/O-intensive systems, a value of 1,000 usually works. We don’t recommend an extreme value like 20,000 unless you have already proved that a lower value is not sufficient.</p>
+</blockquote>
+<p>And more recently, in December 2109 <a href="https://www.percona.com/blog/2019/12/18/give-love-to-your-ssds-reduce-innodb_io_capacity_max/">Yves Trudeau and Francisco Bordenave, MySQL experts at Percona</a>, wrote:</p>
+<blockquote>
+<p>Simply overshooting the values of innodb_io_capacity and innodb_io_capacity_max is not optimal for performance.</p>
+</blockquote>
+<p>Add to those MySQL manual section <a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-configuring-io-capacity.html">14.8.8 Configuring InnoDB I/O Capacity</a> which contains this gem:</p>
+<blockquote>
+<p>Ideally, keep [innodb_io_capacity] as low as practical, but not so low that background activities fall behind. If the value is too high, data is removed from the buffer pool and change buffer too quickly for caching to provide a significant benefit.</p>
+</blockquote>
+<p><em>But wait, there&rsquo;s more!</em></p>
+<p>All information about InnoDB IO performance presumes direct-attached storage, unless explicitly stated otherwise; but <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html">Amazon RDS storage</a> uses Amazon EBS which is <em>not</em> direct-attached storage and has two options: gp2 and io1. (There&rsquo;s a third option: magnetic. Never use magnetic for RDS.) Moreover, RDS storage IOPS scale with storage size, so if <a href="https://aws.amazon.com/about-aws/whats-new/2019/06/rds-storage-auto-scaling/">storage auto scaling</a> is enabled, IOPS change.</p>
+<p><small>Side note: <a href="https://aws.amazon.com/ebs/features/#SSD-backed_volumes_.28IOPS-intensive.29">&ldquo;io1 is backed by solid-state drives (SSDs)&quot;</a>. I presume that &ldquo;backed by&rdquo; does <em>not</em> mean direct-attached.</small></p>
+<p>Does information about InnoDB IO performance apply to RDS storage IOPS? To my knowledge, there&rsquo;s no authoritative answer. But to start, we can presume &ldquo;yes&rdquo; and treat RDS IOPS equal to direct-attached storage IOPS. Then we have to consider gp2 vs. io1.</p>
+<p><mark>I very highly recommend 1,000G (1TB) <em>max</em> storage per RDS instance.</mark> 500G max is better, but I&rsquo;m being generous. The reasons why are another topic, but for now let&rsquo;s limit the discussion to 1TB max.</p>
+<table>
+<thead>
+<tr>
+<th>Storage</th>
+<th>innodb_io_capacity</th>
+<th>innodb_io_capacity_max</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gp2</td>
+<td>Base Performance &lt;= 1500</td>
+<td>3000</td>
+</tr>
+<tr>
+<td>io1</td>
+<td>0.5 * innodb_io_capacity_max</td>
+<td>Provision IOPS &lt;= 5000</td>
+</tr>
+</tbody>
+</table>
+<p>For gp2 storage up to 1000G (1TB), set <code>innodb_io_capacity</code> to base performance IOPS, up to 1500. Even though 1000G of storage provides 3000 IOPS base performance, there&rsquo;s no need to set <code>innodb_io_capacity</code> greater than 1500 unless measuring proves it&rsquo;s needed. And set <code>innodb_io_capacity_max = 3000</code> as a reasonable start; measure to prove that a higher value is needed. Overall, we&rsquo;re trying to ensure we utilize the RDS IOPS paid for without flushing so quickly that we negate the value of in-memory InnoDB buffer pool caching.</p>
+<p>For io1, I suggest setting <code>innodb_io_capacity</code> to 50% of <code>innodb_io_capacity_max</code>, and set <code>innodb_io_capacity_max</code> to the provisioned IOPS, up to 5000. Again, we&rsquo;re trying to balance utilization of IOPS with InnoDB buffer pool caching.</p>
+<p>The MySQL industry needs more research into InnoDB IO capacity tuning with Amazon RDS for MySQL.</p>
+
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/mysql-gtid-missing-writes/" data-toggle="tooltip" data-placement="top" title="Missing Writes with MySQL GTID">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2020 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/3.js" site="WJIYGVMB"></script>
+
+
+  </body>
+</html>

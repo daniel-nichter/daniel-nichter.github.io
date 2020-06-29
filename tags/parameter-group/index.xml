@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>parameter-group on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/parameter-group/</link>
+    <description>Recent content in parameter-group on Hack MySQL</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2020 Daniel Nichter</copyright>
+    <lastBuildDate>Mon, 29 Jun 2020 11:15:00 -0300</lastBuildDate>
+
+	<atom:link href="https://hackmysql.com/tags/parameter-group/index.xml" rel="self" type="application/rss+xml" />
+
+
+    <item>
+      <title>21 Parameter Group Values to Change in Amazon RDS for MySQL</title>
+      <link>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</link>
+      <pubDate>Mon, 29 Jun 2020 11:15:00 -0300</pubDate>
+
+      <guid>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</guid>
+      <description>Amazon RDS for MySQL uses many default values for system variables, but it also sets a few &amp;ldquo;sys vars&amp;rdquo; with different values. As with any database, neither product (MySQL) nor provider (AWS) defaults can best suite all use cases. It&amp;rsquo;s our responsibility to carefully review and set every important system variable. This is tedious and difficult, but I&amp;rsquo;ve done it for you.
+Below are are 21 MySQL 5.7 system variables that I recommend changing by creating a new parameter group.</description>
+    </item>
+
+  </channel>
+</rss>

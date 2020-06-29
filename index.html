@@ -111,28 +111,31 @@
 			<div class="posts-list">
 
 					<article class="post-preview">
-						<a href="https://hackmysql.com/post/mysql-gtid-missing-writes/">
-							<h1 class="post-title">Missing Writes with MySQL GTID</h1>
+						<a href="https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/">
+							<h1 class="post-title">21 Parameter Group Values to Change in Amazon RDS for MySQL</h1>
 
 						</a>
 						<div class="post-entry">
 
-								<p><a href="https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html">GTID-based replication</a> makes managing replication topology easy: just <a href="https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html">CHANGE MASTER</a> to any node and voilà. It <a href="https://hackmysql.com/post/fixing-ghosted-gtids/">doesn&rsquo;t always work</a>, but for the most part it does. That&rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &ldquo;OK, sure!&quot;, which is most of the time, you should double check it.</p>
-								<a href="https://hackmysql.com/post/mysql-gtid-missing-writes/" class="post-read-more">Read more...</a>
+								Amazon RDS for MySQL uses many default values for system variables, but it also sets a few &ldquo;sys vars&rdquo; with different values. As with any database, neither product (MySQL) nor provider (AWS) defaults can best suite all use cases. It&rsquo;s our responsibility to carefully review and set every important system variable. This is tedious and difficult, but I&rsquo;ve done it for you.
+Below are are 21 MySQL 5.7 system variables that I recommend changing by creating a new parameter group.
+								<a href="https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/" class="post-read-more">Read more...</a>
 
 						</div>
 						<div class="post-meta">
 
 
-  <div>May 31, 2020</div>
+  <div>Jun 29, 2020</div>
   <div class="blog-tags">
 
 
         <a href="/tags/mysql">#mysql</a>
 
-        <a href="/tags/replication">#replication</a>
+        <a href="/tags/aws-rds">#aws-rds</a>
 
-        <a href="/tags/gtid">#gtid</a>
+        <a href="/tags/sys-var">#sys-var</a>
+
+        <a href="/tags/parameter-group">#parameter-group</a>
 
 
   </div>
@@ -148,6 +151,8 @@
 	<div class="row">
 		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 			<hr>
+
+				<li><time>2020-05-31</time>&nbsp;<a href="https://hackmysql.com/post/mysql-gtid-missing-writes/">Missing Writes with MySQL GTID</a></li>
 
 				<li><time>2020-04-25</time>&nbsp;<a href="https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/">MySQL Threads Running</a></li>
 

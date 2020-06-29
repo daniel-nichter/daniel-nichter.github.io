@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 31 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 29 Jun 2020 11:15:00 -0300</lastBuildDate>
 
 	<atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
 
+
+    <item>
+      <title>21 Parameter Group Values to Change in Amazon RDS for MySQL</title>
+      <link>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</link>
+      <pubDate>Mon, 29 Jun 2020 11:15:00 -0300</pubDate>
+
+      <guid>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</guid>
+      <description>Amazon RDS for MySQL uses many default values for system variables, but it also sets a few &amp;ldquo;sys vars&amp;rdquo; with different values. As with any database, neither product (MySQL) nor provider (AWS) defaults can best suite all use cases. It&amp;rsquo;s our responsibility to carefully review and set every important system variable. This is tedious and difficult, but I&amp;rsquo;ve done it for you.
+Below are are 21 MySQL 5.7 system variables that I recommend changing by creating a new parameter group.</description>
+    </item>
 
     <item>
       <title>Missing Writes with MySQL GTID</title>
