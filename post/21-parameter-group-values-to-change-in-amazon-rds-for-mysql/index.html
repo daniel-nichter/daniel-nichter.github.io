@@ -282,7 +282,8 @@ Below are are 21 MySQL 5.7 system variables that I recommend changing by creatin
 <p>Setting innodb_flush_log_at_trx_commit to anything other than 1 can cause you to lose transactions. However, you might find the other settings useful if you don&rsquo;t care about durability (the D in ACID).</p>
 </blockquote>
 <p><code>innodb_flush_neighbors</code>: Flushing dirty neighbor pages was a performance benefit with spinning disks. But with <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html">AWS gp2 and io1</a> (never use &ldquo;magnetic&rdquo; for RDS) we presume it&rsquo;s no longer needed. However, gp2 is not direct-attached storage, so we don&rsquo;t know for sure what affect this variable has.</p>
-<p><code>innodb_log_buffer_size</code>: The MySQL 5.7 default 48MB is almost certainly way too small. The AWS default 128MB is much better. But 256MB is an even better default and still probably too low. A proper value is difficult to compute. Percona had this to say:</p>
+<p><code>innodb_log_buffer_size</code>: The MySQL 5.7 default 16MB is the standard. Interestingly, the AWS default 8MB is the MySQL <em>5.6</em> default. Perhaps this was an oversight?</p>
+<p><code>innodb_log_file_size</code>: The MySQL 5.7 default 48MB is almost certainly way too small. The AWS default 128MB is much better. But 256MB is an even better default and still probably too low. A proper value is difficult to compute. Percona had this to say:</p>
 <ul>
 <li><a href="https://www.percona.com/blog/2006/07/03/choosing-proper-innodb_log_file_size/">Choosing proper innodb_log_file_size</a></li>
 <li><a href="https://www.percona.com/blog/2016/05/31/what-is-a-big-innodb_log_file_size/">What is a big innodb_log_file_size?</a></li>
@@ -403,7 +404,7 @@ Below are are 21 MySQL 5.7 system variables that I recommend changing by creatin
 <blockquote>
 <p>You can also increase the innodb_io_capacity option to between 2000 and 20000, depending on the IOPS your device can actually perform.</p>
 </blockquote>
-<p>It said nothing about <code>innodb_io_capacity_max</code>. A little later, in 2105 <a href="https://www.speedemy.com/17-key-mysql-config-file-settings-mysql-5-7-proof/">MySQL expert Aurimas Mikalauskas</a> wrote:</p>
+<p>It said nothing about <code>innodb_io_capacity_max</code>. A little later, in 2015 <a href="https://www.speedemy.com/17-key-mysql-config-file-settings-mysql-5-7-proof/">MySQL expert Aurimas Mikalauskas</a> wrote:</p>
 <blockquote>
 <p>Best solution – measure random write throughput of your storage and set innodb_io_capacity_max to the maximum you could achieve, and innodb_io_capacity to 50-75% of it, especially if your system is write-intensive.</p>
 </blockquote>
