@@ -111,31 +111,33 @@
 			<div class="posts-list">
 
 					<article class="post-preview">
-						<a href="https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/">
-							<h1 class="post-title">21 Parameter Group Values to Change in Amazon RDS for MySQL</h1>
+						<a href="https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/">
+							<h1 class="post-title">What the Flush?</h1>
+
+								<h3 class="post-subtitle">MySQL Dirty Pages</h3>
 
 						</a>
 						<div class="post-entry">
 
-								Amazon RDS for MySQL uses many default values for system variables, but it also sets a few &ldquo;sys vars&rdquo; with different values. As with any database, neither product (MySQL) nor provider (AWS) defaults can best suite all use cases. It&rsquo;s our responsibility to carefully review and set every important system variable. This is tedious and difficult, but I&rsquo;ve done it for you.
-Below are are 21 MySQL 5.7 system variables that I recommend changing by creating a new parameter group.
-								<a href="https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/" class="post-read-more">Read more...</a>
+								<p>Yves Trudeau and Francisco Bordenave, MySQL experts at Percona, recently published a three-part post:
+(1) <a href="https://www.percona.com/blog/2019/12/18/give-love-to-your-ssds-reduce-innodb_io_capacity_max/">Give Love to Your SSDs – Reduce innodb_io_capacity_max!</a>;
+(2) <a href="https://www.percona.com/blog/2020/01/22/innodb-flushing-in-action-for-percona-server-for-mysql/">InnoDB Flushing in Action for Percona Server for MySQL</a>;
+(3) <a href="https://www.percona.com/blog/2020/05/14/tuning-mysql-innodb-flushing-for-a-write-intensive-workload/">Tuning MySQL/InnoDB Flushing for a Write-Intensive Workload</a>. It&rsquo;s a fantastic read from start to finish, and it made me realize: dirty pages sound bad, but they are good. I suspect the opposite (&ldquo;dirty pages are <em>not</em> good&rdquo;) is a misconception due to an incomplete picture. Let&rsquo;s complete the picture.</p>
+								<a href="https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/" class="post-read-more">Read more...</a>
 
 						</div>
 						<div class="post-meta">
 
 
-  <div>Jun 29, 2020</div>
+  <div>Jul 5, 2020</div>
   <div class="blog-tags">
 
 
         <a href="/tags/mysql">#mysql</a>
 
-        <a href="/tags/aws-rds">#aws-rds</a>
+        <a href="/tags/flushing">#flushing</a>
 
-        <a href="/tags/sys-var">#sys-var</a>
-
-        <a href="/tags/parameter-group">#parameter-group</a>
+        <a href="/tags/dirty-pages">#dirty-pages</a>
 
 
   </div>
@@ -151,6 +153,8 @@ Below are are 21 MySQL 5.7 system variables that I recommend changing by creatin
 	<div class="row">
 		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 			<hr>
+
+				<li><time>2020-06-29</time>&nbsp;<a href="https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/">21 Parameter Group Values to Change in Amazon RDS for MySQL</a></li>
 
 				<li><time>2020-05-31</time>&nbsp;<a href="https://hackmysql.com/post/mysql-gtid-missing-writes/">Missing Writes with MySQL GTID</a></li>
 

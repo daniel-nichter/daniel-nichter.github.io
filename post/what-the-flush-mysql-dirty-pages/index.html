@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>What the Flush?</title>
+  <meta property="og:title" content="What the Flush?" />
+  <meta name="description" content="MySQL Dirty Pages">
+  <meta property="og:description" content="MySQL Dirty Pages">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+
+  <meta name="generator" content="Hugo 0.69.0" />
+  <link rel="canonical" href="https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Design</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/golang-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/page/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">metrics</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">What the Flush?</h1>
+        <h3 class="post-subtitle">MySQL Dirty Pages</h2>
+        <div class="post-meta">
+
+
+  <div>Jul 5, 2020</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/flushing">#flushing</a>
+
+        <a href="/tags/dirty-pages">#dirty-pages</a>
+
+
+  </div>
+</div>
+
+
+        <p>Yves Trudeau and Francisco Bordenave, MySQL experts at Percona, recently published a three-part post:
+(1) <a href="https://www.percona.com/blog/2019/12/18/give-love-to-your-ssds-reduce-innodb_io_capacity_max/">Give Love to Your SSDs – Reduce innodb_io_capacity_max!</a>;
+(2) <a href="https://www.percona.com/blog/2020/01/22/innodb-flushing-in-action-for-percona-server-for-mysql/">InnoDB Flushing in Action for Percona Server for MySQL</a>;
+(3) <a href="https://www.percona.com/blog/2020/05/14/tuning-mysql-innodb-flushing-for-a-write-intensive-workload/">Tuning MySQL/InnoDB Flushing for a Write-Intensive Workload</a>. It&rsquo;s a fantastic read from start to finish, and it made me realize: dirty pages sound bad, but they are good. I suspect the opposite (&ldquo;dirty pages are <em>not</em> good&rdquo;) is a misconception due to an incomplete picture. Let&rsquo;s complete the picture.</p>
+<h3 id="dirty-pages-wont-be-lost">Dirty Pages Won&rsquo;t Be Lost</h3>
+<blockquote>
+<p>A dirty page is a page that is modified in memory but not yet flushed to disk.</p>
+</blockquote>
+<p>That&rsquo;s from Yves/Francisco part 2. If the casual reader stops there, it sounds bad: disk is durable storage, so if modifications aren&rsquo;t flushed to disk, they could be lost. But that&rsquo;s not the case: <mark>with <code>innodb_flush_log_at_trx_commit = 1</code>, changes are recorded in the InnoDB transaction (redo) logs on disk and flushed</mark>.</p>
+<h3 id="no-significant-drawbacks">No Significant Drawbacks</h3>
+<p>We trust InnoDB durability, so there is no risk of data loss with dirty pages and <code>innodb_flush_log_at_trx_commit = 1</code>. The only drawbacks of dirty pages are, as mentioned in Yves/Francisco part 1, slow MySQL shutdown and crash recovery. But in practice, those two cases don&rsquo;t matter for one reason: the MySQL server won&rsquo;t (or shouldn&rsquo;t be) active. To shutdown MySQL in production, we would failover to another instance. Then the previous instance has no hurry to shut down. Plus, even if the buffer pool size is 500G, modern storage can flush that quickly (especially when there&rsquo;s no other traffic to the server). If MySQL crashes, we&rsquo;d also failover to another instance. MySQL crashes in production are rare, so don&rsquo;t optimizing for it.</p>
+<h3 id="dirty-pages-are-good">Dirty Pages Are Good</h3>
+<blockquote>
+<p>Since you should aim to have as many dirty pages as possible without running into flush storms and stalls, the high_checkpoint algorithm will help you.</p>
+</blockquote>
+<p>If you read all three parts of their blog post, Yves and Bordenave explain why that quote is true. TL;DR: more dirty pages in memory means less disk IO. If &ldquo;dirty pages&rdquo; sounds worrisome, think of them as &ldquo;recent pages&rdquo;, because that&rsquo;s what they are: the most recent change, in memory. Of course we want the most recent changes in memory! That&rsquo;s the fastest way to fetch them.</p>
+<h3 id="why-flush-at-all">Why Flush At All?</h3>
+<p>If dirty pages are good for performance, then why not 100% dirty pages? Why flush at all? There are two reasons. First, &ldquo;buffer pool churn&rdquo;: flushing old, unused pages to load newly requested data (pages). This happens because almost always the InnoDB buffer pool is <em>much</em> smaller than the total or working data set sizes. For example, having a 100G buffer pool for 500G of data. But even if this wasn&rsquo;t true—let&rsquo;s say we have 1G buffer pool for 50M of data—reason two is the InnoDB transaction log. As shown in Yves/Francisco part 2, the InnoDB transaction log is a ring buffer (two log files). If all data fit in the buffer pool and we updated the same in-memory, dirty pages over and over, the <em>records of those changes</em> would eventually fill up the transaction log. Adaptive flushing won&rsquo;t let that happen.</p>
+<h2 id="history-of-innodb_max_dirty_pages_pct">History of innodb_max_dirty_pages_pct</h2>
+<p>History repeats itself:</p>
+<table>
+<thead>
+<tr>
+<th>MySQL Version</th>
+<th>Default Value</th>
+<th>Maximum Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5.0</td>
+<td>90</td>
+<td>100</td>
+</tr>
+<tr>
+<td>5.1</td>
+<td>90</td>
+<td>100</td>
+</tr>
+<tr>
+<td>5.5</td>
+<td>75</td>
+<td>99</td>
+</tr>
+<tr>
+<td>5.6</td>
+<td>75</td>
+<td>99</td>
+</tr>
+<tr>
+<td>5.7</td>
+<td>75</td>
+<td>99.99</td>
+</tr>
+<tr>
+<td>8.0</td>
+<td>90</td>
+<td>99.99</td>
+</tr>
+</tbody>
+</table>
+<p>If you&rsquo;re running 5.6 or 5.7, you should set <code>innodb_max_dirty_pages_pct = 90</code> to let adaptive flushing handle flushing. And if you&rsquo;re running 8.0, set <code>innodb_max_dirty_pages_pct_lwm = 0</code> because early flushing doesn&rsquo;t make sense.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/" data-toggle="tooltip" data-placement="top" title="21 Parameter Group Values to Change in Amazon RDS for MySQL">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2020 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/3.js" site="WJIYGVMB"></script>
+
+
+  </body>
+</html>

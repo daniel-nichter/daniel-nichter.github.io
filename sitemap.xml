@@ -3,6 +3,41 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
+    <loc>https://hackmysql.com/tags/dirty-pages/</loc>
+    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/flushing/</loc>
+    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
+    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/</loc>
+    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
+  </url>
+
+  <url>
     <loc>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</loc>
     <lastmod>2020-06-29T11:15:00-03:00</lastmod>
   </url>
@@ -13,32 +48,12 @@
   </url>
 
   <url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2020-06-29T11:15:00-03:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2020-06-29T11:15:00-03:00</lastmod>
-  </url>
-
-  <url>
     <loc>https://hackmysql.com/tags/parameter-group/</loc>
     <lastmod>2020-06-29T11:15:00-03:00</lastmod>
   </url>
 
   <url>
-    <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2020-06-29T11:15:00-03:00</lastmod>
-  </url>
-
-  <url>
     <loc>https://hackmysql.com/tags/sys-var/</loc>
-    <lastmod>2020-06-29T11:15:00-03:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2020-06-29T11:15:00-03:00</lastmod>
   </url>
 
