@@ -18,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.69.0" />
+  <meta name="generator" content="Hugo 0.73.0" />
   <link rel="canonical" href="https://hackmysql.com/post/component-based-software-design/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -170,7 +170,7 @@
     <span style="color:#a6e22e">Pump</span>(<span style="color:#a6e22e">rate</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">error</span>
     <span style="color:#a6e22e">Detoxify</span>() <span style="color:#66d9ef">error</span>
 }
-</code></pre></div><p>That is a delineated component, so it&rsquo;s a good start, but its identity is conflated. The identify of a component is its <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">single responsibility</a>. To test identity, try to answer the question &ldquo;What does it do?&rdquo; in a single sentence that accurately and completely captures its high-level responsibility. For <code>blood.Processor</code>, saying, &ldquo;It processes blood.&quot;, is neither accurate nor complete because &ldquo;processes&rdquo; is too vague. In software, most components &ldquo;process&rdquo;, &ldquo;store&rdquo;, &ldquo;transfer&rdquo;, &ldquo;calculate&rdquo;, and other generic computing terms. These are not always bad design, but they should be thoroughly scrutinized by the team to see if a generically-named component is really several specific components. Let&rsquo;s further this example by adding to <code>blood.Processor</code> another method: <code>Oxygenate() error</code>. The lungs oxygenate blood. This is a type of processing, but now <code>blood.Processor</code> is quite conflated because in this example we know that liver, heart, and lungs are very different components. A better design is:</p>
+</code></pre></div><p>That is a delineated component, so it&rsquo;s a good start, but its identity is conflated. The identify of a component is its <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">single responsibility</a>. To test identity, try to answer the question &ldquo;What does it do?&rdquo; in a single sentence that accurately and completely captures its high-level responsibility. For <code>blood.Processor</code>, saying, &ldquo;It processes blood.&rdquo;, is neither accurate nor complete because &ldquo;processes&rdquo; is too vague. In software, most components &ldquo;process&rdquo;, &ldquo;store&rdquo;, &ldquo;transfer&rdquo;, &ldquo;calculate&rdquo;, and other generic computing terms. These are not always bad design, but they should be thoroughly scrutinized by the team to see if a generically-named component is really several specific components. Let&rsquo;s further this example by adding to <code>blood.Processor</code> another method: <code>Oxygenate() error</code>. The lungs oxygenate blood. This is a type of processing, but now <code>blood.Processor</code> is quite conflated because in this example we know that liver, heart, and lungs are very different components. A better design is:</p>
 <pre><code>package blood
 
 type Pumper interface {

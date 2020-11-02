@@ -20,7 +20,7 @@ Many things can affect performance. For example, if the system runs out of memor
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.69.0" />
+  <meta name="generator" content="Hugo 0.73.0" />
   <link rel="canonical" href="https://hackmysql.com/post/queries-effect-performance/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -149,7 +149,7 @@ Many things can affect performance. For example, if the system runs out of memor
 <p>&ldquo;MySQL performance&rdquo; is not a thing. It&rsquo;s not a feature or subsystem of MySQL, like semi-synchronous replication or page flushing. It&rsquo;s not even a known characteristic of the system, like horsepower is to a car. MySQL, all by itself, has no performance. Performance is a measurement. There are many potential measurements, but the one that matters most is how fast it executes queries—query response time. This is why it&rsquo;s grammatically correct to say that queries effect performance.</p>
 <p>But for completeness, it&rsquo;s also true that queries can affect performance. A common case: data backfills. An otherwise good database starts to run slowly because non-typical queries for a data backfill cause MySQL to lock a lot of rows, as one example. In this case, the backfill queries are affecting the performance of the normal queries. And all queries together effect total MySQL performance.</p>
 <h3 id="conclusion">Conclusion</h3>
-<p>This isn&rsquo;t a blog post about query optimization, which is covered by countless other blogs and books. The point is to understand that queries effect database performance. When troubleshooting a slow database under normal conditions (i.e. when hardware and MySQL are normal and stable), queries are the cause. Instead of asking, &ldquo;What&rsquo;s wrong with MySQL? Why is it running slowly?&quot;, ask, &ldquo;Which queries are using the most of MySQL&rsquo;s time? How can we make them faster?&rdquo; It&rsquo;s a subtle but important shift in thinking.</p>
+<p>This isn&rsquo;t a blog post about query optimization, which is covered by countless other blogs and books. The point is to understand that queries effect database performance. When troubleshooting a slow database under normal conditions (i.e. when hardware and MySQL are normal and stable), queries are the cause. Instead of asking, &ldquo;What&rsquo;s wrong with MySQL? Why is it running slowly?&rdquo;, ask, &ldquo;Which queries are using the most of MySQL&rsquo;s time? How can we make them faster?&rdquo; It&rsquo;s a subtle but important shift in thinking.</p>
 
       </article>
       <hr>

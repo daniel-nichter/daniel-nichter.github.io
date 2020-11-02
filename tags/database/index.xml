@@ -28,7 +28,7 @@ We presume that a database can scale to almost 100% of system capacity, and max 
       <pubDate>Sun, 20 Aug 2017 11:20:00 -0700</pubDate>
 
       <guid>https://hackmysql.com/post/how-to-test-the-database/</guid>
-      <description>&amp;ldquo;How do I test the database?&amp;rdquo; is a question I&amp;rsquo;ve been asked by colleagues many times. There&amp;rsquo;s a good, clean solution, but let&amp;rsquo;s first step back from what seems to be the problem to unpack why &amp;ldquo;testing the database&amp;rdquo; is not special (but nonetheless important). In other words: colleagues don&amp;rsquo;t ask, &amp;ldquo;How do I test such-and-such package?&amp;quot;, because that&amp;rsquo;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</description>
+      <description>&amp;ldquo;How do I test the database?&amp;rdquo; is a question I&amp;rsquo;ve been asked by colleagues many times. There&amp;rsquo;s a good, clean solution, but let&amp;rsquo;s first step back from what seems to be the problem to unpack why &amp;ldquo;testing the database&amp;rdquo; is not special (but nonetheless important). In other words: colleagues don&amp;rsquo;t ask, &amp;ldquo;How do I test such-and-such package?&amp;rdquo;, because that&amp;rsquo;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</description>
     </item>
 
   </channel>

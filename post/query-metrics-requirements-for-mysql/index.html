@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Query Metrics Requirements for MySQL</title>
+  <meta property="og:title" content="Query Metrics Requirements for MySQL" />
+  <meta name="description" content="Let&rsquo;s answer a question which, to my knowledge, has never been systematically addressed: What are the requirements for a production-ready query metrics app at scale? I am uniquely qualified to answer that because I have written four query metrics apps, two of which are the open-source standard for MySQL: pt-query-digest and the original (v1) code behind the query metrics/analysis part of Percona Monitoring and Management. I&rsquo;ve also published a couple of packages related to query metrics: go-mysql/slowlog and go-mysql/query.">
+  <meta property="og:description" content="Let&rsquo;s answer a question which, to my knowledge, has never been systematically addressed: What are the requirements for a production-ready query metrics app at scale? I am uniquely qualified to answer that because I have written four query metrics apps, two of which are the open-source standard for MySQL: pt-query-digest and the original (v1) code behind the query metrics/analysis part of Percona Monitoring and Management. I&rsquo;ve also published a couple of packages related to query metrics: go-mysql/slowlog and go-mysql/query.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/query-metrics-requirements-for-mysql/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+
+  <meta name="generator" content="Hugo 0.73.0" />
+  <link rel="canonical" href="https://hackmysql.com/post/query-metrics-requirements-for-mysql/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Design</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/golang-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/page/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">metrics</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Query Metrics Requirements for MySQL</h1>
+
+        <div class="post-meta">
+
+
+  <div>Nov 1, 2020</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/query-metrics">#query-metrics</a>
+
+
+  </div>
+</div>
+
+
+        <p>Let&rsquo;s answer a question which, to my knowledge, has never been systematically addressed: <em>What are the requirements for a production-ready query metrics app at scale?</em> I am uniquely qualified to answer that because I have written four query metrics apps, two of which are the open-source standard for MySQL: <a href="https://www.percona.com/doc/percona-toolkit/LATEST/pt-query-digest.html">pt-query-digest</a> and the original (v1) code behind the query metrics/analysis part of <a href="https://www.percona.com/software/database-tools/percona-monitoring-and-management">Percona Monitoring and Management</a>. I&rsquo;ve also published a couple of packages related to query metrics: <a href="https://github.com/go-mysql/slowlog">go-mysql/slowlog</a> and <a href="https://github.com/go-mysql/query">go-mysql/query</a>.</p>
+<h2 id="query-metrics-vs-system-metrics">Query Metrics vs. System Metrics</h2>
+<p>Let&rsquo;s make sure we&rsquo;re talking about the same thing. System metrics come from <code>SHOW GLOBAL STATUS</code> (usually, but tools should really use the Performance Schema) and include metrics like <a href="https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Threads_running">Threads_running</a>. These and other metrics are system metrics, and there are <em>a lot</em> of apps (open-source, proprietary, hosted/SaaS, etc.) for collecting and charting them. There are so many solutions in this space for two reasons: they&rsquo;re easy and common. They&rsquo;re easy to collect, aggregate, and report because they&rsquo;re just gauges and counters. They&rsquo;re common for the same reason: just gauges and counters which any system should provide and every engineer expects.</p>
+<p>Query metrics (&ldquo;QM&rdquo;) are the statistics of MySQL query metrics aggregated by a dimension, almost always by <a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema-statement-digests.html">statement digest</a> (a.k.a. &ldquo;fingerprint&rdquo;). Raw, non-aggregated query metrics are collected from the <a href="https://dev.mysql.com/doc/refman/8.0/en/slow-query-log.html">slow query log</a> or <a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html">Performance Schema</a> (or, rarely, from the network by sniffing the MySQL protocol). There are <em>very few</em> apps for collecting and visualizing QM because it&rsquo;s quite difficult and very data-intensive. I won&rsquo;t go into technical details, but it&rsquo;s fair to say that an engineer can whip up a solution for system metrics in a few days, but a QM app requires 6 engineering months at least. That&rsquo;s how long it took me and another engineer (3 calendar months == 6 engineering months) to create a QM app for Square with all the <em>Must Have</em> requirements below, and that&rsquo;s with me having had 10+ years experience with query metrics and using some open-source packages I had already written. I&rsquo;d advise a company to plan for 3 exceptional engineers and 2 calendar years to create a production-ready QM app at scale from the ground up.</p>
+<h3 id="why-query-metrics">Why Query Metrics?</h3>
+<p>Query metrics tell you what MySQL is doing (or, <em>has done</em>, since they&rsquo;re not real-time). Moreover, QM tells you what MySQL is <em>busy doing</em>. When system metrics tell you that MySQL is running many threads and QPS is very low, the first question is: <em>Why?</em> Only QM can answer that. Query metrics are almost always required to troubleshoot and fix MySQL performance problems. It&rsquo;s only logical: MySQL does little more than execute queries, so knowing which queries take the most time, examine the most rows, etc. answers many questions. There are cases when one needs only system metrics, but I&rsquo;ve never seen or heard of any company successfully running MySQL without query metrics.</p>
+<h2 id="retail-solutions">Retail Solutions</h2>
+<p>QM apps are difficult to create, which is why there are only two—yes, <em>2</em>—retail (i.e. not private) solutions that I know of: <a href="https://www.percona.com/software/database-tools/percona-monitoring-and-management">Percona Monitoring and Management</a> and <a href="https://www.solarwinds.com/database-performance-monitor">SolarWinds Database Performance Monitor</a> (formerly VividCortex).</p>
+<p>A big name in the metrics/APM industry is developing a third solution, but I don&rsquo;t know if that&rsquo;s public knowledge yet, so I&rsquo;ll refrain from saying which company. Point is: another solution is forthcoming.</p>
+<p>Amazon RDS for MySQL has <a href="https://aws.amazon.com/rds/performance-insights/">Performance Insights</a>, but I&rsquo;ve only looked at it enough to know that it&rsquo;s not standard QM based on query time (which queries MySQL spends time executing); rather, it seems based on wait time (where MySQL spends time waiting). There is merit to this approach (analysis by wait time), but it&rsquo;s not common MySQL practice. I don&rsquo;t think it would make immediate sense to MySQL experts. However, as previously said: it has merit, and some day I&rsquo;d like to give it a more thorough examination.</p>
+<p>MySQL Workbench has <a href="https://dev.mysql.com/doc/workbench/en/wb-performance-reports.html">Performance Schema Reports</a> which are kind of query metrics. But Workbench is a standalone app, so I don&rsquo;t count it as a solution at scale, same as pt-query-digest.</p>
+<h2 id="requirements">Requirements</h2>
+<p>I want more companies to create retail QM apps because it&rsquo;s important that the state of the art keeps evolving and improving. Competition helps do that, as well as lower prices. Granted, <a href="https://www.percona.com/software/database-tools/percona-monitoring-and-management">Percona Monitoring and Management</a> is free but maybe not an ideal solution in a big enterprise which has money to buy a product and let the vendor handle everything.</p>
+<p>Following are requirements for a query metrics app to be, in my opinion, production-ready at scale:</p>
+<h3 id="must-have">Must Have</h3>
+<p>A query metrics app must have these features to be useful for production MySQL at scale:</p>
+<ul>
+<li>Aggregate by Query Digest</li>
+</ul>
+<p>Query metrics mean nothing unless queries are abstracted and grouped by <a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema-statement-digests.html">digest</a> and shown as such in the app. Real query samples <code>SELET * FROM t WHERE id = 1</code> and <code>SELET * FROM t WHERE id = 5</code> are the same logical query: <code>SELET * FROM t WHERE id = ?</code>. This latter form is the query digest (a.k.a. &ldquo;fingerprint&rdquo;). The app must be built around this concept but not necessarily hard-coded to query digests.</p>
+<ul>
+<li>Disable Samples</li>
+</ul>
+<p>The app must report query digests, but reporting real query samples must be opt-in. Samples are not required to troubleshoot issues, but they are very nice to have. However, security often prevents them from being transmitted or stored, so the app must <em>not</em> do so by default and only do so when explicitly enabled.</p>
+<ul>
+<li>Minimum Resolution: 60s</li>
+</ul>
+<p>The app must consume, aggregate, and report query metrics at intervals no grater than 60s. Like system metrics, the higher the resolution, the more detail captured and seen which is necessary for troubleshooting short-lived issues. A maximum resolution of 1s is quite difficult to achieve because query metrics require a lot more processing and data than system metrics. If MySQL is doing 2,000 QPS, the challenge is: can the code digest 2,000 queries <em>and</em> process the query metrics in less than 1s? That&rsquo;s very difficult.</p>
+<ul>
+<li>Minimum Retention: 2w (Full Resolution)</li>
+</ul>
+<p>Query metrics must be retained, at full resolution, for at least 2 weeks. The reason is: if an issues happens today, there might not be a full incident review until next week, or the deep-dive analysis might take awhile. Longer retention is better, but 2 weeks is the minimum. After 2 weeks, the app can downsample to save space.</p>
+<ul>
+<li>Source: Slow Log or Performance Schema</li>
+</ul>
+<p>The app must consume the slow query log or the relevant Performance Schema tables. If using slow log, it must support the Percona Server slow log extensions (extra query metrics). If using Performance Schema, it must do so correctly and efficiently, which is not trivial.</p>
+<p>Sniffing the wire to get query metrics from the MySQL protocol is not sufficient because it contains almost no metrics. The MySQL protocol was never intended for this purpose, which makes it ill-suited. It&rsquo;s useful, however, for augmenting slow log or Performance Schema query metrics.</p>
+<ul>
+<li>Time Frame (UTC and Local)</li>
+</ul>
+<p>The app, like any normal metrics system, must allow the user to select a time frame, both relative and absolute. It&rsquo;s common to look at QM for the last 30 minutes, or to look at QM for a specific time frame further in the past. Additionally, the app time zone must have at least UTC and local time. UTC is used when coordinating with other engineers or servers. Local time is used when one is looking at QM alone.</p>
+<ul>
+<li>Database Grouping</li>
+</ul>
+<p>There are two issues the app must address. First, &ldquo;the&rdquo; database is most likely at least 2 MySQL instances, probably more. Although we need to see per-instance query metrics, we also usually consider &ldquo;the&rdquo; database to be a cluster of database instances connected in the same replication topology. Second, different teams have different databases, and we probably do not need (or want) to see databases that we don&rsquo;t own. Broadly speaking, there are two ways to address both issues: accounts or metadata.</p>
+<p>If the app is partitioned by account (or sub-accounts), then I could use an account that contains only my databases. That solves the second issue, but it might not suffice for the first issue. (This approach is also nice for cost attribution/billing.)</p>
+<p>The app can allow (or require) adding metadata (dimensions, labels, tags, etc.) to the data from each database instance. For example, I label query metrics from my databases with <code>team=foo</code> and <code>cluster=db1</code>, and the app allows me to filter by these labels. This approach is more flexible because it allows others uses of the metadata, but to make it work nicely the app needs to remember my filters so I don&rsquo;t have to re-filter every time.</p>
+<p>The end result should be: I see only my databases (not other teams&rsquo; databases), and by &ldquo;database&rdquo; I mean either a single database instance or all database instances in the cluster. Note: although I want to see databases grouped by cluster, only per-instance query metrics are must-have.</p>
+<ul>
+<li>Profile and Report</li>
+</ul>
+<p>For any given interval (i.e. time frame selected by the user), there will be hundred or thousands of unique query digests. A query profile is necessary to show the meaningful and actionable &ldquo;signals&rdquo; among all the &ldquo;noise&rdquo;. A default query profile shows the top N &ldquo;slowest&rdquo; queries, where &ldquo;slowest&rdquo; means &ldquo;most execution time in the interval&rdquo;, i.e. what MySQL spent most its time doing. The query profile must allow different metrics (not necessarily all metrics, because many are not be useful as the profile sort metric); for example, top N queries by rows examined. From the profile we must be able to select a query digest to see all its aggregated metrics in the interval—a query report.</p>
+<p>A query report is where all the details and metrics for a given query (by digest) are shown. A query report must present all metrics available and at least the usual statistics: minimum, average, maximum. All values must be converted to sensible units: show &ldquo;249 ms&rdquo; not &ldquo;0.249001&rdquo;, convert bytes to KB/MB/GB, etc. Query reports are very information-dense, so a beautifully designed UI is critical.</p>
+<ul>
+<li>Deep Linking</li>
+</ul>
+<p>It is very common for engineers to share QM app links. The app must have &ldquo;deep links&rdquo; that load the <em>exact</em> page as the original user was seeing. This includes everything above: profile, report, database grouping (any filters), time frame, etc.</p>
+<ul>
+<li>Simple Agent</li>
+</ul>
+<p>The app will most likely have an &ldquo;agent&rdquo; of some sort: a binary to collect query metrics from the slow log or Performance Schema, pre-aggregate, and send to a back-end API for further processing which powers the front-end web app. This agent must be extremely simple to install and configure, and support all MySQL connection options (TLS, cleartext password for other auth methods, etc.). In short, the back-end setup must be super simple, fast, and easy to deploy with automation.</p>
+<ul>
+<li>Affordable</li>
+</ul>
+<p>Affordability is relative, but look at the current retail solutions and strive to do better for less money. One way to get an advantage: figure out pricing that takes into account the fact that, almost always, only 1 database in a logical cluster is writable, so all the replicas report little to no query metrics. (This doesn&rsquo;t apply to a real cluster where all nodes are writable.) Query metrics require a lot of data processing and storage, so driving down costs will require extremely efficient programming and a system designed for massive scale from the start.</p>
+<p>If the price is too high, people will find a way to make <a href="https://www.percona.com/software/database-tools/percona-monitoring-and-management">Percona Monitoring and Management</a> work. And if Amazon RDS for MySQL ever makes a more standard QM app, that could be very price-competitive since they already have all the infrastructure to support it.</p>
+<h3 id="premium">Premium</h3>
+<p>A premium query metrics app would have these features to justify its cost. In order of importance:</p>
+<ol>
+<li>EXPLAIN Plan</li>
+</ol>
+<p>One of the first things engineers do is look at the MySQL EXPLAIN plan for the top queries in the profile. The app should do and shows this automatically. This does not require samples: the agent would EXPLAIN the query and transmit only the EXPLAIN plan, not the sample. There should be an EXPLAIN plan for each interval; or if possible, get the EXPLAIN plan on-demand.</p>
+<ol start="2">
+<li>Side-by-Side Comparison</li>
+</ol>
+<p>A common task is comparing QM now to some time in the past because there&rsquo;s a problem now and we want to see what&rsquo;s different. Users can compare two intervals using two web browser tabs, but it&rsquo;s a lot nicer if the app has built-in support for showing two intervals side-by-side. This leads to <em>Advanced 1</em>.</p>
+<ol start="3">
+<li>Pretty-Print Digest SQL</li>
+</ol>
+<p>A query report will contain the query digest, and it&rsquo;s really helpful if it&rsquo;s pretty-printed SQL. It helps engineers study complex queries, and it&rsquo;s pretty easy to do (there are libraries; it&rsquo;s a solved problem).</p>
+<ol start="4">
+<li>Search Queries</li>
+</ol>
+<p>Generally, a QM app delivers value in the profile and reports, but sometimes users need to search for specific queries. Premium QM apps should have this feature, and it leads to the next feature&hellip;</p>
+<ol start="5">
+<li>Comment Metadata</li>
+</ol>
+<p>Putting metadata in multi-line comments is a common practice, like:</p>
+<pre><code class="language-none" data-lang="none">SELECT id FROM t WHERE id = 1 /* file:app.go line:300 traceId:abc123 */
+</code></pre><p>A premium QM app should parse the three key:value pairs from the comment and make them available as searchable, filterable query metadata. This is extremely useful for developers to link queries back to code. It also leads to <em>Advanced 2</em>.</p>
+<h3 id="advanced">Advanced</h3>
+<p>An advanced query metrics app would have these features to be genuinely advanced with respect to the current state of the art:</p>
+<ol>
+<li>Workload Difference</li>
+</ol>
+<p>It&rsquo;s quite common for engineers to look at query metrics only when there&rsquo;s a problem and the burning question is: &ldquo;What has changed?&rdquo; Presuming a change in MySQL workload (i.e. all queries MySQL is executing) is the culprit, an advanced QM app should do the heavy lifting and number crunching to compare two intervals and report the significant differences, making it easy for the engineer to see what has changed. Granted, a simple side-by-side comparison (<em>Premium 2</em>) usually makes this obvious, but there are subtle cases that don&rsquo;t appear by comparing profiles.</p>
+<ol start="2">
+<li>Profile by Comment Metadata</li>
+</ol>
+<p>The profile needs a metric to sort by, and query execution time is the default. A few other native query metrics like rows examined, lock time, etc. are useful, but an advanced QM app should allow sorting by the user-defined metadata from <em>Premium 5</em>. This is really difficult, though, because there are only a few useful native query metrics but unlimited user-defined metadata. Regardless, with such an ability, engineers can do things like (from the example above), profile queries with <code>traceId = abc123</code> to see which is the most time-consuming. Presumably, all queries with <code>traceId = abc123</code> are related, and the user-defined metadata groups them whereas, otherwise, they would be unrelated queries that may or may not show up in a profile together.</p>
+<ol start="3">
+<li>Link to Code</li>
+</ol>
+<p>Another common tasks is linking queries back to code. But this feature is almost impossible unless the QM app vendor is also doing general APM for the app and has access to the code.</p>
+<ol start="4">
+<li>Smart Sampling</li>
+</ol>
+<p>Even though sampling needs to be disabled by default, sampling is really important, especially if done intelligently. The problem is: in rare cases, a query will change dramatically based on input. A classic example is an <code>IN()</code> list with 100 values vs. 10,000 values. The latter can cause MySQL to switch from a good execution plan to a full table scale. But this nuance won&rsquo;t surface unless the right samples are taken to reveal the execution plan change in <em>Premium 1</em>—and if the QM app is extremely advanced, <em>Advanced 1</em> will detect and surface the change in execution plan, too.</p>
+<ol start="5">
+<li>Cluster Query Metrics</li>
+</ol>
+<p>Normal MySQL is not a cluster database, but there are cluster variants like <a href="https://www.percona.com/software/mysql-database/percona-xtradb-cluster">Percona XtraDB Cluster</a> and <a href="https://mariadb.com/kb/en/what-is-mariadb-galera-cluster/">MariaDB Galera Cluster</a> and <a href="https://dev.mysql.com/doc/refman/8.0/en/group-replication.html">MySQL 8 Group Replication</a>. I guess this latter isn&rsquo;t a variant; MySQL 8 is moving towards native cluster support. That&rsquo;s why a premium QM app needs to support cluster-level query metrics: aggregate and report the query metrics from all database instances. This way we can get a profile representative of the cluster. For right now, this would be the exception, far from the norm. But MySQL is moving in this direction.</p>
+<h2 id="what-about-charts">What About Charts?</h2>
+<p>You may notice that charts are not a requirement. The retail solutions have charts, but I don&rsquo;t think they&rsquo;re a requirement. For example, spark lines and spark charts are not uncommon, but I don&rsquo;t think anyone ever saw—let alone solved—a problem by looking at them. They make screenshots look good, but the core value of query metrics (unlike system metrics) is the profile: pinpointing troublesome queries in a given interval. As such, we&rsquo;re less concerned with the query metrics of a particular query over time. That&rsquo;s usually only of interest when comparing intervals (<em>Premium 2</em> and <em>Advanced 1</em>).</p>
+
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/" data-toggle="tooltip" data-placement="top" title="What the Flush?">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2020 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/3.js" site="WJIYGVMB"></script>
+
+
+  </body>
+</html>

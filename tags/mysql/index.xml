@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 05 Jul 2020 18:50:00 -0300</lastBuildDate>
+    <lastBuildDate>Sun, 01 Nov 2020 20:25:00 -0500</lastBuildDate>
 
 	<atom:link href="https://hackmysql.com/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
 
+
+    <item>
+      <title>Query Metrics Requirements for MySQL</title>
+      <link>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</link>
+      <pubDate>Sun, 01 Nov 2020 20:25:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</guid>
+      <description>Let&amp;rsquo;s answer a question which, to my knowledge, has never been systematically addressed: What are the requirements for a production-ready query metrics app at scale? I am uniquely qualified to answer that because I have written four query metrics apps, two of which are the open-source standard for MySQL: pt-query-digest and the original (v1) code behind the query metrics/analysis part of Percona Monitoring and Management. I&amp;rsquo;ve also published a couple of packages related to query metrics: go-mysql/slowlog and go-mysql/query.</description>
+    </item>
 
     <item>
       <title>What the Flush?</title>
@@ -40,7 +49,7 @@ Below are are 21 MySQL 5.7 system variables that I recommend changing by creatin
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
 
       <guid>https://hackmysql.com/post/mysql-gtid-missing-writes/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html&#34;&gt;GTID-based replication&lt;/a&gt; makes managing replication topology easy: just &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html&#34;&gt;CHANGE MASTER&lt;/a&gt; to any node and voilà. It &lt;a href=&#34;https://hackmysql.com/post/fixing-ghosted-gtids/&#34;&gt;doesn&amp;rsquo;t always work&lt;/a&gt;, but for the most part it does. That&amp;rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &amp;ldquo;OK, sure!&amp;quot;, which is most of the time, you should double check it.&lt;/p&gt;</description>
+      <description>&lt;p&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html&#34;&gt;GTID-based replication&lt;/a&gt; makes managing replication topology easy: just &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html&#34;&gt;CHANGE MASTER&lt;/a&gt; to any node and voilà. It &lt;a href=&#34;https://hackmysql.com/post/fixing-ghosted-gtids/&#34;&gt;doesn&amp;rsquo;t always work&lt;/a&gt;, but for the most part it does. That&amp;rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &amp;ldquo;OK, sure!&amp;rdquo;, which is most of the time, you should double check it.&lt;/p&gt;</description>
     </item>
 
     <item>

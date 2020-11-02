@@ -3,32 +3,42 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2020-11-01T20:25:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
+    <lastmod>2020-11-01T20:25:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2020-11-01T20:25:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</loc>
+    <lastmod>2020-11-01T20:25:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/query-metrics/</loc>
+    <lastmod>2020-11-01T20:25:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2020-11-01T20:25:00-05:00</lastmod>
+  </url>
+
+  <url>
     <loc>https://hackmysql.com/tags/dirty-pages/</loc>
     <lastmod>2020-07-05T18:50:00-03:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/tags/flushing/</loc>
-    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2020-07-05T18:50:00-03:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2020-07-05T18:50:00-03:00</lastmod>
   </url>
 

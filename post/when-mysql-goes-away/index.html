@@ -18,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.69.0" />
+  <meta name="generator" content="Hugo 0.73.0" />
   <link rel="canonical" href="https://hackmysql.com/post/when-mysql-goes-away/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -192,7 +192,7 @@
 </tbody>
 </table>
 <p>If MySQL was online and the <code>sql.DB</code> had successfully connected and executed anything, then MySQL goes offline, it&rsquo;s a generic &ldquo;invalid connection&rdquo; error. <code>ErrConnLost</code> makes this more clear: the app was connected to MySQL, but now it&rsquo;s not.</p>
-<p>&ldquo;Why was the connection lost?&quot;, is a common question app developers want the driver to answer, but it cannot because the cause/reason is outside the driver. In other words: the driver doesn&rsquo;t know. Here are some possible reasons:</p>
+<p>&ldquo;Why was the connection lost?&rdquo;, is a common question app developers want the driver to answer, but it cannot because the cause/reason is outside the driver. In other words: the driver doesn&rsquo;t know. Here are some possible reasons:</p>
 <ul>
 <li>MySQL was stopped manually by a human</li>
 <li>MySQL was stopped automatically by tooling</li>
@@ -253,7 +253,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>KILL QUERY</code> causes a specific error code (1317), but I think the default error message (above) is a little vague because &ldquo;interrupted&rdquo; implies that the interrupted thing will resume after the interruption. It&rsquo;s like, &ldquo;We interrupt this program to bring you breaking news&hellip;&quot;, implies that the program will resume after the breaking new. The query will <em>not</em> resume; the app must re-execute the query. This error does not affect the transaction, so the app does not need to roll back. Only the one query that gets this error was killed. Previous queries and their results, the transaction, and the connection are all ok.</p>
+<p><code>KILL QUERY</code> causes a specific error code (1317), but I think the default error message (above) is a little vague because &ldquo;interrupted&rdquo; implies that the interrupted thing will resume after the interruption. It&rsquo;s like, &ldquo;We interrupt this program to bring you breaking news&hellip;&rdquo;, implies that the program will resume after the breaking new. The query will <em>not</em> resume; the app must re-execute the query. This error does not affect the transaction, so the app does not need to roll back. Only the one query that gets this error was killed. Previous queries and their results, the transaction, and the connection are all ok.</p>
 <h2 id="dead-connection-pool-dcp">Dead Connection Pool (DCP)</h2>
 <p>When MySQL goes offline, there will be N number of <code>ErrConnLost</code> errors, where N = <a href="https://golang.org/pkg/database/sql/#DB.SetMaxOpenConns">MaxOpenConns</a>, followed by <code>ErrCannotConnect</code> errors until MySQL is back online.</p>
 <p>Understanding DCP behavior is important. If N = 100 and MySQL goes offline, the app will get at most 100 <code>ErrConnLost</code>, then <code>ErrCannotConnect</code>. (&ldquo;At most&rdquo; because the driver only opens connections as needed. If N = 100 but only 50 connections were needed, then only 50 <code>ErrConnLost</code>.) This happens because the driver does not automatically retry lost (invalid) connections. First, it marks the connection &ldquo;invalid&rdquo; and returns an error. Later, when the invalid connection is reused, the driver tries to reconnect and that&rsquo;s when it returns <code>ErrCannotConnect</code>. This means apps will produce a flurry of <code>ErrConnLost</code> overlapping with some <code>ErrCannotConnect</code> until the connection pool is dead: all connections are marked invalid.</p>

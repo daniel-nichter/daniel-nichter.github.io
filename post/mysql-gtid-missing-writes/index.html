@@ -7,8 +7,8 @@
 
   <title>Missing Writes with MySQL GTID</title>
   <meta property="og:title" content="Missing Writes with MySQL GTID" />
-  <meta name="description" content="GTID-based replication makes managing replication topology easy: just CHANGE MASTER to any node and voilà. It doesn&rsquo;t always work, but for the most part it does. That&rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &ldquo;OK, sure!&quot;, which is most of the time, you should double check it.">
-  <meta property="og:description" content="GTID-based replication makes managing replication topology easy: just CHANGE MASTER to any node and voilà. It doesn&rsquo;t always work, but for the most part it does. That&rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &ldquo;OK, sure!&quot;, which is most of the time, you should double check it.">
+  <meta name="description" content="GTID-based replication makes managing replication topology easy: just CHANGE MASTER to any node and voilà. It doesn&rsquo;t always work, but for the most part it does. That&rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &ldquo;OK, sure!&rdquo;, which is most of the time, you should double check it.">
+  <meta property="og:description" content="GTID-based replication makes managing replication topology easy: just CHANGE MASTER to any node and voilà. It doesn&rsquo;t always work, but for the most part it does. That&rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &ldquo;OK, sure!&rdquo;, which is most of the time, you should double check it.">
   <meta name="author" content="Daniel Nichter"/>
   <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
@@ -18,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.69.0" />
+  <meta name="generator" content="Hugo 0.73.0" />
   <link rel="canonical" href="https://hackmysql.com/post/mysql-gtid-missing-writes/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -131,7 +131,7 @@
 </div>
 
 
-        <p><a href="https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html">GTID-based replication</a> makes managing replication topology easy: just <a href="https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html">CHANGE MASTER</a> to any node and voilà. It <a href="https://hackmysql.com/post/fixing-ghosted-gtids/">doesn&rsquo;t always work</a>, but for the most part it does. That&rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &ldquo;OK, sure!&quot;, which is most of the time, you should double check it.</p>
+        <p><a href="https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html">GTID-based replication</a> makes managing replication topology easy: just <a href="https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html">CHANGE MASTER</a> to any node and voilà. It <a href="https://hackmysql.com/post/fixing-ghosted-gtids/">doesn&rsquo;t always work</a>, but for the most part it does. That&rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &ldquo;OK, sure!&rdquo;, which is most of the time, you should double check it.</p>
 <p>The problem begins when one MySQL node crashes and we fail over to another node. Every MySQL DBA should know that MySQL replication is asynchronous by default. Semi-sync replication requires explicit setup. Consequently, async replication means writes can and will be lost if not replicated before a crash.</p>
 <p>Also important to remember: <em><a href="https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/">crash-safe replication</a> only applies to MySQL crashes, not OS or hardware crashes</em>. MySQL can&rsquo;t be held responsible if the data center suddenly loses power.</p>
 <p>Let&rsquo;s consider two diagrams below. The top one shows node 1 (active/writable) replicating to node 2 (or &ldquo;node 2 is replicating <em>from</em> node 1&rdquo;, if you prefer). Node 2 has not yet fetched node 1 writes 5 and 6. Write 5 is in flight, but not in node 2&rsquo;s relay log yet. Writes 3 and 4 are in the rely log, but 3 is being executed and 4 is being written, so neither are in node 2&rsquo;s binary logs yet. Everyone&rsquo;s happy.</p>

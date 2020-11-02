@@ -20,7 +20,7 @@ Programming languages have aspects which affect how we think, design, and implem
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.69.0" />
+  <meta name="generator" content="Hugo 0.73.0" />
   <link rel="canonical" href="https://hackmysql.com/post/thinking-in-go/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -202,7 +202,7 @@ close(<span style="color:#a6e22e">doneChan</span>)
 </blockquote>
 <p>That concise paragraph seems often to be overlooked because a commonly suggested solution for reading/streaming output from a command is precisely but incorrectly that: using <code>StdoutPipe</code>.</p>
 <p>This type of writing requires &ldquo;unpacking&rdquo; the text; it is sometimes called &ldquo;dense&rdquo;. It is difficult to write well, but it has two advantages: it is less to write and less to read. If a person must read one paragraph vs. one page to understand the code, I bet most people will prefer the former: one paragraph. Most of us do not read code docs for fun; we read them to learn how to do make progress in the actual task at hand. Consequently, Go docs strive to be pricse and concise.</p>
-<p>When designing and writing Go code, think about what you will write for the docs. (And, of course, eventually <em>write</em> those docs.) For every <code>package X</code>, complete this <em>single</em> sentence: &ldquo;Package X provides &hellip;&quot;. If struggling to write that sentence, re-examine the design of the package, what it does and does not provide. Perhaps it is overloaded (i.e. doing too much) or all the functionality belongs in different package. For every <code>type X struct</code>, complete this <em>single</em> sentence: &ldquo;X represents &hellip;&quot;. You can vary the verbs (&ldquo;provides&rdquo;, &ldquo;represents&rdquo;), but keep the mental exercise: thinking how to precisely and concisely document every public part of the code.</p>
+<p>When designing and writing Go code, think about what you will write for the docs. (And, of course, eventually <em>write</em> those docs.) For every <code>package X</code>, complete this <em>single</em> sentence: &ldquo;Package X provides &hellip;&rdquo;. If struggling to write that sentence, re-examine the design of the package, what it does and does not provide. Perhaps it is overloaded (i.e. doing too much) or all the functionality belongs in different package. For every <code>type X struct</code>, complete this <em>single</em> sentence: &ldquo;X represents &hellip;&rdquo;. You can vary the verbs (&ldquo;provides&rdquo;, &ldquo;represents&rdquo;), but keep the mental exercise: thinking how to precisely and concisely document every public part of the code.</p>
 <hr>
 <p>In conclusion:</p>
 <ul>

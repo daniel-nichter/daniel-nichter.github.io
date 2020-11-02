@@ -18,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.69.0" />
+  <meta name="generator" content="Hugo 0.73.0" />
   <link rel="canonical" href="https://hackmysql.com/post/how-to-test-the-database/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -131,7 +131,7 @@
 </div>
 
 
-        <p>&ldquo;How do I test the database?&rdquo; is a question I&rsquo;ve been asked by colleagues many times. There&rsquo;s a good, clean solution, but let&rsquo;s first step back from what seems to be the problem to unpack why &ldquo;testing the database&rdquo; is not special (but nonetheless important). In other words: colleagues don&rsquo;t ask, &ldquo;How do I test such-and-such package?&quot;, because that&rsquo;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</p>
+        <p>&ldquo;How do I test the database?&rdquo; is a question I&rsquo;ve been asked by colleagues many times. There&rsquo;s a good, clean solution, but let&rsquo;s first step back from what seems to be the problem to unpack why &ldquo;testing the database&rdquo; is not special (but nonetheless important). In other words: colleagues don&rsquo;t ask, &ldquo;How do I test such-and-such package?&rdquo;, because that&rsquo;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</p>
 <h2 id="challenges">Challenges</h2>
 <h3 id="external-system">External System</h3>
 <p>One reason testing the database seems difficult is because it&rsquo;s an external system. The developer probably has an instance running on their laptop, but what about the CI system, staging, and production? Staging and prod presumably already have database instances, so the real challenge is programmatically setting up and tearing down a database in the test suites. The answer is: sandbox. <a href="https://mysqlsandbox.net/">MySQL Sandbox</a> is a great example. In general, there are four solutions:</p>
@@ -199,7 +199,7 @@
 }
 </code></pre></div><p>Why do this? The intent is to define an interface that <code>MyDriver</code> implements, then pass around the interface type (instead of the low-level <code>DbDriver</code> type) which allows us to have a <code>MockDriver</code> for testing. Good intention but, in my humble opinion, 1) its <em>way</em> more work and trouble than it&rsquo;s worth especially because 2) there&rsquo;s a better, more clean design.</p>
 <blockquote>
-<p>But what about one of my favorite adages: &ldquo;Most problems in software can be solved by one more layer of abstraction.&quot;? Yes, this is one more layer of abstraction, but that adage doesn&rsquo;t mean &ldquo;abstract whatever, wherever.&rdquo;</p>
+<p>But what about one of my favorite adages: &ldquo;Most problems in software can be solved by one more layer of abstraction.&rdquo;? Yes, this is one more layer of abstraction, but that adage doesn&rsquo;t mean &ldquo;abstract whatever, wherever.&rdquo;</p>
 </blockquote>
 <p>Take a look at the <a href="https://golang.org/pkg/database/sql/">Go SQL driver</a>. Wrapping that fully is a lot of work, and getting it right (i.e. not introducing bugs in the wrapper), is a lot of work. All that work when we don&rsquo;t even need the wrapper. Going back to <code>GetData()</code> (above), that method (with a better name) is or should be part of a package or component that provides higher-level, domain-specific functionality. Let&rsquo;s pretend it&rsquo;s a <a href="https://msdn.microsoft.com/en-us/library/ff649690.aspx">repository</a>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DataRepo</span> <span style="color:#66d9ef">interface</span> {
@@ -215,7 +215,7 @@
 <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MockDataRepo</span>  <span style="color:#66d9ef">struct</span> {}
 </code></pre></div><p>That&rsquo;s all very generic and poorly named, but you get the point. <code>MySQLDataRepo</code> uses the low-level driver whereas the other implementations do not. To test the database for real, we test <code>MySQLDataRepo</code>.</p>
 <h1 id="when-the-database-isnt-data">When the Database Isn&rsquo;t Data</h1>
-<p>Earlier I mentioned &ldquo;Programs are largely &ldquo;data in, data out&rdquo;. &hellip; when it comes to databases this is usually what&rsquo;s happening. (<em>Usually</em>, but not always, which we&rsquo;ll explore later.)&quot;. Let&rsquo;s explore this now.</p>
+<p>Earlier I mentioned &ldquo;Programs are largely &ldquo;data in, data out&rdquo;. &hellip; when it comes to databases this is usually what&rsquo;s happening. (<em>Usually</em>, but not always, which we&rsquo;ll explore later.)&rdquo;. Let&rsquo;s explore this now.</p>
 <p>Apart from its data, a database is just another service, and as such it needs to be configured. For example: replication. So what if we need to programmatically configure and enable replication? In that case, we need a service.</p>
 <p><img src="/img/data-logic-service.svg" alt="Data, Logic, Service"></p>
 <p>We&rsquo;ve talked extensively about data and logic; a third broad category is &ldquo;service&rdquo;. Almost everything in a program is one of these three, so it&rsquo;s a helpful way to think about and breakdown a program from a <em>very</em> high level. In other words, we ask: &ldquo;Is this a matter of data, logic, or service?&rdquo; A service, as its name implies, provides some kind of service, i.e. it <em>does</em> something. A service is defined by what it <em>does</em>, whereas data is defined by its structure and content (i.e. the data itself), and logic is defined by its rules, flow control, etc. (I&rsquo;m glossing a lot since this blog post is already pretty long.)</p>
