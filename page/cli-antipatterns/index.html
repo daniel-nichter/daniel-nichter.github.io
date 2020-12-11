@@ -107,14 +107,13 @@
 </nav>
 
 
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-sm-3">
-      <nav id="toc" data-spy="affix" data-toggle="toc"><a href="#">Command-line Interface Antipatterns</a></nav>
+	  <div class="col-sm-4 col-sm-push-8">
+		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">Command-line Interface Antipatterns</a></em><hr></nav>
     </div>
-    <div class="col-sm-9">
-      <article role="main" class="blog-post">
-        <h1 id="command-line-interface-antipatterns">Command-line Interface Antipatterns</h1>
+	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+		<article role="main" class="blog-post"><h1 id="command-line-interface-antipatterns">Command-line Interface Antipatterns</h1>
 <p>Apps (web, mobile, and native) and APIs do not lessen the need or importance of command-line tools. A beautifully designed command-line user experience is arguably more important and than a graphical UX because the command line is deceptively simple: text on a screen. Wielding mere text on screen is an art akin to wielding mere paint on canvas. This page documents what I believe to be command-line interface (CLI) antipatterns which, in the long or short run, detract from both UX and developer effectiveness.</p>
 <h2 id="car-tree">Car-Tree</h2>
 <p>A command-line tool must always exit zero on success. I don&rsquo;t know how old this standard is, but it probably predates the discovery of fire. Woe unto developers who violate it because <em>other</em> tools presume this standard. On failure, exit 1 is most common, and there are a few <a href="http://tldp.org/LDP/abs/html/exitcodes.html">special exit codes</a> to avoid.</p>
@@ -169,9 +168,8 @@ $ echo $?
 <p>A <code>--verbose</code> option shares two of the same problems as <code>--quiet</code>: too verbose for some people, and not verbose enough for others; and it litters the code with <code>if</code> conditionals or an object to handle printing.</p>
 <p>Verbosity is more difficult to get right than quietness because <code>--quiet</code> usually means &ldquo;no output to STDOUT&rdquo;, but there are no standards or norms for verbosity. Consequently, no two programs&rsquo; <code>--verbose</code> look even remotely similar. Moreover, verbosity is sometimes a repeatable option, like <code>-vv</code> for &ldquo;very verbose&rdquo;, which complicates the option further.</p>
 <p>Rather than <code>--verbose</code>, the developer probably wants log levels, for which there are standards, like <a href="https://en.wikipedia.org/wiki/Syslog#Severity_level">syslog severity levels</a> and others.</p>
-
-      </article>
-    </div>
+</article>
+	</div>
   </div>
 </div>
 

@@ -109,14 +109,13 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
 </nav>
 
 
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-sm-3">
-      <nav id="toc" data-spy="affix" data-toggle="toc"><a href="#">Go Antipatterns</a></nav>
+	  <div class="col-sm-4 col-sm-push-8">
+		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">Go Antipatterns</a></em><hr></nav>
     </div>
-    <div class="col-sm-9">
-      <article role="main" class="blog-post">
-        <h1 id="go-antipatterns">Go Antipatterns</h1>
+	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+		<article role="main" class="blog-post"><h1 id="go-antipatterns">Go Antipatterns</h1>
 <p>These Go lang antipatterns are inspired by <a href="https://pragprog.com/book/bksqla/sql-antipatterns">SQL Antipatterns</a>. Antipattern Go code is syntactically correct, but there&rsquo;s a better way that&rsquo;s both functionally equivalent and <a href="https://hackmysql.com/page/idiomatic-go/">idiomatic</a>.</p>
 <p>These are guidelines not absolutes. For example, <a href="#generic-package">Generic Package</a> is common in practice and often difficult to avoid. Spending significant time trying to rename a <code>util</code> package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</p>
 <h2 id="critical">Critical</h2>
@@ -380,9 +379,8 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
     <span style="color:#e6db74">&#34;app/db&#34;</span>
 )
 </code></pre></div><p>A package provides functionality around a logical and isolated part of the system. &ldquo;What can pkg X do?&rdquo; is the question we ask of that part. &ldquo;How we do X&rdquo; is an implementation detail that&rsquo;s leaked by generic package names. Of course, naming things is difficult, and generic packages are common, but we should nonetheless attempt to clarify their purpose and place in the app with a more domain-specific package name.</p>
-
-      </article>
-    </div>
+</article>
+	</div>
   </div>
 </div>
 

@@ -7,6 +7,7 @@ body {
 p {
   line-height: 1.5em;
   margin: 20px 0;
+  word-break: break-word;
 }
 p a {
   /* text-decoration: underline */
@@ -476,43 +477,35 @@ td.gutter {
   padding-top: 3px;
 }
 
-/* --- Social media sharing section --- */
+/* -------------------------------------------------------------------------- */
 
-#social-share-section {
-  margin-bottom: 30px;
+
+#toc {
+  margin: 0px;
+  padding-right: 20px;
+  line-height: 1.3em;
 }
 
-/* --- TOC --- */
-
 #toc a {
-  color:black;
+  color: black;
   text-decoration: none;
 }
 
-nav[data-toggle='toc'] {
-  margin-top: 20px;
-}
-
-nav[data-toggle='toc'] .nav .nav {
-  display: block;
-}
-
-/* small screens */
-@media (max-width: 768px) {
-  /* override the Affix plugin so that the navigation isn't sticky */
+@media (min-width: 0px) {
   nav.affix[data-toggle='toc'] {
     position: static;
   }
-
-  /* PICK ONE */
-  /* don't expand nested items, which pushes down the rest of the page when navigating */
-  /*
-  nav[data-toggle='toc'] .nav .active .nav {
-    display: none;
-  }
-  */
-
   nav[data-toggle='toc'] .nav .nav {
     display: block;
+  }
+}
+
+@media (min-width: 768px) {
+  nav.affix[data-toggle='toc'] {
+    position: fixed;
+  }
+  #page-content {
+    padding-left: 50px;
+    padding-right: 30px;
   }
 }

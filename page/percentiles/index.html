@@ -107,14 +107,13 @@
 </nav>
 
 
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-sm-3">
-      <nav id="toc" data-spy="affix" data-toggle="toc"><a href="#">Percentiles</a></nav>
+	  <div class="col-sm-4 col-sm-push-8">
+		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">Percentiles</a></em><hr></nav>
     </div>
-    <div class="col-sm-9">
-      <article role="main" class="blog-post">
-        <h1 id="percentiles">Percentiles</h1>
+	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+		<article role="main" class="blog-post"><h1 id="percentiles">Percentiles</h1>
 <p><a href="https://en.wikipedia.org/wiki/Percentile">Percentiles</a> are ubiquitous in application performance monitoring, particularly the 95th (P95), 99th (P99), and 99.9th (P999) percentiles. The basic concept is simple: percentile P<em>n</em> means <em>n</em>% of all values are &lt;= than the P<em>n</em> value. If the P95 value = 100ms, then 95% of all values are &lt;= 100ms. In other words: 5% of all values are &gt; 100ms. Percentiles discard the top (100-<em>n</em>)% values as outliers for various reasons which are outside the scope of this page. Less simple than the basic concept is calculating percentiles, which is the scope of this page. Given arrays <code>x</code> and <code>y</code> with index <code>j</code>:</p>
 <p><img src="/img/percentile_ranks.svg" alt="Percentile Ranks"></p>
 <p>The percentile rank for each array element is given. For example, <code>x[4]</code> is P50 (median): <code>&lt;= x[4]</code> is exactly half (50%) of all 10 values. Here&rsquo;s where percentiles get interesting: where is P95? If <code>x[8]</code> = P90 and <code>x[9]</code> = p100 then P95 is between these element which does not exist (i.e. <code>x[8.5]</code> is not valid). Do we choose <code>x[8]</code> or <code>x[9]</code>? The answer depends on the method: nearest rank or linear interpolation.</p>
@@ -212,9 +211,8 @@ i := p * (n + (1/3.0)) + (1/3.0) // R8
 </li>
 </ol>
 </section>
-
-      </article>
-    </div>
+</article>
+	</div>
   </div>
 </div>
 

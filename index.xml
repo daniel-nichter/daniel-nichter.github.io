@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 01 Nov 2020 20:25:00 -0500</lastBuildDate>
+    <lastBuildDate>Fri, 11 Dec 2020 00:00:00 +0000</lastBuildDate>
 
 	<atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
 
+
+    <item>
+      <title>About</title>
+      <link>https://hackmysql.com/page/about/</link>
+      <pubDate>Fri, 11 Dec 2020 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmysql.com/page/about/</guid>
+      <description>Hack MySQL Hack MySQL is my personal blog about MySQL, the Go programming language, and software design.
+The content of this site is inspired by two things. First is my job at Square. Working with thousands of databases, hundreds of microservices, and engineers across the company, I&amp;rsquo;m fortunate to always have new challenges and opportunities to both learn and mentor. A lot of the posts and pages began as conversations with colleagues.</description>
+    </item>
 
     <item>
       <title>Query Metrics Requirements for MySQL</title>
@@ -89,16 +99,6 @@ You can download it from https://github.com/daniel-nichter/hackmysql.com/tree/ma
 
       <guid>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</guid>
       <description>&lt;p&gt;Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by &lt;em&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Threads_running&#34;&gt;Threads_running&lt;/a&gt;&lt;/em&gt;, expressed as a gauge (whereas QPS is a rate). Before discussing &lt;em&gt;Threads_running&lt;/em&gt;, let&amp;rsquo;s consider an analogy:&lt;/p&gt;</description>
-    </item>
-
-    <item>
-      <title>About</title>
-      <link>https://hackmysql.com/page/about/</link>
-      <pubDate>Wed, 01 Apr 2020 00:00:00 +0000</pubDate>
-
-      <guid>https://hackmysql.com/page/about/</guid>
-      <description>Hack MongoMySQL Hack MongoMySQL is my personal blog about databases, the Go programming language, and software design.
-In 2017, I started hackmongo.com thinking that I would do more work with MongoDB—a new frontier for me—but in the last three years I have continued to work with MySQL. Moreover, in the five years since I stopped HackMySQL.com (2005-2015), I have seen an increasing gap between MySQL advancements and free, independent MySQL knowledge and tools.</description>
     </item>
 
     <item>
