@@ -5,19 +5,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>aws-rds</title>
-  <meta property="og:title" content="aws-rds" />
+  <title>MySQL Password Rotation with AWS</title>
+  <meta property="og:title" content="MySQL Password Rotation with AWS" />
+  <meta name="description" content="And Terraform">
+  <meta property="og:description" content="And Terraform">
   <meta name="author" content="Daniel Nichter"/>
   <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
   <link rel="manifest" href="site.webmanifest">
-  <meta property="og:url" content="https://hackmysql.com/tags/aws-rds/" />
+  <meta property="og:url" content="https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
   <meta name="generator" content="Hugo 0.73.0" />
-  <link rel="canonical" href="https://hackmysql.com/tags/aws-rds/" />
+  <link rel="canonical" href="https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
@@ -116,18 +118,13 @@
 </nav>
 
 
-  <div class="container" role="main">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-
-        <div class="posts-list">
-
-            <article class="post-preview">
-              <a href="https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/">
-                <h1 class="post-title">MySQL Password Rotation with AWS</h1>
-                <h3 class="post-subtitle">And Terraform</h3>
-              </a>
-              <div class="post-meta">
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">MySQL Password Rotation with AWS</h1>
+        <h3 class="post-subtitle">And Terraform</h2>
+        <div class="post-meta">
 
 
   <div>Dec 28, 2020</div>
@@ -151,71 +148,49 @@
 </div>
 
 
-           </article>
+        <p>MySQL password rotation using <a href="https://aws.amazon.com/rds/mysql/">Amazon RDS for MySQL</a>, <a href="https://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a>, and <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and <a href="https://www.terraform.io/">Terraform</a> for cloud infrastructure.</p>
+<p><strong>Read the full page: <a href="https://hackmysql.com/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>.</strong></p>
 
-            <article class="post-preview">
-              <a href="https://hackmysql.com/page/mysql-password-rotation-lambda/">
-                <h1 class="post-title">MySQL Password Rotation with AWS Secrets Manager and Lambda</h1>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
 
-              </a>
-              <div class="post-meta">
-
-
-  <div>Dec 28, 2020</div>
-  <div class="blog-tags">
+          <li class="previous">
+            <a href="https://hackmysql.com/post/query-metrics-requirements-for-mysql/" data-toggle="tooltip" data-placement="top" title="Query Metrics Requirements for MySQL">&larr; </a>
+          </li>
 
 
-        <a href="/tags/mysql">#mysql</a>
-
-        <a href="/tags/aws-rds">#aws-rds</a>
-
-        <a href="/tags/aws-secrets-manager">#aws-secrets-manager</a>
-
-        <a href="/tags/aws-lambda">#aws-lambda</a>
-
-        <a href="/tags/aws-s3">#aws-s3</a>
-
-        <a href="/tags/terraform">#terraform</a>
+      </ul>
 
 
-  </div>
-</div>
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
 
 
-           </article>
 
-            <article class="post-preview">
-              <a href="https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/">
-                <h1 class="post-title">21 Parameter Group Values to Change in Amazon RDS for MySQL</h1>
-
-              </a>
-              <div class="post-meta">
-
-
-  <div>Jun 29, 2020</div>
-  <div class="blog-tags">
-
-
-        <a href="/tags/mysql">#mysql</a>
-
-        <a href="/tags/aws-rds">#aws-rds</a>
-
-        <a href="/tags/sys-var">#sys-var</a>
-
-        <a href="/tags/parameter-group">#parameter-group</a>
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
 
 
-  </div>
-</div>
-
-
-           </article>
-
-        </div>
-
-      </div>
     </div>
   </div>
+</div>
 
     <footer>
   <p class="copyright text-muted">

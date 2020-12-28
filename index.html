@@ -122,26 +122,36 @@
 			<div class="posts-list">
 
 					<article class="post-preview">
-						<a href="https://hackmysql.com/post/query-metrics-requirements-for-mysql/">
-							<h1 class="post-title">Query Metrics Requirements for MySQL</h1>
+						<a href="https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/">
+							<h1 class="post-title">MySQL Password Rotation with AWS</h1>
+
+								<h3 class="post-subtitle">And Terraform</h3>
 
 						</a>
 						<div class="post-entry">
 
-								Let&rsquo;s answer a question which, to my knowledge, has never been systematically addressed: What are the requirements for a production-ready query metrics app at scale? I am uniquely qualified to answer that because I have written four query metrics apps, two of which are the open-source standard for MySQL: pt-query-digest and the original (v1) code behind the query metrics/analysis part of Percona Monitoring and Management. I&rsquo;ve also published a couple of packages related to query metrics: go-mysql/slowlog and go-mysql/query.
-								<a href="https://hackmysql.com/post/query-metrics-requirements-for-mysql/" class="post-read-more">Read more...</a>
+								MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and Terraform for cloud infrastructure.
+								<a href="https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/" class="post-read-more">Read more...</a>
 
 						</div>
 						<div class="post-meta">
 
 
-  <div>Nov 1, 2020</div>
+  <div>Dec 28, 2020</div>
   <div class="blog-tags">
 
 
         <a href="/tags/mysql">#mysql</a>
 
-        <a href="/tags/query-metrics">#query-metrics</a>
+        <a href="/tags/aws-rds">#aws-rds</a>
+
+        <a href="/tags/aws-secrets-manager">#aws-secrets-manager</a>
+
+        <a href="/tags/aws-lambda">#aws-lambda</a>
+
+        <a href="/tags/aws-s3">#aws-s3</a>
+
+        <a href="/tags/terraform">#terraform</a>
 
 
   </div>
@@ -157,6 +167,8 @@
 	<div class="row">
 		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 			<hr>
+
+				<li><time>2020-11-01</time>&nbsp;<a href="https://hackmysql.com/post/query-metrics-requirements-for-mysql/">Query Metrics Requirements for MySQL</a></li>
 
 				<li><time>2020-07-05</time>&nbsp;<a href="https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/">What the Flush?</a></li>
 

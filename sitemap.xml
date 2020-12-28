@@ -4,32 +4,52 @@
 
   <url>
     <loc>https://hackmysql.com/tags/aws-lambda/</loc>
-    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+    <lastmod>2020-12-28T11:50:00-05:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/tags/aws-rds/</loc>
-    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+    <lastmod>2020-12-28T11:50:00-05:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/tags/aws-s3/</loc>
-    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+    <lastmod>2020-12-28T11:50:00-05:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/tags/aws-secrets-manager/</loc>
-    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+    <lastmod>2020-12-28T11:50:00-05:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/</loc>
-    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+    <lastmod>2020-12-28T11:50:00-05:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+    <lastmod>2020-12-28T11:50:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</loc>
+    <lastmod>2020-12-28T11:50:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2020-12-28T11:50:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2020-12-28T11:50:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/terraform/</loc>
+    <lastmod>2020-12-28T11:50:00-05:00</lastmod>
   </url>
 
   <url>
@@ -43,18 +63,8 @@
   </url>
 
   <url>
-    <loc>https://hackmysql.com/tags/</loc>
-    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
-  </url>
-
-  <url>
     <loc>https://hackmysql.com/page/about/</loc>
     <lastmod>2020-12-11T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2020-11-01T20:25:00-05:00</lastmod>
   </url>
 
   <url>
