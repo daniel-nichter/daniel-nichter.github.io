@@ -479,6 +479,11 @@ td.gutter {
 
 /* -------------------------------------------------------------------------- */
 
+.page-subtitle {
+  color:#aaaaaa;
+  font-style:italic;
+}
+
 
 #toc {
   margin: 0px;
@@ -508,4 +513,16 @@ td.gutter {
     padding-left: 50px;
     padding-right: 30px;
   }
+}
+
+p.note {
+  background-color: #f0f7fb;
+  border-left: solid 4px #3498db;
+  padding: 15px 60px;
+}
+
+p.warning {
+  background-color: #ffdfdf;
+  border-left: solid 4px red;
+  padding: 15px 60px;
 }

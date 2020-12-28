@@ -100,6 +100,17 @@
 
 
 
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+              </div>
+            </li>
+
+
+
 
       </ul>
     </div>
@@ -132,11 +143,12 @@
 
 
         <p>Handling MySQL errors in Go is not easy. There are <em>a lot</em> of <a href="https://dev.mysql.com/doc/refman/5.7/en/error-messages-server.html">MySQL server error codes</a>, and the <a href="https://github.com/go-sql-driver/mysql">Go MySQL driver</a> as its own errors, and Go <a href="https://golang.org/pkg/database/sql/">database/sql</a> has its own errors, and errors can bubble up from other packages, like <a href="https://golang.org/pkg/net/#OpError">net.OpError</a>. Consequently, Go programs tend not to handle errors. Instead, they simply report errors:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Query</span>(<span style="color:#f92672">...</span>).<span style="color:#a6e22e">Scan</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">v</span>)
-<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-   <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+<pre><code class="language-go">err := db.Query(...).Scan(&amp;v)
+if err != nil {
+   return err
 }
-</code></pre></div><p>And then the error is logged or reported somewhere. This is as poor as it common, and it&rsquo;s extremely common. A robust program handles the error: retry the query if possible; or report a more specific error; else, report the unhandled error. But robust MySQL error handling in Go requires very specific knowledge and experience that is beyond the reasonable purview of app developers.</p>
+</code></pre>
+<p>And then the error is logged or reported somewhere. This is as poor as it common, and it&rsquo;s extremely common. A robust program handles the error: retry the query if possible; or report a more specific error; else, report the unhandled error. But robust MySQL error handling in Go requires very specific knowledge and experience that is beyond the reasonable purview of app developers.</p>
 <p>I created <a href="https://github.com/go-mysql/errors">go-mysql/errors</a> to make robust error handling easier. The key word is &ldquo;easier&rdquo; not &ldquo;easy&rdquo; because in the course of writing this package I rediscovered how weird MySQL error handling in Go can be, and that is what we explore in this blog post.</p>
 <h2 id="scope">Scope</h2>
 <p>First, we must narrow the scope. We cannot and should not handle <em>all</em> errors. In my experience, well-behaved production apps do not encounter 99% of MySQL errors. The 1% of errors encountered are:</p>
@@ -152,9 +164,10 @@
 <p>Connection errors are the focus because the <a href="https://github.com/go-sql-driver/mysql">Go MySQL driver</a> handles them in ways you might not expect but need to know. Let&rsquo;s make MySQL &ldquo;go away&rdquo; and see what happens&hellip;</p>
 <h2 id="error-cases">Error Cases</h2>
 <p>As of Go 1.9 we have <a href="https://golang.org/pkg/database/sql/#Conn">sql.Conn</a>, but go1.9 is less than one year old as of this writing, so it&rsquo;s unlikely the world has done a mass migration from <code>sql.DB</code> to <code>sql.Conn</code>. Therefore, let&rsquo;s start with <a href="https://golang.org/pkg/database/sql/#DB">sql.DB</a> and look at <code>sql.Conn</code> later. All the examples in this section use <code>sql.DB</code>, like:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#e6db74">&#34;mysql&#34;</span>, <span style="color:#e6db74">&#34;user:password@/dbname&#34;</span>)
-<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">QueryRow</span>(<span style="color:#e6db74">&#34;SELECT connection_id()&#34;</span>).<span style="color:#a6e22e">Scan</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">id</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</code></pre></div><p><code>db</code> is a <code>sql.DB</code> connection pool managed by the driver, <a href="https://github.com/go-sql-driver/mysql">go-sql-driver/mysql</a> and <a href="https://golang.org/pkg/database/sql/">database/sql</a>.</p>
+<pre><code class="language-go">db, err := sql.Open(&quot;mysql&quot;, &quot;user:password@/dbname&quot;)
+if err := db.QueryRow(&quot;SELECT connection_id()&quot;).Scan(&amp;id); err != nil {
+</code></pre>
+<p><code>db</code> is a <code>sql.DB</code> connection pool managed by the driver, <a href="https://github.com/go-sql-driver/mysql">go-sql-driver/mysql</a> and <a href="https://golang.org/pkg/database/sql/">database/sql</a>.</p>
 <p>For each error case below, a table is given: the first column is the <a href="https://godoc.org/github.com/go-mysql/errors#pkg-variables">go-mysql/errors error variable</a> that function <a href="https://godoc.org/github.com/go-mysql/errors#Error">Error</a> returns; the second column is the default Go error string and data type. The default errors are varied. The <code>go-mysql/errors</code> are easier to use and more consistent.</p>
 <h4 id="when-mysql-is-offline">When MySQL Is Offline</h4>
 <table>

@@ -100,6 +100,17 @@
 
 
 
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+              </div>
+            </li>
+
+
+
 
       </ul>
     </div>
@@ -149,44 +160,47 @@
 <p>Bootloader in one sentence: <em>Start code uses an app context to boot the program.</em></p>
 <h2 id="start-code">Start Code</h2>
 <p>As the name implies, start code starts the program. It can also be called &ldquo;entry point&rdquo; or simply &ldquo;main&rdquo; since the default start code is usually in a <code>main()</code> function. <mark>The defining characteristic of start code: with respect to the program, it only calls the boot code with an app context.</mark> This means start code can be very minimal, like:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-    <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">Run</span>(<span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Defaults</span>())
-    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#e6db74">&#34;server stopped: %s&#34;</span>, <span style="color:#a6e22e">err</span>)
+<pre><code class="language-go">func main() {
+    err := server.Run(app.Defaults())
+    log.Fatal(&quot;server stopped: %s&quot;, err)
 }
-</code></pre></div><p><code>app.Defaults()</code> returns a default app context, and <code>server.Run()</code> is the boot code. The qualification &ldquo;with respect to the program&rdquo; is important: start code can do anything if unrelated to the program. This allows wrapper code to do wrapper-specific work. For example, let&rsquo;s imagine <code>keurig</code> is a program that makes coffee and we want to use it in another system that makes breakfast, so the breakfast code needs to wrap <code>keurig</code> and make coffee at the right time and with a user-specified roast. The pseudo code is:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeBreakfast</span>(<span style="color:#a6e22e">coffeeRoast</span> <span style="color:#66d9ef">string</span>) {
-	<span style="color:#a6e22e">toast</span>.<span style="color:#a6e22e">BurnIt</span>()
-	<span style="color:#a6e22e">fruit</span>.<span style="color:#a6e22e">SliceIt</span>()
+</code></pre>
+<p><code>app.Defaults()</code> returns a default app context, and <code>server.Run()</code> is the boot code. The qualification &ldquo;with respect to the program&rdquo; is important: start code can do anything if unrelated to the program. This allows wrapper code to do wrapper-specific work. For example, let&rsquo;s imagine <code>keurig</code> is a program that makes coffee and we want to use it in another system that makes breakfast, so the breakfast code needs to wrap <code>keurig</code> and make coffee at the right time and with a user-specified roast. The pseudo code is:</p>
+<pre><code class="language-go">func makeBreakfast(coffeeRoast string) {
+	toast.BurnIt()
+	fruit.SliceIt()
 
-	<span style="color:#a6e22e">coffee</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">NewCoffee</span>(<span style="color:#a6e22e">coffeeRoast</span>)
-	<span style="color:#a6e22e">keurig</span>.<span style="color:#a6e22e">Make</span>(<span style="color:#a6e22e">coffee</span>)
+	coffee := app.NewCoffee(coffeeRoast)
+	keurig.Make(coffee)
 
-	<span style="color:#a6e22e">waffles</span>.<span style="color:#a6e22e">FlipThem</span>()
+	waffles.FlipThem()
 }
-</code></pre></div><p><code>makeBreakfast()</code> is the start code, <code>coffee</code> is the app context, and <code>keurig.Make()</code> is the boot code. The example demonstrates two things. First, that start code can do anything if unrelated to the program in question, <code>keurig</code>. Second, that although a program must have its own default start code, it might not be used; instead, other wrapper code serves as the start code, <code>makeBreakfast()</code>. So although <code>makeBreakfast()</code> does other stuff, it&rsquo;s still start code for <code>keurig</code> because with respect to <code>keurig</code> it only calls the boot code (<code>keurig.Make()</code>) with an app context (<code>coffee</code>).</p>
+</code></pre>
+<p><code>makeBreakfast()</code> is the start code, <code>coffee</code> is the app context, and <code>keurig.Make()</code> is the boot code. The example demonstrates two things. First, that start code can do anything if unrelated to the program in question, <code>keurig</code>. Second, that although a program must have its own default start code, it might not be used; instead, other wrapper code serves as the start code, <code>makeBreakfast()</code>. So although <code>makeBreakfast()</code> does other stuff, it&rsquo;s still start code for <code>keurig</code> because with respect to <code>keurig</code> it only calls the boot code (<code>keurig.Make()</code>) with an app context (<code>coffee</code>).</p>
 <h2 id="app-context">App Context</h2>
 <p><img src="/img/app_context.svg" alt="App Context"></p>
 <p>App context is a well-defined structure (blue rectangles) that exposes all &ldquo;global&rdquo; app configuration, factories, hooks (callbacks), and any other well-defined semantics. It is a pseudo-singleton: only one app context should be instantiated. (I suppose a system that can dynamically reload might have varying contexts between reloads, but the intention is for the app context to be a singleton.) It is global in usage, <em>not</em> namespace (i.e. it&rsquo;s not a global variable) because it&rsquo;s passed to most components in the program as part of their instantiation or initialization.</p>
 <p>The app context structure is what allows developers to define, document, and expose points of integration and extensibility while hiding the inner working (i.e. implementation details) of the program. With the Keurig coffee maker, pods are &ldquo;app context&rdquo; for the machine: the pod structure is defined by Keurig, but the user chooses a pod. In software, developers define the app context, and the start code instantiates an app context (green circles). Usually, a program provides default start code and a default app context.</p>
 <p>As a &ldquo;global&rdquo; pseudo-singleton, the app context is a unifying design element, a single source of truth, and the point of integration and extensibility. This is simple but extremely powerful because it allows 3rd-party code to affect the program in fundamental ways without breaking the program&rsquo;s encapsulations, boundaries, interfaces, etc. For example, a common requirement for an API is authentication, but an open-source project cannot predict or reasonably support all possible auth mechanisms. It can support common mechanisms by default, but it can also expose an auth hook to allow any auth mechanism:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Hooks</span> <span style="color:#66d9ef">struct</span> {
-    <span style="color:#a6e22e">Auth</span> <span style="color:#66d9ef">func</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) (<span style="color:#66d9ef">bool</span>, <span style="color:#66d9ef">error</span>)
+<pre><code class="language-go">type Hooks struct {
+    Auth func(*http.Request) (bool, error)
 }
 
-<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">AppContext</span> <span style="color:#66d9ef">struct</span> {
-    <span style="color:#a6e22e">Hooks</span> <span style="color:#a6e22e">Hooks</span>
+type AppContext struct {
+    Hooks Hooks
 }
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">startCode</span>() {
-    <span style="color:#a6e22e">appCtx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">Defaults</span>()
-    <span style="color:#a6e22e">appCtx</span>.<span style="color:#a6e22e">Hooks</span>.<span style="color:#a6e22e">Auth</span> = <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">req</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) (<span style="color:#66d9ef">bool</span>, <span style="color:#66d9ef">error</span>) {
-        <span style="color:#75715e">// Allow access only on 1st day of month
-</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">firstDayOfMonth</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">Day</span>() <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">firstDayOfMonth</span>, <span style="color:#66d9ef">nil</span>
+func startCode() {
+    appCtx := app.Defaults()
+    appCtx.Hooks.Auth = func(req *http.Request) (bool, error) {
+        // Allow access only on 1st day of month
+        firstDayOfMonth := time.Now().Day() == 1
+	return firstDayOfMonth, nil
     }
-    <span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">Boot</span>(<span style="color:#a6e22e">appCtx</span>)
+    server.Boot(appCtx)
 }
-</code></pre></div><p>In the pseudo code above, we define a special auth hook in our start code that only authenticates (returns true) on the 1st day of the month. This is a silly example, but the possibilities are endless and easy to add.</p>
+</code></pre>
+<p>In the pseudo code above, we define a special auth hook in our start code that only authenticates (returns true) on the 1st day of the month. This is a silly example, but the possibilities are endless and easy to add.</p>
 <p>Whereas hooks allow arbitrary code callback during program execution, <a href="https://sourcemaking.com/design_patterns/factory_method">factories</a> are a great design pattern to let 3rd-party code create internal objects. For example, in Go an <code>*http.Client</code> is frequently used and has a lot of internal configuration. Exposing an <code>HTTPClientFactory</code> allows 3rd-party code to make an <code>*http.Client</code> with a specific internal configuration.</p>
 <p>Last note: <mark>app context should only be mutable in the start code.</mark> Outside the start code (i.e. when passed to other code components), app context should by passed by value. Since the app context is used globally, we don&rsquo;t want one part of the program to interfere with another via changes to the app context. Also good to keep in mind that it&rsquo;s probably used concurrently, but it doesn&rsquo;t need guarding as long as it&rsquo;s immutable and read-only outside the start code.</p>
 <h2 id="boot-code">Boot Code</h2>

@@ -3,23 +3,53 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-    <loc>https://hackmysql.com/page/about/</loc>
-    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
+    <loc>https://hackmysql.com/tags/aws-lambda/</loc>
+    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/aws-rds/</loc>
+    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/aws-s3/</loc>
+    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/aws-secrets-manager/</loc>
+    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/</loc>
-    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/page/</loc>
-    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
+    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
   </url>
 
   <url>
     <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2020-11-01T20:25:00-05:00</lastmod>
+    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/page/mysql-password-rotation-lambda/</loc>
+    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/page/</loc>
+    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2020-12-28T09:56:00-05:00</lastmod>
+  </url>
+
+  <url>
+    <loc>https://hackmysql.com/page/about/</loc>
+    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
   </url>
 
   <url>
@@ -34,11 +64,6 @@
 
   <url>
     <loc>https://hackmysql.com/tags/query-metrics/</loc>
-    <lastmod>2020-11-01T20:25:00-05:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2020-11-01T20:25:00-05:00</lastmod>
   </url>
 
@@ -59,11 +84,6 @@
 
   <url>
     <loc>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</loc>
-    <lastmod>2020-06-29T11:15:00-03:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/tags/aws-rds/</loc>
     <lastmod>2020-06-29T11:15:00-03:00</lastmod>
   </url>
 

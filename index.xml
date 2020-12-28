@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Fri, 11 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 28 Dec 2020 09:56:00 -0500</lastBuildDate>
 
 	<atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
 
+
+    <item>
+      <title>MySQL Password Rotation with AWS Secrets Manager and Lambda</title>
+      <link>https://hackmysql.com/page/mysql-password-rotation-lambda/</link>
+      <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/page/mysql-password-rotation-lambda/</guid>
+      <description>MySQL Password Rotation with AWS Secrets Manager and Lambda MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and Terraform for cloud infrastructure.</description>
+    </item>
 
     <item>
       <title>About</title>
@@ -184,7 +193,7 @@ host.prod1.disk-free.sda host.</description>
 
       <guid>https://hackmysql.com/post/when-mysql-goes-away/</guid>
       <description>Handling MySQL errors in Go is not easy. There are a lot of MySQL server error codes, and the Go MySQL driver as its own errors, and Go database/sql has its own errors, and errors can bubble up from other packages, like net.OpError. Consequently, Go programs tend not to handle errors. Instead, they simply report errors:
-err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err } And then the error is logged or reported somewhere.</description>
+err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err }  And then the error is logged or reported somewhere.</description>
     </item>
 
     <item>

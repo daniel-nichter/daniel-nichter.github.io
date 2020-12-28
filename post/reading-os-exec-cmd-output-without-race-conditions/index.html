@@ -100,6 +100,17 @@
 
 
 
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+              </div>
+            </li>
+
+
+
 
       </ul>
     </div>
@@ -134,67 +145,69 @@
         <p><a href="https://golangweekly.com/issues/164">Golang Weekly issue 164</a> features a nice article, <a href="https://blog.kowalczyk.info/article/wOYk/advanced-command-execution-in-go-with-osexec.html">Advanced command execution in Go with os/exec</a>, which details several ways of working with <a href="https://golang.org/pkg/os/exec/">os/exec</a>, especially how to read STDOUT and STDERR while the command is running. This common task is commonly done wrong, where &ldquo;wrong&rdquo; means &ldquo;the code has a race condition&rdquo;. This blog post shows how to read STDOUT and STDERR from an <code>os/exec.Cmd</code> while it&rsquo;s running and <em>without</em> race conditions.</p>
 <h3 id="problem">Problem</h3>
 <p>The Internet is rife solutions like Krzysztof provides (but afaik no one has provided them in one place and so thoroughly, so his post is a good read nonetheless), but let&rsquo;s test one:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//
-</span><span style="color:#75715e">// cmd.go
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#f92672">package</span> <span style="color:#a6e22e">cmd</span>
+<pre><code class="language-go">//
+// cmd.go
+//
+package cmd
 
-<span style="color:#f92672">import</span> (
-	<span style="color:#e6db74">&#34;bytes&#34;</span>
-	<span style="color:#e6db74">&#34;fmt&#34;</span>
-	<span style="color:#e6db74">&#34;io&#34;</span>
-	<span style="color:#e6db74">&#34;log&#34;</span>
-	<span style="color:#e6db74">&#34;os&#34;</span>
-	<span style="color:#e6db74">&#34;os/exec&#34;</span>
+import (
+	&quot;bytes&quot;
+	&quot;fmt&quot;
+	&quot;io&quot;
+	&quot;log&quot;
+	&quot;os&quot;
+	&quot;os/exec&quot;
 )
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Run</span>() {
-	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">stdoutBuf</span>, <span style="color:#a6e22e">stderrBuf</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
-	<span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">exec</span>.<span style="color:#a6e22e">Command</span>(<span style="color:#e6db74">&#34;ls&#34;</span>, <span style="color:#e6db74">&#34;-lah&#34;</span>)
+func Run() {
+	var stdoutBuf, stderrBuf bytes.Buffer
+	cmd := exec.Command(&quot;ls&quot;, &quot;-lah&quot;)
 
-	<span style="color:#a6e22e">stdoutIn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">StdoutPipe</span>()
-	<span style="color:#a6e22e">stderrIn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">StderrPipe</span>()
+	stdoutIn, _ := cmd.StdoutPipe()
+	stderrIn, _ := cmd.StderrPipe()
 
-	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">errStdout</span>, <span style="color:#a6e22e">errStderr</span> <span style="color:#66d9ef">error</span>
-	<span style="color:#a6e22e">stdout</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">MultiWriter</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Stdout</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">stdoutBuf</span>)
-	<span style="color:#a6e22e">stderr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">MultiWriter</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Stderr</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">stderrBuf</span>)
-	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Start</span>()
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;cmd.Start() failed with &#39;%s&#39;\n&#34;</span>, <span style="color:#a6e22e">err</span>)
+	var errStdout, errStderr error
+	stdout := io.MultiWriter(os.Stdout, &amp;stdoutBuf)
+	stderr := io.MultiWriter(os.Stderr, &amp;stderrBuf)
+	err := cmd.Start()
+	if err != nil {
+		log.Fatalf(&quot;cmd.Start() failed with '%s'\n&quot;, err)
 	}
 
-	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
-		<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">errStdout</span> = <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Copy</span>(<span style="color:#a6e22e">stdout</span>, <span style="color:#a6e22e">stdoutIn</span>)
+	go func() {
+		_, errStdout = io.Copy(stdout, stdoutIn)
 	}()
 
-	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
-		<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">errStderr</span> = <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Copy</span>(<span style="color:#a6e22e">stderr</span>, <span style="color:#a6e22e">stderrIn</span>)
+	go func() {
+		_, errStderr = io.Copy(stderr, stderrIn)
 	}()
 
-	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Wait</span>()
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;cmd.Run() failed with %s\n&#34;</span>, <span style="color:#a6e22e">err</span>)
+	err = cmd.Wait()
+	if err != nil {
+		log.Fatalf(&quot;cmd.Run() failed with %s\n&quot;, err)
 	}
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">errStdout</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">errStderr</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#e6db74">&#34;failed to capture stdout or stderr\n&#34;</span>)
+	if errStdout != nil || errStderr != nil {
+		log.Fatal(&quot;failed to capture stdout or stderr\n&quot;)
 	}
-	<span style="color:#a6e22e">outStr</span>, <span style="color:#a6e22e">errStr</span> <span style="color:#f92672">:=</span> string(<span style="color:#a6e22e">stdoutBuf</span>.<span style="color:#a6e22e">Bytes</span>()), string(<span style="color:#a6e22e">stderrBuf</span>.<span style="color:#a6e22e">Bytes</span>())
-	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\nout:\n%s\nerr:\n%s\n&#34;</span>, <span style="color:#a6e22e">outStr</span>, <span style="color:#a6e22e">errStr</span>)
+	outStr, errStr := string(stdoutBuf.Bytes()), string(stderrBuf.Bytes())
+	fmt.Printf(&quot;\nout:\n%s\nerr:\n%s\n&quot;, outStr, errStr)
 }
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//
-</span><span style="color:#75715e">// cmd_test.go
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#f92672">package</span> <span style="color:#a6e22e">cmd</span>
+</code></pre>
+<pre><code class="language-go">//
+// cmd_test.go
+//
+package cmd
 
-<span style="color:#f92672">import</span> (
-	<span style="color:#e6db74">&#34;testing&#34;</span>
+import (
+	&quot;testing&quot;
 )
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestRun</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
-	<span style="color:#a6e22e">Run</span>()
+func TestRun(t *testing.T) {
+	Run()
 }
 
-</code></pre></div><p>Let&rsquo;s <code>go test -race</code> it:</p>
+</code></pre>
+<p>Let&rsquo;s <code>go test -race</code> it:</p>
 <pre><code>$ go test -race
 
 ==================
@@ -255,7 +268,8 @@ Goroutine 7 (finished) created at:
 Found 7 data race(s)
 exit status 66
 FAIL	_/opt/dev/test/cmd-output/cmd	1.025s
-</code></pre><p>I&rsquo;ll summarize:</p>
+</code></pre>
+<p>I&rsquo;ll summarize:</p>
 <ul>
 <li>goroutine 6:</li>
 <li>runs cmd</li>
@@ -280,65 +294,66 @@ FAIL	_/opt/dev/test/cmd-output/cmd	1.025s
 <p>TL;DR: <a href="https://github.com/go-cmd/cmd">go-cmd/cmd</a></p>
 <p>I agree with Krzysztof: it&rsquo;s important to understand <code>os/exec</code>. Once you do and you want to make things &ldquo;just work&rdquo;, just use <code>go-cmd/cmd</code>; it has <em>100% test coverage</em> and <em>no race conditions</em>, and it can be used synchronously or asynchronously. It also correctly handles process termination, which is a problem far more subtle and infrequently realized let alone handled.</p>
 <p>Here&rsquo;s how <code>go-cmd/cmd</code> handles it (just code snippets):</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// os/exec.Cmd.StdoutPipe is usually used incorrectly. The docs are clear:
-</span><span style="color:#75715e">// &#34;it is incorrect to call Wait before all reads from the pipe have completed.&#34;
-</span><span style="color:#75715e">// Therefore, we can&#39;t read from the pipe in another goroutine because it
-</span><span style="color:#75715e">// causes a race condition: we&#39;ll read in one goroutine and the original
-</span><span style="color:#75715e">// goroutine that calls Wait will write on close which is what Wait does.
-</span><span style="color:#75715e">// The proper solution is using an io.Writer for cmd.Stdout. I couldn&#39;t find
-</span><span style="color:#75715e">// an io.Writer that&#39;s also safe for concurrent reads (as lines in a []string
-</span><span style="color:#75715e">// no less), so I created one:
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">output</span> <span style="color:#66d9ef">struct</span> {
-	<span style="color:#a6e22e">buf</span>   <span style="color:#f92672">*</span><span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
-	<span style="color:#a6e22e">lines</span> []<span style="color:#66d9ef">string</span>
-	<span style="color:#f92672">*</span><span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Mutex</span>
+<pre><code class="language-go">// os/exec.Cmd.StdoutPipe is usually used incorrectly. The docs are clear:
+// &quot;it is incorrect to call Wait before all reads from the pipe have completed.&quot;
+// Therefore, we can't read from the pipe in another goroutine because it
+// causes a race condition: we'll read in one goroutine and the original
+// goroutine that calls Wait will write on close which is what Wait does.
+// The proper solution is using an io.Writer for cmd.Stdout. I couldn't find
+// an io.Writer that's also safe for concurrent reads (as lines in a []string
+// no less), so I created one:
+type output struct {
+	buf   *bytes.Buffer
+	lines []string
+	*sync.Mutex
 }
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">newOutput</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">output</span> {
-	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">output</span>{
-		<span style="color:#a6e22e">buf</span>:   <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>{},
-		<span style="color:#a6e22e">lines</span>: []<span style="color:#66d9ef">string</span>{},
-		<span style="color:#a6e22e">Mutex</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Mutex</span>{},
+func newOutput() *output {
+	return &amp;output{
+		buf:   &amp;bytes.Buffer{},
+		lines: []string{},
+		Mutex: &amp;sync.Mutex{},
 	}
 }
 
-<span style="color:#75715e">// io.Writer interface is only this method
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">rw</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">output</span>) <span style="color:#a6e22e">Write</span>(<span style="color:#a6e22e">p</span> []<span style="color:#66d9ef">byte</span>) (<span style="color:#66d9ef">int</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#a6e22e">rw</span>.<span style="color:#a6e22e">Lock</span>()
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">rw</span>.<span style="color:#a6e22e">Unlock</span>()
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">rw</span>.<span style="color:#a6e22e">buf</span>.<span style="color:#a6e22e">Write</span>(<span style="color:#a6e22e">p</span>) <span style="color:#75715e">// and bytes.Buffer implements it, too
-</span><span style="color:#75715e"></span>}
-
-<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">rw</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">output</span>) <span style="color:#a6e22e">Lines</span>() []<span style="color:#66d9ef">string</span> {
-	<span style="color:#a6e22e">rw</span>.<span style="color:#a6e22e">Lock</span>()
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">rw</span>.<span style="color:#a6e22e">Unlock</span>()
-	<span style="color:#75715e">// Scanners are io.Readers which effectively destroy the buffer by reading
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// to EOF. So once we scan the buf to lines, the buf is empty again.
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">s</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">bufio</span>.<span style="color:#a6e22e">NewScanner</span>(<span style="color:#a6e22e">rw</span>.<span style="color:#a6e22e">buf</span>)
-	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">Scan</span>() {
-		<span style="color:#a6e22e">rw</span>.<span style="color:#a6e22e">lines</span> = append(<span style="color:#a6e22e">rw</span>.<span style="color:#a6e22e">lines</span>, <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">Text</span>())
-	}
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">rw</span>.<span style="color:#a6e22e">lines</span>
+// io.Writer interface is only this method
+func (rw *output) Write(p []byte) (int, error) {
+	rw.Lock()
+	defer rw.Unlock()
+	return rw.buf.Write(p) // and bytes.Buffer implements it, too
 }
 
-<span style="color:#75715e">//
-</span><span style="color:#75715e">// Elsewhere in the code...
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span>
-<span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">exec</span>.<span style="color:#a6e22e">Command</span>(<span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">args</span><span style="color:#f92672">...</span>)
+func (rw *output) Lines() []string {
+	rw.Lock()
+	defer rw.Unlock()
+	// Scanners are io.Readers which effectively destroy the buffer by reading
+	// to EOF. So once we scan the buf to lines, the buf is empty again.
+	s := bufio.NewScanner(rw.buf)
+	for s.Scan() {
+		rw.lines = append(rw.lines, s.Text())
+	}
+	return rw.lines
+}
 
-<span style="color:#a6e22e">stdout</span> = <span style="color:#a6e22e">newOutput</span>()
-<span style="color:#a6e22e">stderr</span> = <span style="color:#a6e22e">newOutput</span>()
+//
+// Elsewhere in the code...
+//
 
-<span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Stdout</span> = <span style="color:#a6e22e">stdout</span>
-<span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Stderr</span> = <span style="color:#a6e22e">stderr</span>
+cmd := exec.Command(name, args...)
 
-<span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Start</span>()
+stdout = newOutput()
+stderr = newOutput()
 
-<span style="color:#75715e">// Safe to call stdout.Lines()
-</span><span style="color:#75715e"></span>
-<span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Wait</span>()
-</code></pre></div><p>This this the best way? I don&rsquo;t know. Is it a <em>correct</em> way? I&rsquo;m 99% certain it is. Does it work? Yes! I&rsquo;ve used it extensively in the real world without issues.</p>
+cmd.Stdout = stdout
+cmd.Stderr = stderr
+
+cmd.Start()
+
+// Safe to call stdout.Lines()
+
+cmd.Wait()
+</code></pre>
+<p>This this the best way? I don&rsquo;t know. Is it a <em>correct</em> way? I&rsquo;m 99% certain it is. Does it work? Yes! I&rsquo;ve used it extensively in the real world without issues.</p>
 <p><code>go-cmd/cmd</code> saves me a lot of time because it just works. I hope it &ldquo;just works&rdquo; for you, too, and I hope this blog post helps turn the tide of racey solutions to the common and important task of reading STDOUT/STDERR from a Go <code>os/exec.Cmd</code> while it&rsquo;s running.</p>
 
       </article>

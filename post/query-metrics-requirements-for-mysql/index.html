@@ -100,6 +100,17 @@
 
 
 
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+              </div>
+            </li>
+
+
+
 
       </ul>
     </div>
@@ -217,8 +228,9 @@
 <li>Comment Metadata</li>
 </ol>
 <p>Putting metadata in multi-line comments is a common practice, like:</p>
-<pre><code class="language-none" data-lang="none">SELECT id FROM t WHERE id = 1 /* file:app.go line:300 traceId:abc123 */
-</code></pre><p>A premium QM app should parse the three key:value pairs from the comment and make them available as searchable, filterable query metadata. This is extremely useful for developers to link queries back to code. It also leads to <em>Advanced 2</em>.</p>
+<pre><code class="language-none">SELECT id FROM t WHERE id = 1 /* file:app.go line:300 traceId:abc123 */
+</code></pre>
+<p>A premium QM app should parse the three key:value pairs from the comment and make them available as searchable, filterable query metadata. This is extremely useful for developers to link queries back to code. It also leads to <em>Advanced 2</em>.</p>
 <h3 id="advanced">Advanced</h3>
 <p>An advanced query metrics app would have these features to be genuinely advanced with respect to the current state of the art:</p>
 <ol>

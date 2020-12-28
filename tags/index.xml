@@ -7,15 +7,51 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 01 Nov 2020 20:25:00 -0500</lastBuildDate>
+    <lastBuildDate>Mon, 28 Dec 2020 09:56:00 -0500</lastBuildDate>
 
 	<atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
 
 
     <item>
+      <title>aws-lambda</title>
+      <link>https://hackmysql.com/tags/aws-lambda/</link>
+      <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/tags/aws-lambda/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>aws-rds</title>
+      <link>https://hackmysql.com/tags/aws-rds/</link>
+      <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/tags/aws-rds/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>aws-s3</title>
+      <link>https://hackmysql.com/tags/aws-s3/</link>
+      <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/tags/aws-s3/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>aws-secrets-manager</title>
+      <link>https://hackmysql.com/tags/aws-secrets-manager/</link>
+      <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/tags/aws-secrets-manager/</guid>
+      <description></description>
+    </item>
+
+    <item>
       <title>mysql</title>
       <link>https://hackmysql.com/tags/mysql/</link>
-      <pubDate>Sun, 01 Nov 2020 20:25:00 -0500</pubDate>
+      <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
 
       <guid>https://hackmysql.com/tags/mysql/</guid>
       <description></description>
@@ -45,15 +81,6 @@
       <pubDate>Sun, 05 Jul 2020 18:50:00 -0300</pubDate>
 
       <guid>https://hackmysql.com/tags/flushing/</guid>
-      <description></description>
-    </item>
-
-    <item>
-      <title>aws-rds</title>
-      <link>https://hackmysql.com/tags/aws-rds/</link>
-      <pubDate>Mon, 29 Jun 2020 11:15:00 -0300</pubDate>
-
-      <guid>https://hackmysql.com/tags/aws-rds/</guid>
       <description></description>
     </item>
 

@@ -100,6 +100,17 @@
 
 
 
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+              </div>
+            </li>
+
+
+
 
       </ul>
     </div>
@@ -125,7 +136,8 @@
 <pre><code>$ tool &gt;/dev/null
 $ echo $?
 0
-</code></pre><p>No output to STDERR should always indicate success, as further indicated by a zero exit (see first antipattern: Car-Tree).</p>
+</code></pre>
+<p>No output to STDERR should always indicate success, as further indicated by a zero exit (see first antipattern: Car-Tree).</p>
 <h2 id="--quiet">&ndash;quiet</h2>
 <p>First, presuming <code>--quiet</code> means &ldquo;no output&rdquo;, this &ldquo;feature&rdquo; is solved at fundamental level with STDOUT and STDERR redirection:</p>
 <table>
@@ -162,7 +174,8 @@ $ echo $?
          &quot;I found myself within a forest dark,&quot; +
          &quot;For the straightforward pathway had been lost.&quot;)
 }
-</code></pre><p>Or the developer will create and pass around a printing object to all parts of the code. And usually some line is overlooked and a bug is file: &ldquo;&ndash;quiet does not suppress all output.&rdquo;</p>
+</code></pre>
+<p>Or the developer will create and pass around a printing object to all parts of the code. And usually some line is overlooked and a bug is file: &ldquo;&ndash;quiet does not suppress all output.&rdquo;</p>
 <p>Given the first point (that this feature is already thoroughly solved by STDOUT/STDERR redirection), an explicit <code>--quiet</code> option needs a very necessary and convincing reason to exist for it not to be an antipattern.</p>
 <h2 id="--verbose">&ndash;verbose</h2>
 <p>A <code>--verbose</code> option shares two of the same problems as <code>--quiet</code>: too verbose for some people, and not verbose enough for others; and it litters the code with <code>if</code> conditionals or an object to handle printing.</p>
