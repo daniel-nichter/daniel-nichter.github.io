@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 01 Nov 2020 20:25:00 -0500</lastBuildDate>
-
-	<atom:link href="https://hackmysql.com/tags/query-metrics/index.xml" rel="self" type="application/rss+xml" />
-
-
+    <lastBuildDate>Sun, 01 Nov 2020 20:25:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/query-metrics/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Query Metrics Requirements for MySQL</title>
       <link>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</link>

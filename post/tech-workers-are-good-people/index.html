@@ -18,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.73.0" />
+  <meta name="generator" content="Hugo 0.80.0" />
   <link rel="canonical" href="https://hackmysql.com/post/tech-workers-are-good-people/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -106,6 +106,8 @@
 
                   <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
 
+                  <a href="/page/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
               </div>
             </li>
 
@@ -165,9 +167,9 @@
 <p>I like this section in the article:</p>
 <blockquote>
 <p>[The startup kings are] continuing their quest to move fast and break things—regardless of what broken objects are left in their wake.</p>
-<p>Outside the bubble, things are different. We&rsquo;re not egging on startups that willingly flout regulations. We&rsquo;re wary of artificial intelligence and its potential to eliminate jobs. We&rsquo;re dubious of tech leaders&rsquo; promises to make their products safe for their kids to use. We are all sick of the jokes that no longer feel funny: lines about the lack of women in tech, about obscenely rich 20-somethings, about awkward coders with bad people skills, about &ldquo;hustling&rdquo; and growth at any cost. It all feels inappropriate.</p>
+<p>Outside the bubble, things are different. We&rsquo;re not egging on startups that willingly flout regulations. We&rsquo;re wary of artificial intelligence and its potential to eliminate jobs. We&rsquo;re dubious of tech leaders' promises to make their products safe for their kids to use. We are all sick of the jokes that no longer feel funny: lines about the lack of women in tech, about obscenely rich 20-somethings, about awkward coders with bad people skills, about &ldquo;hustling&rdquo; and growth at any cost. It all feels inappropriate.</p>
 </blockquote>
-<p>That feels like it reflects reality, but before we light our torches and grab our pitchforks, we need to be careful and clarify: <em>who</em> is flouting regulations? <em>who</em> is advancing AI with no consideration for the jobs it could replace? <em>which</em> tech leaders seem not to care about kids&rsquo; safety? <em>who</em> are making such jokes?</p>
+<p>That feels like it reflects reality, but before we light our torches and grab our pitchforks, we need to be careful and clarify: <em>who</em> is flouting regulations? <em>who</em> is advancing AI with no consideration for the jobs it could replace? <em>which</em> tech leaders seem not to care about kids' safety? <em>who</em> are making such jokes?</p>
 <p>For every bad actor I can probably list at least two good actors. Yes, Uber has been a bad actor (example: <a href="https://www.nytimes.com/2017/03/03/technology/uber-greyball-program-evade-authorities.html">Greyball</a>). But what about Lyft and <a href="https://www.chariot.com">Chariot</a>? And yes, <a href="https://www.wired.com/story/apple-iphone-battery-slow-down/">Apple recently stumbled</a>, but what about all other smartphone makers? Also, <a href="https://www.npr.org/sections/thetwo-way/2017/12/29/574575797/apple-apologizes-for-slowdowns-lops-50-off-battery-replacement-cost">Apple has apologized and taken steps to rectify the situation</a>. And sure, <a href="https://www.forbes.com/sites/bizcarson/2017/09/01/silicon-valleys-infamous-400-juicer-startup-is-shutting-down/#4e937877d57b">Juicero</a> seems ridiculous, but take your pick of myriad other startups which aren&rsquo;t ridiculous. And <a href="https://www.nytimes.com/2016/02/18/technology/zenefits-scandal-highlights-perils-of-hypergrowth-at-start-ups.html">the former Zenefits CEO cheated</a>, but when&rsquo;s the last time you heard something scandalous about Bill Gates, Reed Hastings, or Aneel Bhusri?</p>
 <p>The point is: <em>don&rsquo;t be too quick to judge</em>. Yes, there are bad actors, but we should not condemn any group for the failings of a few.</p>
 <p>That does not mean we &ldquo;turn a blind eye&rdquo;. I&rsquo;m not arguing we should overlook the failings of Silicon Valley, only that we should be precise in our criticism. For example, the same author wrote <a href="http://fortune.com/silicon-valley-startups-fraud-venture-capital/">The Ugly Unethical Underside of Silicon Valley</a>, which is an illuminating article that cites many specific examples. If bad actors become the majority&ndash;if we look far and wide but struggle to find good actors&ndash;then, yes, we need to examine the broad underpinnings and driving forces of the industry to determine why it&rsquo;s doing more harm than good. I don&rsquo;t think we&rsquo;re at that point, yet. I think we&rsquo;re at the point where too many high-profile companies have made too many questionable actions, but, in my humble opinion, Silicon Valley has only lost its way, not its benevolent soul. If we&rsquo;re upstanding and wise enough to criticize its behavior, then we must also be willing to help correct it.</p>
@@ -286,7 +288,7 @@
 
     <footer>
   <p class="copyright text-muted">
-    Copyright 2020 Daniel Nichter
+    Copyright 2021 Daniel Nichter
   </p>
   <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>

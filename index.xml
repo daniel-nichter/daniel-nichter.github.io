@@ -7,10 +7,15 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Mon, 28 Dec 2020 12:09:00 -0500</lastBuildDate>
+    <lastBuildDate>Thu, 14 Jan 2021 15:42:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL Select and Sort Status Variables</title>
+      <link>https://hackmysql.com/page/mysql-select-and-sort/</link>
+      <pubDate>Thu, 14 Jan 2021 15:42:00 -0500</pubDate>
 
-	<atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
-
+      <guid>https://hackmysql.com/page/mysql-select-and-sort/</guid>
+      <description>MySQL Select and Sort Status Variables This page is a reboot of the original written 15 years ago in 2005. Back then, I must have been using MySQL 4.1 or 5.0. Today, I am using MySQL 8.0.22. A lot changed in MySQL from 4.1 to 8.0, but it still has the same Select_% and Sort_% status variables which are equally important today in 2021. Let&amp;rsquo;s examine them in greater detail and with better examples.</description>
+    </item>
 
     <item>
       <title>MySQL Password Rotation with AWS</title>
@@ -318,7 +323,7 @@ Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmysql.com/post/design-before-implementation/</guid>
-      <description>Like most software engineers, I review my colleagues&amp;rsquo; code. I rarely provide feedback on implementation details because developers rarely choose obviously bad implementations. I focus my attention on design rather than implementation for one simple reason: implementation details are easy to change when software is well designed. Or, from the business perspective, design is the most costly aspect of software to change, so I review for great and therefore cost-effective design.</description>
+      <description>Like most software engineers, I review my colleagues&#39; code. I rarely provide feedback on implementation details because developers rarely choose obviously bad implementations. I focus my attention on design rather than implementation for one simple reason: implementation details are easy to change when software is well designed. Or, from the business perspective, design is the most costly aspect of software to change, so I review for great and therefore cost-effective design.</description>
     </item>
 
     <item>

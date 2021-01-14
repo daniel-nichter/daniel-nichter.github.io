@@ -18,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.73.0" />
+  <meta name="generator" content="Hugo 0.80.0" />
   <link rel="canonical" href="https://hackmysql.com/post/query-metrics-requirements-for-mysql/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -106,6 +106,8 @@
 
                   <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
 
+                  <a href="/page/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
               </div>
             </li>
 
@@ -187,7 +189,7 @@
 <p>There are two issues the app must address. First, &ldquo;the&rdquo; database is most likely at least 2 MySQL instances, probably more. Although we need to see per-instance query metrics, we also usually consider &ldquo;the&rdquo; database to be a cluster of database instances connected in the same replication topology. Second, different teams have different databases, and we probably do not need (or want) to see databases that we don&rsquo;t own. Broadly speaking, there are two ways to address both issues: accounts or metadata.</p>
 <p>If the app is partitioned by account (or sub-accounts), then I could use an account that contains only my databases. That solves the second issue, but it might not suffice for the first issue. (This approach is also nice for cost attribution/billing.)</p>
 <p>The app can allow (or require) adding metadata (dimensions, labels, tags, etc.) to the data from each database instance. For example, I label query metrics from my databases with <code>team=foo</code> and <code>cluster=db1</code>, and the app allows me to filter by these labels. This approach is more flexible because it allows others uses of the metadata, but to make it work nicely the app needs to remember my filters so I don&rsquo;t have to re-filter every time.</p>
-<p>The end result should be: I see only my databases (not other teams&rsquo; databases), and by &ldquo;database&rdquo; I mean either a single database instance or all database instances in the cluster. Note: although I want to see databases grouped by cluster, only per-instance query metrics are must-have.</p>
+<p>The end result should be: I see only my databases (not other teams' databases), and by &ldquo;database&rdquo; I mean either a single database instance or all database instances in the cluster. Note: although I want to see databases grouped by cluster, only per-instance query metrics are must-have.</p>
 <ul>
 <li>Profile and Report</li>
 </ul>
@@ -303,7 +305,7 @@
 
     <footer>
   <p class="copyright text-muted">
-    Copyright 2020 Daniel Nichter
+    Copyright 2021 Daniel Nichter
   </p>
   <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>

@@ -18,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.73.0" />
+  <meta name="generator" content="Hugo 0.80.0" />
   <link rel="canonical" href="https://hackmysql.com/page/cli-antipatterns/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -106,6 +106,8 @@
 
                   <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
 
+                  <a href="/page/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
               </div>
             </li>
 
@@ -179,7 +181,7 @@ $ echo $?
 <p>Given the first point (that this feature is already thoroughly solved by STDOUT/STDERR redirection), an explicit <code>--quiet</code> option needs a very necessary and convincing reason to exist for it not to be an antipattern.</p>
 <h2 id="--verbose">&ndash;verbose</h2>
 <p>A <code>--verbose</code> option shares two of the same problems as <code>--quiet</code>: too verbose for some people, and not verbose enough for others; and it litters the code with <code>if</code> conditionals or an object to handle printing.</p>
-<p>Verbosity is more difficult to get right than quietness because <code>--quiet</code> usually means &ldquo;no output to STDOUT&rdquo;, but there are no standards or norms for verbosity. Consequently, no two programs&rsquo; <code>--verbose</code> look even remotely similar. Moreover, verbosity is sometimes a repeatable option, like <code>-vv</code> for &ldquo;very verbose&rdquo;, which complicates the option further.</p>
+<p>Verbosity is more difficult to get right than quietness because <code>--quiet</code> usually means &ldquo;no output to STDOUT&rdquo;, but there are no standards or norms for verbosity. Consequently, no two programs' <code>--verbose</code> look even remotely similar. Moreover, verbosity is sometimes a repeatable option, like <code>-vv</code> for &ldquo;very verbose&rdquo;, which complicates the option further.</p>
 <p>Rather than <code>--verbose</code>, the developer probably wants log levels, for which there are standards, like <a href="https://en.wikipedia.org/wiki/Syslog#Severity_level">syslog severity levels</a> and others.</p>
 </article>
 	</div>
@@ -188,7 +190,7 @@ $ echo $?
 
     <footer>
   <p class="copyright text-muted">
-    Copyright 2020 Daniel Nichter
+    Copyright 2021 Daniel Nichter
   </p>
   <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>

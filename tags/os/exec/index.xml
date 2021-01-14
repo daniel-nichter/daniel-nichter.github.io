@@ -6,11 +6,7 @@
     <description>Recent content in os/exec on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2020 Daniel Nichter</copyright>
-
-	<atom:link href="https://hackmysql.com/tags/os/exec/index.xml" rel="self" type="application/rss+xml" />
-
-
+    <copyright>2020 Daniel Nichter</copyright><atom:link href="https://hackmysql.com/tags/os/exec/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Reading os/exec.Cmd Output Without Race Conditions</title>
       <link>https://hackmysql.com/post/reading-os-exec-cmd-output-without-race-conditions/</link>

@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 13 May 2018 09:00:00 -0700</lastBuildDate>
-
-	<atom:link href="https://hackmysql.com/tags/godoc/index.xml" rel="self" type="application/rss+xml" />
-
-
+    <lastBuildDate>Sun, 13 May 2018 09:00:00 -0700</lastBuildDate><atom:link href="https://hackmysql.com/tags/godoc/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Thinking in Go</title>
       <link>https://hackmysql.com/post/thinking-in-go/</link>

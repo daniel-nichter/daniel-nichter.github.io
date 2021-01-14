@@ -18,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.73.0" />
+  <meta name="generator" content="Hugo 0.80.0" />
   <link rel="canonical" href="https://hackmysql.com/post/designing-tools-for-integration/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -106,6 +106,8 @@
 
                   <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
 
+                  <a href="/page/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
               </div>
             </li>
 
@@ -188,7 +190,7 @@
     },
 }
 </code></pre>
-<p>After parsing command-line options, the tool calls this hook and the hook sets <code>--addr</code> and <code>--env</code>, if not already set, by auto-detecting internal stuff and using internal VIPs. Of course, if the hook breaks these options&rsquo; values, that&rsquo;ll break the tool, but that&rsquo;s the hook&rsquo;s fault, not the tool&rsquo;s.</p>
+<p>After parsing command-line options, the tool calls this hook and the hook sets <code>--addr</code> and <code>--env</code>, if not already set, by auto-detecting internal stuff and using internal VIPs. Of course, if the hook breaks these options' values, that&rsquo;ll break the tool, but that&rsquo;s the hook&rsquo;s fault, not the tool&rsquo;s.</p>
 <p>Give hooks consistent and descriptive names. I find &ldquo;Before&rdquo; and &ldquo;After&rdquo; prefixes work well. Or, if a hook can override a point in the code, then name it according to that point, like &ldquo;LogTheData(data)&rdquo; where only the hook is called (if set) to log the data. (By contrast, before- and after-hooks are always called when set and don&rsquo;t override/replace built-in code execution.&quot;)</p>
 <p><mark>Define hooks with consistent and descriptive names throughout the main code flow and call them if set.</mark></p>
 <h1 id="context">Context</h1>
@@ -378,7 +380,7 @@ func main() {
 
     <footer>
   <p class="copyright text-muted">
-    Copyright 2020 Daniel Nichter
+    Copyright 2021 Daniel Nichter
   </p>
   <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>

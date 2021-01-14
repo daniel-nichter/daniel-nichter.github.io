@@ -18,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.73.0" />
+  <meta name="generator" content="Hugo 0.80.0" />
   <link rel="canonical" href="https://hackmysql.com/post/design-before-implementation/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -106,6 +106,8 @@
 
                   <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
 
+                  <a href="/page/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
               </div>
             </li>
 
@@ -138,7 +140,7 @@
 </div>
 
 
-        <p>Like most software engineers, I review my colleagues&rsquo; code. I rarely provide feedback on implementation details because developers rarely choose obviously bad implementations. I focus my attention on design rather than implementation for one simple reason: implementation details are easy to change when software is well designed. Or, from the business perspective, design is the most costly aspect of software to change, so I review for great and therefore cost-effective design.</p>
+        <p>Like most software engineers, I review my colleagues' code. I rarely provide feedback on implementation details because developers rarely choose obviously bad implementations. I focus my attention on design rather than implementation for one simple reason: implementation details are easy to change when software is well designed. Or, from the business perspective, design is the most costly aspect of software to change, so I review for great and therefore cost-effective design.</p>
 <p>&ldquo;Design&rdquo; in this context is a broad; let me clarify. By &ldquo;design&rdquo; I mean the &ldquo;boundaries&rdquo;, or &ldquo;contours&rdquo;, or &ldquo;seams&rdquo; of any part that uses or is used by another part. Here, &ldquo;part&rdquo; is also broad, meaning everything from a single function (usually the smallest part of software), to a class, to a package, to the highest conceptual levels of the system (e.g. two APIs or services in a distributed system). Therefore, we can say: <em>software design concerns the delineation and interaction of software parts</em>.</p>
 <p>Let&rsquo;s consider the classic antithesis: <a href="https://en.wikipedia.org/wiki/Spaghetti_code">spaghetti code</a>. It&rsquo;s probably safe to say that we&rsquo;ve all experienced this kind of painful software. At first it&rsquo;s difficult to articulate why it&rsquo;s painful, we just feel that the code is messy and difficult to work with. The reason is blurred or nonexistent lines between the parts or, in the extreme, having no delineated parts in the first place. (The extreme is usually not the case. Most developers manage to break down code into package, classes, and functions at the least.) If the spaghetti code works, it&rsquo;s difficult to reproach because the traditional argument is &ldquo;function before form&rdquo;, but I think great software design requires the opposite: form before function&ndash;design before implementation.</p>
 <p>As stated above, design concerns the delineation and interaction of software parts. As such, it creates logical separations. A <a href="https://en.wikipedia.org/wiki/Bulkhead_(partition)">bulkhead</a> is a useful analogy. Software design concerns the creation and placements of bulkheads. The purpose of bulkheads are to isolate parts of a ship, so that when the Romulans blast a hole through the ship, the whole crew isn&rsquo;t blown out into space, only the unfortunate crew members in affected decks and sections (presuming they weren&rsquo;t first vaporized by the disruptor). Software is a starship and logical bulkheads should exist between every part for two reasons.</p>
@@ -196,7 +198,7 @@
 
     <footer>
   <p class="copyright text-muted">
-    Copyright 2020 Daniel Nichter
+    Copyright 2021 Daniel Nichter
   </p>
   <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>

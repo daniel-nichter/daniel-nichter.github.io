@@ -18,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
 
-  <meta name="generator" content="Hugo 0.73.0" />
+  <meta name="generator" content="Hugo 0.80.0" />
   <link rel="canonical" href="https://hackmysql.com/post/fixing-ghosted-gtids/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -105,6 +105,8 @@
               <div class="navlinks-children">
 
                   <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/page/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
 
               </div>
             </li>
@@ -206,7 +208,7 @@ node2: 7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052104638-5054955706
 </code></pre>
 <p>Can <code>node2</code> replicate from <code>node1</code> with auto-pos? (In other words, can&rsquo;t <code>node2</code> auto-pos on <code>node1</code>?) The answer is &ldquo;no&rdquo;, and the script above would print:</p>
 <blockquote>
-<p>node2 cannot auto-position on node1, missing GTID sets 7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052064794-5052104637&rdquo;</p>
+<p>node2 cannot auto-position on node1, missing GTID sets 7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052064794-5052104637&quot;</p>
 </blockquote>
 <p>GTID sets can be overwhelming to humans because they&rsquo;re large, long sets. (See <a href="https://bugs.mysql.com/bug.php?id=92836">MySQL bug #92836</a>.) Let&rsquo;s highlight the difference in the GTIDs sets above:</p>
 <p>node1: 7b07bfca-d4d9-11e5-b97a-fe46eb913463:5052<mark>064794</mark>-5054955706</p>
@@ -308,7 +310,7 @@ missing trx end   = 5052104637
 
     <footer>
   <p class="copyright text-muted">
-    Copyright 2020 Daniel Nichter
+    Copyright 2021 Daniel Nichter
   </p>
   <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>

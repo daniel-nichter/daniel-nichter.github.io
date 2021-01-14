@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 02 Dec 2018 00:00:00 +0000</lastBuildDate>
-
-	<atom:link href="https://hackmysql.com/tags/software-design/index.xml" rel="self" type="application/rss+xml" />
-
-
+    <lastBuildDate>Sun, 02 Dec 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/tags/software-design/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Component-based Software Design</title>
       <link>https://hackmysql.com/post/component-based-software-design/</link>
@@ -84,7 +80,7 @@ Programming languages have aspects which affect how we think, design, and implem
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
 
       <guid>https://hackmysql.com/post/design-before-implementation/</guid>
-      <description>Like most software engineers, I review my colleagues&amp;rsquo; code. I rarely provide feedback on implementation details because developers rarely choose obviously bad implementations. I focus my attention on design rather than implementation for one simple reason: implementation details are easy to change when software is well designed. Or, from the business perspective, design is the most costly aspect of software to change, so I review for great and therefore cost-effective design.</description>
+      <description>Like most software engineers, I review my colleagues&#39; code. I rarely provide feedback on implementation details because developers rarely choose obviously bad implementations. I focus my attention on design rather than implementation for one simple reason: implementation details are easy to change when software is well designed. Or, from the business perspective, design is the most costly aspect of software to change, so I review for great and therefore cost-effective design.</description>
     </item>
 
   </channel>
