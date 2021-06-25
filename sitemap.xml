@@ -1,549 +1,337 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-
   <url>
-    <loc>https://hackmysql.com/page/career-advice/</loc>
+    <loc>https://hackmysql.com/eng/career-advice/</loc>
     <lastmod>2021-04-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
+    <loc>https://hackmysql.com/eng/</loc>
+    <lastmod>2021-04-12T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/</loc>
     <lastmod>2021-04-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/page/</loc>
-    <lastmod>2021-04-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/mysql/</loc>
     <lastmod>2021-01-14T15:42:00-05:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/page/mysql-select-and-sort/</loc>
+  </url><url>
+    <loc>https://hackmysql.com/mysql-select-and-sort/</loc>
     <lastmod>2021-01-14T15:42:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2021-01-14T15:42:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/aws-rds/</loc>
     <lastmod>2020-12-28T12:09:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</loc>
     <lastmod>2020-12-28T12:09:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/</loc>
     <lastmod>2020-12-28T12:09:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/terraform/</loc>
     <lastmod>2020-12-28T12:09:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/aws-lambda/</loc>
     <lastmod>2020-12-28T09:56:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/aws-s3/</loc>
     <lastmod>2020-12-28T09:56:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/aws-secrets-manager/</loc>
     <lastmod>2020-12-28T09:56:00-05:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/page/mysql-password-rotation-lambda/</loc>
+  </url><url>
+    <loc>https://hackmysql.com/mysql-password-rotation-lambda/</loc>
     <lastmod>2020-12-28T09:56:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/page/about/</loc>
     <lastmod>2020-12-11T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
+    <loc>https://hackmysql.com/page/</loc>
+    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</loc>
     <lastmod>2020-11-01T20:25:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/query-metrics/</loc>
     <lastmod>2020-11-01T20:25:00-05:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/dirty-pages/</loc>
     <lastmod>2020-07-05T18:50:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/flushing/</loc>
     <lastmod>2020-07-05T18:50:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/</loc>
     <lastmod>2020-07-05T18:50:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</loc>
     <lastmod>2020-06-29T11:15:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/parameter-group/</loc>
     <lastmod>2020-06-29T11:15:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/sys-var/</loc>
     <lastmod>2020-06-29T11:15:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/gtid/</loc>
     <lastmod>2020-05-31T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/mysql-gtid-missing-writes/</loc>
     <lastmod>2020-05-31T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/replication/</loc>
     <lastmod>2020-05-31T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/archive/</loc>
     <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/archive/</loc>
     <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/mysqlreport/</loc>
     <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/archive/mysqlreport/</loc>
     <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/mysqlsla/</loc>
     <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/archive/mysqlsla/</loc>
     <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/mysqlsniffer/</loc>
     <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/archive/mysqlsniffer/</loc>
     <lastmod>2020-05-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/metrics/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/threads-running/</loc>
     <lastmod>2020-04-25T16:18:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/performance/</loc>
     <lastmod>2020-01-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/queries/</loc>
     <lastmod>2020-01-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/queries-effect-performance/</loc>
     <lastmod>2020-01-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/auto-pos/</loc>
     <lastmod>2019-12-15T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/fixing-ghosted-gtids/</loc>
     <lastmod>2019-12-15T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/histograms/</loc>
     <lastmod>2019-06-29T19:00:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/percentiles/</loc>
     <lastmod>2019-06-29T19:00:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/response-time-sla/</loc>
     <lastmod>2019-06-29T19:00:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/sla/</loc>
     <lastmod>2019-06-29T19:00:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/monitoring/</loc>
     <lastmod>2019-04-12T09:00:00-04:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/path-and-dimension-metrics/</loc>
     <lastmod>2019-04-12T09:00:00-04:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/time-series/</loc>
     <lastmod>2019-04-12T09:00:00-04:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/three-golang-error-types/</loc>
     <lastmod>2019-03-25T11:00:00-04:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/errors/</loc>
     <lastmod>2019-03-25T11:00:00-04:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/golang/</loc>
     <lastmod>2019-03-25T11:00:00-04:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/go-metrics/</loc>
     <lastmod>2019-02-10T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/linear-interpolation/</loc>
     <lastmod>2019-02-10T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/nearest-rank/</loc>
     <lastmod>2019-02-10T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/page/percentiles/</loc>
+  </url><url>
+    <loc>https://hackmysql.com/eng/percentiles/</loc>
     <lastmod>2019-02-10T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/three-golang-channel-red-flags/</loc>
     <lastmod>2018-12-16T13:00:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/channels/</loc>
     <lastmod>2018-12-16T13:00:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/design-pattern/</loc>
     <lastmod>2018-12-16T13:00:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/sender-closer/</loc>
     <lastmod>2018-12-16T13:00:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/cbd/</loc>
     <lastmod>2018-12-02T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/component-based-design/</loc>
     <lastmod>2018-12-02T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/component-based-software-design/</loc>
     <lastmod>2018-12-02T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/software-design/</loc>
     <lastmod>2018-12-02T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/when-mysql-goes-away/</loc>
     <lastmod>2018-07-22T18:00:00-03:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/godoc/</loc>
     <lastmod>2018-05-13T09:00:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/thinking-in-go/</loc>
     <lastmod>2018-05-13T09:00:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/bootloader/</loc>
     <lastmod>2018-02-04T19:30:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/bootloader-design-pattern/</loc>
     <lastmod>2018-02-04T19:30:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/database/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/database-scalability-contention-and-crosstalk/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/gunther/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/scalability/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/schwartz/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/universal-scalability-law/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/crash-safe/</loc>
     <lastmod>2018-01-23T18:40:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</loc>
     <lastmod>2018-01-23T18:40:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/antipatterns/</loc>
     <lastmod>2018-01-21T19:00:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/cli/</loc>
     <lastmod>2018-01-21T19:00:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/command-line/</loc>
     <lastmod>2018-01-21T19:00:00-07:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/page/cli-antipatterns/</loc>
+  </url><url>
+    <loc>https://hackmysql.com/eng/cli-antipatterns/</loc>
     <lastmod>2018-01-21T19:00:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/business/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/philosophy/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/silicon-valley/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/social-responsibility/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/tech-workers-are-good-people/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/approaching-a-new-software-project/</loc>
     <lastmod>2017-12-10T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/domain-model/</loc>
     <lastmod>2017-12-10T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/engineering/</loc>
     <lastmod>2017-11-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/ideas-leaders-and-engineers/</loc>
     <lastmod>2017-11-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/leadership/</loc>
     <lastmod>2017-11-12T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/checklist/</loc>
     <lastmod>2017-09-17T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/five-point-checklist-for-excellent-software/</loc>
     <lastmod>2017-09-17T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/designing-tools-for-integration/</loc>
     <lastmod>2017-09-05T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/integration/</loc>
     <lastmod>2017-09-05T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/tools/</loc>
     <lastmod>2017-09-05T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/how-to-test-the-database/</loc>
     <lastmod>2017-08-20T11:20:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/testing/</loc>
     <lastmod>2017-08-20T11:20:00-07:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/design-before-implementation/</loc>
     <lastmod>2017-08-01T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/race-condition/</loc>
     <lastmod>2017-06-17T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/reading-os-exec-cmd-output-without-race-conditions/</loc>
     <lastmod>2017-06-17T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/post/custom-mongodb-replica-set-write-concern/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/mongodb/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/replica-set/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/tag-set/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/write-concern/</loc>
     <lastmod>2017-06-11T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/page/golang-antipatterns/</loc>
+  </url><url>
+    <loc>https://hackmysql.com/golang/go-antipatterns/</loc>
     <lastmod>2017-06-03T18:51:14-07:00</lastmod>
-  </url>
-
-  <url>
-    <loc>https://hackmysql.com/page/idiomatic-go/</loc>
+  </url><url>
+    <loc>https://hackmysql.com/golang/</loc>
+    <lastmod>2017-06-03T18:51:14-07:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/golang/idiomatic-go/</loc>
     <lastmod>2017-06-03T00:00:00+00:00</lastmod>
-  </url>
-
-  <url>
+  </url><url>
     <loc>https://hackmysql.com/tags/os/exec/</loc>
   </url>
-
 </urlset>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Command-line Interface Antipatterns</title>
+  <meta property="og:title" content="Command-line Interface Antipatterns" />
+  <meta name="description" content="Command-line Interface Antipatterns Apps (web, mobile, and native) and APIs do not lessen the need or importance of command-line tools. A beautifully designed command-line user experience is arguably more important and than a graphical UX because the command line is deceptively simple: text on a screen. Wielding mere text on screen is an art akin to wielding mere paint on canvas. This page documents what I believe to be command-line interface (CLI) antipatterns which, in the long or short run, detract from both UX and developer effectiveness.">
+  <meta property="og:description" content="Command-line Interface Antipatterns Apps (web, mobile, and native) and APIs do not lessen the need or importance of command-line tools. A beautifully designed command-line user experience is arguably more important and than a graphical UX because the command line is deceptively simple: text on a screen. Wielding mere text on screen is an art akin to wielding mere paint on canvas. This page documents what I believe to be command-line interface (CLI) antipatterns which, in the long or short run, detract from both UX and developer effectiveness.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/eng/cli-antipatterns/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+
+  <meta name="generator" content="Hugo 0.84.0" />
+  <link rel="canonical" href="https://hackmysql.com/eng/cli-antipatterns/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container-fluid">
+  <div class="row">
+	  <div class="col-sm-4 col-sm-push-8">
+		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">Command-line Interface Antipatterns</a></em><hr></nav>
+    </div>
+	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+		<article role="main" class="blog-post"><h1 id="command-line-interface-antipatterns">Command-line Interface Antipatterns</h1>
+<p>Apps (web, mobile, and native) and APIs do not lessen the need or importance of command-line tools. A beautifully designed command-line user experience is arguably more important and than a graphical UX because the command line is deceptively simple: text on a screen. Wielding mere text on screen is an art akin to wielding mere paint on canvas. This page documents what I believe to be command-line interface (CLI) antipatterns which, in the long or short run, detract from both UX and developer effectiveness.</p>
+<h2 id="car-tree">Car-Tree</h2>
+<p>A command-line tool must always exit zero on success. I don&rsquo;t know how old this standard is, but it probably predates the discovery of fire. Woe unto developers who violate it because <em>other</em> tools presume this standard. On failure, exit 1 is most common, and there are a few <a href="http://tldp.org/LDP/abs/html/exitcodes.html">special exit codes</a> to avoid.</p>
+<p>&ldquo;Success&rdquo; is often not trivial. If there&rsquo;s a warning, does that mean the tool was not successful? One way to help decide is to think of the caller: other tools or scripts using the tool. To the caller, exit zero means &ldquo;continue executing&rdquo;. This is what <a href="http://tldp.org/LDP/abs/html/options.html">Bash -e</a> is used for: <em>stop</em> executing on the first non-zero exit status. So exit zero if, despite a warning, it&rsquo;s ok for the caller to continue with reasonable assurance they, too, will be successful. When in doubt, exit non-zero.</p>
+<p><img src="/img/car-tree.jpg" alt="Car-tree"></p>
+<p>I call this antipattern &ldquo;car-tree&rdquo; for an analogy I use to describe ignoring non-zero exit status: you crash a car into a tree, but instead of stopping you back up, <em>put on a blindfold</em>, then floor it, racing off broken and blind until you run off a cliff. Don&rsquo;t endanger yourself or others by violation this simple standard: exit zero on success, and stop executing on non-zero exit.</p>
+<h2 id="poor-standards">Poor Standards</h2>
+<p>Poor or incorrect use of STDOUT and STDERR is an abomination to command-line tools. There are few Unix standards and expectations more venerable and proven than printing normal program output to STDOUT and error (and maybe warnings) to STDERR. The following should always hold true:</p>
+<pre><code>$ tool &gt;/dev/null
+$ echo $?
+0
+</code></pre>
+<p>No output to STDERR should always indicate success, as further indicated by a zero exit (see first antipattern: Car-Tree).</p>
+<h2 id="--quiet">&ndash;quiet</h2>
+<p>First, presuming <code>--quiet</code> means &ldquo;no output&rdquo;, this &ldquo;feature&rdquo; is solved at fundamental level with STDOUT and STDERR redirection:</p>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Errors to screen, discard output</td>
+<td><code>&gt;/dev/null</code></td>
+</tr>
+<tr>
+<td>Errors to screen, output to file</td>
+<td><code>&gt;file</code></td>
+</tr>
+<tr>
+<td>Errors to file, discard output</td>
+<td><code>&gt;/dev/null 2&gt;file</code></td>
+</tr>
+<tr>
+<td>Discard errors and output</td>
+<td><code>2&gt;&amp;1 &gt;/dev/null</code></td>
+</tr>
+</tbody>
+</table>
+<p>Second, the level of quietness is never right. For some people it&rsquo;s too quiet, for others not quiet enough.</p>
+<p>Third, does <code>--quiet</code> apply to STDOUT <em>and</em> STDERR, or just the former? See previous point.</p>
+<p>Fourth, the developer will soon regret the option when it comes time to implement it because the code will be littered with <code>if</code> conditionals like:</p>
+<pre><code>if !quiet {
+   print(&quot;Midway upon the journey of our life&quot;, +
+         &quot;I found myself within a forest dark,&quot; +
+         &quot;For the straightforward pathway had been lost.&quot;)
+}
+</code></pre>
+<p>Or the developer will create and pass around a printing object to all parts of the code. And usually some line is overlooked and a bug is file: &ldquo;&ndash;quiet does not suppress all output.&rdquo;</p>
+<p>Given the first point (that this feature is already thoroughly solved by STDOUT/STDERR redirection), an explicit <code>--quiet</code> option needs a very necessary and convincing reason to exist for it not to be an antipattern.</p>
+<h2 id="--verbose">&ndash;verbose</h2>
+<p>A <code>--verbose</code> option shares two of the same problems as <code>--quiet</code>: too verbose for some people, and not verbose enough for others; and it litters the code with <code>if</code> conditionals or an object to handle printing.</p>
+<p>Verbosity is more difficult to get right than quietness because <code>--quiet</code> usually means &ldquo;no output to STDOUT&rdquo;, but there are no standards or norms for verbosity. Consequently, no two programs' <code>--verbose</code> look even remotely similar. Moreover, verbosity is sometimes a repeatable option, like <code>-vv</code> for &ldquo;very verbose&rdquo;, which complicates the option further.</p>
+<p>Rather than <code>--verbose</code>, the developer probably wants log levels, for which there are standards, like <a href="https://en.wikipedia.org/wiki/Syslog#Severity_level">syslog severity levels</a> and others.</p>
+</article>
+	</div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2021 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/3.js" site="WJIYGVMB"></script>
+
+
+  </body>
+</html>

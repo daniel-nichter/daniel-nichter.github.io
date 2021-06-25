@@ -6,7 +6,7 @@
     <description>Recent content in golang on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2020 Daniel Nichter</copyright>
+    <copyright>2021 Daniel Nichter</copyright>
     <lastBuildDate>Mon, 25 Mar 2019 11:00:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/golang/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>3 Golang Error Types</title>
@@ -57,20 +57,20 @@ Programming languages have aspects which affect how we think, design, and implem
 
     <item>
       <title>Go Antipatterns</title>
-      <link>https://hackmysql.com/page/golang-antipatterns/</link>
+      <link>https://hackmysql.com/golang/go-antipatterns/</link>
       <pubDate>Sat, 03 Jun 2017 18:51:14 -0700</pubDate>
 
-      <guid>https://hackmysql.com/page/golang-antipatterns/</guid>
+      <guid>https://hackmysql.com/golang/go-antipatterns/</guid>
       <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&amp;rsquo;s a better way that&amp;rsquo;s both functionally equivalent and idiomatic.
 These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</description>
     </item>
 
     <item>
       <title>Idiomatic Go</title>
-      <link>https://hackmysql.com/page/idiomatic-go/</link>
+      <link>https://hackmysql.com/golang/idiomatic-go/</link>
       <pubDate>Sat, 03 Jun 2017 00:00:00 +0000</pubDate>
 
-      <guid>https://hackmysql.com/page/idiomatic-go/</guid>
+      <guid>https://hackmysql.com/golang/idiomatic-go/</guid>
       <description>Idiomatic Go Canon can·on /ˈkanən/ noun : a general law, rule, principle, or criterion by which something is judged
 These texts explicitly and implicitly define idiomatic Go code. Read, memorize, and refer to them often. Use them to settle debates.
  Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names  Recommended  Go Code Review Comments Best practices for a new Go developer Reducing Type Hierarchies  </description>

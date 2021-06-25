@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>MySQL Password Rotation with AWS Secrets Manager and Lambda</title>
+  <meta property="og:title" content="MySQL Password Rotation with AWS Secrets Manager and Lambda" />
+  <meta name="description" content="MySQL Password Rotation with AWS Secrets Manager and Lambda MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and Terraform for cloud infrastructure.">
+  <meta property="og:description" content="MySQL Password Rotation with AWS Secrets Manager and Lambda MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and Terraform for cloud infrastructure.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/mysql-password-rotation-lambda/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+
+  <meta name="generator" content="Hugo 0.84.0" />
+  <link rel="canonical" href="https://hackmysql.com/mysql-password-rotation-lambda/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container-fluid">
+  <div class="row">
+	  <div class="col-sm-4 col-sm-push-8">
+		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">MySQL Password Rotation with AWS Secrets Manager and Lambda</a></em><hr></nav>
+    </div>
+	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+		<article role="main" class="blog-post"><h1 id="mysql-password-rotation-with-aws-secrets-manager-and-lambda">MySQL Password Rotation with AWS Secrets Manager and Lambda</h1>
+<p>MySQL password rotation using <a href="https://aws.amazon.com/rds/mysql/">Amazon RDS for MySQL</a>, <a href="https://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a>, and <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and <a href="https://www.terraform.io/">Terraform</a> for cloud infrastructure.</p>
+<h2 id="high-level-overview">High-level Overview</h2>
+<h3 id="aws-services">AWS Services</h3>
+<p><img src="/img/mysql-password-rotation.png" alt="MySQL Password Rotation with AWS"></p>
+<p><small>Not shown: IAM roles and policy privileges</small></p>
+<p>There are two primary services: AWS Secrets Manager and AWS Lambda. Secrets Manager stores the MySQL password and controls its rotation using a Lambda function. Lambda logs all output to AWS CloudWatch Logs. When eveything is set up and working properly, <a href="https://medium.com/@zaccharles/how-secrets-manager-schedules-automatic-rotations-e9f5f50de8aa">rotation happens on a fuzzy schedule</a> starting with Secrets Manager invoking the Lambda function which connects to MySQL to change the password.</p>
+<p>The Lambda function (&ldquo;the lambda&rdquo;) is not trivial. Although Secrets Manager is driving the process, the lambda is responsible for making Secrets Manager API calls to create a new pending secret, set and verify it, then swap the current and pending secrets. Read more about this: <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets-lambda-function-overview.html">Overview of the Lambda rotation function</a>.</p>
+<p>Most of the work (and trouble) happens in the lambda. Although the diagram above is simple, the 13 requirements outlined in the next section reveal a gap between the simplest possible solution—which is not production-ready—and what really needs to be done and handled in the lambda to make it production-ready.</p>
+<h3 id="separation-of-work">Separation of Work</h3>
+<p>The separation of work between the DBA team and app developers motivates several requirements and design choices:</p>
+<p><img src="/img/dba-app-prl-overview.svg" alt="High-level Overview"></p>
+<p>Your environment, teams, and separation of work may be different. But for the purposes of this page, we have one DBA team and many app teams/developers. The DBA team creates, maintains, and distributes a version-controlled <a href="https://www.terraform.io/docs/configuration/blocks/modules/index.html">Terraform module</a> which creates properly configured RDS instances. App developers (on various, unrelated teams) use this module in their application&rsquo;s infrastructure code (&ldquo;infra code&rdquo;) to create AWS resources. The DBA team maintains a backend service which does various post-provision tasks. For the DBA team, this separation enables operations at scale because the Terraform module stamps out consistently-made RDS instance—no bespoke infrastructure. For app developers, it allows self-service database provisioning (and decommissioning), ease-of-use, and scale.</p>
+<p>This separation requires a fair amount of complex work by the DBA team. It&rsquo;s not easy. The password rotation lambda alone is quite complicated, which is why this page is a long read. By the end, you will understand the issues this separation creates and how to solve them. The benefits exceed the costs: once a separation like this is achieved, both the DBA team and app developers are unblocked, able to provision and operate thousands of RDS instances with relative ease.</p>
+<h3 id="default-password-rotation-lambda">Default Password Rotation Lambda</h3>
+<p>A quick note on using the default AWS password rotation lambda. In the AWS console, when creating a new secret and enabling rotation, it prompts you to create a new lambda or using an existing one:</p>
+<p><img src="/img/aws-secrets-manager-new-secret-rotation.png" alt="AWS Secrets Manager New Secret Rotation"></p>
+<p>I tried this and it does not work. For one thing, it doesn&rsquo;t meet requiremnt 5: TLS connections required. (This is an outstanding issue: <a href="https://github.com/aws-samples/aws-secrets-manager-rotation-lambdas/issues/14">aws-samples/aws-secrets-manager-rotation-lambdas issue #14</a>.) It&rsquo;s also not automated, not unit tested, and doesn&rsquo;t rotate in parallel, retry, or rollback. The latter (rollback) is particularly important because not removing an unused <em>AWSPENDING</em> staging label blocks future Secrets Manager rotations.</p>
+<p>As far as I can tell, the default AWS password rotation lambda only works in the simplest case when other resources are also set up in the simplest case. It&rsquo;s not a secure and robust solution for production.</p>
+<h2 id="requirements">Requirements</h2>
+<h3 id="1-rotate-mysql-57-passwords">1. Rotate MySQL 5.7 passwords</h3>
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/password-management.html#dual-passwords">MySQL 8 supports dual passwords</a>, which makes password rotation a little easier. But we&rsquo;re running MySQL 5.7 which has only a single password per user. That makes handling password rotation more difficult for the application, which we&rsquo;ll look at later.</p>
+<p>Supporting MySQL 8 is not a goal.</p>
+<h3 id="2-same-user-single-password-rotation">2. Same user, single password rotation</h3>
+<p>There are several methods for rotating a MySQL user password:</p>
+<table>
+<thead>
+<tr>
+<th>Same User</th>
+<th>Root User</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single Password</td>
+<td>Single Password</td>
+</tr>
+<tr>
+<td>Dual Password</td>
+<td>Dual Password</td>
+</tr>
+<tr>
+<td> </td>
+<td><a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets-two-users.html">Multi-user</a></td>
+</tr>
+</tbody>
+</table>
+<p>First choice is whether we use the same user (i.e. the user whose password is being rotated) or a root user. I prefer same user to avoid having more root users than necessary. Also, root user has no benefits unless using <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets-two-users.html">multi-user</a>. I prefer not using multi-users to avoid having more users than necessary.</p>
+<p>Same user, single password means the password rotation lambda (PRL) will connect to MySQL as the user whose password is being rotated and execute <code>ALTER USER CURRENT_USER IDENTIFIED BY '&lt;newpass&gt;'</code>. That is the simplest, most direct approach.</p>
+<hr>
+<p><mark><em>PRL = Password Rotation Lambda, the code that runs in AWS Lambda to rotate a MySQL user password</em></mark></p>
+<hr>
+<h3 id="3-zero-knowledge-passwords">3. Zero knowledge passwords</h3>
+<p>Normally, DBAs would have access to all MySQL user passwords. But it&rsquo;s more secure if they don&rsquo;t. This is possible given the <a href="#separation-of-work">separation of work</a>. One detail not mentioned there: application teams have their own AWS accounts to which the DBA team does <em>not</em> have access. This works because the DBA team only provides a Terraform module that app teams use to run infra code which makes AWS resources in their AWS accounts. Consequently, we can limit secret access only to the PRL, the app, and the app developers (who are admins of their AWS account).</p>
+<p>How this works will become clear by the end of this page. The salient point and requirement is: <em>only</em> the PRL, the app, and the app developers can access MySQL passwords stored in Secrets Manager. Everything and everyone else, including the DBA team, has zero knowledge of the passwords.</p>
+<h3 id="4-run-in-vpc">4. Run in VPC</h3>
+<p>All resources must exist in a VPC. Nothing is on a public network or has public IPs. This means the PRL needs a special setup: <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html">Configuring a Lambda function to access resources in a VPC</a>. AWS resources in a VPC generally require more work, which is why we make this requirement explicit.</p>
+<h3 id="5-tls-connections-required">5. TLS connections required</h3>
+<p>Even though running in a VPC, we require TLS for <em>all</em> connections: to MySQL and to all AWS APIs. This is important because the PRL will query <em>public</em> AWS APIs (we can route from VPC to public internet but not the reverse).</p>
+<p>In the cloud, we should use TLS connections for all APIs. Even VPC endpoints will use TLS connections.</p>
+<h3 id="6-one-password-per-user">6. One password per user</h3>
+<p>Each AWS account represents one application, so all RDS instances in the account are used by the one, same application. If there are multiple RDS instances, it&rsquo;s because the application has sharded, so all database instances are one logical database. Therefore, the MySQL user on each database instance is also logically the same and has the same password stored in one secret.</p>
+<p>If access controls to secrets are the same, then different passwords for each database instance is not more secure because compromising one secret (i.e. defeating the access controls) compromises all the secrets. Using different passwords guards against leaked password, but frequent password rotation also guards against leaked passwords. Therefore, different passwords is not a requirement.</p>
+<h3 id="7-parallel-rotations">7. Parallel rotations</h3>
+<p>The PRL must rotate passwords in parallel, up to some limit. In the first diagram at the top of this page, the PRL rotates the password on all 3 MySQL instances in parallel. This reduces the time that the application&rsquo;s access to MySQL is split between two passwords.</p>
+<h3 id="8-retry-and-rollback">8. Retry and rollback</h3>
+<p>With three systems (RDS/MySQL, Lambda, and Secrets Manager), something will fail eventually. When it does, the PRL must retry to ensure the failure isn&rsquo;t a blip (a transient failure), and if retrying fails it must roll back.</p>
+<p>The PRL must roll back if any database instance fails to rotate after all retries. For example, if we have 3 database instances and the first two rotate but the third fails, we must roll back the first two so that all databases are in sync with respect to the MySQL user password. Else, the application will only work on 2 of 3 database instances, which can be worse than working on zero of them because partial success can be confusing to debug. If the application developers see 66% success (2/3 rotated successfully), they might think the database is fine and the problem is elsewhere. We prioritize application access over password rotation.</p>
+<p>If the rollback fails too, then we&rsquo;re really in a pickle. A human will have to figure out what went terribly wrong and fix it manually. This double failure should be incredibly rare.</p>
+<h3 id="9-handle-secrets-in-limbo">9. Handle secrets in limbo</h3>
+<p>The first step of a Secrets Manager rotation is creating a secret with the <em>AWSPENDING</em> staging label. On failure, the PRL should rollback/remove the pending secret, but other failures (e.g. the PRL panics) could cause the pending secret to be left. This blocks future Secrets Manager rotations; the AWS console returns a cryptic and misleading error:</p>
+<p><img src="/img/secrets-manager-previous-password-rotation-failed.png" alt="Secrets Manager Previous Password Rotation Failed"></p>
+<p>Later, we&rsquo;ll look at this error in more detail. The requirement is that the PRL handles secrets in limbo, essentially fixing previous broken rotations.</p>
+<h3 id="10-manually-invoked-rotation">10. Manually invoked rotation</h3>
+<p>The primary use case of the PRL is being invoked automatically by Secrets Manager. When everything is stable and working, this is the autopilot mode working quietly in the background. But there is an additional use case: adding new database instances. In this case, we should <em>not</em> rotate secrets by calling Secrets Manager because it would needlessly rotate secrets for all existing databases. That&rsquo;s not terrible if the application handles password rotation with ease, but it&rsquo;s unnecessary so we avoid it. Instead, we should manually invoke the PRL to set the MySQL user password, on new database instances, to the current secret value (password). This requirement will become more clear when technical problems <a href="#default-provision-password-dpp">Default Provision Password (DPP)</a> and <a href="#initial-password-rotation-ipr">Initial Password Rotation (IPR)</a> are addressed.</p>
+<p>Moreover, from experience I can tell you that adding custom functionality to the PRL is very helpful. For example, the ability to verify the MySQL user connection is super helpful: the PRL simply tries to connect to MySQL with the current password. This lets the DBA team verify the secret since they don&rsquo;t have access to the secret or the application.</p>
+<h3 id="11-code-unit-tests">11. Code unit tests</h3>
+<p>The PRL function code should be unit tested as best as possible. This is quite difficult because our personal computers can&rsquo;t run the PRL in the same way or environment as AWS. It&rsquo;d be great if AWS published a Docker container that simulated the AWS Lambda service. For a PRL invoked by Secrets Manager this becomes even more complicated unless you simulate how Secrets Manager invokes the Lambda and handles success and failure.</p>
+<p class="note">How does Secrets Manager handle failure? I have never seen this documented. By direct observation, we see that Secrets Manager tries 5 times with a 100 second wait between tries. On final failure, it simply stops trying. It does not notify or log final failure.</p>
+<p>All that aside, though, the PRL should be unit tested as best as possible because it&rsquo;s important code that, when it fails, has the potential to break the app and cause an outage.</p>
+<h3 id="12-thorough-logging-and-debug">12. Thorough logging and debug</h3>
+<p>From previous requirements you can see why <em>thorough</em> logging is required: a lot is happening, which means a lot can break. Without thorough logs, it&rsquo;s nearly impossible to debug a PRL. By default, Lambda output logs to CloudWach Logs, which is sufficient to start.</p>
+<p>Closely related is having a debug mode or level of logging. When necessary, we need to see <em>everything</em> the PRL is doing. When enabled, the PRL should log so verbosely that we&rsquo;re sure to see any problem or bug. This was a lifesaver for me in the early days of PRL development.</p>
+<h3 id="13-fully-automated">13. Fully Automated</h3>
+<p>The entire PRL setup must be fully automated, which means no engineer manually creates any resource or enters any value. As seen in <a href="#separation-of-work">Separation of Work</a>, the DBA team publishes a ready-made Terraform module that app developers use to create all the necessary AWS resources. Also, the DBA team has a backend service which does post-provision (i.e. post-Terraform) tasks.</p>
+<p>Fully automating the PRL is a lot more difficult but worth the investment.</p>
+<br>
+<hr>
+<br>
+<h2 id="technical-problems-and-solutions">Technical Problems and Solutions</h2>
+<h3 id="failed-rotation-and-staging-labels">Failed Rotation and Staging Labels</h3>
+<p>Failed rotations can block future Secrets Manager rotations. The problem is the <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/terms-concepts.html#term_staging-label">staging labels</a>: <em>AWSCURRENT</em>, <em>AWSPENDING</em>, and <em>AWSPREVIOUS</em>. Secrets Manager uses these to track different versions of the secret during rotation. When the PRL fails, Secrets Manager is left in a broken state if the staging labels are not reset to normal. If you try to rotate the secret again, the AWS console shows an unhelpful error message:</p>
+<p><img src="/img/secrets-manager-previous-password-rotation-failed.png" alt="Secrets Manager Previous Password Rotation Failed"></p>
+<p>Excuse me while I digress to point out why that error message is unhelpful:</p>
+<ol>
+<li>It does not say or give any clue as to <em>why</em> it failed.</li>
+<li>It does not say where to look to see the failure.</li>
+<li>It says &ldquo;Fail&rdquo; but also &ldquo;isn&rsquo;t completed&rdquo;—are those the same?</li>
+<li>Which &ldquo;previous rotation&rdquo;?</li>
+<li>How often will the &ldquo;previous rotation&rdquo; be reattempted?</li>
+<li>You cannot see or cancel the &ldquo;previous rotation&rdquo; in the AWS console.</li>
+</ol>
+<p>In essence, the error message says only, &ldquo;This rotation didn&rsquo;t work because some previous rotation didn&rsquo;t work.&rdquo;</p>
+<p>First, let&rsquo;s see the normal state of staging labels using the command line <a href="https://docs.aws.amazon.com/cli/latest/reference/secretsmanager/describe-secret.html">aws secretsmanager describe-secret</a>:</p>
+<pre><code class="language-json">{
+    &quot;ARN&quot;: &quot;arn:aws:secretsmanager:us-west-2:123456789012:secret:mysql-user-password-X7ax21&quot;,
+    &quot;Name&quot;: &quot;mysql-user-password&quot;,
+    &quot;Description&quot;: &quot;Rotates the MySQL user password&quot;,
+    &quot;RotationEnabled&quot;: true,
+    &quot;RotationLambdaARN&quot;: &quot;arn:aws:lambda:us-west-2:123456789012:function:mysql-password-rotation&quot;,
+    &quot;RotationRules&quot;: {
+        &quot;AutomaticallyAfterDays&quot;: 1
+    },
+    &quot;LastRotatedDate&quot;: &quot;2020-11-03T13:35:51.599000-05:00&quot;,
+    &quot;LastChangedDate&quot;: &quot;2020-11-03T13:35:51.607000-05:00&quot;,
+    &quot;LastAccessedDate&quot;: &quot;2020-11-02T19:00:00-05:00&quot;,
+    &quot;Tags&quot;: [],
+    &quot;VersionIdsToStages&quot;: {
+        &quot;0e402657-8ed6-4ea4-b908-4dadc09e5928&quot;: [
+            &quot;AWSCURRENT&quot;
+        ],
+        &quot;4bacb6fe-4753-4928-09ac-364f51b7cc0b&quot;: [
+            &quot;AWSPREVIOUS&quot;
+        ]
+    }
+}
+</code></pre>
+<p>The normal state of staging labels is having only <em>AWSCURRENT</em> and <em>AWSPREVIOUS</em>, as shown above. During rotation, the new secret version has the <em>AWSPENDING</em> staging label:</p>
+<pre><code class="language-json">{
+    /* Other output removed */
+    &quot;VersionIdsToStages&quot;: {
+        &quot;0e402657-8ed6-4ea4-b908-4dadc09e5928&quot;: [
+            &quot;AWSCURRENT&quot;
+        ],
+        &quot;4bacb6fe-4753-4928-09ac-364f51b7cc0b&quot;: [
+            &quot;AWSPREVIOUS&quot;
+        ],
+        &quot;b862db6d-8b73-4fc8-bee8-2edd74a9a527&quot;: [ /*
+            &quot;AWSPENDING&quot;                           * New secret
+        ]                                          */
+    }
+}
+</code></pre>
+<p>If rotation fails and does not remove the <em>AWSPENDING</em> version of the secret, Secrets Manager will show the unhelpful error message above.</p>
+<p><em><strong>Solution</strong></em></p>
+<p>Requirement 9, <a href="#9-handle-secrets-in-limbo">Handle secrets in limbo</a>, addresses this problem. The PRL must check for and use the pending secret (the secret with the <em>AWSPENDING</em> staging label) if its version ID matches the client request token from Secrets Manager. (This is an implementation detail that you can read about in the <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets-lambda-function-customizing.html">Lambda rotation function docs</a>.) In short, it means that the PRL must reuse its own pending secrets.</p>
+<p>Or, you can manually delete the <em>AWSPENDING</em> version:</p>
+<pre><code class="language-shell">aws secretsmanager update-secret-version-stage \
+  --secret-id              mysql-user-password \
+  --version-stage          AWSPENDING          \
+  --remove-from-version-id b862db6d-8b73-4fc8-bee8-2edd74a9a527
+</code></pre>
+<p><mark>DO NOT use <code>aws secretsmanager cancel-rotate-secret</code> to fix this!</mark> I read the fine manual, but I also get busy and make some educated guesses about what a command does based on its name, so I thought <code>cancel-rotate-secret</code> would cancel &ldquo;A previous rotation&rdquo; but no: <code>cancel-rotate-secret</code> disables secret rotation, i.e. automatic rotation every N days. Like the AWS console, this command would be better named <code>disable-automatic-rotation</code>:</p>
+<p><img src="/img/aws-secrets-manager-disable-automatic-rotation.png" alt="Secrets Manager Disable Automatic Rotation"></p>
+<p><mark>You cannot see secret versions/staging labels in the AWS console.</mark> When this problem occurs, you must use the AWS CLI or your own code calling the Secrets Manager API.</p>
+<h3 id="manually-invoke-lambda">Manually Invoke Lambda</h3>
+<p>The PRL is a generic Lambda function. We use it for password rotation, but we can also program it to do other things. Secrets Manager does not use Lambda in a special way, it&rsquo;s merely a client that invokes the PRL in a prescribed four-step process: <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets-lambda-function-overview.html">Overview of the Lambda rotation function</a>. In practice, you will need to bypass Secrets Manager and invoke the password rotation lambda directly to:</p>
+<ul>
+<li><em>Verify current password</em>: verify PRL can connect to Secrets Manager and MySQL using the current password</li>
+<li><em>Set current password</em>: don&rsquo;t rotate password, just set MySQL user password to its current value</li>
+<li><em>Get PRL code version</em>: the actual code version, not the Lambda version</li>
+<li><em>Do other things</em>: you may have needs specific to your infrastructure</li>
+</ul>
+<p>Like Secrets Manager, you and other systems will be clients that invoke the PRL. For example, verifying the current password is really helpful to ensure the PRL itself (apart from Secrets Manager) is working. You will find that you and others systems need to bypass Secrets Manager and invoke the lambda directly.</p>
+<p><em><strong>Solution</strong></em></p>
+<p>The lambda function code must distinguish between invocations by Secrets Manager and manual invocations by other clients. This is pretty easy:</p>
+<pre><code class="language-go">// InvokedBySecretsManager returns true if the event is from Secrets Manager.
+func InvokedBySecretsManager(event map[string]string) bool {
+    _, haveToken := event[&quot;ClientRequestToken&quot;]
+    _, haveSecretId := event[&quot;SecretId&quot;]
+    _, haveStep := event[&quot;Step&quot;]
+    return haveToken &amp;&amp; haveSecretId &amp;&amp; haveStep
+}
+</code></pre>
+<p>As that Go function shows, the event from a Secrets Manager invocation has three fields: <em>ClientRequestToken</em>, <em>SecretId</em>, and <em>Step</em>. If all three fields are set, it&rsquo;s an invocation by Secrets Manager (or a unit test pretending to be Secrets Manager). Else, the event should be handled as a manual invocation and everything in the event is your choice, as well as the return.</p>
+<p>This distinction is made in the lambda handler function, and Lambda itself does not know or care. In fact, Lambda has no special awareness of Secrets Manager; as previously stated, Secrets Manager is simply one client that invokes the PRL in a prescribed four-step process.</p>
+<p>You can do anything inside your manual invocation handler code. You should develop conventions for the expected input and output. For example, the code snippet below returns the PRL function code version when <code>event</code> contains a <code>version</code> field:</p>
+<pre><code class="language-go">const VERSION = &quot;1.0.0&quot;
+
+var SHA = &quot;&quot; // set on build
+
+func (r rotatePassword) Handler(ctx context.Context, event map[string]string) (map[string]string, error) {
+    // Return version and SHA if event[version] is set
+    if _, ok := event[&quot;version&quot;]; ok {
+        ret := map[string]string{
+            &quot;prl-version&quot;: VERSION,
+            &quot;prl-sha&quot;:     SHA,
+        }
+        return ret, nil
+    }
+</code></pre>
+<p>The client receives a JSON document like:</p>
+<pre><code class="language-json">{
+  &quot;prl-version&quot;: &quot;1.0.0&quot;,
+  &quot;prl-sha&quot;: &quot;70d89cfcae18c2845e1f693aa053da394a873578&quot;
+}
+</code></pre>
+<p>To manually invoke the PRL and get that version response:</p>
+<pre><code class="language-shell">aws lambda invoke \
+  --function-name arn:aws:lambda:us-east-1:123456789012:function:mysql-password-rotation \
+  --invocation-type RequestResponse \
+  --payload &quot;$(echo '{&quot;version&quot;:1}' | base64)&quot; \
+  response.json
+</code></pre>
+<p>The <code>--payload</code> becomes the input <code>event</code>. The output is printed to <code>response.json</code> (for some reason, the AWS CLI requires an output file for this command, it won&rsquo;t print to STDOUT).</p>
+<p><mark>Code to handle manual invocation is separate from code to handle Secrets Manager invocation.</mark> Handling manual invocation is in addition to handling the four steps of Secrets Manager rotation.</p>
+<h3 id="lambda-concurrency">Lambda Concurrency</h3>
+<p>Lambda functions run concurrently by default. For truly stateless processing (for example, using a Lambda to process images is truly stateless if the images are unrelated), reasoning about and programming the Lambda function is easier. But a password rotation lambda serves a stateful process, a tiny state machine: the <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets-lambda-function-overview.html">four-step rotation</a> executed by Secrets Manager. More importantly, there is no affinity which means, for any given rotation, each step can (and often does) execute on a different instance of the PRL.</p>
+<p><img src="/img/aws-lambda-concurrency.svg" alt="Lambda process concurrency"></p>
+<p>The diagram above shows 3 concurrent instances of the same PRL (i.e. it&rsquo;s the same Lambda function; AWS is running 3 instances of it in parallel). If three different secrets are rotated at the same time, each rotation step executed by Secrets Manager can occur on a different PRL instance. Each rotation happens in order but not on the same PRL instance and not sequentially. For example, rotation 1 step 4 happens last even though it started at the same time as the other two rotations.</p>
+<p><em><strong>Solution</strong></em></p>
+<p>Concurrency can be disabled by setting <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-concurrency.html">reserved concurrency</a> on the function to 1, but you should not do this. I suggest setting reserved concurrency for the PRL equal to the number of secrets it rotates. For example, if the same PRL rotates 5 secrets, then set reserved concurrency to 5. If it only rotates 1 secret, then set reserved concurrency to 2 minimum to ensure the PRL handles concurrency.</p>
+<p>With respect to the lambda function code, each Secrets Manager step must be treated as a completely new process. For example, on a Linux command line you can imagine running each step by running program <code>prl</code> four times on four different hosts:</p>
+<pre><code class="language-bash">$ ssh host1 &quot;prl 1&quot; &amp;&amp; \
+  ssh host2 &quot;prl 2&quot; &amp;&amp; \
+  ssh host3 &quot;prl 3&quot; &amp;&amp; \
+  ssh host4 &quot;prl 4&quot;
+</code></pre>
+<p>The <code>&amp;&amp;</code> ensures that step 2 only runs if step 1 exits zero, and step 3 only runs if step 2 exits zero, and step 4 only runs if step 3 exits zero. Even though all four steps run on different hosts, they always run in order.</p>
+<p>I do not advise caching anything in the PRL; but if you do, you must handle cache expiration because, for example, in the diagram above rotation 1 starts on PRL 1 but ends on PRL 3. If PRL 1 caches anything about rotation 1, how will it know when to expire the cache?</p>
+<h3 id="testing">Testing</h3>
+<p>Testing an AWS Lambda, like any cloud resource, is not easy because we cannot reproduce the full cloud environment outside of the cloud. We can simulate many parts of the cloud, but simulating <em>all</em> is probably not possible. Consider how many AWS services and resources are used to run a Lambda function: IAM (roles, policies), security group, VPC (subnets, routing, etc.), CloudWatch, etc.</p>
+<p><em><strong>Solution</strong></em></p>
+<p>The solution to testing in this situation is separation of concerns:</p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Code Handles</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Your environment</td>
+<td>AWS access/credentials/sessions, proxies, auth, deploy/runtime</td>
+</tr>
+<tr>
+<td>Your manual invocation</td>
+<td>See <a href="#manually-invoke-lambda">Manually Invoke Lambda</a></td>
+</tr>
+<tr>
+<td>Lambda integration</td>
+<td>Basic low-level hook into AWS Lambda</td>
+</tr>
+<tr>
+<td>Secrets Manager invocation</td>
+<td>Four rotation steps of Secrets Manager</td>
+</tr>
+<tr>
+<td>Database password rotation</td>
+<td>Set MySQL user password</td>
+</tr>
+</tbody>
+</table>
+<p>I wrote an open-source database password rotation lambda for AWS: <a href="https://github.com/square/password-rotation-lambda">square/password-rotation-lambda</a>. Let&rsquo;s call this the &ldquo;PRL package&rdquo; because it&rsquo;s a Go package. The PRL package handles the bottom 3 concerns: Lambda integration, Secrets Manager invocation, and database password rotation. Best of all: it&rsquo;s tested. This means your code only handles your concerns (the top 2): your environment and your manual invocation. You can read the PRL package docs to see how it&rsquo;s used, but point is: all the important low-level unit testing is done for you by <a href="https://github.com/square/password-rotation-lambda">square/password-rotation-lambda</a>.</p>
+<p>Even if you don&rsquo;t use this PRL package, it demonstrates how to separate these concerns and test them.</p>
+<h3 id="default-provision-password-dpp">Default Provision Password (DPP)</h3>
+<p>We need a first password for the MySQL user. I call this the &ldquo;default provision password&rdquo; (DPP) for reasons that will be clear by the end of this section. Ultimately, the MySQL user password will be set to the secret value. The problem is getting the two in sync.</p>
+<p>If everything could be done in infra code, there wouldn&rsquo;t be a problem. On provision, starting with no AWS resources, the infra code would:</p>
+<ol>
+<li>Create the PRL and the secrets</li>
+<li>Enable rotation on the secrets which causes the initial password rotation</li>
+<li>Initial password rotation stores a random password in the secrets</li>
+<li>Create database instances</li>
+<li>Create MySQL users using the random passwords</li>
+</ol>
+<p>In theory, that should work. But in our case, given the <a href="#separation-of-work">separation of work</a>, there are a few problems:</p>
+<p>(1) The DBA team provides a Terrafom module to app developers. This module can provision N-many identical database instances  (varying by <code>identifier</code>) using <code>for_each</code>, like:</p>
+<pre><code class="language-hcl">resource &quot;aws_db_instance&quot; &quot;rds-mysql&quot; {
+  for_each = var.db_instances
+
+  identifier = each.key
+}
+</code></pre>
+<p>This is ideal for app developers: they can easily create many <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance">aws_db_instance</a> with the same configuration. But the problem is that <a href="https://github.com/hashicorp/terraform/issues/19932">Terraform cannot use <code>for_each</code> in a <code>provider</code></a>, so the module cannot connect to the list of RDS instances because each needs its own <a href="https://www.terraform.io/docs/providers/mysql/index.html">MySQL provider</a>. Even if that worked, there&rsquo;s another problem&hellip;</p>
+<p>(2) The <a href="https://www.terraform.io/docs/providers/mysql/index.html">MySQL provider</a> has a <code>tls</code> option, but it only enables TLS. To make a TLS connection to RDS, you must load the <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html">RDS root certificate</a>, but the <a href="https://github.com/terraform-providers/terraform-provider-mysql/blob/master/mysql/provider.go">MySQL provider source code</a> does not show any way of doing this. Since we <em>always</em> required TLS connection, this is a blocker.</p>
+<p>(3) Even if (1) and (2) could be solved, <mark>I do not advise putting MySQL users and privileges in infrastructure code</mark>. Instead, a trusted backend service should create MySQL users and grant them privileges. This allows a single source of truth and auditing, which are critical for maximum security. It also decouples MySQL users and privileges from infrastructure, which is good because they are independent. By contrast, having infra code create MySQL users and grant them privileges runs the risk of drift: MySQL users and privileges change as different versions of infra code are deployed (<a href="https://semver.org/">semver</a> the infra code). Inconsistency is the bane of security and operations. Also, access to infra code might be more permissive than access to MySQL users and privileges should be.</p>
+<p>(4) Could the DBA team write the module differently to work around these problems? Not really. If the module did not accept a list of RDS instances to create and, instead, created only a single instance, if an app team wanted 4 instances they would have to declare the module 4 times, but this doesn&rsquo;t work either because the majority of the module is common infrastructure (security group, db subnet group, db parameter group, etc.) which would create 4 duplicates. The DBA team would have to provide one module for common infrastructure and another module for database instances. That might work, but it still doesn&rsquo;t solve (1) or (2) unless the app team also declares 4 MySQL providers—but now we&rsquo;re not solving or simplifying problems, we&rsquo;re just trading one set of problems for another.</p>
+<p>A single Terraform module that creates N-many database instances is the best experience for app developers. These problems are implementation details that the DBA team needs to handle and hide from app teams.</p>
+<p><em><strong>Solution</strong></em></p>
+<p>Since infra code cannot set the first password for MySQL users, the DBA team&rsquo;s backend service must set them post-provision (after infra code has run). This is advisable in any case for the reasons stated above in (3). And since initial password rotation happens before the backend service runs, the backend service cannot create MySQL users with the random passwords because of the <a href="#3-zero-knowledge-passwords">zero knowledge passwords</a> requirement.</p>
+<p class="warning">The infra code should not transmit the random passwords to the backend service.<br>Never transmit passwords if avoidable.</p>
+<p>With a default provision password (DPP) and the ability to manually invoke the PRL, the solution is easy. When the backend service runs post-provision, it creates MySQL users with the DPP. (The DPP can be any value, even an empty string.) The PRL is also hard-coded to use the DPP when manually invoked to do an &ldquo;application password reset&rdquo; (APR): a feature which connects to a database instance using the DPP and resets the MySQL user password to the current secret value (the random password).</p>
+<hr>
+<p><mark><em>APR = Application Password Reset, a PRL manual invoke feature to reset MySQL password from DPP to current secret value</em></mark></p>
+<hr>
+<p>A hard-coded password is a bad idea, and the DPP is no exception but it is an acceptable trade-off given the extremely unlikely worst-case scenario which is: a bad actor gains access using the DPP. A window of vulnerability is open for several milliseconds: between <code>CREATE USER IDENTIFIED BY 'DPP' REQUIRE SSL</code> and APR. To exploit that window, a bad actor would need to have already comprised internal systems and left spyware to wait for new RDS instances, then wait for the MySQL users to be created and connect—within a few milliseconds—before the APR completes. If a bad actor can do that, it&rsquo;s probably game over. If that is not an acceptable risk/solution trade-off, then reboot the RDS instance after APR to disconnect any bad actors. They can only regain access if they have access to Secrets Manager to get the random password. If a bad actor can do that, then it&rsquo;s definitely game over.</p>
+<h3 id="initial-password-rotation-ipr">Initial Password Rotation (IPR)</h3>
+<p>Enabling password rotation on a secret rotates the secret—the initial password rotation (IPR). For example, the AWS console notes:</p>
+<p><img src="/img/aws-secrets-manager-ipr.png" alt="AWS Secrets Manager Initial Password Rotation"></p>
+<p>IPR is a challenge with automation because we must consider whether the RDS instances are created before, after, or during the creation of the PRL:</p>
+<ul>
+<li><strong>Before</strong> (RDS → PRL): If RDS instances are created before the PRL, are the MySQL users also created before?
+<ul>
+<li>If yes, then a DPP is needed for IPR to work because the PRL connects with the current password. However, this requires infra code to create MySQL users which does not work, as discussed above in <a href="#default-provision-password-dpp">Default Provision Password</a>.</li>
+<li>If no, then the PRL will fail (because the MySQL users don&rsquo;t exist) and roll back which means IPR fails—the initial password is not rotated.</li>
+</ul>
+</li>
+<li><strong>After</strong> (PRL → RDS): If there are no database instances, the PRL has nothing to do which it can treat as success. The secret value is changed even though no MySQL passwords were changed.</li>
+<li><strong>During</strong>: Creating RDS instances and the PRL at the same time is the most difficult case because the PRL may or may not see or have access to the new databases. This amounts to a race condition, so best to avoid it altogether.</li>
+</ul>
+<p><em><strong>Solution</strong></em></p>
+<p>The &ldquo;After&rdquo; approach works. First create the PRL. Then create the secrets and eanble rotation, which triggers the IPR. Third, wait about 20 seconds because PRL invocation is asynchronous, so a wait is a crude but effective strategy to give the PRL time to run <em>before</em> any RDS instances are created. With no instances, the IPR happens almost immediately. (Which makes it a no-op password rotation since no MySQL passwords actually change, the PRL just sets new secret values.) Lastly, create RDS instances.</p>
+<p>DPP and IPR work together. The latter (IPR) happens only in infra code. End result is that new secrets immediately have random passwords. The former (DPP) happens post-provision in the DBA team&rsquo;s backend service. End result is that APR resets MySQL user passwords from DPP to the random passwords set by IPR.</p>
+<h3 id="deleted-secrets-are-kept-and-hidden">Deleted Secrets Are Kept and Hidden</h3>
+<p>Secrets are not deleted immediately, they are kept for a configurable recovery window. With fully automated infrastructure, this creates a problem when deleting and recreating secrets with the same names: it fails because the secrets already exist (but deleted).</p>
+<p>To see deleted secrets in the AWS console, click the gear icon (in Secrets Manager) to open the preferences, then enable &ldquo;Show secrets scheduled for deletion&rdquo; and &ldquo;Deleted on&rdquo;, as shown below.</p>
+<p><img src="/img/aws-secrets-manager-show-deleted.png" alt="Secrets Manager Show Deleted"></p>
+<p>You can select a deleted secret and restore it.</p>
+<p><em><strong>Solution</strong></em></p>
+<p>Secret names could be dynamic; for example, append the date to the secret name. I don&rsquo;t like this solution because secret names are used in other places, notably IAM policies, so dynamic names makes everything more difficult because the names have to be stored and passed where needed. For example, if we provision a database today the secret name would be <code>secret-20201213</code>, and tomorrow <code>secret-20201214</code>, and next month <code>secret-20210101</code>. That means for any given database you don&rsquo;t know the secret name, you have to look it up. And if the application grows over time, adding more databases, each will have a different secret name even though all databases are logically the same (for the same app). For operations at scale, this kind of variably adds no value, it only complicates ops for both human and machine.</p>
+<p>Static secret names are better. They really simplify operations and IAM policies. Plus, rebuilding cloud infrastructure is the exception not the norm. After deleting statically-named secrets, there are two solutions to immediately recreate them with Terraform. After Terraform destroys the secrets, use <span style="font-family: monospace"><a href="https://docs.aws.amazon.com/cli/latest/reference/secretsmanager/delete-secret.html">aws secretsmanager delete-secret --force-delete-without-recovery</a></span> to immediately delete secrets. (Actually, it takes several seconds.) This lets Terraform recreate the secrets. Alternatively, you can restore secrets in the AWS console (cancel the deletion), then <a href="https://www.terraform.io/docs/import/index.html">terraform import</a> the restored secrets. This lets Terraform reuse the secrets.</p>
+<h3 id="mysql-driver">MySQL Driver</h3>
+<p><mark>No MySQL driver natively supports password rotation</mark>, which means that all database connections are lost when the password is rotated, and the connections are not recovered until the application is restarted which reloads the database credentials (or <a href="https://en.wikipedia.org/wiki/Data_source_name">DSN</a>). By &ldquo;connections are lost&rdquo; I mean that connections will eventually reconnect and encounter <a href="https://dev.mysql.com/doc/mysql-errors/5.7/en/server-error-reference.html#error_er_access_denied_error">MySQL error 1045: access denied</a>. For production apps that cannot take downtime, this is unacceptable. Even if the app developers coordinate password rotation with a rolling app restart, downtime is limited to how fast the app can restart.</p>
+<p>Once a MySQL connection is authenticated, it remains valid until disconnected or <code>FLUSH PRIVILEGES</code> is executed. Therefore, connecitons are not immediatley lost when the password changes. The impact of password rotation depends on how the MySQL driver connection pool is configured. If the pool is large and allows many long-lived idle connections, then password rotation may have little effect. But if the pool is small and limits idle connections, then password rotation can have a greater, more immediate effect.</p>
+<p><em><strong>Solution</strong></em></p>
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/password-management.html#dual-passwords">MySQL 8.0 has dual password support</a>. But the requirement is password rotation with MySQL 5.7. The same solution applies to MySQL 5.6, but do not use 5.6 because it is end of life (EOL) February, 2021.</p>
+<p>I wrote <a href="https://github.com/go-mysql/hotswap-dsn-driver">go-mysql/hotswap-dsn-driver</a> to solve this problem for Go. The solution is very simple: on <a href="https://dev.mysql.com/doc/mysql-errors/5.7/en/server-error-reference.html#error_er_access_denied_error">MySQL error 1045 (access denied)</a>, a user-provided function is called to reload the DSN. For this context, that user-provided function will call Secrets Manager to get the current secret value that the PRL just rotated and saved. Of course, this is thread-safe (or &ldquo;safe for use by multiple goroutines&rdquo;, in Go parlance). The result is zero downtime, only a ~100 millisecond delay on <em>new</em> database connections.</p>
+<p>Even if you don’t use Go, it demonstrates how to handle password rotation in a MySQL driver. I hope someone does the same for other major languages.</p>
+<br>
+<hr>
+<br>
+<h2 id="terraform">Terraform</h2>
+<p>Implementing a password rotation lambda in Terraform (TF) that meets all requirements and solves all technical problems is not terribly complicated. There are three parts to the infrastructure code: IAM roles and policies, the Lambda function itself, and the Secrets Manager secrets.</p>
+<p class="note">This page does not explain how to set up or use Terraform. Please read the <a href="https://www.terraform.io/docs/index.html">Terraform Documentation</a>.</p>
+<p>The examples below are not a complete, working infrastructure. You will need more infra code to set up additional resources, like the RDS instances.</p>
+<h3 id="iam-role-and-policies">IAM Role and Policies</h3>
+<p>First we need to create an IAM role and policy for the PRL. Read the comments in the Terraform code below for more details.</p>
+<pre><code class="language-hcl"># Trust policy: allow AWS Lambda service to assume this role while running the lambda.
+# https://docs.aws.amazon.com/lambda/latest/dg/lambda-permissions.html
+data &quot;aws_iam_policy_document&quot; &quot;prl-trust&quot; {
+  statement {
+    sid     = &quot;TrustLambda&quot;
+    actions = [&quot;sts:AssumeRole&quot;]
+    principals {
+      type        = &quot;Service&quot;
+      identifiers = [&quot;lambda.amazonaws.com&quot;]
+    }
+  }
+}
+
+# Execution role: the role the PRL uses when running (invoked).
+# This role must have policies (defined next) to allow the lambda
+# to do and access everything it needs.
+resource &quot;aws_iam_role&quot; &quot;prl-role&quot; {
+  name               = &quot;mysql-password-rotation-lambda&quot;
+  assume_role_policy = data.aws_iam_policy_document.prl-trust.json
+}
+
+# Execution policy: execution role permissions. These vary depending
+# on what the PRL does. The permissions below should be the minimum
+# requirements.
+data &quot;aws_iam_policy_document&quot; &quot;prl-policy&quot; {
+
+  # PRL queries RDS API to automatically discovers all RDS instances
+  # in the same AWS account.
+  statement {
+    actions   = [&quot;rds:DescribeDBInstances&quot;]
+    resources = [&quot;*&quot;]
+  }
+
+  # PRL function code is loaded from an S3 bucket. We create and
+  # upload function.zip (which contains the function code Go binary).
+  statement {
+    actions   = [&quot;s3:GetObject&quot;]
+    resources = [&quot;arn:aws:s3:::prl-func/function.zip&quot;]
+  }
+
+  # PRL reads and writes secrets which contain MySQL user passwords.
+  # The condition allows Secrets Manager to use the PRL.
+  statement {
+    actions = [
+      &quot;secretsmanager:DescribeSecret&quot;,
+      &quot;secretsmanager:GetSecretValue&quot;,
+      &quot;secretsmanager:PutSecretValue&quot;,
+      &quot;secretsmanager:UpdateSecretVersionStage&quot;,
+    ]
+    resources = [&quot;*&quot;]
+    condition {
+      test     = &quot;StringLike&quot;
+      variable = &quot;secretsmanager:resource/AllowRotationLambdaArn&quot;
+      values   = [&quot;arn:aws:lambda:*:123456789012:function:mysql-password-rotation&quot;]
+    }
+  }
+}
+
+# Attach execution policy as inline policy to execution role.
+# Use an inline policy, not a customer-managed policy, because
+# the policy is unique and specific to the PRL. No other IAM
+# entities should use this policy.
+resource &quot;aws_iam_role_policy&quot; &quot;prl&quot; {
+  name   = &quot;lambda-exec&quot;
+  role   = aws_iam_role.prl-role.id
+  policy = data.aws_iam_policy_document.prl-policy.json
+}
+
+# PRL runs in VPC which requires the AWS-managed AWSLambdaVPCAccessExecutionRole
+# role. Attach it to the execution role. If the PRL needs other
+# AWS-managed roles, you can add them to the for_each list.
+resource &quot;aws_iam_role_policy_attachment&quot; &quot;lambda-exec&quot; {
+  for_each = {
+    vpc = &quot;arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole&quot;
+  }
+  role       = aws_iam_role.prl-role.id
+  policy_arn = each.value
+}
+</code></pre>
+<p class="note"> AWS account 123456789012 is fake. Be sure to replace it with your AWS account number.</p>
+<p class="note">The IAM policy references S3 bucket name "prl-func" which is created later. The name must be changed in all Terraform code because S3 bucket names are globally unique.</p>
+<p>Once this TF code is applied, you should see the <code>mysql-password-rotation-lambda</code> IAM role and inline policy in the AWS console:</p>
+<p><img src="/img/aws-lambda-role.png" alt="Lambda Execution Role"></p>
+<h3 id="lambda-function">Lambda Function</h3>
+<p>First, let&rsquo;s create the Lambda function code (using Go) and an S3 bucket to hold it. After, we&rsquo;ll write the TF code to create the PRL using the function code stored in the S3 bucket.</p>
+<h4 id="function-code-and-s3-bucket">Function Code and S3 Bucket</h4>
+<p>Create an <a href="https://aws.amazon.com/s3/">S3 bucket</a> to hold the function code which we&rsquo;ll upload as <code>function.zip</code>. Be mindful of the S3 bucket access policy: Terraform needs access from wherever and however you run it. If all AWS resources are in the same account, access should not be an issue. But in this setup (i.e. given the <a href="#separation-of-work">separation of work</a>), the S3 bucket is in the DBA team&rsquo;s AWS account because, like the TF module they provide, they also provide the PRL function code. So the S3 bucket in the DBA team&rsquo;s AWS account needs an access policy to allow <em>and</em> restrict cross-account access only from other AWS accounts in the same AWS organization. S3 access policies are beyond the scope of this page, but you probably want a condition like:</p>
+<pre><code class="language-json">&quot;Condition&quot;: {
+  &quot;StringEquals&quot;: {
+    &quot;aws:PrincipalOrgID&quot;: &quot;o-IamNotReal&quot;
+  }
+}
+</code></pre>
+<p>Be sure the S3 bucket blocks <em>all</em> public access!</p>
+<p class="warning"><b>Be sure the S3 bucket blocks <em>all</em> public access!</b></p>
+<p>Seriously, don&rsquo;t let your PRL becomes a news story about how public access lead to being hacked. Granted, the PRL code is pretty harmless by itself, but don&rsquo;t take the risk when it&rsquo;s so easy to avoid completely. In the AWS console, the list of S3 buckets must say:</p>
+<p><img src="/img/aws-s3-not-public.png" alt="S3 Not Public"></p>
+<p>And when viewing the bucket permissions, it must say:</p>
+<p><img src="/img/aws-s3-no-public-access.png" alt="S3 No Public Access"></p>
+<p>Using an <a href="https://aws.amazon.com/s3/features/access-points/">S3 access point</a> would be better, but as far as I can tell TF does not work with S3 access points (I could be wrong about this).</p>
+<p>Be sure to create the bucket in the same AWS region as other resources. For this example, let&rsquo;s call the bucket <code>prl-func</code>, so its ARN is <code>arn:aws:s3:::prl-func</code>.</p>
+<p class="note">S3 bucket names are globally unique, so you must change "prl-func" in all Terraform code.</p>
+<p><em><strong>Function Code</strong></em></p>
+<p>Lucky you: <a href="https://github.com/square/password-rotation-lambda">square/password-rotation-lambda</a> has a ready-made working example in <code>examples/rds</code>. Clone the repo, change to that directory, build the PRL binary for Linux, and put it in a zip file:</p>
+<pre><code class="language-shell">$ GOOS=linux GOARCH=amd64 go build -o prl-bin
+
+$ zip function.zip prl-bin
+</code></pre>
+<p>Upload <code>function.zip</code> to the S3 bucket.</p>
+<p>Alternatively, here is a more complex example using an HTTP proxy for the RDS API,  a VPC endpoint for the Secrets Manager API, and a custom <code>SecretSetter</code> implementation (<code>MyRandomPassword</code>) to handle <a href="#manually-invoke-lambda">manual invocation</a>:</p>
+<pre><code class="language-go">package main
+
+import (
+    &quot;context&quot;
+    &quot;encoding/json&quot;
+    &quot;fmt&quot;
+    &quot;log&quot;
+    &quot;net/http&quot;
+    &quot;net/url&quot;
+    &quot;os&quot;
+    &quot;time&quot;
+
+    &quot;github.com/aws/aws-lambda-go/lambda&quot;
+    &quot;github.com/aws/aws-sdk-go/aws&quot;
+    &quot;github.com/aws/aws-sdk-go/aws/session&quot;
+    &quot;github.com/aws/aws-sdk-go/service/rds&quot;
+    &quot;github.com/aws/aws-sdk-go/service/secretsmanager&quot;
+
+    &quot;github.com/square/password-rotation-lambda/v2&quot;
+    &quot;github.com/square/password-rotation-lambda/v2/db&quot;
+    &quot;github.com/square/password-rotation-lambda/v2/db/mysql&quot;
+)
+
+const VERSION = &quot;v1.0.0&quot;
+
+var SHA = &quot;&quot;
+
+var (
+    parallel  = uint(10)
+    retries   = uint(2)
+    retryWait = time.Duration(2 * time.Second)
+)
+
+func init() {
+    rotate.Debug = os.Getenv(&quot;DEBUG&quot;) == &quot;yes&quot;
+}
+
+func main() {
+    log.Printf(&quot;prl-bin %s (%s)&quot;, VERSION, SHA)
+
+    // Get proxy URL from env var and create *http.Client using it
+    proxyURL, err := url.Parse(os.Getenv(&quot;HTTPS_PROXY&quot;))
+    if err != nil {
+        log.Fatalf(&quot;error parsing HTTPS_PROXY: %s&quot;, err)
+    }
+    proxyClient := &amp;http.Client{
+        Timeout:   time.Duration(5 * time.Second),
+        Transport: &amp;http.Transport{Proxy: http.ProxyURL(proxyURL)},
+    }
+
+    // Make AWS session for RDS API via proxy
+    rdsSess, err := session.NewSession(&amp;aws.Config{
+        MaxRetries: aws.Int(2),
+        HTTPClient: proxyClient,
+    })
+    if err != nil {
+        log.Fatalf(&quot;error making AWS session for RDS: %s&quot;, err)
+    }
+
+    // Make MySQL password setter to handle changing MySQL user password
+    ps := mysql.NewPasswordSetter(mysql.Config{
+        RDSClient: rds.New(rdsSess),                // RDS API client
+        DbClient:  mysql.NewRDSClient(true, false), // RDS MySQL cilent (true=TLS, false=dry run)
+        Parallel:  parallel,                        // rotate password on 10 RDS concurrently
+        Retry:     retries,                         // 5 tries total
+        RetryWait: retryWait,                       // sleep between tries
+    })
+
+    // Make AWS session for Secrets Manager via VPC endpoint
+    smSess, err := session.NewSession(&amp;aws.Config{
+        MaxRetries: aws.Int(2),
+        Endpoint:   aws.String(&quot;...&quot;), // using VPC endpoint (real value not shown)
+    })
+    if err != nil {
+        log.Fatalf(&quot;error making AWS session for Secrets Manager: %s&quot;, err)
+    }
+    sm := secretsmanager.New(smSess)
+
+    // Make rotator to handle invocation from Secrets Manager
+    r := rotate.NewRotator(rotate.Config{
+        SecretsManager: sm,
+        SecretSetter:   MyRandomPassword{SecretsManager: sm},
+        PasswordSetter: ps,
+    })
+
+    // Run lambda using rotator (blocking call)
+    lambda.Start(r.Handler)
+}
+
+// --------------------------------------------------------------------------
+
+type MyRandomPassword struct {
+    rotate.RandomPassword // handles Rotate() and Credentials()
+    SecretsManager        *secretsmanager.SecretsManager
+}
+
+// MyRandomPassword.Handler() overrides rotate.RandomPassword.Handler()
+// because the latter does nothing. This func handles manual invocation.
+func (r MyRandomPassword) Handler(ctx context.Context, event map[string]string) (map[string]string, error) {
+    // Handle manually invoked lambda
+    return map[string]string{}, nil
+}
+</code></pre>
+<p>The code above is not complete. It&rsquo;s a demonstration and starting point. You should implement <code>func (r MyRandomPassword) Handler</code> to handle manual invocation requests like APR (see <a href="#default-provision-password-dpp">Default Provision Password</a>). If you adapt the code above to work for your environment, build it as <code>prl-bin</code>, zip it into <code>function.zip</code>, and upload the zip file to the S3 bucket.</p>
+<h4 id="terraform-1">Terraform</h4>
+<p>Once the PRL code has been uploaded to S3, we can create the actual PRL in Terraform. Either TF or AWS checks/fetchs the function code from S3 on apply, so if that part is not correct, the TF apply will fail with some error.</p>
+<p>Since <a href="#4-run-in-vpc">running in a VPC</a> is a requirement, we set our VPC IDs and the <code>vpc_config</code> block with our subnet IDs. These values aren&rsquo;t shown because they will be unique to your AWS account. The TF code below supports the more complex PRL function code above (HTTP proxy for the RDS API and VPC endpoint for the Secrets Manager API).</p>
+<pre><code class="language-hcl"># Security group: allow PRL only specific egress and deny all ingress.
+resource &quot;aws_security_group&quot; &quot;prl&quot; {
+  name   = &quot;mysql-password-rotation-lambda&quot;
+  vpc_id = &quot;vpc-...&quot;
+  egress {
+    description = &quot;Secrets Manager via VPC endpoint&quot;
+    from_port   = 443
+    to_port     = 443
+    protocol    = &quot;tcp&quot;
+    cidr_blocks = [&quot;10.0.0.0/8&quot;]
+  }
+  egress {
+    description = &quot;MySQL password rotation&quot;
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = &quot;tcp&quot;
+    cidr_blocks = [&quot;10.0.0.0/8&quot;]
+  }
+  egress {
+    description = &quot;RDS API via proxy&quot;
+    from_port   = 18080
+    to_port     = 18080
+    protocol    = &quot;tcp&quot;
+    cidr_blocks = [&quot;10.0.0.0/8&quot;]
+  }
+}
+
+# Lambda function: create the actual password rotation lambda (PRL) function.
+resource &quot;aws_lambda_function&quot; &quot;prl&quot; {
+  depends_on = [
+    aws_security_group.prl,
+  ]
+  s3_bucket     = &quot;prl-func&quot;
+  s3_key        = &quot;function.zip&quot;
+  function_name = &quot;mysql-password-rotation&quot; # Lambda func name
+  handler       = &quot;prl-bin&quot;                 # Go binary name
+  role          = aws_iam_role.prl-role.arn
+  runtime       = &quot;go1.x&quot;
+  memory_size   = 128
+  timeout       = 60
+
+  environment {
+    variables = {
+      HTTP_PROXY  = &quot;http://proxy:18080&quot;
+      HTTPS_PROXY = &quot;http://proxy:18080&quot;
+      NO_PROXY    = &quot;.vpce.amazonaws.com&quot;
+    }
+  }
+
+  vpc_config {
+    subnet_ids         = [&quot;subnet-...&quot;, &quot;subnet-...&quot;]
+    security_group_ids = [aws_security_group.prl.id]
+  }
+}
+
+# Change default invoke configuration to lower timeout and retries because
+# the PRL handles timeout and retries internally.
+resource &quot;aws_lambda_function_event_invoke_config&quot; &quot;prl&quot; {
+  function_name                = aws_lambda_function.prl.function_name
+  maximum_event_age_in_seconds = 300 # 5 min
+  maximum_retry_attempts       = 1
+}
+
+# Resource-based policy: allow Secrets Manager to invoke the PRL.
+resource &quot;aws_lambda_permission&quot; &quot;prl-invoke-by-secretsmanager&quot; {
+  statement_id  = &quot;AllowExecutionFromSecretsManager&quot;
+  action        = &quot;lambda:InvokeFunction&quot;
+  function_name = aws_lambda_function.prl.function_name
+  principal     = &quot;secretsmanager.amazonaws.com&quot;
+}
+</code></pre>
+<p>A few important points about the TF code above:</p>
+<ul>
+<li>
+<p>Security group: The egress rules are strict and required for the more complex example of the function code above. Port 443 allows TLS connections to the Secrets Manager API via VPC endpoint. Port 3306 allows connections to MySQL (RDS), which is pretty useful for a MySQL password rotation lambda. And port 18080 is the web proxy port because we connect to the public RDS API instead of using a VPC endpoint. The CIDR ranges will also be specific to your environment.</p>
+</li>
+<li>
+<p>Lambda function: In the <code>enviroment</code> block we inject the standard <code>HTTP_PROXY</code> and <code>HTTPS_PROXY</code> values which most normal software automatically uses. But we need to exclude VPC endpoints (i.e. do <em>not</em> go through the web proxy to reach a VPC endpoint), so we set <code>NO_PROXY = &quot;.vpce.amazonaws.com&quot;</code>.</p>
+</li>
+<li>
+<p>Resource-based policy: The last Terraform resource defines a <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_identity-vs-resource.html">resource-based policy</a> for the PRL. You can see it in the AWS console for the PRL by clicking <em>Permissions</em> (shown below). Whereas the execution role/policy defines what the PRL can do when it&rsquo;s running, the resource-based policy defines what can invoke the PRL. If you click the &ldquo;Info&rdquo; link next to &ldquo;Resource-based policy&rdquo; in the AWS console it explains: &ldquo;You use a resource-based policy to allow an AWS service to invoke your function.&rdquo; Allowing the Secrets Manager service to invoke the PRL is the whole point. The diagram below helps clarify the execution role/policy vs. the resource-based policy during the PRL flow when invoked by Secrets Manager.</p>
+</li>
+</ul>
+<p><img src="/img/aws-lambda-permissions.png" alt="AWS Lambda Permissions"></p>
+<br>
+<p><img src="/img/prl-flow.png" alt="AWS Secrets Manager Lambda rotation flow"></p>
+<p>The diagram above shows the PRL flow when invoked by Secrets Manager:</p>
+<ol>
+<li>Secrets Manager invokes the PRL <em>iff</em> the resource-based policy allows.</li>
+<li>Lambda service assumes the PRL execution role, which has various policy privileges.</li>
+<li>Lambda service runs the PRL (lambda function code) as the PRL exec role.</li>
+<li>Since Secrets Manager invoked the PRL, first step is to create a new, pending secret (staging label = <em>AWSPENDING</em>).</li>
+<li>PRL rotates (sets) the MySQL user password to the pending secret value.</li>
+<li>PRL makes the pending secret the current secret (staging label = <em>AWSCURRENT</em>).</li>
+</ol>
+<p>Note: the four steps of Secrets Manager rotation are not shown. In this diagram, step 4 is equal to rotation step 1; step 5 is equal to rotation steps 2 and 3 (set and verify), and step 6 is equal to rotation step 4.</p>
+<h3 id="secrets-manager">Secrets Manager</h3>
+<p>The last piece of the puzzle is the secret in Secrets Manager:</p>
+<pre><code class="language-hcl"># Create secret with MySQL app user password.
+# This is just the secret resource, no value yet.
+resource &quot;aws_secretsmanager_secret&quot; &quot;mysql-password&quot; {
+  depends_on = [
+    aws_lambda_permission.prl-invoke-by-secretsmanager,
+  ]
+  name                    = &quot;mysql-app-password&quot;
+  description             = &quot;MySQL app user password&quot;
+  recovery_window_in_days = 0
+}
+
+# Initialize secret with default provision password (DPP). This sets the
+# secret value, which is JSON doc containing MySQL username and password.
+resource &quot;aws_secretsmanager_secret_version&quot; &quot;mysql-password&quot; {
+  depends_on = [
+    aws_secretsmanager_secret.mysql-password,
+  ]
+  secret_id = aws_secretsmanager_secret.mysql-password.id
+  secret_string = jsonencode({
+    username = &quot;app&quot;
+    password = &quot;default_provision_password&quot;
+  })
+}
+
+# Enable rotation with PRL. This causes the initial password rotation (IPR).
+resource &quot;aws_secretsmanager_secret_rotation&quot; &quot;mysql-password&quot; {
+  secret_id           = aws_secretsmanager_secret.mysql-password.id
+  rotation_lambda_arn = aws_lambda_function.prl.arn # ~~ PRL ~~
+  rotation_rules {
+    automatically_after_days = 1
+  }
+}
+
+# Wait 20s after initial password rotation (IPR) before creating db instances.
+# The PRL is async, so IPR happens in the background. The resource that
+# creates RDS instances should depend on this resource so that the instances
+# start creating 20s after IPR was started.
+resource &quot;time_sleep&quot; &quot;wait-for-password-rotation&quot; {
+  depends_on = [
+    aws_secretsmanager_secret_rotation.mysql-password,
+  ]
+  create_duration = &quot;20s&quot;
+}
+</code></pre>
+<p>The Secrets Manager resources are pretty straightforward. Be sure to set <code>automatically_after_days</code> to your rotation requirements.</p>
+<br>
+<hr>
+<br>
+<h2 id="summary">Summary</h2>
+<p>This page covers <em>a lot</em> of information. It&rsquo;s not easy to grasp all at once; it takes times. But when it all comes together and works, you&rsquo;ll see the four-step rotation executed by Secrets Manager logged in CloudWatch Logs, and the secret will look like:</p>
+<p><img src="/img/aws-secrets-manager-secret.png" alt="AWS Secrets Manager Secret"></p>
+<p>The password is a random string (obscured in the image) and rotation is enabled.</p>
+<p>At the start, one might think that MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a simple matter: just create a Lambda, use default code and settings, and voilà—it works! But if you have read this entire page, then you have learned the many reasons why that&rsquo;s not true.  I wish I had known at the start that:</p>
+<ul>
+<li>The default AWS PRL is not sufficient and does not work out of the box; don&rsquo;t waste time with it</li>
+<li>There are no high-quality open-source PRL packages (so I wrote one: <a href="https://github.com/square/password-rotation-lambda">square/password-rotation-lambda</a>)</li>
+<li><a href="#manually-invoke-lambda">Manually invoking the PRL</a> is as necessary as automatically invoked by Secrets Manager</li>
+<li><a href="#lambda-concurrency">Lambda concurrency</a> requires careful attention to detail and programming, especially wrt Secrets Manager rotation</li>
+<li>Secrets Manager is helpless when rotation (the PRL) fails</li>
+<li>Do not leave the <em>AWSPENDING</em> staging label, it blocks Secrets Manager rotation</li>
+<li><a href="#deleted-secrets-are-kept-and-hidden">Secrets do not deleted by default</a>, they&rsquo;re scheduled for deletion which blocks recreating secrets</li>
+<li><a href="#initial-password-rotation-ipr">Initial password rotation</a>—everything already mentioned</li>
+<li>MySQL password rotation with AWS Secrets Manager and Lambda is a careful orchestration of many resources and user-specific code</li>
+</ul>
+<p>Database password rotation is very important and should be implemented for every database, especially databases in the cloud. Hopefully this page makes it a lot easier for you to implement password rotation in your environment.</p>
+</article>
+	</div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2021 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/3.js" site="WJIYGVMB"></script>
+
+
+  </body>
+</html>
