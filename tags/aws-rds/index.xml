@@ -12,29 +12,29 @@
       <title>MySQL Password Rotation with AWS</title>
       <link>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</link>
       <pubDate>Mon, 28 Dec 2020 12:09:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</guid>
       <description>If you run MySQL on Amazon RDS and use passwords, I sure hope you frequently rotate those passwords (among many other security best practices). But if you don&amp;rsquo;t rotate them, I might know why: it&amp;rsquo;s quite difficult to set up when you really get into it. It seems easy at first, but if you&amp;rsquo;ve ever tried you know how quickly it becomes complicated. At least, that was my experience. So to help others overcome the challenges and do frequent password rotation, I wrote up a long read: MySQL Password Rotation with AWS Secrets Manager and Lambda.</description>
     </item>
-
+    
     <item>
       <title>MySQL Password Rotation with AWS Secrets Manager and Lambda</title>
       <link>https://hackmysql.com/mysql-password-rotation-lambda/</link>
       <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/mysql-password-rotation-lambda/</guid>
       <description>MySQL Password Rotation with AWS Secrets Manager and Lambda MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and Terraform for cloud infrastructure.</description>
     </item>
-
+    
     <item>
       <title>21 Parameter Group Values to Change in Amazon RDS for MySQL</title>
       <link>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</link>
       <pubDate>Mon, 29 Jun 2020 11:15:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</guid>
       <description>Amazon RDS for MySQL uses many default values for system variables, but it also sets a few &amp;ldquo;sys vars&amp;rdquo; with different values. As with any database, neither product (MySQL) nor provider (AWS) defaults can best suite all use cases. It&amp;rsquo;s our responsibility to carefully review and set every important system variable. This is tedious and difficult, but I&amp;rsquo;ve done it for you.
 Below are are 21 MySQL 5.7 system variables that I recommend changing by creating a new parameter group.</description>
     </item>
-
+    
   </channel>
 </rss>

@@ -12,11 +12,11 @@
       <title>Queries Effect Performance</title>
       <link>https://hackmysql.com/post/queries-effect-performance/</link>
       <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/post/queries-effect-performance/</guid>
       <description>Queries effect database performance. That&amp;rsquo;s not a typo: &amp;ldquo;effect&amp;rdquo; not &amp;ldquo;affect&amp;rdquo;. The difference is not a word game but an important way to think about database performance.
 Many things can affect performance. For example, if the system runs out of memory then starts swapping which causes high disk IO latency, that will negatively affect performance. But external factors like that notwithstanding (i.e. when hardware and MySQL are normal and stable), it&amp;rsquo;s important to understand that queries effect performance.</description>
     </item>
-
+    
   </channel>
 </rss>

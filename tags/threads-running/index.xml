@@ -12,10 +12,10 @@
       <title>MySQL Threads Running</title>
       <link>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</link>
       <pubDate>Sat, 25 Apr 2020 16:18:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</guid>
       <description>&lt;p&gt;Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by &lt;em&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Threads_running&#34;&gt;Threads_running&lt;/a&gt;&lt;/em&gt;, expressed as a gauge (whereas QPS is a rate). Before discussing &lt;em&gt;Threads_running&lt;/em&gt;, let&amp;rsquo;s consider an analogy:&lt;/p&gt;</description>
     </item>
-
+    
   </channel>
 </rss>

@@ -12,13 +12,13 @@
       <title>What the Flush?</title>
       <link>https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/</link>
       <pubDate>Sun, 05 Jul 2020 18:50:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/</guid>
       <description>&lt;p&gt;Yves Trudeau and Francisco Bordenave, MySQL experts at Percona, recently published a three-part post:
 (1) &lt;a href=&#34;https://www.percona.com/blog/2019/12/18/give-love-to-your-ssds-reduce-innodb_io_capacity_max/&#34;&gt;Give Love to Your SSDs – Reduce innodb_io_capacity_max!&lt;/a&gt;;
 (2) &lt;a href=&#34;https://www.percona.com/blog/2020/01/22/innodb-flushing-in-action-for-percona-server-for-mysql/&#34;&gt;InnoDB Flushing in Action for Percona Server for MySQL&lt;/a&gt;;
 (3) &lt;a href=&#34;https://www.percona.com/blog/2020/05/14/tuning-mysql-innodb-flushing-for-a-write-intensive-workload/&#34;&gt;Tuning MySQL/InnoDB Flushing for a Write-Intensive Workload&lt;/a&gt;. It&amp;rsquo;s a fantastic read from start to finish, and it made me realize: dirty pages sound bad, but they are good. I suspect the opposite (&amp;ldquo;dirty pages are &lt;em&gt;not&lt;/em&gt; good&amp;rdquo;) is a misconception due to an incomplete picture. Let&amp;rsquo;s complete the picture.&lt;/p&gt;</description>
     </item>
-
+    
   </channel>
 </rss>

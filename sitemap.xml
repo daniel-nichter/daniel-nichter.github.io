@@ -2,31 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/tags/data-locks/</loc>
+    <lastmod>2021-07-26T15:40:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2021-07-26T15:40:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
+    <lastmod>2021-07-26T15:40:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</loc>
+    <lastmod>2021-07-26T15:40:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2021-07-26T15:40:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2021-07-26T15:40:00-04:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/eng/career-advice/</loc>
     <lastmod>2021-04-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/eng/</loc>
     <lastmod>2021-04-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2021-04-12T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2021-01-14T15:42:00-05:00</lastmod>
-  </url><url>
     <loc>https://hackmysql.com/mysql-select-and-sort/</loc>
-    <lastmod>2021-01-14T15:42:00-05:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2021-01-14T15:42:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/aws-rds/</loc>
     <lastmod>2020-12-28T12:09:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</loc>
-    <lastmod>2020-12-28T12:09:00-05:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/post/</loc>
     <lastmod>2020-12-28T12:09:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/terraform/</loc>
@@ -44,10 +50,7 @@
     <loc>https://hackmysql.com/mysql-password-rotation-lambda/</loc>
     <lastmod>2020-12-28T09:56:00-05:00</lastmod>
   </url><url>
-    <loc>https://hackmysql.com/page/about/</loc>
-    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/page/</loc>
+    <loc>https://hackmysql.com/about/</loc>
     <lastmod>2020-12-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</loc>

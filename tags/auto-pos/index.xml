@@ -12,10 +12,10 @@
       <title>Fixing Ghosted GTIDs</title>
       <link>https://hackmysql.com/post/fixing-ghosted-gtids/</link>
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/post/fixing-ghosted-gtids/</guid>
       <description>MySQL auto-positioning is an integral part of replication with GTID, but it&amp;rsquo;s neither required nor guaranteed to work. It&amp;rsquo;s possible to enable GTIDs but disable auto-positioning, and it&amp;rsquo;s possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.</description>
     </item>
-
+    
   </channel>
 </rss>
