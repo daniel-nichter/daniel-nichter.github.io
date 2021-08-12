@@ -449,6 +449,7 @@ pre {
 }
 pre code {
   white-space: pre;
+  word-wrap: normal;
 }
 pre.highlight, .highlight > pre, td.code pre {
   background: #FAFAFA;
