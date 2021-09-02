@@ -7,22 +7,49 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2021 Daniel Nichter</copyright>
-    <lastBuildDate>Mon, 26 Jul 2021 15:40:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 02 Sep 2021 18:11:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>data-locks</title>
-      <link>https://hackmysql.com/tags/data-locks/</link>
-      <pubDate>Mon, 26 Jul 2021 15:40:00 -0400</pubDate>
+      <title>innodb</title>
+      <link>https://hackmysql.com/tags/innodb/</link>
+      <pubDate>Thu, 02 Sep 2021 18:11:00 -0400</pubDate>
       
-      <guid>https://hackmysql.com/tags/data-locks/</guid>
+      <guid>https://hackmysql.com/tags/innodb/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>io-capacity</title>
+      <link>https://hackmysql.com/tags/io-capacity/</link>
+      <pubDate>Thu, 02 Sep 2021 18:11:00 -0400</pubDate>
+      
+      <guid>https://hackmysql.com/tags/io-capacity/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>lru-flushing</title>
+      <link>https://hackmysql.com/tags/lru-flushing/</link>
+      <pubDate>Thu, 02 Sep 2021 18:11:00 -0400</pubDate>
+      
+      <guid>https://hackmysql.com/tags/lru-flushing/</guid>
       <description></description>
     </item>
     
     <item>
       <title>mysql</title>
       <link>https://hackmysql.com/tags/mysql/</link>
-      <pubDate>Mon, 26 Jul 2021 15:40:00 -0400</pubDate>
+      <pubDate>Thu, 02 Sep 2021 18:11:00 -0400</pubDate>
       
       <guid>https://hackmysql.com/tags/mysql/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>data-locks</title>
+      <link>https://hackmysql.com/tags/data-locks/</link>
+      <pubDate>Mon, 26 Jul 2021 15:40:00 -0400</pubDate>
+      
+      <guid>https://hackmysql.com/tags/data-locks/</guid>
       <description></description>
     </item>
     

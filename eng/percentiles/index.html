@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
   <title>Percentiles</title>
   <meta property="og:title" content="Percentiles" />
   <meta name="description" content="Percentiles Percentiles are ubiquitous in application performance monitoring, particularly the 95th (P95), 99th (P99), and 99.9th (P999) percentiles. The basic concept is simple: percentile Pn means n% of all values are &lt;= than the Pn value. If the P95 value = 100ms, then 95% of all values are &lt;= 100ms. In other words: 5% of all values are &gt; 100ms. Percentiles discard the top (100-n)% values as outliers for various reasons which are outside the scope of this page.">
@@ -17,9 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/eng/percentiles/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-
-  <meta name="generator" content="Hugo 0.87.0" />
-  <link rel="canonical" href="https://hackmysql.com/eng/percentiles/" />
+  <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/eng/percentiles/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
@@ -42,77 +39,77 @@
 
     <div class="collapse navbar-collapse" id="main-navbar">
       <ul class="nav navbar-nav navbar-left">
-
-
+        
+          
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-
+                
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-
+                
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-
+                
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-
+                
                   <a href="/eng/career-advice/">Career Advice</a>
-
+                
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
-
+                
                   <a href="/eng/percentiles/">Percentiles</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-
+                
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-
+                
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-
+                
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-
+                
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-
+                
               </div>
             </li>
+          
+        
 
-
-
-
+        
       </ul>
     </div>
   </div>
 </nav>
 
-
+    
 <div class="container-fluid">
   <div class="row">
 	  <div class="col-sm-4 col-sm-push-8">
@@ -228,7 +225,7 @@ func pValue(i float64, vals []float64) float64 {
   <p class="copyright text-muted">
     Copyright 2021 Daniel Nichter
   </p>
-  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>

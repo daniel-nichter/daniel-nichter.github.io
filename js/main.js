@@ -13,7 +13,7 @@ var main = {
     $('#main-navbar').on('hidden.bs.collapse', function () {
       $(".navbar").removeClass("top-nav-expanded");
     });
-
+  
     // On mobile, when clicking on a multi-level navbar menu, show the child links
     $('#main-navbar').on("click", ".navlinks-parent", function(e) {
       var target = e.target;
@@ -51,7 +51,7 @@ var main = {
       });
 
       fakeMenu.remove();
-    }
+    }      
   },
 };
 

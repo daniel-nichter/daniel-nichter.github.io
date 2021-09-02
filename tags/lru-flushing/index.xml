@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>lru-flushing on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/lru-flushing/</link>
+    <description>Recent content in lru-flushing on Hack MySQL</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2021 Daniel Nichter</copyright>
+    <lastBuildDate>Thu, 02 Sep 2021 18:11:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/lru-flushing/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL LRU Flushing and I/O Capacity</title>
+      <link>https://hackmysql.com/post/mysql-lru-flushing-io-capacity/</link>
+      <pubDate>Thu, 02 Sep 2021 18:11:00 -0400</pubDate>
+      
+      <guid>https://hackmysql.com/post/mysql-lru-flushing-io-capacity/</guid>
+      <description>&lt;p&gt;InnoDB background LRU list flushing is &lt;em&gt;not&lt;/em&gt; limited by &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_io_capacity&#34;&gt;&lt;code&gt;innodb_io_capcity&lt;/code&gt;&lt;/a&gt; or &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_io_capacity_max&#34;&gt;&lt;code&gt;innodb_io_capacity_max&lt;/code&gt;&lt;/a&gt;.
+I&amp;rsquo;ll prove it in this blog post, but since MySQL experts disagree (or don&amp;rsquo;t know for sure), I&amp;rsquo;d like you to prove me wrong.
+This is not an intro; you&amp;rsquo;ll need to know all the InnoDB details wrt page flushing.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

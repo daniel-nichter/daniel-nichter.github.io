@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
   <title>MySQL Select and Sort Status Variables</title>
   <meta property="og:title" content="MySQL Select and Sort Status Variables" />
   <meta name="description" content="MySQL Select and Sort Status Variables This page is a reboot of the original written 15 years ago in 2005. Back then, I must have been using MySQL 4.1 or 5.0. Today, I am using MySQL 8.0.22. A lot changed in MySQL from 4.1 to 8.0, but it still has the same Select_% and Sort_% status variables which are equally important today in 2021. Let&rsquo;s examine them in greater detail and with better examples.">
@@ -17,9 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/mysql-select-and-sort/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-
-  <meta name="generator" content="Hugo 0.87.0" />
-  <link rel="canonical" href="https://hackmysql.com/mysql-select-and-sort/" />
+  <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/mysql-select-and-sort/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
@@ -42,77 +39,77 @@
 
     <div class="collapse navbar-collapse" id="main-navbar">
       <ul class="nav navbar-nav navbar-left">
-
-
+        
+          
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-
+                
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-
+                
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-
+                
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-
+                
                   <a href="/eng/career-advice/">Career Advice</a>
-
+                
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
-
+                
                   <a href="/eng/percentiles/">Percentiles</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-
+                
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-
+                
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-
+                
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-
+                
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-
+                
               </div>
             </li>
+          
+        
 
-
-
-
+        
       </ul>
     </div>
   </div>
 </nav>
 
-
+    
 <div class="container-fluid">
   <div class="row">
 	  <div class="col-sm-4 col-sm-push-8">
@@ -140,7 +137,7 @@
   `c2` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `c1` (`c1`)
-) ENGINE=InnoDB
+) ENGINE=InnoDB 
 
 CREATE TABLE `t2` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -593,7 +590,7 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
   <p class="copyright text-muted">
     Copyright 2021 Daniel Nichter
   </p>
-  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>

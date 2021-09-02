@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
   <title>3 Golang Channel Red Flags</title>
   <meta property="og:title" content="3 Golang Channel Red Flags" />
   <meta name="description" content="Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&rsquo;t close the channel isn&rsquo;t aware the channel is closed, so send and receive on the closed channel don&rsquo;t have the intended effect.">
@@ -17,9 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/post/three-golang-channel-red-flags/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-
-  <meta name="generator" content="Hugo 0.87.0" />
-  <link rel="canonical" href="https://hackmysql.com/post/three-golang-channel-red-flags/" />
+  <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/post/three-golang-channel-red-flags/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
@@ -42,99 +39,99 @@
 
     <div class="collapse navbar-collapse" id="main-navbar">
       <ul class="nav navbar-nav navbar-left">
-
-
+        
+          
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-
+                
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-
+                
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-
+                
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-
+                
                   <a href="/eng/career-advice/">Career Advice</a>
-
+                
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
-
+                
                   <a href="/eng/percentiles/">Percentiles</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-
+                
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-
+                
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-
+                
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-
+                
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-
+                
               </div>
             </li>
+          
+        
 
-
-
-
+        
       </ul>
     </div>
   </div>
 </nav>
 
-
+    
 <div class="container">
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main">
         <h1 class="post-title">3 Golang Channel Red Flags</h1>
-
+        
         <div class="post-meta">
-
-
+  
+  
   <div>Dec 16, 2018</div>
   <div class="blog-tags">
-
-
+    
+      
         <a href="/tags/golang">#golang</a>
-
+      
         <a href="/tags/channels">#channels</a>
-
+      
         <a href="/tags/sender-closer">#sender-closer</a>
-
+      
         <a href="/tags/design-pattern">#design pattern</a>
-
-
+      
+    
   </div>
 </div>
 
@@ -199,27 +196,27 @@ func gen(nums ...int) &lt;-chan int {
       </article>
       <hr>
       <ul class="pager blog-pager">
-
+        
           <li class="previous">
             <a href="https://hackmysql.com/post/component-based-software-design/" data-toggle="tooltip" data-placement="top" title="Component-based Software Design">&larr; </a>
           </li>
-
-
+        
+        
           <li class="next">
             <a href="https://hackmysql.com/post/three-golang-error-types/" data-toggle="tooltip" data-placement="top" title="3 Golang Error Types"> &rarr;</a>
           </li>
-
+        
       </ul>
 
-
-
+      
+        
           <div class="disqus-comments">
             <div id="disqus_thread"></div>
 <script type="application/javascript">
     var disqus_config = function () {
-
-
-
+    
+    
+    
     };
     (function() {
         if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
@@ -235,8 +232,8 @@ func gen(nums ...int) &lt;-chan int {
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
           </div>
-
-
+        
+      
     </div>
   </div>
 </div>
@@ -245,7 +242,7 @@ func gen(nums ...int) &lt;-chan int {
   <p class="copyright text-muted">
     Copyright 2021 Daniel Nichter
   </p>
-  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
