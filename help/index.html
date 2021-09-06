@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Help</title>
+  <meta property="og:title" content="Help" />
+  <meta name="description" content="Resources for MySQL This is my personal list of resources for MySQL. It&rsquo;s neither exhaustive nor official—there are more resources for MySQL than listed on this page. But I know and trust these resources due to my professional experience in the MySQL industry.
+You can trust the correctness and accuracy of whatever these resources say or write. However, everyone makes mistakes and MySQL is a vast and complicated subject that continues to evolve.">
+  <meta property="og:description" content="Resources for MySQL This is my personal list of resources for MySQL. It&rsquo;s neither exhaustive nor official—there are more resources for MySQL than listed on this page. But I know and trust these resources due to my professional experience in the MySQL industry.
+You can trust the correctness and accuracy of whatever these resources say or write. However, everyone makes mistakes and MySQL is a vast and complicated subject that continues to evolve.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/help/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/help/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+                
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+                
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+                
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+                
+                  <a href="/eng/career-advice/">Career Advice</a>
+                
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                
+                  <a href="/eng/percentiles/">Percentiles</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+                
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+                
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+                
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+                
+              </div>
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    
+<div class="container-fluid">
+  <div class="row">
+	  <div class="col-sm-4 col-sm-push-8">
+		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">Help</a></em><hr></nav>
+    </div>
+	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+		<article role="main" class="blog-post"><h1 id="resources-for-mysql">Resources for MySQL</h1>
+<p>This is my personal list of resources for MySQL.
+It&rsquo;s neither exhaustive nor official—there are more resources for MySQL than listed on this page.
+But I know and trust these resources due to my professional experience in the MySQL industry.</p>
+<p>You can trust the correctness and accuracy of whatever these resources say or write.
+However, everyone makes mistakes <em>and</em> MySQL is a vast and complicated subject that continues to evolve.
+Also, some resources are less relevant today than they were in the past, so adjust for time.
+For example, nobody runs MySQL 5.5 any longer, but you can still find mentions of that version.</p>
+<h2 id="mysql-manual">MySQL Manual</h2>
+<p>The <a href="https://dev.mysql.com/doc/refman/en/">MySQL Reference Manual</a> is the source of truth.
+Even MySQL experts rely on the manual and frequently read and reference it.
+RTFM is true tradition in the MySQL industry.</p>
+<h2 id="companies">Companies</h2>
+<p>
+<dl>
+<dt><a href="https://www.mysql.com/">Oracle</a></dt>
+<dd>Oracle develops and publishes MySQL.
+It also offers training, certification, consulting, and support.
+As the upstream source of MySQL, Oracle is authoritative for all MySQL information.</dd>
+</dl>
+</p>
+<p>
+<dl>
+<dt><a href="https://mariadb.org/">MariaDB</a></dt>
+<dd>Monty Widenius, the original author of MySQL, founded MariaDB to take MySQL development in a different direction.
+<em>MariaDB Server</em> started as fork of Oracle MySQL, and it&rsquo;s still compatible, but it has become different enough to become it&rsquo;s own distribution.</dd>
+</dl>
+</p>
+<p>
+<dl>
+<dt><a href="https://www.percona.com/">Percona</a></dt>
+<dd>Percona is a legend in the MySQL industry and still the most important independent company in the MySQL industry.
+<em>Percona Server</em> is a true fork of Oracle MySQL: it follows the upstream source code but adds a long list of performance enhancements and features.</dd>
+</dl>
+</p>
+<p>
+<dl>
+<dt><a href="https://pythian.com/">Pythian</a></dt>
+<dd>Pythian is an independent company that has been active in the MySQL industry for a long time.
+The scope of their services is much wider than MySQL, but they are known as experts in the MySQL industry, too.</dd>
+</dl>
+</p>
+<p>
+<dl>
+<dt><a href="https://fromdual.com/">FromDual</a></dt>
+<dd>FromDual provides independent consulting, support and, training for MariaDB and MySQL.
+It was founded by Oli Sennhauser, a long-time MySQL expert.</dd>
+</dl>
+</p>
+<h2 id="book-publishers">Book Publishers</h2>
+<p>Not all book publishers cover on MySQL.
+Moreover, I&rsquo;ve come across some MySQL books that do little more than rephrase the <a href="https://dev.mysql.com/doc/refman/en/">MySQL manual</a>—a waste of your time and money.</p>
+<p>These publishers print original and insightful works on MySQL:</p>
+<ul>
+<li><a href="https://www.oreilly.com/">O&rsquo;Reilly</a></li>
+<li><a href="https://www.apress.com/">Apress</a></li>
+<li><a href="https://pragprog.com/">Pragmatic Bookshelf</a></li>
+</ul>
+<h2 id="conferences">Conferences</h2>
+<p>I&rsquo;m sure engineers talk about MySQL at many conferences, but these are the conferences where MySQL is a focus:</p>
+<ul>
+<li><a href="https://www.percona.com/live/conferences">Percona Live</a></li>
+<li><a href="https://www.oracle.com/openworld/">Oracle Open World</a></li>
+<li><a href="https://mariadb.org/events/">MariaDB Events</a></li>
+<li><a href="https://fosdem.org/">FOSDEM</a></li>
+</ul>
+<p>You should definitely attend these conferences as often as you can.</p>
+<p>For more than 10 years, Percona Live (which took over the original O&rsquo;Reilly MySQL Conference &amp; Expo) was the event of the year in the MySQL industry.
+The COVID-19 pandemic caused all conferences to become virtual, but I sincerely hope that Percona Live can resume it&rsquo;s former glory in 2022 and beyond.</p>
+<h2 id="blogs">Blogs</h2>
+<p>Following are team/company blogs, not the personal blogs of MySQL experts. <a href="https://planet.mysql.com/">Planet MySQL</a> aggregates most MySQL blogs.</p>
+<ul>
+<li><a href="https://www.percona.com/blog/">Percona Database Performance Blog</a></li>
+<li><a href="https://percona.community/blog/">Percona Community Blog</a></li>
+<li><a href="https://mysqlhighavailability.com">MySQL High Availability</a></li>
+<li><a href="https://mysqlserverteam.com/">MySQL Server Blog</a></li>
+</ul>
+<h2 id="mysql-experts">MySQL Experts</h2>
+<p>There are significantly more MySQL experts in the world than listed here, but these MySQL experts are public and widely known as book authors, active bloggers, conference presenters, or open-source software contributors.
+Any material by these people is trustworthy.
+Remember: not all experts are still active in the MySQL industry, so check the date of any MySQL resource that you use.</p>
+<ul>
+<li>Aleksandr Kuzminsky</li>
+<li>Alexander Rubin</li>
+<li>Alexey Kopytov</li>
+<li>Baron Schwartz</li>
+<li>Bill Karwin</li>
+<li>Charity Majors</li>
+<li>Collin Charles</li>
+<li>Daniël van Eeden</li>
+<li>Derek Downey</li>
+<li>Domas Mitzus</li>
+<li>Emily Slocombe</li>
+<li>Erin O&rsquo;Neill</li>
+<li>Evan Elias</li>
+<li>Fernando Ipar</li>
+<li>Frédéric Descamps</li>
+<li>Gavin Towey</li>
+<li>Giuseppe Maxia</li>
+<li>Henrik Ingo</li>
+<li>Istvan Podor</li>
+<li>Ivan Groenewold</li>
+<li>Jay Pipes</li>
+<li>Jean-François Gangé</li>
+<li>Jenni Snyder</li>
+<li>Jeremy Cole</li>
+<li>Jeremy Tinley</li>
+<li>Jesper Wisborg Krogh</li>
+<li>Justin Swanhart</li>
+<li>Kaj Arnö</li>
+<li>Kenny Gryp</li>
+<li>Laurynas Biveinis</li>
+<li>Marc Lehmann</li>
+<li>Marco Tusa</li>
+<li>Marcos Albe</li>
+<li>Mark Callaghan</li>
+<li>Mark Leith</li>
+<li>Matt Lord</li>
+<li>Matt Ullmer</li>
+<li>Matt Yonkavit</li>
+<li>Michael Coburn</li>
+<li>Mike Benshoof</li>
+<li>Morgan Tocker</li>
+<li>Nilnandan Joshi</li>
+<li>Ovais Tariq</li>
+<li>Peter Boros</li>
+<li>Peter Zaitsev</li>
+<li>Pim van der Wal</li>
+<li>Raghavendra Prabhu</li>
+<li>René Cannaò</li>
+<li>Richard Burnison</li>
+<li>Rick James</li>
+<li>Rob Wultsch</li>
+<li>Roman Vynar</li>
+<li>Ronald Bradford</li>
+<li>Ryan Lowe</li>
+<li>Sheeri Cabral</li>
+<li>Shlmoi Noarch</li>
+<li>Silvia Botros</li>
+<li>Simon Mudd</li>
+<li>Stewart Smith</li>
+<li>Sugu Sougoumarane</li>
+<li>Sveta Smirnova</li>
+<li>Tim Vaillancourt</li>
+<li>Tom Krouper</li>
+<li>Troy Karraker</li>
+<li>Vadim Tkanchenko</li>
+<li>Valerii Kravchuk</li>
+<li>Will Gunty</li>
+<li>Yoshinori Matsunobu</li>
+<li>Yves Trudeau</li>
+</ul>
+</article>
+	</div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2021 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" defer></script>
+
+
+  </body>
+</html>
