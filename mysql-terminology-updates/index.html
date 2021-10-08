@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>MySQL Terminology Updates</title>
+  <meta property="og:title" content="MySQL Terminology Updates" />
+  <meta name="description" content="MySQL Terminology Updates This page reproduces the blog post &ldquo;MySQL Terminology Updates&rdquo; from the defunct web site https://mysqlhighavailability.com/mysql-terminology-updates/. The original page—written by Kenny Gryp on July 1, 2020—is quoted below.
+ It’s been 20 years since MySQL Replication was introduced in MySQL 3.23.15 (Released in May 2000). Since then, virtually every MySQL Database deployment in production has been using Replication in order to achieve high availability, disaster recovery, read scale out and various other purposes.">
+  <meta property="og:description" content="MySQL Terminology Updates This page reproduces the blog post &ldquo;MySQL Terminology Updates&rdquo; from the defunct web site https://mysqlhighavailability.com/mysql-terminology-updates/. The original page—written by Kenny Gryp on July 1, 2020—is quoted below.
+ It’s been 20 years since MySQL Replication was introduced in MySQL 3.23.15 (Released in May 2000). Since then, virtually every MySQL Database deployment in production has been using Replication in order to achieve high availability, disaster recovery, read scale out and various other purposes.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/mysql-terminology-updates/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/mysql-terminology-updates/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+                
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+                
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+                
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+                
+                  <a href="/eng/career-advice/">Career Advice</a>
+                
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                
+                  <a href="/eng/percentiles/">Percentiles</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+                
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+                
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+                
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+                
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+                
+              </div>
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    
+<div class="container-fluid">
+  <div class="row">
+	  <div class="col-sm-4 col-sm-push-8">
+		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">MySQL Terminology Updates</a></em><hr></nav>
+    </div>
+	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+		<article role="main" class="blog-post"><h1 id="mysql-terminology-updates">MySQL Terminology Updates</h1>
+<p>This page reproduces the blog post <a href="/mysql-terminology-updates.pdf">&ldquo;MySQL Terminology Updates&rdquo;</a> from the defunct web site <code>https://mysqlhighavailability.com/mysql-terminology-updates/</code>.
+The original page—written by Kenny Gryp on July 1, 2020—is quoted below.</p>
+<blockquote>
+<p>It’s been 20 years since MySQL Replication was introduced in MySQL 3.23.15 (Released in May 2000). Since then, virtually every MySQL Database deployment in production has been using Replication in order to achieve high availability, disaster recovery, read scale out and various other purposes.</p>
+<p>Anyone using MySQL Replication is familiar with the terms: “master” and “slave”. The origins of these words are negative. That is clear. At MySQL, we made the decision to change this terminology. Already, many of us have changed how we refer to these roles in blogposts and presentations — usually using terms like “prima- ry”, “secondary”, “source”, and “replica”. We have now started the process of changing the MySQL syntax in our source code and documentation to match this.
+Our latest products already rely on the use of Primary/Secondary to define dierent roles servers can have in the database architecture:</p>
+<ul>
+<li>MySQL Group Replication</li>
+<li>MySQL InnoDB Cluster</li>
+<li>MySQL InnoDB ReplicaSet</li>
+</ul>
+<p>The following terminology changes will be implemented in all MySQL products in upcoming releases:</p>
+<table>
+<thead>
+<tr>
+<th>Old</th>
+<th>New</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>master</td>
+<td>source</td>
+</tr>
+<tr>
+<td>slave</td>
+<td>replica</td>
+</tr>
+<tr>
+<td>blacklist</td>
+<td>blocklist</td>
+</tr>
+<tr>
+<td>whitelist</td>
+<td>allowlist</td>
+</tr>
+</tbody>
+</table>
+<p>Why was “source” chosen? MySQL Asynchronous Replication is a change stream. Each replication configura- tion has a source and does not imply what role a server should have in the overall database architecture. Therefore, the use of e.g. “primary” does not fit, especially when replication is used to build database archi- tectures topologies including bidirectional replication, multi-tiered replication, or even circular replication.</p>
+<p>It will take some time to make these changes. One quick way to remove some of the syntax would be to add aliases for the existing commands, e.g. SHOW SLAVE STATUS becoming SHOW REPLICA STATUS. That is not enough, many of these commands return results with column names that include the text “mas- ter” and “slave”.</p>
+<p>Completely removing the use of these legacy terminologies is a huge undertaking.</p>
+<p>To retain backwards compatibility, some of these terminologies need to be deprecated first and then later re- moved. It is important that we make the new syntax eg. SHOW REPLICA STATUS the recommended syn- tax and not merely an ‘alternative’ syntax.</p>
+<p>It is impossible to remove all references in one release. There are millions of deployments of MySQL we have to keep on supporting. It will take several iterations to deprecate and/or remove these terminologies from our syntax, protocol, error messages, source code&hellip;</p>
+<p>Earlier this week, the documentation team published the first phase of terminology changes in the MySQL 8.0 documentation.</p>
+<p>Training &amp; Certification and forthcoming MySQL product releases will incorporate gradual changes to the ter- minology as well.</p>
+<p>— The Oracle MySQL Team</p>
+</blockquote>
+</article>
+	</div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2021 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" defer></script>
+
+
+  </body>
+</html>
