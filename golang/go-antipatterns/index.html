@@ -21,7 +21,6 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
   <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/golang/go-antipatterns/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
@@ -72,6 +71,8 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
                 
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
                 
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
                   <a href="/eng/percentiles/">Percentiles</a>
                 
               </div>
@@ -120,12 +121,8 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
 </nav>
 
     
-<div class="container-fluid">
-  <div class="row">
-	  <div class="col-sm-4 col-sm-push-8">
-		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">Go Antipatterns</a></em><hr></nav>
-    </div>
-	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+<main>
+	<div id="art">
 		<article role="main" class="blog-post"><h1 id="go-antipatterns">Go Antipatterns</h1>
 <p>These Go lang antipatterns are inspired by <a href="https://pragprog.com/book/bksqla/sql-antipatterns">SQL Antipatterns</a>. Antipattern Go code is syntactically correct, but there&rsquo;s a better way that&rsquo;s both functionally equivalent and <a href="https://hackmysql.com/golang/idiomatic-go/">idiomatic</a>.</p>
 <p>These are guidelines not absolutes. For example, <a href="#generic-package">Generic Package</a> is common in practice and often difficult to avoid. Spending significant time trying to rename a <code>util</code> package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</p>
@@ -418,8 +415,41 @@ import (
 <p>A package provides functionality around a logical and isolated part of the system. &ldquo;What can pkg X do?&rdquo; is the question we ask of that part. &ldquo;How we do X&rdquo; is an implementation detail that&rsquo;s leaked by generic package names. Of course, naming things is difficult, and generic packages are common, but we should nonetheless attempt to clarify their purpose and place in the app with a more domain-specific package name.</p>
 </article>
 	</div>
-  </div>
-</div>
+	<nav id="toc">
+		<em><a href="#">Go Antipatterns</a></em>
+		<hr>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#critical">Critical</a>
+      <ul>
+        <li><a href="#writable-read-only-value">Writable Read-only Value</a></li>
+        <li><a href="#promiscuous-interface">Promiscuous Interface</a></li>
+        <li><a href="#labyrinthine-structure">Labyrinthine Structure</a></li>
+        <li><a href="#hidden-goroutine">Hidden Goroutine</a></li>
+        <li><a href="#new-and-do">New and Do</a></li>
+        <li><a href="#guarded-channel">Guarded Channel</a></li>
+        <li><a href="#opaque-error">Opaque Error</a></li>
+      </ul>
+    </li>
+    <li><a href="#important">Important</a>
+      <ul>
+        <li><a href="#superfluous-function">Superfluous Function</a></li>
+        <li><a href="#superfluous-structure">Superfluous Structure</a></li>
+        <li><a href="#transient-argument">Transient Argument</a></li>
+        <li><a href="#runaway-arguments">Runaway Arguments</a></li>
+        <li><a href="#type-hiding">Type Hiding</a></li>
+      </ul>
+    </li>
+    <li><a href="#stylistic">Stylistic</a>
+      <ul>
+        <li><a href="#c-style-pointer">C-style Pointer</a></li>
+        <li><a href="#generic-package">Generic Package</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+	</nav>
+</main>
 
     <footer>
   <p class="copyright text-muted">

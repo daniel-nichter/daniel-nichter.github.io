@@ -19,7 +19,6 @@
   <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/mysql-password-rotation-lambda/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
@@ -70,6 +69,8 @@
                 
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
                 
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
                   <a href="/eng/percentiles/">Percentiles</a>
                 
               </div>
@@ -118,12 +119,8 @@
 </nav>
 
     
-<div class="container-fluid">
-  <div class="row">
-	  <div class="col-sm-4 col-sm-push-8">
-		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">MySQL Password Rotation with AWS Secrets Manager and Lambda</a></em><hr></nav>
-    </div>
-	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+<main>
+	<div id="art">
 		<article role="main" class="blog-post"><h1 id="mysql-password-rotation-with-aws-secrets-manager-and-lambda">MySQL Password Rotation with AWS Secrets Manager and Lambda</h1>
 <p>MySQL password rotation using <a href="https://aws.amazon.com/rds/mysql/">Amazon RDS for MySQL</a>, <a href="https://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a>, and <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and <a href="https://www.terraform.io/">Terraform</a> for cloud infrastructure.</p>
 <h2 id="high-level-overview">High-level Overview</h2>
@@ -834,8 +831,59 @@ resource &quot;time_sleep&quot; &quot;wait-for-password-rotation&quot; {
 <p>Database password rotation is very important and should be implemented for every database, especially databases in the cloud. Hopefully this page makes it a lot easier for you to implement password rotation in your environment.</p>
 </article>
 	</div>
-  </div>
-</div>
+	<nav id="toc">
+		<em><a href="#">MySQL Password Rotation with AWS Secrets Manager and Lambda</a></em>
+		<hr>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#high-level-overview">High-level Overview</a>
+      <ul>
+        <li><a href="#aws-services">AWS Services</a></li>
+        <li><a href="#separation-of-work">Separation of Work</a></li>
+        <li><a href="#default-password-rotation-lambda">Default Password Rotation Lambda</a></li>
+      </ul>
+    </li>
+    <li><a href="#requirements">Requirements</a>
+      <ul>
+        <li><a href="#1-rotate-mysql-57-passwords">1. Rotate MySQL 5.7 passwords</a></li>
+        <li><a href="#2-same-user-single-password-rotation">2. Same user, single password rotation</a></li>
+        <li><a href="#3-zero-knowledge-passwords">3. Zero knowledge passwords</a></li>
+        <li><a href="#4-run-in-vpc">4. Run in VPC</a></li>
+        <li><a href="#5-tls-connections-required">5. TLS connections required</a></li>
+        <li><a href="#6-one-password-per-user">6. One password per user</a></li>
+        <li><a href="#7-parallel-rotations">7. Parallel rotations</a></li>
+        <li><a href="#8-retry-and-rollback">8. Retry and rollback</a></li>
+        <li><a href="#9-handle-secrets-in-limbo">9. Handle secrets in limbo</a></li>
+        <li><a href="#10-manually-invoked-rotation">10. Manually invoked rotation</a></li>
+        <li><a href="#11-code-unit-tests">11. Code unit tests</a></li>
+        <li><a href="#12-thorough-logging-and-debug">12. Thorough logging and debug</a></li>
+        <li><a href="#13-fully-automated">13. Fully Automated</a></li>
+      </ul>
+    </li>
+    <li><a href="#technical-problems-and-solutions">Technical Problems and Solutions</a>
+      <ul>
+        <li><a href="#failed-rotation-and-staging-labels">Failed Rotation and Staging Labels</a></li>
+        <li><a href="#manually-invoke-lambda">Manually Invoke Lambda</a></li>
+        <li><a href="#lambda-concurrency">Lambda Concurrency</a></li>
+        <li><a href="#testing">Testing</a></li>
+        <li><a href="#default-provision-password-dpp">Default Provision Password (DPP)</a></li>
+        <li><a href="#initial-password-rotation-ipr">Initial Password Rotation (IPR)</a></li>
+        <li><a href="#deleted-secrets-are-kept-and-hidden">Deleted Secrets Are Kept and Hidden</a></li>
+        <li><a href="#mysql-driver">MySQL Driver</a></li>
+      </ul>
+    </li>
+    <li><a href="#terraform">Terraform</a>
+      <ul>
+        <li><a href="#iam-role-and-policies">IAM Role and Policies</a></li>
+        <li><a href="#lambda-function">Lambda Function</a></li>
+        <li><a href="#secrets-manager">Secrets Manager</a></li>
+      </ul>
+    </li>
+    <li><a href="#summary">Summary</a></li>
+  </ul>
+</nav>
+	</nav>
+</main>
 
     <footer>
   <p class="copyright text-muted">

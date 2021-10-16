@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Database Operations Manual</title>
+  <meta property="og:title" content="Database Operations Manual" />
+  <meta name="description" content="Database Operations Manual Running a database is easy, especially in the cloud, but operating a database is complicated. This page outlines operational aspects (OA) required to operate a database in production, at scale.
+Last updated: October 16, 2021
+1. Security Security is the first priority: nothing else matters if the database is compromised. It is better for a database to be offline than hacked. Security permeates every operational aspects (OA), but these OA address the most critical aspects, like root (super) access and encryption.">
+  <meta property="og:description" content="Database Operations Manual Running a database is easy, especially in the cloud, but operating a database is complicated. This page outlines operational aspects (OA) required to operate a database in production, at scale.
+Last updated: October 16, 2021
+1. Security Security is the first priority: nothing else matters if the database is compromised. It is better for a database to be offline than hacked. Security permeates every operational aspects (OA), but these OA address the most critical aspects, like root (super) access and encryption.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/eng/database-operations-manual/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/eng/database-operations-manual/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+                
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+                
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+                
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+                
+                  <a href="/eng/career-advice/">Career Advice</a>
+                
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
+                  <a href="/eng/percentiles/">Percentiles</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+                
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+                
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+                
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+                
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+                
+              </div>
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    
+<main>
+	<div id="art">
+		<article role="main" class="blog-post"><h1 id="database-operations-manual">Database Operations Manual</h1>
+<p>Running a database is easy, especially in the cloud, but operating a database is complicated.
+This page outlines <em>operational aspects</em> (OA) required to operate a database in production, at scale.</p>
+<p><small>Last updated: October 16, 2021</small></p>
+<h2 id="1-security">1. Security</h2>
+<p>Security is the first priority: nothing else matters if the database is compromised.
+It is better for a database to be offline than hacked.
+Security permeates every operational aspects (OA), but these OA address the most critical aspects, like root (super) access and encryption.</p>
+<h3 id="11-root-access">1.1. Root Access</h3>
+<ul>
+<li>Who has access as root / super / with all privileges?</li>
+<li>How is root access controlled?</li>
+<li>From where does root access originate?</li>
+<li>How can root access be reset?</li>
+</ul>
+<h3 id="12-accounts">1.2. Accounts</h3>
+<ul>
+<li>What are each user account, privileges, and purpose?</li>
+<li>From where do user accounts originate?</li>
+<li>What keeps user accounts in sync, updated, correct?</li>
+<li>Does anything audit user accounts?</li>
+<li>Is user account access logged/audited?</li>
+</ul>
+<h3 id="13-certificates">1.3. Certificates</h3>
+<ul>
+<li>Who issues the certificate (certs)?</li>
+<li>How are the certs issued?</li>
+<li>How are (certs) used: connection, user auth, etc.?</li>
+<li>How are the certs updated/rotated?</li>
+</ul>
+<h3 id="14-encryption">1.4. Encryption</h3>
+<ul>
+<li>Who issues the keys?</li>
+<li>How are the keys issued?</li>
+<li>How are the keys used: encryption at rest, database-level encryption, etc.?</li>
+<li>How are the keys updated/rotated?</li>
+</ul>
+<h3 id="15-compliance-and-controls">1.5. Compliance and Controls</h3>
+<ul>
+<li>Which compliance/regulations (if any) should DBAs be aware of?</li>
+<li>How do compliance/regulations affect operations (“ops”)?</li>
+<li>What controls exists (if any) that affect ops, and how?</li>
+<li>What can we not do/are not allowed to do?</li>
+</ul>
+<hr>
+<h2 id="2-data-consistency">2. Data Consistency</h2>
+<p>Data consistency is the second priority: nothing else matters if the data is wrong.
+It is better for a database to be offline than to serve bad data.
+Moreover, data moves very fast, so data corruption can grow or affect other systems quickly, too.
+Prevent at all cost and stop everything if discovered.
+The risk is presumed to be inherent to operations and human error, not the database.</p>
+<h3 id="21-read-only">2.1. Read-only</h3>
+<ul>
+<li>How are non-writable instances kept in read-only mode?</li>
+<li>How does the writable instance become read-only and vice versa?</li>
+<li>How do we monitor and alert that only one instance is writable?</li>
+<li>Does read-only prevent the super user from writing?</li>
+</ul>
+<h3 id="22-verification">2.2. Verification</h3>
+<ul>
+<li>How can data consistency be verified?</li>
+<li>When is data consistency verified?</li>
+<li>How is data inconsistency corrected?</li>
+</ul>
+<hr>
+<h2 id="3-instance">3. Instance</h2>
+<p>Instance refers to the low-level database server instance: the running binary providing the port.
+In the cloud, many of these OA are not applicable: we pay the cloud provider to handle them.
+Otherwise, they are a significant consideration because it’s a lot of work simply to make and maintain a compute instance on which the database server binary can run.</p>
+<h3 id="31-hardware">3.1. Hardware</h3>
+<ul>
+<li>From where does hardware originate?</li>
+<li>How is free hardware found/selected/reserved?</li>
+<li>How is free hardware allocated/provisioned?</li>
+<li>Who is responsible for hardware issues?</li>
+<li>Who is responsible for firmware/BIOS upgrades?</li>
+<li>Is the storage locally-attached or network-attached?</li>
+<li>What are the hardware specs?</li>
+</ul>
+<h3 id="32-compute">3.2. Compute</h3>
+<ul>
+<li>From where does the base operating system originate?</li>
+<li>Who is responsible for its compatibility with the hardware?</li>
+<li>Who installs it on the hardware?</li>
+<li>Who maintains its lifecycle on the hardware?</li>
+</ul>
+<h3 id="33-scale">3.3. Scale</h3>
+<ul>
+<li>How does hardware scale up or down?</li>
+<li>Which parts are scalable: CPU, memory, storage, network?</li>
+<li>How long does scaling up/down take?</li>
+</ul>
+<h3 id="34-roles">3.4. Roles</h3>
+<ul>
+<li>Which instance roles exist, like read replicas, if any?</li>
+<li>In what ways do roles differ from regular instances?</li>
+<li>Which roles can become regular instances, and vice versa?</li>
+<li>Which roles are user-facing or internal?</li>
+</ul>
+<hr>
+<h2 id="4-lifecycle">4. Lifecycle</h2>
+<p>Lifecycle refers to the most basic and universal OA for a database instance from provision to decommission.
+Sometimes, we provision a database and never hear or think about it again until the engineers decommission it.
+That’s possible but unlikely: most databases experience failures and come to our attention for other OA.
+But a databases dream of a simple life.</p>
+<h3 id="41-configure">4.1. Configure</h3>
+<ul>
+<li>Where is the base configuration?</li>
+<li>Can the base configuration be modified?</li>
+<li>How are configuration changes applied?</li>
+<li>Has an expert reviewed the configuration for performance and best practices?</li>
+</ul>
+<h3 id="42-provision">4.2. Provision</h3>
+<ul>
+<li>How is a database instance (or cluster of instances) provisioned?</li>
+<li>What pre- and post-provision checks, tasks, etc. are necessary?</li>
+<li>How is the final provisioned instance (or cluster) verified?</li>
+<li>How is the provisioned instance (or cluster) added to instance tracking (8.1)?</li>
+</ul>
+<h3 id="43-upgrade">4.3. Upgrade</h3>
+<ul>
+<li>How are minor and major version upgrades performed?</li>
+<li>How are upgrades tested before production?</li>
+<li>Is there downtime, or a maintenance window?</li>
+<li>Can upgrades roll back to the previous version?</li>
+<li>What is the upgrade cadence?</li>
+</ul>
+<h3 id="44-decommission">4.4. Decommission</h3>
+<ul>
+<li>How is a database instance (or cluster) decommissioned?</li>
+<li>Is there a final backup?</li>
+<li>How are external pieces (e.g. crypto keys) removed?</li>
+<li>How is instance tracking (8.1) updated?</li>
+</ul>
+<hr>
+<h2 id="5-availability">5. Availability</h2>
+<p>Availability refers to everything we do to make the database highly available and reduce downtime when, inevitably, something fails.</p>
+<h3 id="51-uptime-sla">5.1. Uptime SLA</h3>
+<ul>
+<li>What is the uptime SLA?</li>
+<li>How is this measured and reported?</li>
+<li>Does this apply to all instances, or just the writable instance?</li>
+<li>Does this apply to maintenance windows (if any)?</li>
+</ul>
+<h3 id="52-high-availability">5.2. High Availability</h3>
+<ul>
+<li>What is the basis (design) of the high availability setup?</li>
+<li>Are all instances (or clusters) highly available?</li>
+<li>Do we optimize for recovery time (RTO) or recovery point (RPO)?</li>
+<li>How many instances can fail (or be offline) before high availability is lost?</li>
+</ul>
+<h3 id="53-failover">5.3. Failover</h3>
+<ul>
+<li>How do we failover when the writable instance fails?</li>
+<li>How long does failover take?</li>
+<li>What is the typical or expect impact to applications during failover?</li>
+<li>At which network layers does failover operate?</li>
+<li>Does (or when does) failover rely on DNS changes?</li>
+<li>How does replication lag (if any) factor into failover?</li>
+<li>Are failovers automatic (by a service) or manual (by a DBA)?</li>
+<li>How is the standby (new writable) instance chosen?</li>
+<li>Does the standby use separate storage or shared network-attached storage?</li>
+<li>Can we fail back if the original (failed) instance is recovered?</li>
+</ul>
+<h3 id="53-multi-region-dr">5.3. Multi-Region DR</h3>
+<ul>
+<li>Is the cluster multi-region?</li>
+<li>How is the active region determined?</li>
+<li>How does everything in 5.3. Failover apply to DR failovers?</li>
+</ul>
+<h3 id="54-active-active">5.4. Active-Active</h3>
+<ul>
+<li>Does the cluster have multiple writable instances?</li>
+<li>How does 5.3. Failover work?</li>
+<li>Can the cluster revert (or degrade) to a single writable instance?</li>
+<li>Are there any quorum or consensus requirements or considerations?</li>
+</ul>
+<h3 id="55-clone">5.5. Clone</h3>
+<ul>
+<li>When an instance in the cluster fails, how is a new instance cloned to take its place?</li>
+<li>Does cloning rely on/work by restoring the latest backup?</li>
+<li>What order of time (hours, days, etc.) is required to clone a new instance?</li>
+</ul>
+<hr>
+<h2 id="6-observability">6. Observability</h2>
+<p>Observability refers to logs, metrics, and everything DBAs and engineers literally see with respect to database health and performance.
+Observability determines alerting because, usually, nobody looks at the database until there’s a problem.</p>
+<h3 id="61-server-metrics">6.1. Server Metrics</h3>
+<ul>
+<li>How are metrics collected from the database server?</li>
+<li>What is the collection resolution (frequency)?</li>
+<li>To where are server metrics reported?</li>
+<li>Are server metrics comprehensive or general?</li>
+<li>What is the retention of server metrics?</li>
+</ul>
+<h3 id="62-monitoring">6.2. Monitoring</h3>
+<ul>
+<li>What is the monitoring (graphing and visualization) product?</li>
+<li>Which dashboard, graphs, etc. are authoritative?</li>
+<li>How are the authoritative dashboards, graphs, etc. created and maintained?</li>
+<li>How are server metrics separated by database, cluster, application, etc.?</li>
+</ul>
+<h3 id="63-alerting">6.3. Alerting</h3>
+<ul>
+<li>What are all the alerts?</li>
+<li>Which alerts page the database/application owners?</li>
+<li>Which alerts page the DBAs?</li>
+<li>Which alerts page 24x7 verses business hours?</li>
+<li>How are alerts created and maintained?</li>
+<li>How can application owners customize alerts?</li>
+</ul>
+<h3 id="64-query-metrics">6.4. Query Metrics</h3>
+<ul>
+<li>How are query metrics collected?</li>
+<li>What is the collection resolution (frequency)?</li>
+<li>To where are server metrics reported?</li>
+<li>What is the retention of query metrics?</li>
+<li>How is query data redacted/anonymized?</li>
+</ul>
+<h3 id="65-logs">6.5. Logs</h3>
+<ul>
+<li>How and where are server logs (including stdout and stderr) collected?</li>
+<li>How are logs rotated?</li>
+<li>What is the retention of logs?</li>
+<li>Does InfoSec need to scan the logs?</li>
+<li>Is there a specific log for access logging/auditing?</li>
+</ul>
+<hr>
+<h2 id="7-developer-experience">7. Developer Experience</h2>
+<h3 id="71-management">7.1. Management</h3>
+<ul>
+<li>How and where do users (engineers) manage their databases?</li>
+<li>How are users authenticated and authorized?</li>
+<li>Which OA can they manage or affect?</li>
+</ul>
+<h3 id="72-app-connection">7.2. App Connection</h3>
+<ul>
+<li>How does the application connect to the database?</li>
+<li>What creates and maintains the data source (if any)?</li>
+<li>How does the application authenticate?</li>
+<li>How are application credentials updated/rotated?</li>
+</ul>
+<h3 id="73-human-connection">7.3. Human Connection</h3>
+<ul>
+<li>How do humans (users and DBAs) connect to the database?</li>
+<li>How are humans authenticated and authorized?</li>
+<li>What is the mapping of human users to database user accounts?</li>
+<li>How are hunan credentials updated/rotated?</li>
+<li>Can humans connect directly from their laptop/work machine?</li>
+<li>Does the database CLI work as expected (e.g. with pipes and redirects)?</li>
+</ul>
+<h3 id="74-online-schema-change">7.4. Online Schema Change</h3>
+<ul>
+<li>How do users change database schemas, including indexes?</li>
+<li>Can the OSC tool pause and retry (for really long runs)?</li>
+</ul>
+<hr>
+<h2 id="8-data-infrastructure">8. Data Infrastructure</h2>
+<h3 id="81-instance-tracking">8.1. Instance Tracking</h3>
+<ul>
+<li>How are database instanced tracked?</li>
+<li>Is the tracking system available to all engineers?</li>
+<li>Is the tracking system available to all services?</li>
+<li>Which DBA tools and services depend on the tracking service?</li>
+</ul>
+<h3 id="82-change-data-capture-cdc">8.2. Change Data Capture (CDC)</h3>
+<ul>
+<li>How are database changes exposed outside the server?</li>
+<li>Are changes streaming (real-time)?</li>
+<li>Which external services consume the changes?</li>
+<li>How does change stream consumption affect other OA?</li>
+</ul>
+<h3 id="83-cross-app-access">8.3. Cross-app Access</h3>
+<ul>
+<li>Do other applications access the database?</li>
+<li>Does cross-app access ues special roles or other mechanisms?</li>
+<li>How does cross-app access affect other OA?</li>
+</ul>
+<hr>
+<h2 id="9-backup-and-restore">9. Backup and Restore</h2>
+<h3 id="91-backup">9.1. Backup</h3>
+<ul>
+<li>How do backups work?</li>
+<li>When do backups run?</li>
+<li>Are backups encrypted when made?</li>
+<li>Are backups used for cloning (5.5)?</li>
+</ul>
+<h3 id="92-storage-and-retention">9.2. Storage and Retention</h3>
+<ul>
+<li>Where are backups created and/or stored?</li>
+<li>Do backups move/transition to other places (e.g. S3)?</li>
+<li>Are backups encrypted differently when/where stored?</li>
+<li>What is the backup retention policy?</li>
+<li>How is retention managed?</li>
+<li>Does retention vary by application?</li>
+<li>Can users change the retention?</li>
+</ul>
+<h3 id="93-restore">9.3. Restore</h3>
+<ul>
+<li>How are backups restored?</li>
+<li>Who can restore backups?</li>
+<li>Which encryption keys are needed to restore a backup?</li>
+<li>How long does restoring a backup generally take?</li>
+<li>Is restoring tested regularly?</li>
+<li>Does compliance (1.5) require periodic restoring?</li>
+</ul>
+<hr>
+<h2 id="10-cost">10. Cost</h2>
+<p>Cost refers to money: database aren’t free. They’re quite expensive, actually.</p>
+<ul>
+<li>From which budget does the database cost subtract?</li>
+<li>How are database costs approved?</li>
+<li>How are database costs calculated and reported?</li>
+</ul>
+</article>
+	</div>
+	<nav id="toc">
+		<em><a href="#">Database Operations Manual</a></em>
+		<hr>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-security">1. Security</a>
+      <ul>
+        <li><a href="#11-root-access">1.1. Root Access</a></li>
+        <li><a href="#12-accounts">1.2. Accounts</a></li>
+        <li><a href="#13-certificates">1.3. Certificates</a></li>
+        <li><a href="#14-encryption">1.4. Encryption</a></li>
+        <li><a href="#15-compliance-and-controls">1.5. Compliance and Controls</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-data-consistency">2. Data Consistency</a>
+      <ul>
+        <li><a href="#21-read-only">2.1. Read-only</a></li>
+        <li><a href="#22-verification">2.2. Verification</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-instance">3. Instance</a>
+      <ul>
+        <li><a href="#31-hardware">3.1. Hardware</a></li>
+        <li><a href="#32-compute">3.2. Compute</a></li>
+        <li><a href="#33-scale">3.3. Scale</a></li>
+        <li><a href="#34-roles">3.4. Roles</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-lifecycle">4. Lifecycle</a>
+      <ul>
+        <li><a href="#41-configure">4.1. Configure</a></li>
+        <li><a href="#42-provision">4.2. Provision</a></li>
+        <li><a href="#43-upgrade">4.3. Upgrade</a></li>
+        <li><a href="#44-decommission">4.4. Decommission</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-availability">5. Availability</a>
+      <ul>
+        <li><a href="#51-uptime-sla">5.1. Uptime SLA</a></li>
+        <li><a href="#52-high-availability">5.2. High Availability</a></li>
+        <li><a href="#53-failover">5.3. Failover</a></li>
+        <li><a href="#53-multi-region-dr">5.3. Multi-Region DR</a></li>
+        <li><a href="#54-active-active">5.4. Active-Active</a></li>
+        <li><a href="#55-clone">5.5. Clone</a></li>
+      </ul>
+    </li>
+    <li><a href="#6-observability">6. Observability</a>
+      <ul>
+        <li><a href="#61-server-metrics">6.1. Server Metrics</a></li>
+        <li><a href="#62-monitoring">6.2. Monitoring</a></li>
+        <li><a href="#63-alerting">6.3. Alerting</a></li>
+        <li><a href="#64-query-metrics">6.4. Query Metrics</a></li>
+        <li><a href="#65-logs">6.5. Logs</a></li>
+      </ul>
+    </li>
+    <li><a href="#7-developer-experience">7. Developer Experience</a>
+      <ul>
+        <li><a href="#71-management">7.1. Management</a></li>
+        <li><a href="#72-app-connection">7.2. App Connection</a></li>
+        <li><a href="#73-human-connection">7.3. Human Connection</a></li>
+        <li><a href="#74-online-schema-change">7.4. Online Schema Change</a></li>
+      </ul>
+    </li>
+    <li><a href="#8-data-infrastructure">8. Data Infrastructure</a>
+      <ul>
+        <li><a href="#81-instance-tracking">8.1. Instance Tracking</a></li>
+        <li><a href="#82-change-data-capture-cdc">8.2. Change Data Capture (CDC)</a></li>
+        <li><a href="#83-cross-app-access">8.3. Cross-app Access</a></li>
+      </ul>
+    </li>
+    <li><a href="#9-backup-and-restore">9. Backup and Restore</a>
+      <ul>
+        <li><a href="#91-backup">9.1. Backup</a></li>
+        <li><a href="#92-storage-and-retention">9.2. Storage and Retention</a></li>
+        <li><a href="#93-restore">9.3. Restore</a></li>
+      </ul>
+    </li>
+    <li><a href="#10-cost">10. Cost</a></li>
+  </ul>
+</nav>
+	</nav>
+</main>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2021 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" defer></script>
+
+
+  </body>
+</html>

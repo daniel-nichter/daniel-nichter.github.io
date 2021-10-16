@@ -19,7 +19,6 @@
   <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/eng/cli-antipatterns/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
@@ -70,6 +69,8 @@
                 
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
                 
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
                   <a href="/eng/percentiles/">Percentiles</a>
                 
               </div>
@@ -118,12 +119,8 @@
 </nav>
 
     
-<div class="container-fluid">
-  <div class="row">
-	  <div class="col-sm-4 col-sm-push-8">
-		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">Command-line Interface Antipatterns</a></em><hr></nav>
-    </div>
-	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+<main>
+	<div id="art">
 		<article role="main" class="blog-post"><h1 id="command-line-interface-antipatterns">Command-line Interface Antipatterns</h1>
 <p>Apps (web, mobile, and native) and APIs do not lessen the need or importance of command-line tools. A beautifully designed command-line user experience is arguably more important and than a graphical UX because the command line is deceptively simple: text on a screen. Wielding mere text on screen is an art akin to wielding mere paint on canvas. This page documents what I believe to be command-line interface (CLI) antipatterns which, in the long or short run, detract from both UX and developer effectiveness.</p>
 <h2 id="car-tree">Car-Tree</h2>
@@ -183,8 +180,19 @@ $ echo $?
 <p>Rather than <code>--verbose</code>, the developer probably wants log levels, for which there are standards, like <a href="https://en.wikipedia.org/wiki/Syslog#Severity_level">syslog severity levels</a> and others.</p>
 </article>
 	</div>
-  </div>
-</div>
+	<nav id="toc">
+		<em><a href="#">Command-line Interface Antipatterns</a></em>
+		<hr>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#car-tree">Car-Tree</a></li>
+    <li><a href="#poor-standards">Poor Standards</a></li>
+    <li><a href="#--quiet">&ndash;quiet</a></li>
+    <li><a href="#--verbose">&ndash;verbose</a></li>
+  </ul>
+</nav>
+	</nav>
+</main>
 
     <footer>
   <p class="copyright text-muted">

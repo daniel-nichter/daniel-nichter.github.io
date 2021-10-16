@@ -2,16 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/tags/database/</loc>
+    <lastmod>2021-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/eng/database-operations-manual/</loc>
+    <lastmod>2021-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/eng/</loc>
+    <lastmod>2021-10-16T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/</loc>
-    <lastmod>2021-10-08T16:06:00-04:00</lastmod>
+    <lastmod>2021-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/ops/</loc>
+    <lastmod>2021-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2021-10-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/mysql/</loc>
     <lastmod>2021-10-08T16:06:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/mysql-terminology-updates/</loc>
-    <lastmod>2021-10-08T16:06:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2021-10-08T16:06:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/help/</loc>
@@ -39,9 +51,6 @@
     <lastmod>2021-07-26T15:40:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/eng/career-advice/</loc>
-    <lastmod>2021-04-12T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/eng/</loc>
     <lastmod>2021-04-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/mysql-select-and-sort/</loc>
@@ -232,9 +241,6 @@
   </url><url>
     <loc>https://hackmysql.com/post/bootloader-design-pattern/</loc>
     <lastmod>2018-02-04T19:30:00-07:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/database/</loc>
-    <lastmod>2018-01-28T11:20:00-07:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/database-scalability-contention-and-crosstalk/</loc>
     <lastmod>2018-01-28T11:20:00-07:00</lastmod>

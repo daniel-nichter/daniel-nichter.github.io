@@ -19,7 +19,6 @@
   <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/mysql-select-and-sort/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
@@ -70,6 +69,8 @@
                 
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
                 
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
                   <a href="/eng/percentiles/">Percentiles</a>
                 
               </div>
@@ -118,12 +119,8 @@
 </nav>
 
     
-<div class="container-fluid">
-  <div class="row">
-	  <div class="col-sm-4 col-sm-push-8">
-		<nav id="toc" data-spy="affix" data-toggle="toc"><em><a href="#">MySQL Select and Sort Status Variables</a></em><hr></nav>
-    </div>
-	<div class="col-sm-8 col-sm-pull-4" id="page-content">
+<main>
+	<div id="art">
 		<article role="main" class="blog-post"><h1 id="mysql-select-and-sort-status-variables">MySQL Select and Sort Status Variables</h1>
 <p>This page is a reboot of the original written 15 years ago in 2005. Back then, I must have been using MySQL 4.1 or 5.0. Today, I am using MySQL 8.0.22. A lot changed in MySQL from 4.1 to 8.0, but it still has the same <code>Select_%</code> and <code>Sort_%</code> status variables which are equally important today in 2021. Let&rsquo;s examine them in greater detail and with better examples.</p>
 <p>The MySQL <code>Select_%</code> and <code>Sort_%</code> status variables (metrics) are:</p>
@@ -591,8 +588,32 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
 <p><code>Sort_rows</code> is the total number of rows sorted. The value is usually so high that it is nearly meaningless, even as a rate (rows sorted/second). If necessary, monitor the rate and watch for unexpected changes.</p>
 </article>
 	</div>
-  </div>
-</div>
+	<nav id="toc">
+		<em><a href="#">MySQL Select and Sort Status Variables</a></em>
+		<hr>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#select">Select</a>
+      <ul>
+        <li><a href="#select_scan">Select_scan</a></li>
+        <li><a href="#select_range">Select_range</a></li>
+        <li><a href="#select_full_join">Select_full_join</a></li>
+        <li><a href="#select_full_range_join">Select_full_range_join</a></li>
+        <li><a href="#select_range_check">Select_range_check</a></li>
+      </ul>
+    </li>
+    <li><a href="#sort">Sort</a>
+      <ul>
+        <li><a href="#sort_scan">Sort_scan</a></li>
+        <li><a href="#sort_range">Sort_range</a></li>
+        <li><a href="#sort_merge_passes">Sort_merge_passes</a></li>
+        <li><a href="#sort_rows">Sort_rows</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+	</nav>
+</main>
 
     <footer>
   <p class="copyright text-muted">
