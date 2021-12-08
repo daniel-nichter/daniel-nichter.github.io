@@ -2,6 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2021-12-08T09:00:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
+    <lastmod>2021-12-08T09:00:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/mysql-transaction-reporting/</loc>
+    <lastmod>2021-12-08T09:00:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2021-12-08T09:00:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/trx/</loc>
+    <lastmod>2021-12-08T09:00:00-05:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/tags/database/</loc>
     <lastmod>2021-10-16T00:00:00+00:00</lastmod>
   </url><url>
@@ -11,17 +26,8 @@
     <loc>https://hackmysql.com/eng/</loc>
     <lastmod>2021-10-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2021-10-16T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://hackmysql.com/tags/ops/</loc>
     <lastmod>2021-10-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
-    <lastmod>2021-10-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2021-10-08T16:06:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/mysql-terminology-updates/</loc>
     <lastmod>2021-10-08T16:06:00-04:00</lastmod>
