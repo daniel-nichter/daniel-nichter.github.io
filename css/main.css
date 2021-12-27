@@ -32,14 +32,6 @@ hr.small {
   border-radius: 3px;
 }
 
-.main-content {
-  padding-top: 0px;
-}
-
-.main-explain-area {
-  padding: 15px inherit;
-}
-
 .hideme {
   display: none;
 }
@@ -190,8 +182,6 @@ img::-moz-selection {
   }
 }
 
-/* --- Footer --- */
-
 footer {
   padding: 5px;
   background: #F5F5F5;
@@ -215,8 +205,6 @@ footer img {
   margin: auto;
 }
 
-/* --- Post preview --- */
-
 .post-title {
   font-weight: 700;
   font-size: 30px;
@@ -232,31 +220,29 @@ footer img {
 .post-preview {
   padding: 0;
   border-bottom: 2px solid #eee;
-  padding-bottom: 25px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
-
 .post-preview:last-child {
   border-bottom: none;
   padding-bottom: 0;
   margin-bottom: 0;
 }
-
 .post-preview a {
   text-decoration: none;
   color: #404040;
 }
-
 .post-preview a:focus,
 .post-preview a:hover {
   text-decoration: none;
   color: #0085a1;
 }
-
 .post-preview .post-read-more {
   color: #008AAA;
   font-weight: 700;
   float: right;
+  margin-top:10px;
+}
+.post-preview .post-meta {
   margin-top:10px;
 }
 
@@ -264,7 +250,7 @@ footer img {
   color: #808080;
   font-size: 14px;
   font-style: italic;
-  margin: 0 0 10px;
+  margin: 0 0 20px;
 }
 
 .post-meta a {
@@ -272,13 +258,14 @@ footer img {
   text-decoration: none;
 }
 
-.post-preview .post-meta {
-  margin-top:10px;
-}
 
 .post-entry {
   display: block;
   width: 100%;
+}
+
+.post-entry p a {
+  color: #008AFF;
 }
 
 .post-image {
@@ -300,13 +287,11 @@ footer img {
 div.blog-tags {
   margin: 0;
 }
-
 div.blog-tags a {
   color: #008AAA;
   text-decoration: none;
   padding: 0px;
 }
-
 div.blog-tags a:hover {
   text-decoration: underline;
 }
@@ -323,7 +308,6 @@ div.blog-tags a:hover {
 }
 
 .pager li a {
-  /* font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
   text-transform: uppercase;
   font-size: 14px;
   font-weight: 800;
@@ -359,8 +343,6 @@ div.blog-tags a:hover {
   }
 }
 
-/* --- Tables --- */
-
 table {
   padding: 0;
 }
@@ -394,8 +376,6 @@ table tr th :last-child,
 table tr td :last-child {
   margin-bottom: 0;
 }
-
-/* --- Code blocks --- */
 
 pre {
   line-height: 1.5em;
@@ -431,8 +411,6 @@ td.code pre {
 td.gutter {
   padding-top: 3px;
 }
-
-/* -------------------------------------------------------------------------- */
 
 .page-subtitle {
   color:#aaaaaa;
@@ -486,8 +464,39 @@ article img {
   height: auto;
 }
 
+img#book-cover {
+  margin-bottom: 25px;
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+}
+
+span.book-title {
+  font-family: gilroy, Arial, sans-serif;
+  font-size: 36px;
+  font-weight: 400;
+  margin-top: 20px;
+}
+
+a.book-button {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 5px;
+  margin-bottom: 10px;
+  padding: 13px 21px;
+  border-radius: 2px;
+  background-color: #e00;
+  font-size: 18px;
+  font-size: 1.125rem;
+  line-height: 1em;
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  text-decoration: none;
+}
+
 @media (min-width: 0px) {
-  main {
+  main.page {
     display: grid;
     grid-template-columns: 100%;
     grid-template-areas:
@@ -495,21 +504,39 @@ article img {
       "art";
     margin: 0px 15px 30px 15px;
   }
-
   div#art {
     grid-area: art;
     margin: 5px;
   }
-
   nav#toc {
     grid-area: toc;
     line-height: 2.0em;
   }
 
+  /* -- */
+
+  main.home {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-areas:
+      "posts"
+      "book";
+    margin: 0px 15px 30px 15px;
+  }
+  div#book {
+    grid-area: book;
+    margin-top: 20px;
+  }
+  div#posts {
+    grid-area: posts;
+  }
+  div#book-desc {
+    text-align: justify;
+  }
 }
 
 @media (min-width: 768px) {
-  main {
+  main.page {
     display: grid;
     grid-template-columns: 70% 30%;
     grid-template-areas:
@@ -517,21 +544,40 @@ article img {
     grid-column-gap: 2rem;
     margin: 0px;
   }
-
-  main > nav#toc {
+  main.page > nav#toc {
     position: sticky;
     top: 2rem;
     align-self: start;
   }
-
   div#art {
     grid-area: art;
     margin: 0px 30px 30px 50px;
   }
-
   nav#toc {
     grid-area: toc;
     line-height: 1.7em;
     font-size: 13px;
+  }
+
+  /* -- */
+
+  main.home {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-areas:
+      "book posts";
+    margin: 0px 15px 30px 15px;
+  }
+  div#book {
+    grid-area: book;
+    margin: 5px 5px 20px 20px;
+  }
+  div#posts {
+    grid-area: posts;
+    margin-right: 10px;
+  }
+  div#book-desc {
+    margin-right: 35px;
+    text-align: justify;
   }
 }

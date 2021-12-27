@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://hackmysql.com/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/" />
+  <meta name="generator" content="Hugo 0.91.1" /><link rel="canonical" href="https://hackmysql.com/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
@@ -119,53 +119,68 @@
 </nav>
 
     
-<div role="main" class="container main-content">
-	<div class="row">
-		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-			<div class="posts-list">
-				
-					<article class="post-preview">
-						<a href="https://hackmysql.com/post/mysql-lru-flushing-io-capacity/">
-							<h1 class="post-title">MySQL LRU Flushing and I/O Capacity</h1>
-							
-						</a>
-						<div class="post-entry">
-							
-								<p>InnoDB background LRU list flushing is <em>not</em> limited by <a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_io_capacity"><code>innodb_io_capcity</code></a> or <a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_io_capacity_max"><code>innodb_io_capacity_max</code></a>.
-I&rsquo;ll prove it in this blog post, but since MySQL experts disagree (or don&rsquo;t know for sure), I&rsquo;d like you to prove me wrong.
-This is not an intro; you&rsquo;ll need to know all the InnoDB details wrt page flushing.</p>
-								<a href="https://hackmysql.com/post/mysql-lru-flushing-io-capacity/" class="post-read-more">Read more...</a>
-							
-						</div>
-						<div class="post-meta">
+<main class="home">
+	<div id="book">
+		<img id="book-cover" src="/img/book/efficient-mysql-performance-cover.png" width="360px" height="473px">
+		<div class="book-links">
+			<a class="book-button" href="https://oreil.ly/efficient-mysql-performance">Details at O'Reilly &Rang;</a>
+			<a class="book-button" href="https://www.amazon.com/dp/1098105095">Buy on Amazon &Rang;</a>
+		</div>
+		<div id="book-desc">
+			<p>You'll find several books on basic or advanced MySQL performance, but nothing in between. That's because explaining MySQL performance without addressing its complexity is difficult. This practical book bridges the gap by teaching software engineers mid-level MySQL knowledge beyond the fundamentals, but well shy of deep-level internals required by database administrators (DBAs).</p>
+			<p>In <em>Efficient MySQL Performance</em>, I show you how to apply the best practices and techniques that directly affect MySQL performance. You'll learn how to improve performance by analyzing query execution, indexing for common SQL clauses and table joins, optimizing data access, and understanding the most important MySQL metrics. You'll also discover how replication, transactions, row locking, and the cloud influence MySQL performance.</p>
+			<p>
+				<ul>
+					<li>Understand why query response time is the North Star of MySQL performance</li>
+					<li>Learn query metrics in detail, including aggregation, reporting, and analysis</li>
+					<li>See how to index effectively for common SQL clauses and table joins</li>
+					<li>Explore the most important server metrics and what they reveal about performance</li>
+					<li>Dive into transactions and row locking to gain deep, actionable insight</li>
+					<li>Achieve remarkable MySQL performance at any scale</li>
+				</ul>
+			</p>
+		</div>
+	</div>
+	<div id="posts">
+			
+			<article class="post-preview">
+				<a href="https://hackmysql.com/post/book-0/">
+					<h1 class="post-title">Efficient MySQL Performance</h1>
+					
+						<h3 class="post-subtitle">Preface</h3>
+					
+				</a>
+				<div class="post-entry">
+					
+						<p>After 17 years with MySQL, I wrote a book: <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>.</p>
+<p>I&rsquo;ll make a bold claim: a MySQL book like this has never been written—not even close.
+The preface explains why this book is unique:</p>
+						<a href="https://hackmysql.com/post/book-0/" class="post-read-more">Read more...</a>
+					
+				</div>
+				<div class="post-meta">
   
   
-  <div>Sep 2, 2021</div>
+  <div>Dec 27, 2021</div>
   <div class="blog-tags">
     
       
         <a href="/tags/mysql">#mysql</a>
       
-        <a href="/tags/innodb">#innodb</a>
+        <a href="/tags/book">#book</a>
       
-        <a href="/tags/lru-flushing">#lru-flushing</a>
-      
-        <a href="/tags/io-capacity">#io-capacity</a>
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
       
     
   </div>
 </div>
 
 
-					</article>
-				
-			</div> 
-		</div> 
-	</div> 
-
-	<div class="row">
-		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-			<hr>
+			</article>
+			
+		<div>
+			
+				<li><time>2021-09-02</time>&nbsp;<a href="https://hackmysql.com/post/mysql-lru-flushing-io-capacity/">MySQL LRU Flushing and I/O Capacity</a></li>
 			
 				<li><time>2021-07-26</time>&nbsp;<a href="https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/">MySQL Data Locks: Mapping 8.0 to 5.7</a></li>
 			
@@ -223,9 +238,9 @@ This is not an intro; you&rsquo;ll need to know all the InnoDB details wrt page 
 			
 				<li><time>2017-06-11</time>&nbsp;<a href="https://hackmysql.com/post/custom-mongodb-replica-set-write-concern/">Custom MongoDB Replica Set Write Concern</a></li>
 			
-		</div> 
-	</div> 
-</div> 
+		</div>
+	</div>
+</main>
 
     <footer>
   <p class="copyright text-muted">

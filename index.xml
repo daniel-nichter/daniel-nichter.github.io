@@ -7,7 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2021 Daniel Nichter</copyright>
-    <lastBuildDate>Wed, 08 Dec 2021 09:00:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 27 Dec 2021 09:30:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Efficient MySQL Performance</title>
+      <link>https://hackmysql.com/post/book-0/</link>
+      <pubDate>Mon, 27 Dec 2021 09:30:00 -0500</pubDate>
+      
+      <guid>https://hackmysql.com/post/book-0/</guid>
+      <description>&lt;p&gt;After 17 years with MySQL, I wrote a book: &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ll make a bold claim: a MySQL book like this has never been written—not even close.
+The preface explains why this book is unique:&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://hackmysql.com/about/</link>
+      <pubDate>Sat, 25 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hackmysql.com/about/</guid>
+      <description>Hack MySQL Hack MySQL is my personal blog about MySQL, the Go programming language, and software design.
+The content of this site is inspired by two things. First is my job at Square. Working with thousands of databases, hundreds of microservices, and engineers across the company, I&amp;rsquo;m fortunate to always have new challenges and opportunities to both learn and mentor. A lot of the posts and pages began as conversations with colleagues.</description>
+    </item>
+    
     <item>
       <title>MySQL Transaction Reporting</title>
       <link>https://hackmysql.com/mysql-transaction-reporting/</link>
@@ -105,16 +126,6 @@ Ensure that the work you do adds value to the business and other people.
       
       <guid>https://hackmysql.com/mysql-password-rotation-lambda/</guid>
       <description>MySQL Password Rotation with AWS Secrets Manager and Lambda MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and Terraform for cloud infrastructure.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://hackmysql.com/about/</link>
-      <pubDate>Fri, 11 Dec 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hackmysql.com/about/</guid>
-      <description>Hack MySQL Hack MySQL is my personal blog about MySQL, the Go programming language, and software design.
-The content of this site is inspired by two things. First is my job at Square. Working with thousands of databases, hundreds of microservices, and engineers across the company, I&amp;rsquo;m fortunate to always have new challenges and opportunities to both learn and mentor. A lot of the posts and pages began as conversations with colleagues.</description>
     </item>
     
     <item>

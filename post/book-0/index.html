@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Efficient MySQL Performance</title>
+  <meta property="og:title" content="Efficient MySQL Performance" />
+  <meta name="description" content="Preface">
+  <meta property="og:description" content="Preface">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-0/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.91.1" /><link rel="canonical" href="https://hackmysql.com/post/book-0/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+                
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+                
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+                
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+                
+                  <a href="/eng/career-advice/">Career Advice</a>
+                
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
+                  <a href="/eng/percentiles/">Percentiles</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+                
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+                
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+                
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+                
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+                
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+                
+              </div>
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Efficient MySQL Performance</h1>
+        <h3 class="post-subtitle">Preface</h2>
+        <div class="post-meta">
+  
+  
+  <div>Dec 27, 2021</div>
+  <div class="blog-tags">
+    
+      
+        <a href="/tags/mysql">#mysql</a>
+      
+        <a href="/tags/book">#book</a>
+      
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+      
+    
+  </div>
+</div>
+
+
+        <p>After 17 years with MySQL, I wrote a book: <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>.</p>
+<p>I&rsquo;ll make a bold claim: a MySQL book like this has never been written—not even close.
+The preface explains why this book is unique:</p>
+<img id="book-cover" src="/img/book/efficient-mysql-performance-cover.png" width="360px" height="473px" style="float:right; margin-left:10px;">
+<blockquote>
+<p>A gap in MySQL literature exists between basic MySQL knowledge and advanced MySQL performance.
+There are several books about the former, and one book about the latter: <em>High Performance MySQL</em>, 4th Edition, by Silvia Botros and Jeremy Tinley (O&rsquo;Reilly).
+This is the first book to bridge the gap.</p>
+<p>The gap exists because MySQL is complex, and it’s difficult to teach performance without addressing that complexity—the proverbial elephant in the room.
+But engineers using (not managing) MySQL should not need to become MySQL experts to achieve remarkable MySQL performance.
+To bridge the gap, this book is unapologetically efficient—pay no attention to the elephant; it’s friendly.</p>
+<p><em>Efficient</em> MySQL performance means <em>focus</em>: learning and applying only the best practices and techniques that directly affect remarkable MySQL performance.
+Focus dramatically narrows the scope of MySQL complexity and allows me to show you a much simpler and faster path through the vast and complex field of MySQL performance.
+The journey begins with the first sentence of chapter 1, &ldquo;Performance is query response time.&rdquo;
+From there, we move fast through indexes, data, access patterns, and a lot more.</p>
+<p>On a scale of one to five—where one is an introduction for anyone, and five is a deep dive for aspiring experts—this book ranges from three to four: deep, but far from the bottom.
+I presume that you’re an experienced engineer who has basic knowledge of and experience with a relational database (MySQL or otherwise), so I do not explain SQL or database fundamentals.
+I presume that you’re an accomplished programmer who is responsible for one or more applications that use MySQL, so I continually reference <em>the application</em> and trust that you know the details of <em>your application</em>.
+I also presume that you’re familiar with computers in general, so I talk freely about hardware, software, networks, and so forth.</p>
+</blockquote>
+<p>This blog post is the first of eleven: one for the preface and ten for each chapter of the book.
+These blog posts are my thoughts and musings &ldquo;behind the book&rdquo;—what wasn&rsquo;t printed.</p>
+<h2 id="accomplished-engineers">Accomplished Engineers</h2>
+<p>I wish more books like <em>Efficient MySQL Performance</em> were written.
+When I&rsquo;m feeling overly proud, I think to myself: &ldquo;This is an entirely new <em>genre</em> of tech book!&rdquo;
+But that&rsquo;s too bold a claim, so I don&rsquo;t say it aloud.
+I think it, however, because I&rsquo;ve spent my entire young-adult and adult life reading tech books, and I cannot think of any tech book like this one.</p>
+<p>In my opinion, the field of MySQL books is dominated by three genres: basic, advanced, and howto.
+Basic MySQL books are obvious: everyone needs an introduction, a starting point.
+Advanced MySQL books are useful for high-level engineers (e.g. engineering leads), DBAs (new or aspiring), and MySQL experts who want a capstone for their career.
+Howto MySQL books are often either how to operate MySQL (for DBAs) or how to use MySQL as a product (e.g. how to query MySQL).</p>
+<p>Ironically, perhaps, those three genres do not address the largest and—I would argue—most important audience: accomplished engineers using MySQL for their application.
+The keyword is &ldquo;accomplished&rdquo;: these engineers know all the basics—they&rsquo;ve probably been programming and using various data stores for years—so they know what they&rsquo;re doing in general.
+Their area of expertise and responsibility is their app, not MySQL.
+But since the app uses MySQL, they need to ensure that MySQL &ldquo;Just Works&rdquo;—is fast and trouble-free.
+To that end, they want (or need) to know more about MySQL but only insofar as necessary for their app.</p>
+<p>That makes senses.
+We all use technologies in which we don&rsquo;t have the time or inclination to become experts.
+We just want the tech to work.
+MySQL is this tech for countless software engineers.</p>
+<p>For MySQL, engineers need a book that starts at their level (accomplished) and leads straight to their goal (&ldquo;Just Works&rdquo; for their app).
+No background info; no review of the basics; no material that&rsquo;s not directly applicable or actionable.
+Straight to the point: <em>what do I <strong>need</strong> to know and do to make my application as fast as possible with MySQL?</em></p>
+<p><em>Efficient MySQL Performance</em> is that book.</p>
+<h2 id="welcome-to-the-jungle">Welcome to the Jungle</h2>
+<p>After writing this book, I have a pretty good idea why none like it exist: it&rsquo;s very difficult.
+Not the writing—that was relatively easy—but clearing a path through the proverbial jungle that is MySQL performance.</p>
+<p>MySQL experts know that performance can be a very complex and subtle matter.
+Sure, sometimes MySQL performance is dead-simple: missing index → table scan → app outage.
+You don&rsquo;t need to know much about MySQL to solve that problem.
+But busy apps don&rsquo;t tend to have simple problems, which is how they were able to scale up and become busy in the first place: by avoiding simple mistakes.</p>
+<p>Solving a realistic performance problem means searching the jungle.
+The cause and solution could be anywhere in there—watch out for pitfalls and don&rsquo;t follow red herrings.</p>
+<p>But even at the outset, engineers know that that search is not feasible—it&rsquo;s not efficient—because MySQL is a vast and complex system, not all of which is documented.
+Even searching the internet for answers isn&rsquo;t much help because accomplished engineers know that their database problems are related to their app, data, and queries.</p>
+<p>You need a destination to make progress.
+The destination doesn&rsquo;t make the jungle any less wild, but it provides focus: advance toward the destination; ignore the rest (for now).</p>
+<p>Focus yields efficient effort (less wasted time), hence the title of the book.</p>
+<p>I think it&rsquo;s safe to say that for every OLTP database, <em>query response time</em> is the destination.
+You want MySQL to execute queries as fast as possible.
+It&rsquo;s that simple.
+(In chapter 1, I explain why.)</p>
+<p>If we&rsquo;re focused on improving response time (i.e. <em>reducing</em> it, which means queries execute faster), then what&rsquo;s the first and most important subject to address?
+I think most experts will agree: indexes.
+Not surprisingly then, chapter 1 covers response time, and chapter 2 covers index.
+But since this isn&rsquo;t a basic MySQL book, these chapters go deep quickly—but not too deep—because it&rsquo;s a big jungle; waste no time.</p>
+<h2 id="paths-to-goals">Paths to Goals</h2>
+<p>But it&rsquo;s not enough to merely write technical stuff.
+If you want <em>a lot</em> of deep technical writing, then read the <a href="https://dev.mysql.com/doc/refman/8.0/en/">MySQL Manual</a>.
+(If I recall correctly, Bill Karwin once told me that it would be over 1,000 pages if printed.)</p>
+<p>I&rsquo;ve read countless technical books, and most convey knowledge; very few <em>teach</em>.</p>
+<p>Conveying knowledge, while important, is like a brain dump, like the author is saying, &ldquo;Know this, this, and this. And this is how that works.&rdquo;
+And the reader is expected to &ldquo;connect the dots&rdquo; or &ldquo;put it together&rdquo; in their mind to make the knowledge applicable.
+In short, the book focuses on and stops at mere knowledge.</p>
+<p>Teaching shows a path to a goal and helps you learn how to walk it.
+This is what I strived to do in <em>Efficient MySQL Performance</em>.
+(Even the jokes and puns serve a purpose: little mental breaks so that, hopefully, the reading is fun and refreshing.)
+Although the book is full of deep technical content, that&rsquo;s not how (or where) I see its primary value.
+It&rsquo;s primary value is how methodically it teaches: the whole book, from chapter 1 to 10, is a meticulously crafted lesson that deepens and expands your understanding of MySQL as you progress toward a single goal: improving query response time.</p>
+<p>In the vastness of MySQL, improving query response time seems like a goal that&rsquo;s too small or simplistic.
+Can MySQL performance really be that simple?
+For most engineers who use MySQL: yes, it&rsquo;s really that simple.
+But that doesn&rsquo;t mean the path is simple: MySQL performance <em>is</em> complex.
+<em>Efficient MySQL Performance</em> is a little over 300 pages because there&rsquo;s a lot to learn about response time.</p>
+<h2 id="bold-claims">Bold Claims</h2>
+<p>I am certain that <em>Efficient MySQL Performance</em> leads to success with MySQL.
+That&rsquo;s another bold claim, but I see and repeat its lessons almost every week to a new engineer, a new team, or a new app.
+And I see my DBA colleagues do the same.</p>
+<p>Last bold claim: everything in this book is <em>required knowledge</em> for software engineers using MySQL.
+Seriously: if you&rsquo;re responsible for an application that uses MySQL, read this book.
+It takes a few hours, but it teaches you <em>years</em> of knowledge and skills that you can immediately apply.</p>
+<h2 id="thank-you">Thank You</h2>
+<p>Thank you to the MySQL experts who reviewed this book: Vadim Tkachenko, Frédéric Descamps, and Fernando Ipar.
+Thank you to the MySQL experts who reviewed parts of this book: Marcos Albe, Jean-François Gagné, and Kenny Gryp.
+Thank you to many other MySQL experts who have helped me, taught me, and provided opportunities over the years: Peter Zaitsev, Baron Schwartz, Ryan Lowe, Bill Karwin, Emily Slocombe, Morgan Tocker, Shlomi Noach, Jeremy Cole, Laurynas Biveinis, Mark Callaghan, Domas Mituzas, Ronald Bradford, Yves Trudeau, Sveta Smirnova, Alexey Kopytov, Jay Pipes, Stewart Smith, Aleksandr Kuzminsky, Alexander Rubin, Roman Vynar, and—again—Vadim Tkachenko.</p>
+<p>And thank you, Monty.</p>
+<p>MySQL has been a fantastic career and livelihood for me.
+For many of us (myself included), it&rsquo;s also been a notable part of our personal lives, too.
+I am grateful for your help, support, encouragement, and all the experiences we have shared.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+        
+          <li class="previous">
+            <a href="https://hackmysql.com/post/mysql-lru-flushing-io-capacity/" data-toggle="tooltip" data-placement="top" title="MySQL LRU Flushing and I/O Capacity">&larr; </a>
+          </li>
+        
+        
+      </ul>
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+      
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2021 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" defer></script>
+
+
+  </body>
+</html>

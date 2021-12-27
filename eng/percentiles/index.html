@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/eng/percentiles/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.83.1" /><link rel="canonical" href="https://hackmysql.com/eng/percentiles/" />
+  <meta name="generator" content="Hugo 0.91.1" /><link rel="canonical" href="https://hackmysql.com/eng/percentiles/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
@@ -121,7 +121,7 @@
 </nav>
 
     
-<main>
+<main class="page">
 	<div id="art">
 		<article role="main" class="blog-post"><h1 id="percentiles">Percentiles</h1>
 <p><a href="https://en.wikipedia.org/wiki/Percentile">Percentiles</a> are ubiquitous in application performance monitoring, particularly the 95th (P95), 99th (P99), and 99.9th (P999) percentiles. The basic concept is simple: percentile P<em>n</em> means <em>n</em>% of all values are &lt;= than the P<em>n</em> value. If the P95 value = 100ms, then 95% of all values are &lt;= 100ms. In other words: 5% of all values are &gt; 100ms. Percentiles discard the top (100-<em>n</em>)% values as outliers for various reasons which are outside the scope of this page. Less simple than the basic concept is calculating percentiles, which is the scope of this page. Given arrays <code>x</code> and <code>y</code> with index <code>j</code>:</p>
