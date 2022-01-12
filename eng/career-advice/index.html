@@ -20,7 +20,7 @@ Ensure that the work you do adds value to the business and other people.
   <meta property="og:url" content="https://hackmysql.com/eng/career-advice/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.91.1" /><link rel="canonical" href="https://hackmysql.com/eng/career-advice/" />
+  <meta name="generator" content="Hugo 0.91.2" /><link rel="canonical" href="https://hackmysql.com/eng/career-advice/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
@@ -42,89 +42,89 @@ Ensure that the work you do adds value to the business and other people.
 
     <div class="collapse navbar-collapse" id="main-navbar">
       <ul class="nav navbar-nav navbar-left">
-        
-          
+
+
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-                
+
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-                
+
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-                
+
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-                
+
                   <a href="/eng/career-advice/">Career Advice</a>
-                
+
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
-                
+
                   <a href="/eng/database-operations-manual/">Database Operations Manual</a>
-                
+
                   <a href="/eng/percentiles/">Percentiles</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-                
+
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-                
+
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li>
               <a title="Help" href="/help/">Help</a>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-                
+
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-                
+
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-                
+
                   <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
-                
+
                   <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
-                
+
               </div>
             </li>
-          
-        
 
-        
+
+
+
       </ul>
     </div>
   </div>
 </nav>
 
-    
+
 <main class="page">
 	<div id="art">
 		<article role="main" class="blog-post"><h1 id="career-advice">Career Advice</h1>
@@ -164,6 +164,34 @@ Judiciously breaking the rules is sometimes good and necessary to make exception
 The reward <em>and the risk</em> are also exceptional: succeed and you&rsquo;re a hero; but fail and you lose significant engineering credibility.
 That won&rsquo;t end your career, but rebuilding engineering credibility is difficult and time-consuming.
 If you realize early that you&rsquo;ll fail, own it and get ahead of it—let your manager know.</p>
+<h3 id="6-design-for-users">6. Design for Users</h3>
+<p>The famous Steve Jobs quote:</p>
+<blockquote>
+<p>You have to start with the customer experience and work backwards to the technology.</p>
+</blockquote>
+<p>Watch the video <a href="https://www.youtube.com/watch?v=FF-tKLISfPE">Steve Jobs Insult Response</a>.</p>
+<p>Consciously, intentionally think: <em>how will humans uses this program?</em>
+Draw out or mock up the <em>experiences</em> of using the program—don&rsquo;t worry about how you&rsquo;ll make the experiences work.
+Iterate on the <em>experiences</em> over and over and over again until you can &ldquo;use&rdquo; the program in a way that you (or others) think is remarkably logical, consistent, easy, and helpful.</p>
+<p>After all, isn&rsquo;t that the entire point of computers: to help <em>humans</em> work better, faster, and easier?</p>
+<p>Sometimes it helps to imagine a user experience that doesn&rsquo;t even seem possible.
+Why?
+Because after many years of programming, engineers tend to become quite practical and practiced in standards, conventions, and so on—almost to the point that we begin to design software by rote rather than by focusing on the user experience.
+Imagining a seemingly impossible user experience helps break the rote mindset.
+More importantly, those years of experience are always hard at work, so in the process of imagining the impossible, we might find that some particular experience is effectively impossible with today&rsquo;s tech <em>but</em> with a few tweaks we can create an experience that&rsquo;s really close and really remarkable.</p>
+<h3 id="7-code-for-future-engineers">7. Code for Future Engineers</h3>
+<p>It is no longer sufficient to write code that works and passes unit tests.
+If that&rsquo;s all you do, then you&rsquo;re unlikely to advance significantly in the software industry because any engineer can do that, so you&rsquo;ll find yourself in a very large and competitive sea of engineers, many of whom are working hard for that next promotion or engineering level.</p>
+<p>Externally, software is design for users and the user experience (see previous point).
+But <em>internally</em>, design software for future engineers—not for yourself, not for today, but for a new engineer 5 years from now.
+That mindset and intention has two effects.</p>
+<p>First: it helps you design, write, and document code more clearly because you realize that future engineers will step into a complex code base and have to understand and make changes and, moreover, probably be under pressure to do so either because they&rsquo;re new engineers (and trying to do well at their new job) or because the company has imposed time limits on them.
+When that future engineer finds your well design, well written, and well documented code, it&rsquo;s an oasis in a desert complete with food, water, and maps.</p>
+<p>Second: significant career advancement in tech is only 50% technical skill.
+The other 50% is your impact on <em>other engineers</em> because look around&hellip; code affects many engineers.
+Providing that oasis has a signifiant impact.
+It allows other engineers to ramp up more quickly, which helps them be successful more quickly, which helps the team achieve its goals more quickly (or, at least, on time), which helps the company succeed, which provides value to users and customers.
+When <em>that</em> is your impact—by coding for future engineers—you won&rsquo;t have to advance your career, the industry will pull you up.</p>
 </article>
 	</div>
 	<nav id="toc">
@@ -178,6 +206,8 @@ If you realize early that you&rsquo;ll fail, own it and get ahead of it—let yo
         <li><a href="#3-hype-yourself">3. Hype Yourself</a></li>
         <li><a href="#4-step-up">4. Step Up</a></li>
         <li><a href="#5-dont-fail">5. Don&rsquo;t Fail&hellip;</a></li>
+        <li><a href="#6-design-for-users">6. Design for Users</a></li>
+        <li><a href="#7-code-for-future-engineers">7. Code for Future Engineers</a></li>
       </ul>
     </li>
   </ul>

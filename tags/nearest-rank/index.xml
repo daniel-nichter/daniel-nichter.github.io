@@ -6,16 +6,16 @@
     <description>Recent content in nearest rank on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2021 Daniel Nichter</copyright>
+    <copyright>2022 Daniel Nichter</copyright>
     <lastBuildDate>Sun, 10 Feb 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/tags/nearest-rank/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Percentiles</title>
       <link>https://hackmysql.com/eng/percentiles/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/percentiles/</guid>
       <description>Percentiles Percentiles are ubiquitous in application performance monitoring, particularly the 95th (P95), 99th (P99), and 99.9th (P999) percentiles. The basic concept is simple: percentile Pn means n% of all values are &amp;lt;= than the Pn value. If the P95 value = 100ms, then 95% of all values are &amp;lt;= 100ms. In other words: 5% of all values are &amp;gt; 100ms. Percentiles discard the top (100-n)% values as outliers for various reasons which are outside the scope of this page.</description>
     </item>
-    
+
   </channel>
 </rss>

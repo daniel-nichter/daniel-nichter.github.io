@@ -6,34 +6,34 @@
     <description>Recent content in replication on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2021 Daniel Nichter</copyright>
+    <copyright>2022 Daniel Nichter</copyright>
     <lastBuildDate>Sun, 31 May 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/tags/replication/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Missing Writes with MySQL GTID</title>
       <link>https://hackmysql.com/post/mysql-gtid-missing-writes/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/mysql-gtid-missing-writes/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html&#34;&gt;GTID-based replication&lt;/a&gt; makes managing replication topology easy: just &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html&#34;&gt;CHANGE MASTER&lt;/a&gt; to any node and voilà. It &lt;a href=&#34;https://hackmysql.com/post/fixing-ghosted-gtids/&#34;&gt;doesn&amp;rsquo;t always work&lt;/a&gt;, but for the most part it does. That&amp;rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &amp;ldquo;OK, sure!&amp;rdquo;, which is most of the time, you should double check it.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Fixing Ghosted GTIDs</title>
       <link>https://hackmysql.com/post/fixing-ghosted-gtids/</link>
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/fixing-ghosted-gtids/</guid>
       <description>MySQL auto-positioning is an integral part of replication with GTID, but it&amp;rsquo;s neither required nor guaranteed to work. It&amp;rsquo;s possible to enable GTIDs but disable auto-positioning, and it&amp;rsquo;s possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.</description>
     </item>
-    
+
     <item>
       <title>Crash-safe MySQL Replication</title>
       <link>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</link>
       <pubDate>Tue, 23 Jan 2018 18:40:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</guid>
       <description>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it&amp;rsquo;s not consistently understood or applied. The MySQL manual on the topic, 16.3.2 Handling an Unexpected Halt of a Replication Slave, is correct and authoritative, but unless you grok MySQL replication that page doesn&amp;rsquo;t make it obvious why crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient.</description>
     </item>
-    
+
   </channel>
 </rss>

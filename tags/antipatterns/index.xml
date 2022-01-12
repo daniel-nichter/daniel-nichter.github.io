@@ -6,26 +6,26 @@
     <description>Recent content in antipatterns on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2021 Daniel Nichter</copyright>
+    <copyright>2022 Daniel Nichter</copyright>
     <lastBuildDate>Sun, 21 Jan 2018 19:00:00 -0700</lastBuildDate><atom:link href="https://hackmysql.com/tags/antipatterns/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Command-line Interface Antipatterns</title>
       <link>https://hackmysql.com/eng/cli-antipatterns/</link>
       <pubDate>Sun, 21 Jan 2018 19:00:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/cli-antipatterns/</guid>
       <description>Command-line Interface Antipatterns Apps (web, mobile, and native) and APIs do not lessen the need or importance of command-line tools. A beautifully designed command-line user experience is arguably more important and than a graphical UX because the command line is deceptively simple: text on a screen. Wielding mere text on screen is an art akin to wielding mere paint on canvas. This page documents what I believe to be command-line interface (CLI) antipatterns which, in the long or short run, detract from both UX and developer effectiveness.</description>
     </item>
-    
+
     <item>
       <title>Go Antipatterns</title>
       <link>https://hackmysql.com/golang/go-antipatterns/</link>
       <pubDate>Sat, 03 Jun 2017 18:51:14 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/golang/go-antipatterns/</guid>
       <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&amp;rsquo;s a better way that&amp;rsquo;s both functionally equivalent and idiomatic.
 These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</description>
     </item>
-    
+
   </channel>
 </rss>

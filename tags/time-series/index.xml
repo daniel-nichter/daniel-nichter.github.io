@@ -6,18 +6,18 @@
     <description>Recent content in time series on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2021 Daniel Nichter</copyright>
+    <copyright>2022 Daniel Nichter</copyright>
     <lastBuildDate>Fri, 12 Apr 2019 09:00:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/time-series/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Path and Dimension Metrics</title>
       <link>https://hackmysql.com/post/path-and-dimension-metrics/</link>
       <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/path-and-dimension-metrics/</guid>
       <description>The two most common strategies for identifying and organizing data points that comprise metric time series are path and dimension. This post is geared towards engineers who have never been introduced to the subject. Implementing metrics from the ground up, or adding new metrics to an existing system, can be overwhelming in nontrivial systems. Understanding these two strategies simplifies one&amp;rsquo;s efforts.
 Path-based Metrics Path-based metrics are the historical norm:
 host.prod1.disk-free.sda host.</description>
     </item>
-    
+
   </channel>
 </rss>

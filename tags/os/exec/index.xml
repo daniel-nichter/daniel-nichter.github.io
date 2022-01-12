@@ -6,15 +6,15 @@
     <description>Recent content in os/exec on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2021 Daniel Nichter</copyright><atom:link href="https://hackmysql.com/tags/os/exec/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>2022 Daniel Nichter</copyright><atom:link href="https://hackmysql.com/tags/os/exec/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Reading os/exec.Cmd Output Without Race Conditions</title>
       <link>https://hackmysql.com/post/reading-os-exec-cmd-output-without-race-conditions/</link>
       <pubDate>Sat, 17 Jun 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/reading-os-exec-cmd-output-without-race-conditions/</guid>
       <description>Golang Weekly issue 164 features a nice article, Advanced command execution in Go with os/exec, which details several ways of working with os/exec, especially how to read STDOUT and STDERR while the command is running. This common task is commonly done wrong, where &amp;ldquo;wrong&amp;rdquo; means &amp;ldquo;the code has a race condition&amp;rdquo;. This blog post shows how to read STDOUT and STDERR from an os/exec.Cmd while it&amp;rsquo;s running and without race conditions.</description>
     </item>
-    
+
   </channel>
 </rss>

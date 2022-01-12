@@ -6,37 +6,37 @@
     <description>Recent content in archive on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2021 Daniel Nichter</copyright>
+    <copyright>2022 Daniel Nichter</copyright>
     <lastBuildDate>Sun, 03 May 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/tags/archive/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>mysqlreport</title>
       <link>https://hackmysql.com/archive/mysqlreport/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/archive/mysqlreport/</guid>
       <description>mysqlreport The mysqlreport script has been archived. It is no longer developed or supported.
 You can download it from https://github.com/daniel-nichter/hackmysql.com/tree/master/mysqlreport.</description>
     </item>
-    
+
     <item>
       <title>mysqlsla</title>
       <link>https://hackmysql.com/archive/mysqlsla/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/archive/mysqlsla/</guid>
       <description>mysqlsla The mysqlsla script has been archived. It is no longer developed or supported.
 You can download it from https://github.com/daniel-nichter/hackmysql.com/tree/master/mysqlsla.</description>
     </item>
-    
+
     <item>
       <title>mysqlsniffer</title>
       <link>https://hackmysql.com/archive/mysqlsniffer/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/archive/mysqlsniffer/</guid>
       <description>mysqlsniffer The mysqlsniffer program has been archived. It is no longer developed or supported.
 You can download it from https://github.com/daniel-nichter/hackmysql.com/tree/master/mysqlsniffer.</description>
     </item>
-    
+
   </channel>
 </rss>

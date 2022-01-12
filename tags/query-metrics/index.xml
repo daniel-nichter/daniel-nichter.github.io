@@ -6,16 +6,16 @@
     <description>Recent content in query-metrics on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2021 Daniel Nichter</copyright>
+    <copyright>2022 Daniel Nichter</copyright>
     <lastBuildDate>Sun, 01 Nov 2020 20:25:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/query-metrics/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Query Metrics Requirements for MySQL</title>
       <link>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</link>
       <pubDate>Sun, 01 Nov 2020 20:25:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</guid>
       <description>Let&amp;rsquo;s answer a question which, to my knowledge, has never been systematically addressed: What are the requirements for a production-ready query metrics app at scale? I am uniquely qualified to answer that because I have written four query metrics apps, two of which are the open-source standard for MySQL: pt-query-digest and the original (v1) code behind the query metrics/analysis part of Percona Monitoring and Management. I&amp;rsquo;ve also published a couple of packages related to query metrics: go-mysql/slowlog and go-mysql/query.</description>
     </item>
-    
+
   </channel>
 </rss>

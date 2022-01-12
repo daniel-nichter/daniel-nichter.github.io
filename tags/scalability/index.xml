@@ -6,17 +6,17 @@
     <description>Recent content in scalability on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2021 Daniel Nichter</copyright>
+    <copyright>2022 Daniel Nichter</copyright>
     <lastBuildDate>Sun, 28 Jan 2018 11:20:00 -0700</lastBuildDate><atom:link href="https://hackmysql.com/tags/scalability/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Database Scalability: Contention and Crosstalk</title>
       <link>https://hackmysql.com/post/database-scalability-contention-and-crosstalk/</link>
       <pubDate>Sun, 28 Jan 2018 11:20:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/database-scalability-contention-and-crosstalk/</guid>
       <description>New engineers might not know and experienced engineers might not believe that database systems do not and cannot scale gracefully to 100% system capacity but, rather and counterintutively, exhibit retrograde performance at some point less than 100% system capacity. The reasonable presumption is:
 We presume that a database can scale to almost 100% of system capacity, and max performance is a small fraction at the very top (right, orange slice) because, after all, the system itself needs some resources to run itself.</description>
     </item>
-    
+
   </channel>
 </rss>

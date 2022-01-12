@@ -6,16 +6,16 @@
     <description>Recent content in trx on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2021 Daniel Nichter</copyright>
+    <copyright>2022 Daniel Nichter</copyright>
     <lastBuildDate>Wed, 08 Dec 2021 09:00:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/trx/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>MySQL Transaction Reporting</title>
       <link>https://hackmysql.com/mysql-transaction-reporting/</link>
       <pubDate>Wed, 08 Dec 2021 09:00:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/mysql-transaction-reporting/</guid>
       <description>MySQL Transaction Reporting In chapter 8 of my forthcoming book (more on this later), I discuss reporting MySQL transactions (among many other related topics). In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&amp;rsquo;t monitor or report them in the world of MySQL. Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.</description>
     </item>
-    
+
   </channel>
 </rss>

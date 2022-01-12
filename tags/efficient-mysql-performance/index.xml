@@ -6,18 +6,18 @@
     <description>Recent content in efficient-mysql-performance on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2021 Daniel Nichter</copyright>
+    <copyright>2022 Daniel Nichter</copyright>
     <lastBuildDate>Mon, 27 Dec 2021 09:30:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/efficient-mysql-performance/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Efficient MySQL Performance</title>
       <link>https://hackmysql.com/post/book-0/</link>
       <pubDate>Mon, 27 Dec 2021 09:30:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-0/</guid>
       <description>&lt;p&gt;After 17 years with MySQL, I wrote a book: &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;ll make a bold claim: a MySQL book like this has never been written—not even close.
 The preface explains why this book is unique:&lt;/p&gt;</description>
     </item>
-    
+
   </channel>
 </rss>
