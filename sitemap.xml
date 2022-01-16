@@ -23,6 +23,9 @@
     <loc>https://hackmysql.com/post/</loc>
     <lastmod>2022-01-16T15:40:00-05:00</lastmod>
   </url><url>
+    <loc>https://hackmysql.com/tags/query-metrics/</loc>
+    <lastmod>2022-01-16T15:40:00-05:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/tags/slow-query-log/</loc>
     <lastmod>2022-01-16T15:40:00-05:00</lastmod>
   </url><url>
@@ -105,9 +108,6 @@
     <lastmod>2020-12-28T09:56:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</loc>
-    <lastmod>2020-11-01T20:25:00-05:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/query-metrics/</loc>
     <lastmod>2020-11-01T20:25:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/dirty-pages/</loc>
