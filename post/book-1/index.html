@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Configuring MySQL Query Metrics</title>
+  <meta property="og:title" content="Configuring MySQL Query Metrics" />
+  <meta name="description" content="Chapter 1">
+  <meta property="og:description" content="Chapter 1">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-1/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.91.1" /><link rel="canonical" href="https://hackmysql.com/post/book-1/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+                
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+                
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+                
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+                
+                  <a href="/eng/career-advice/">Career Advice</a>
+                
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
+                  <a href="/eng/percentiles/">Percentiles</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+                
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+                
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+                
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+                
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+                
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+                
+              </div>
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Configuring MySQL Query Metrics</h1>
+        <h3 class="post-subtitle">Chapter 1</h2>
+        <div class="post-meta">
+  
+  
+  <div>Jan 16, 2022</div>
+  <div class="blog-tags">
+    
+      
+        <a href="/tags/mysql">#mysql</a>
+      
+        <a href="/tags/book">#book</a>
+      
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+      
+        <a href="/tags/performance-schema">#performance-schema</a>
+      
+        <a href="/tags/slow-query-log">#slow-query-log</a>
+      
+    
+  </div>
+</div>
+
+
+        <p>Editors and technical reviewers suggested that I cover how to configure MySQL query metrics in chapter 1 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, but I deferred because it was out of scope for the book, which focuses on engineers <em>using</em> MySQL, not DBAs.
+As such, there&rsquo;s only a note in chapter 1 that says: &ldquo;Ask your DBA or read the MySQL manual.&rdquo;
+But I&rsquo;ll cover the topic here because that&rsquo;s what this blog post series is for: behind the book.</p>
+<p>This blog post is the second of eleven: one for the preface and ten for each chapter of the book.
+The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mysql-performance</a>.</p>
+<p>MySQL provides query metrics through two sources: <a href="https://dev.mysql.com/doc/refman/8.0/en/slow-query-log.html">slow query log</a> and <a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html">Performance Schema</a>.
+Chapter 1 of the book details what you need to know about each, so I won&rsquo;t repeat myself here.
+First, let&rsquo;s start with choosing a query metric tool because that determines the source.
+Then we&rsquo;ll look at configuring each source.</p>
+<p class="warning">
+<b>WARNING</b>: This post is <i>not</i> a copy-paste guide; it presumes that you have basic experience configuring and operating MySQL.
+Except for restarting MySQL, configuring the slow query log and Performance Schema are generally safe, but consult with a MySQL expert if you are not sure.
+</p>
+<br>
+<h2 id="choose-a-query-metric-tool">Choose a Query Metric Tool</h2>
+<p>Start by choosing a query metric tool because it determines the source (slow query log or Performance Schema) and configuration.
+For example, if the tool doesn&rsquo;t support the Performance Schema, then you must configure and manage the slow query log.
+All of these tools &ldquo;get the job done&rdquo;, so choose the one that works best for you.</p>
+<p class="note">
+<b>NOTE</b>: I do not endorse or favor any tool because everything depends on your particular environment, company, team, budget, and so forth&mdash;none of which I know.
+</p>
+<p>Some context-specific terminology used in the tables below:</p>
+<dl>
+<dt>Client</dt>
+<dd>Program that collects query metrics from source and sends to server where it is aggregated and reported.</dd>
+<dt>Command line</dt>
+<dd>Tool runs and prints reports on the command line. This implies that tool must be run manually for each report.</dd>
+<dt>GUI</dt>
+<dd>Tool is a traditional Windows/Mac/Linux desktop GUI for reporting. Probably uses a client to collect query metrics.</dd>
+<dt>Mixed</dt>
+<dd>Tool uses command line for operations and web for reporting.</dd>
+<dt>PFS</dt>
+<dd>Abbreviation for <a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html"><em>Performance Schema</em></a>, one of two sources.</dd>
+<dt>Slow log</dt>
+<dd>Sort for <a href="https://dev.mysql.com/doc/refman/8.0/en/slow-query-log.html"><em>slow query log</em></a>, one of two sources.</dd>
+<dt>Web app</dt>
+<dd>Fully hosted web app for all reporting. Typically commercial (not free) and requires local client to send metrics to the hosted web app.</dd>
+</dl>
+<h3 id="pt-query-digest">pt-query-digest</h3>
+<table>
+<thead>
+<tr>
+<th>Open source</th>
+<th>Interface</th>
+<th>Client</th>
+<th>Sources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Yes</td>
+<td>Command line</td>
+<td>No</td>
+<td>Slow log</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://www.percona.com/doc/percona-toolkit/LATEST/pt-query-digest.html">pt-query-digest</a> is the industry-standard command-line query metric tool.
+It&rsquo;s really simple: run <code>pt-query-digest LOG</code>, where <code>LOG</code> is the path to your slow query log, and it prints a query profile and report for each query in that profile.</p>
+<p>If you have never used query metrics before, you might start here because it&rsquo;s so simple: <a href="#configuring-the-slow-query-log">enable the slow query log</a>, and run <code>pt-query-digest</code> occasionally to gain essential performance insight into your MySQL database.</p>
+<p>&lt;history&gt;
+Since I can ramble in blog posts (zero rambling in the book—it&rsquo;s efficient right down to every word), I&rsquo;ll tell you some boring MySQL industry history.
+In the beginning, MySQL shipped with a Perl script called <code>mysqldumpslow</code>, and it was not very good, in my opinion, but better than nothing.
+At roughly the same time (circa 2004), both Baron Schwartz and I created better Perl scripts.
+Then he and I joined Percona and created pt-query-digest (code initially from his script, then largely rewritten by me).
+And that&rsquo;s how the MySQL industry worked for many years: just running pt-query-digest.
+Some companies automated the process by creating back end services to run pt-query-digest automatically.
+But by and large, the industry standard was simply running pt-query-digest on the command line.
+&lt;/history&gt;</p>
+<p>Today, as of 2022, <code>pt-query-digest</code> is still a useful tool (and many MySQL experts still use it), but several new web-based query metric tools exist, which offer a better user experience, especially with respect to reporting because, as I note in the book, reporting is a challenge and an art form.</p>
+<h3 id="percona-monitoring-and-management-pmm">Percona Monitoring and Management (PMM)</h3>
+<table>
+<thead>
+<tr>
+<th>Open source</th>
+<th>Interface</th>
+<th>Client</th>
+<th>Sources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Yes</td>
+<td>Mixed</td>
+<td>Yes</td>
+<td>Slow log, PFS</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://www.percona.com/software/database-tools/percona-monitoring-and-management">Percona Monitoring and Management (PMM)</a> is a comprehensive, open source solution for MySQL query metrics and server metrics.
+On the back end, it has clients to collect query and server metrics and send them to servers for aggregation.
+It uses <a href="https://grafana.com">Grafana</a> for all reporting, including query metrics (which it calls <em>Query Analytics</em> because that&rsquo;s what I called it when I helped create PMM v1.0 long ago).</p>
+<p>PMM, like all Percona tools and products, are developed and used by their experts in the course of their work.
+Meaning: they&rsquo;re great tools because they&rsquo;re professionally developed and supported, and they&rsquo;re usually the industry standard.</p>
+<p>If you prefer (or need) to use open source solutions, evaluate PMM.
+It&rsquo;s basically the only comprehensive, free, open source solution with web-based reporting.</p>
+<p>(Technically, there is also <a href="https://github.com/box/Anemometer">Anemometer</a>, which automates pt-query-digest and provides a web UI for reporting, but I&rsquo;m not sure Anemometer is actively developed or supported any longer.)</p>
+<p>&lt;history&gt;
+What does &ldquo;usually the industry standard&rdquo; mean?
+MySQL has a long an interesting history around the fact that MySQL AB (the original company) was bought by Sun Microsystems, and Sun Microsystems was bought by Oracle.
+Big changes in ownership tend to create big changes in development plans, priorities, etc.
+At the same time, MySQL had its &ldquo;going viral&rdquo; years from about 2000 to 2015, and those were the years of internet history during which many of the big tech companies we know/love/hate today also &ldquo;went viral&rdquo;.
+Consequently, you had MySQL doing one thing and powerful market forces asking/needing it to do another thing.
+Enter Percona.
+Percona, along with some major tech companies, often filled the gaps in MySQL the product that MySQL the company (whether MySQL, Sun, or Oracle) had yet to fill.
+For many years, Percona Server (the Percona distribution of MySQL Community Edition) was ahead of MySQL Community Edition.
+But today, MySQL 8.0 is often ahead because MySQL is much more stable, those market forces have moved on to other tech, and so forth.
+We also have MariaDB Server that took (and continues to take) MySQL in another direction.
+&lt;/history&gt;</p>
+<h3 id="solarwinds-database-performance-monitor">SolarWinds Database Performance Monitor</h3>
+<table>
+<thead>
+<tr>
+<th>Open source</th>
+<th>Interface</th>
+<th>Client</th>
+<th>Sources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No</td>
+<td>Web app</td>
+<td>Yes</td>
+<td>network capture, PFS</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://www.solarwinds.com/database-performance-monitor">SolarWinds Database Performance Monitor</a> was originally VividCortex: a company started by Baron Schwartz to develop an insanely good query metrics tool as a fully-hosted, commercial web app.
+That tells you how imperative query metrics are to MySQL performance: Baron started a company initially focused solely on MySQL query metrics.
+The company was successful, which is why SolarWinds bought it (and renamed it).</p>
+<p>Since I always knew this product as &ldquo;VC&rdquo; (short for &ldquo;VividCortex&rdquo;), I&rsquo;ll call it that in this blog post.</p>
+<p>The most interesting aspect of VC is that it uses network capture when running locally (on the same physical server as MySQL) to measure query response time.
+In other words, the VC agent sniffs the local network for traffic on port 3306.
+The technical reasons why are beyond the scope this post, but sufficient to say: it works for measuring query response time.
+When running remotely—MySQL in the cloud, for example—it uses the Performance Schema.</p>
+<p>To me, one of the most impressive things about VC is ironically not the query metrics but the initial setup (of the client).
+I worked with Baron for many years, so I know: he really values and strives for an amazing setup experience—the smarter and more automated, the better.
+I&rsquo;m rarely impressed by setup procedures, but the VC setup is truly impressive—you&rsquo;ll see why if you try it.</p>
+<p>VC has a free 14-day trial, so try it if you&rsquo;re shopping for commercial solutions.
+Last time I used it (2020), it was still the exceptional product that Baron created, but time will tell if SolarWinds keeps it that way.</p>
+<h3 id="datadog-database-monitoring">Datadog Database Monitoring</h3>
+<table>
+<thead>
+<tr>
+<th>Open source</th>
+<th>Interface</th>
+<th>Client</th>
+<th>Sources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No (client: yes)</td>
+<td>Web app</td>
+<td>Yes</td>
+<td>PFS</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://www.datadoghq.com/product/database-monitoring/">Datadog Database Monitoring</a> is a relatively new web-based commercial query metric tool.
+It shipped in 2021, but I used and evaluated it in 2020 while in development.
+Even in 2020 development, it was a solid query metric tool that has the added bonus of (eventually) hooking into everything else Datadog offers.
+For example, if you already use Datadog for application performance monitoring (APM), then adding Datadog Database Monitoring gets you the complete picture—from app to MySQL and back—in the same web app.</p>
+<p>The initial setup of the Datadog client is really good.
+In my opinion, it&rsquo;s not as good as the VC setup, but nothing is (so far) in this particular respect.
+But the Datadog setup is really good, which is still high praise because, as you&rsquo;ll see in the second half of this blog post, configuring MySQL query metrics is not trivial.</p>
+<p>Datadog also has a free trial, so try it if you&rsquo;re in the market for commercial solutions.</p>
+<h3 id="mysql-workbench">MySQL Workbench</h3>
+<table>
+<thead>
+<tr>
+<th>Open source</th>
+<th>Interface</th>
+<th>Client</th>
+<th>Sources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No</td>
+<td>GUI</td>
+<td>?</td>
+<td>?</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://www.mysql.com/products/workbench/">MySQL Workbench</a> is:</p>
+<blockquote>
+<p>a unified visual tool for database architects, developers, and DBAs.</p>
+</blockquote>
+<p>This is the point in the blog post where you get to teach me because I have never used MySQL Workbench, which is why the table above contains two &ldquo;?&quot;: I don&rsquo;t know how it works.
+I only know that it has some kind of query metrics reporting.</p>
+<p>I also know that some people and companies use MySQL Workbench or other Oracle products, so I include this product for completeness even though I can&rsquo;t tell you about its technical specifications.
+But I&rsquo;m sure Oracle will be happy to tell you all about it.</p>
+<h3 id="aws-performance-insights">AWS Performance Insights</h3>
+<table>
+<thead>
+<tr>
+<th>Open source</th>
+<th>Interface</th>
+<th>Client</th>
+<th>Sources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No</td>
+<td>Web app</td>
+<td>No</td>
+<td>PFS</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://aws.amazon.com/rds/performance-insights/">AWS Performance Insights (PI)</a> is a slightly different type of query metric tool.
+The industry standard—as I write extensively throughout <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>—is to focus on query <em>response</em> time.
+Why?
+Because that&rsquo;s what MySQL is <em>doing</em>, and we most often need to know that so we can make it &ldquo;do faster&rdquo;, which means execute queries faster.
+But PI seems to focus on query <em>wait</em> time: how long (and for which operations) MySQL was idle—basically doing nothing.
+(Is waiting doing nothing? &ldquo;Waiting&rdquo; it something, but the act of waiting implies doing nothing.)</p>
+<p>I say that it &ldquo;seems to focus&rdquo; because it does also report something like a more traditional query profile, which shows the top slowest queries.
+And just a couple of weeks ago, my team used it to find and fix a slow query.
+(We have a standard set of tools, including query metrics, but we also keep trying [and retrying] new tools because tools change over time and we like to stay relevant and current.)</p>
+<p>But honestly: every time I use PI, I&rsquo;m not figuratively sold on the product or experience.
+It&rsquo;s acceptable, especially in lieu of having no other solution, but I would not buy it.
+Fortunately, if you&rsquo;re already using AWS RDS, then PI is free for 7 days of data, which is probably sufficient (14 days is better for production, but 7 days free is a good offering).</p>
+<p>My book still applies (performance is query <em>response</em> time), but you&rsquo;ll have to translate most of chapter 1 to fit with PI.
+Try PI if you&rsquo;re running AWS RDS, and remember: its reporting is unique, so read the docs and blog posts that AWS publishes.</p>
+<h3 id="apm">APM</h3>
+<table>
+<thead>
+<tr>
+<th>Open source</th>
+<th>Interface</th>
+<th>Client</th>
+<th>Sources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Depends</td>
+<td>Web app</td>
+<td>No</td>
+<td>Application</td>
+</tr>
+</tbody>
+</table>
+<p>Application performance monitoring (APM) products (like Datadog and New Relic) can measure query response time <em>in the application</em>.
+I emphasis those last three words because, technically, this is different than query response time measured in MySQL.
+For one thing, MySQL will almost certainly report faster query times because it does not measure network latency to and from itself (MySQL), whereas query time measured in the application includes network latency—and another other latency intrinsic to the application.
+For another thing, MySQL can measure and report a lot more query metrics, whereas APM products simply do not have access to these additional metrics—they can really only measure query response time.</p>
+<p>A true query metric tool is ideal, but if you already have APM that can measure query response time, it&rsquo;s a good start.</p>
+<hr>
+<h2 id="configure-performance-schema-for-query-metrics">Configure Performance Schema for Query Metrics</h2>
+<p>Let&rsquo;s start with the setup of the Performance Schema (PFS) because it&rsquo;s the most standard and consistent, which is why I recommend it in <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>.</p>
+<p>Good news: the default PFS configuration is usually sufficient for query metrics.
+You might not need to configure anything, but it depends on your query metric tool:</p>
+<ul>
+<li>Percona Monitoring and Management: <a href="https://www.percona.com/doc/percona-monitoring-and-management/2.x/setting-up/client/mysql.html#performance-schema">PMM v2.x Client Setup &gt; Performance Schema</a></li>
+<li>SolarWinds Database Performance Monitor: <a href="https://docs.vividcortex.com/getting-started/off-host-installation/#enabling-performance-schema-on-mysql">Enabling PERFORMANCE_SCHEMA on MySQL</a></li>
+<li>Datadog Database Monitoring: <a href="https://docs.datadoghq.com/database_monitoring/setup_mysql/selfhosted/?tab=mysql57#configure-mysql-settings">Configure MySQL settings</a></li>
+<li>AWS Performance Insights: <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights.EnableMySQL.html">Enabling the Performance Schema for Performance Insights on Amazon RDS for MariaDB or MySQL</a></li>
+</ul>
+<p>If you want the TL;DR, then read and apply the configuration as documented by those tools.
+If you want the longer and more generic explanation, then read the rest of this section.</p>
+<p class="note">
+<b>NOTE</b>: The Performance Schema is vast and complex, so I'm only going to address what's necessary and relevant to query metrics&mdash;I'm not going to explain instruments, consumers, and the myriad details of the PFS.
+</p>
+<p>At a minimum, query metrics from the Performance Schema require three consumers that are enabled by default:</p>
+<pre><code class="language-sql">mysql&gt; SELECT * FROM performance_schema.setup_consumers ORDER BY name;
++----------------------------------+---------+
+| NAME                             | ENABLED |
++----------------------------------+---------+
+| events_stages_current            | NO      |
+| events_stages_history            | NO      |
+| events_stages_history_long       | NO      |
+| events_statements_current        | YES     | -- 1. query metrics
+| events_statements_history        | YES     | -- 2. query metrics
+| events_statements_history_long   | NO      | -- 3. query metrics
+| events_transactions_current      | YES     |
+| events_transactions_history      | YES     |
+| events_transactions_history_long | NO      |
+| events_waits_current             | NO      |
+| events_waits_history             | NO      |
+| events_waits_history_long        | NO      |
+| global_instrumentation           | YES     |
+| statements_digest                | YES     | -- 4. query metrics
+| thread_instrumentation           | YES     |
++----------------------------------+---------+
+</code></pre>
+<p>The list above is all consumers, but I annotated the four consumers related to query metrics.
+Notice that only consumer 3, <code>events_statements_history_long</code>, is <em>disabled</em> by default.
+Without going into a full explanation of what this consumer does, the short version is: it provides real SQL statements (query samples).
+But as you&rsquo;ll read in chapter 1 of the book, many query metric tools do not use query samples by default for security.</p>
+<p>For tools that require <code>events_statements_history_long</code>, you enable it in the <code>my.cnf</code>:</p>
+<pre><code class="language-ini">[mysqld]
+performance_schema_consumer_events_statements_history_long=ON # query metrics
+</code></pre>
+<p>Set <code>performance_schema_consumer_events_statements_history_long=ON</code> in <code>my.cnf</code> under the <code>[mysqld]</code> section as shown.
+That enables the consumer when MySQL starts, but the variable is dynamic so you can enable it the first time without restarting MySQL:</p>
+<pre><code class="language-sql">UPDATE performance_schema.setup_consumers SET enabled='YES' WHERE name='events_statements_history_long';
+</code></pre>
+<p>Then execute <code>SELECT * FROM performance_schema.setup_consumers ORDER BY name</code> to check that all query metric-related consumers are enabled.</p>
+<p>In other guides about enabling PFS for query metrics, you might see a configuration like:</p>
+<pre><code class="language-ini">[mysqld]
+performance_schema
+performance_schema_consumer_statements_digest=ON
+performance_schema_consumer_events_statements_history_long=ON
+</code></pre>
+<p>Usually, these guides are being explicit: having you explicitly enable PFS consumers (and other parts) even though many are enabled by default.
+This is not a bad practice (because MySQL defaults might change), just be aware that there are many different ways to express the same configuration.</p>
+<p class="warning"><b>EXCEPTION</b>: Amazon RDS for MySQL disables the Performance Schema by default.
+This is contrary to the industry standard, and it's odd given that their own product, Performance Insights, requires the PFS.<br><br>
+To enable PFS on Amazon RDS for MySQL, set <code>performance_schema = 1</code> and (if needed) <code>performance_schema_consumer_events_statements_history_long = 1</code> in the parameter group.
+Apply the parameter group changes, which requires restarting MySQL.
+</p>
+<p>To check that PFS query metrics are working, run:</p>
+<pre><code class="language-sql">mysql&gt; SELECT * FROM performance_schema.events_statements_summary_by_digest LIMIT 1\G
+*************************** 1. row ***************************
+                SCHEMA_NAME: NULL
+                     DIGEST: 80c944deffba0a309d8246bc7f71a69dfaf62386ef0409a63d4fe1fb66a4d0b7
+                DIGEST_TEXT: SELECT * FROM `performance_schema` . `setup_consumers` ORDER BY NAME
+                 COUNT_STAR: 3
+             SUM_TIMER_WAIT: 6475000000
+             MIN_TIMER_WAIT: 168000000
+             AVG_TIMER_WAIT: 2158333000
+             MAX_TIMER_WAIT: 6016000000
+              SUM_LOCK_TIME: 3629000000
+                 SUM_ERRORS: 0
+               SUM_WARNINGS: 0
+          SUM_ROWS_AFFECTED: 0
+              SUM_ROWS_SENT: 45
+          SUM_ROWS_EXAMINED: 90
+SUM_CREATED_TMP_DISK_TABLES: 0
+     SUM_CREATED_TMP_TABLES: 0
+       SUM_SELECT_FULL_JOIN: 0
+ SUM_SELECT_FULL_RANGE_JOIN: 0
+           SUM_SELECT_RANGE: 0
+     SUM_SELECT_RANGE_CHECK: 0
+            SUM_SELECT_SCAN: 3
+      SUM_SORT_MERGE_PASSES: 0
+             SUM_SORT_RANGE: 0
+              SUM_SORT_ROWS: 45
+              SUM_SORT_SCAN: 3
+          SUM_NO_INDEX_USED: 3
+     SUM_NO_GOOD_INDEX_USED: 0
+                 FIRST_SEEN: 2022-01-15 16:17:53.349231
+                  LAST_SEEN: 2022-01-15 16:51:57.777186
+                QUANTILE_95: 6025595860
+                QUANTILE_99: 6025595860
+               QUANTILE_999: 6025595860
+          QUERY_SAMPLE_TEXT: SELECT * FROM performance_schema.setup_consumers ORDER BY name
+          QUERY_SAMPLE_SEEN: 2022-01-15 16:51:57.777186
+    QUERY_SAMPLE_TIMER_WAIT: 291000000
+</code></pre>
+<p>Query metric tools primarily use table <a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema-statement-summary-tables.html">events_statements_summary_by_digest</a> to generate query profiles and reports.
+In the example above, you can spot the nine essential query metrics that chapter 1 explains in detail:</p>
+<ul>
+<li><code>SUM_TIMER_WAIT</code> (query response time)</li>
+<li><code>SUM_LOCK_TIME</code> (lock time <em>without</em> row lock time)</li>
+<li><code>SUM_ROWS_EXAMINED</code></li>
+<li><code>SUM_ROWS_SENT</code></li>
+<li><code>SUM_ROWS_AFFECTED</code></li>
+<li><code>SUM_SELECT_SCAN</code></li>
+<li><code>SUM_SELECT_FULL_JOIN</code></li>
+<li><code>SUM_CREATED_TMP_DISK_TABLES</code></li>
+<li><code>COUNT_STAR</code> (query count)</li>
+</ul>
+<p>That covers basic configuration of PFS for query metrics, but you need one more thing: the MySQL user that the query metric tool uses needs a grant like:</p>
+<p><code>GRANT SELECT ON performance_schema.* TO ...</code></p>
+<p>Your query metric tool might require more privileges, but it certainly requires at least <code>SELECT</code> on PFS.</p>
+<p>Lastly, I like the suggestion by Datadog to change the default value of these three system variables:</p>
+<ul>
+<li><code>max_digest_length = 4096</code></li>
+<li><code>performance_schema_max_digest_length = 4096</code></li>
+<li><code>performance_schema_max_sql_text_length = 4096</code></li>
+</ul>
+<p>Set those three system variables in <code>my.cnf</code>.
+They&rsquo;re not dynamic, so you have to restart MySQL.
+That will cause PFS use to use a little more memory, but it&rsquo;s necessary for accuracy if you have queries greater than 1024 bytes long, which is not uncommon.</p>
+<hr>
+<h2 id="configuring-the-slow-query-log">Configuring the Slow Query Log</h2>
+<p>The <a href="https://dev.mysql.com/doc/refman/en/slow-query-log.html">slow query log</a> is not as easy to configure or manage as the Performance Schema.
+In the cloud, it&rsquo;s basically not usable, although some cloud providers (like AWS) allow you to download it, which makes <a href="#pt-query-digest">pt-query-digset</a> an option.</p>
+<p>If you must use the slow query log, your best options are <a href="https://www.percona.com/software/mysql-database/percona-server">Percona Server</a> or <a href="https://mariadb.org/">MariaDB Server</a> because, from my point of view, Oracle seems to prioritize Performance Schema development over slow query log development, which is probably the better technical decision.</p>
+<p>Nevertheless, the slow query log is the classic source of query metrics—more than 20 years old and still important today.</p>
+<h3 id="mysql">MySQL</h3>
+<p>Let me quote myself from chapter 1 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>:</p>
+<blockquote>
+<p>As of MySQL 8.0.14, enable system variable <a href="https://oreil.ly/ibfRK"><code>log_slow_extra</code></a> and the slow query log provides six of the nine metrics in &ldquo;Query Metrics&rdquo; on page 11, lacking only <code>Rows_affected</code>, <code>Select_scan</code>, and <code>Select_full_join</code>.
+It’s still a good source, but use the Performance Schema if possible.</p>
+<p>Before MySQL 8.0.14, which includes MySQL 5.7, the slow query log is bare bones, providing only <code>Query_time</code>, <code>Lock_time</code>, <code>Rows_sent</code>, and <code>Rows_examined</code>.
+You can still analyze queries with only these four metrics, but the analysis is much less insightful.
+Consequently, avoid the slow query log before MySQL 8.0.14 and instead use the Performance Schema.</p>
+</blockquote>
+<p>Here&rsquo;s a starting point configuration for <code>my.cnf</code>:</p>
+<pre><code class="language-ini">[mysqld]
+slow_query_log                = 1
+long_query_time               = 0.001  # 1 millisecond
+log_queries_not_using_indexes = 1
+slow_query_log_file           = slow-query.log
+#
+# As of MySQL 8.0.14:
+#
+log_slow_extra                = 1 
+</code></pre>
+<p class="warning">
+<b>WARNING</b>: If you're not using MySQL 8.014 or newer, comment out the last line (<code>`log_slow_extra`</code>), else MySQL will error on startup.
+</p>
+<p>Those system variables are dynamic, so you can set them without restarting MySQL, but they&rsquo;re not default values, so you must also set them in <code>my.cnf</code> so they&rsquo;re configured on startup.</p>
+<p>The main decision to make is the value for <a href="https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_long_query_time"><code>long_query_time</code></a>: if set to zero, then MySQL logs <em>every</em> query.
+A zero value is basically never used because it causes too much storage I/O and generates too much data in the log file.
+At a mere 1,000 QPS, for example, that&rsquo;s 60,000 log entries per minute, and each log entry is at least 3 lines long, so 180,000 lines/minute, which is 10.8 <em>million</em> lines/hour or 259.2 million lines/day—and that&rsquo;s not even taking into consideration the log file size, which will probably be many gigabytes.</p>
+<p>I chose 1 millisecond (<code>long_query_time = 0.001</code>) for this example, but <strong>you must test it on your server: it might generate too much storage I/O overheard or use too much disk space.</strong>
+Adjust <code>long_query_time</code> until you find the smallest value that generates acceptable overhead and disk space.
+Certain query metric tools, like <a href="#percona-monitoring-and-management-pmm">PMM</a>, can manage large slow query logs with tailing and rotation.</p>
+<p>Finding the best value for <code>long_query_time</code> is difficult, which is why Percona implemented query sampling a long time ago&hellip;</p>
+<h3 id="percona-server">Percona Server</h3>
+<p>The Percona Server <a href="https://www.percona.com/doc/percona-server/5.7/diagnostics/slow_extended.html">extended slow query log</a> has two important features: query sampling and extra query metrics.</p>
+<p>Here&rsquo;s another starting point configuration for <code>my.cnf</code>:</p>
+<pre><code class="language-ini">[mysqld]
+slow_query_log                = 1
+long_query_time               = 0  # throttled by log_slow_rate_limit
+log_queries_not_using_indexes = 1
+slow_query_log_file           = slow-query.log
+#
+# Percona Server
+#
+log_slow_rate_type  = query              # query sampling
+log_slow_rate_limit = 10                 # 1/10 = 10% queries logged
+slow_query_log_always_write_time = 2     # always log really slow queries
+log_slow_verbosity  = innodb,query_plan  # extra query metrics
+</code></pre>
+<p>With <code>log_slow_rate_type = query</code> and <code>log_slow_rate_limit = N</code>, you can set MySQL <code>long_query_time = 0</code> and get the best of both worlds: log virtually all queries with minimal overhead.
+This is query sampling: logging every Nth query, which yields a percentage of all queries.
+In this example, I chose <code>log_slow_rate_limit = 10</code>, which just happens to also equal 10% of queries logged.
+The calculation is:</p>
+<p><code>(1 / log_slow_rate_limit) * 100 = % queries logged</code></p>
+<p>A quick reference for different values of <code>log_slow_rate_limit</code>, which ranges from 1 to 1000:</p>
+<pre><code>(1 /   1) * 100 = 100% (every query)
+(1 /   2) * 100 =  50%
+(1 /   3) * 100 =  33%
+(1 /   4) * 100 =  25%
+(1 /   5) * 100 =  20%
+(1 /  10) * 100 =  10%
+(1 / 100) * 100 =   1%
+(1 / 500) * 100 = 0.2%
+(1 /1000) * 100 = 0.1%
+</code></pre>
+<p>Even the highest value, 1000, works: on high QPS servers, logging only 0.1% of queries (every 1,000th query) quickly produces a complete and accurate picture.
+This is analogous to video: you only need 24 frames per second to produce a video.
+Likewise, with MySQL you only need to sample a small percentage of queries to produce an accurate query profile.</p>
+<p>The other important feature is <code>log_slow_verbosity = innodb,query_plan</code>: this cause Percona Server to log the most query metrics of any source or distribution of MySQL.
+It logs all nine essential query metrics explained in chapter 1 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>—and a lot more.</p>
+<p>The configuration above is a good starting point, but read the <a href="https://www.percona.com/doc/percona-server/5.7/diagnostics/slow_extended.html">extended slow query log documentation</a> to learn more.</p>
+<h3 id="mariadb">MariaDB</h3>
+<p>MariaDB Server use the Percona Server extended slow query log code, so its configuration is the same.
+See <a href="https://mariadb.com/kb/en/slow-query-log-overview/#throttling-the-slow-query-log">Throttling the Slow Query Log</a> in the MariaDB documentation.
+Two important notes about those docs:</p>
+<ul>
+<li>The <code>my.cnf</code> section header is <code>[mariadb]</code></li>
+<li>The example shows <code>long_query_time=5.0</code> but change 5.0 to 0 when <code>log_slow_rate_limit</code> is enabled (greater than 1)</li>
+</ul>
+<h2 id="history">History</h2>
+<p>Ironically, the history of &ldquo;performance is query response time&rdquo; originates from the book <a href="https://www.oreilly.com/library/view/optimizing-oracle-performance/059600527X/"><em>Optimizing Oracle Performance</em></a> published by O&rsquo;Reilly in September 2003.
+That&rsquo;s ironic because in 2003 MySQL was the &ldquo;anti-Oracle&rdquo; relational database.
+Not just the fact that MySQL has always been free and open source, but the relative ease of using and managing MySQL—especially replication—made it the &ldquo;anti-Oracle&rdquo; relational database of choice for the internet.
+But now in 2022, Oracle owns MySQL, and if you read that book and look at MySQL 8.0, you&rsquo;ll see the family resemblance.
+The authors, Cary Millsap and Jeff Holt, where right about database performance 20 years ago and still right today: <em>performance is query response time</em>.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+        
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-0/" data-toggle="tooltip" data-placement="top" title="Efficient MySQL Performance">&larr; </a>
+          </li>
+        
+        
+      </ul>
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+      
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" defer></script>
+
+
+  </body>
+</html>

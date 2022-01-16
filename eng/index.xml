@@ -12,41 +12,41 @@
       <title>Database Operations Manual</title>
       <link>https://hackmysql.com/eng/database-operations-manual/</link>
       <pubDate>Sat, 16 Oct 2021 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/eng/database-operations-manual/</guid>
       <description>Database Operations Manual Running a database is easy, especially in the cloud, but operating a database is complicated. This page outlines operational aspects (OA) required to operate a database in production, at scale.
 Last updated: October 16, 2021
 1. Security Security is the first priority: nothing else matters if the database is compromised. It is better for a database to be offline than hacked. Security permeates every operational aspects (OA), but these OA address the most critical aspects, like root (super) access and encryption.</description>
     </item>
-
+    
     <item>
       <title>Career Advice</title>
       <link>https://hackmysql.com/eng/career-advice/</link>
       <pubDate>Mon, 12 Apr 2021 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/eng/career-advice/</guid>
       <description>Career Advice 1. Add Value Success follows value.
 Ensure that the work you do adds value to the business and other people.
 2. Write Well When writing any document that&amp;rsquo;s read by other people (even if it&amp;rsquo;s just a README), always use proper grammar and style. Read Grammatically Correct if you need to learn grammar, and read It was the best of sentences, it was the worst of sentences if you need to learn style.</description>
     </item>
-
+    
     <item>
       <title>Percentiles</title>
       <link>https://hackmysql.com/eng/percentiles/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/eng/percentiles/</guid>
       <description>Percentiles Percentiles are ubiquitous in application performance monitoring, particularly the 95th (P95), 99th (P99), and 99.9th (P999) percentiles. The basic concept is simple: percentile Pn means n% of all values are &amp;lt;= than the Pn value. If the P95 value = 100ms, then 95% of all values are &amp;lt;= 100ms. In other words: 5% of all values are &amp;gt; 100ms. Percentiles discard the top (100-n)% values as outliers for various reasons which are outside the scope of this page.</description>
     </item>
-
+    
     <item>
       <title>Command-line Interface Antipatterns</title>
       <link>https://hackmysql.com/eng/cli-antipatterns/</link>
       <pubDate>Sun, 21 Jan 2018 19:00:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/eng/cli-antipatterns/</guid>
       <description>Command-line Interface Antipatterns Apps (web, mobile, and native) and APIs do not lessen the need or importance of command-line tools. A beautifully designed command-line user experience is arguably more important and than a graphical UX because the command line is deceptively simple: text on a screen. Wielding mere text on screen is an art akin to wielding mere paint on canvas. This page documents what I believe to be command-line interface (CLI) antipatterns which, in the long or short run, detract from both UX and developer effectiveness.</description>
     </item>
-
+    
   </channel>
 </rss>

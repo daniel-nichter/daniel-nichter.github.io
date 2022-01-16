@@ -12,10 +12,10 @@
       <title>3 Golang Channel Red Flags</title>
       <link>https://hackmysql.com/post/three-golang-channel-red-flags/</link>
       <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/post/three-golang-channel-red-flags/</guid>
       <description>Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&amp;rsquo;t close the channel isn&amp;rsquo;t aware the channel is closed, so send and receive on the closed channel don&amp;rsquo;t have the intended effect.</description>
     </item>
-
+    
   </channel>
 </rss>

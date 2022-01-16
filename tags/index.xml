@@ -7,672 +7,690 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Mon, 27 Dec 2021 09:30:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 16 Jan 2022 15:40:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>book</title>
       <link>https://hackmysql.com/tags/book/</link>
-      <pubDate>Mon, 27 Dec 2021 09:30:00 -0500</pubDate>
-
+      <pubDate>Sun, 16 Jan 2022 15:40:00 -0500</pubDate>
+      
       <guid>https://hackmysql.com/tags/book/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>efficient-mysql-performance</title>
       <link>https://hackmysql.com/tags/efficient-mysql-performance/</link>
-      <pubDate>Mon, 27 Dec 2021 09:30:00 -0500</pubDate>
-
+      <pubDate>Sun, 16 Jan 2022 15:40:00 -0500</pubDate>
+      
       <guid>https://hackmysql.com/tags/efficient-mysql-performance/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>mysql</title>
       <link>https://hackmysql.com/tags/mysql/</link>
-      <pubDate>Mon, 27 Dec 2021 09:30:00 -0500</pubDate>
-
+      <pubDate>Sun, 16 Jan 2022 15:40:00 -0500</pubDate>
+      
       <guid>https://hackmysql.com/tags/mysql/</guid>
       <description></description>
     </item>
-
+    
+    <item>
+      <title>performance-schema</title>
+      <link>https://hackmysql.com/tags/performance-schema/</link>
+      <pubDate>Sun, 16 Jan 2022 15:40:00 -0500</pubDate>
+      
+      <guid>https://hackmysql.com/tags/performance-schema/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>slow-query-log</title>
+      <link>https://hackmysql.com/tags/slow-query-log/</link>
+      <pubDate>Sun, 16 Jan 2022 15:40:00 -0500</pubDate>
+      
+      <guid>https://hackmysql.com/tags/slow-query-log/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>trx</title>
       <link>https://hackmysql.com/tags/trx/</link>
       <pubDate>Wed, 08 Dec 2021 09:00:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/trx/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>database</title>
       <link>https://hackmysql.com/tags/database/</link>
       <pubDate>Sat, 16 Oct 2021 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/database/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>ops</title>
       <link>https://hackmysql.com/tags/ops/</link>
       <pubDate>Sat, 16 Oct 2021 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/ops/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>innodb</title>
       <link>https://hackmysql.com/tags/innodb/</link>
       <pubDate>Thu, 02 Sep 2021 18:11:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/innodb/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>io-capacity</title>
       <link>https://hackmysql.com/tags/io-capacity/</link>
       <pubDate>Thu, 02 Sep 2021 18:11:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/io-capacity/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>lru-flushing</title>
       <link>https://hackmysql.com/tags/lru-flushing/</link>
       <pubDate>Thu, 02 Sep 2021 18:11:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/lru-flushing/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>data-locks</title>
       <link>https://hackmysql.com/tags/data-locks/</link>
       <pubDate>Mon, 26 Jul 2021 15:40:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/data-locks/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>aws-rds</title>
       <link>https://hackmysql.com/tags/aws-rds/</link>
       <pubDate>Mon, 28 Dec 2020 12:09:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/aws-rds/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>terraform</title>
       <link>https://hackmysql.com/tags/terraform/</link>
       <pubDate>Mon, 28 Dec 2020 12:09:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/terraform/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>aws-lambda</title>
       <link>https://hackmysql.com/tags/aws-lambda/</link>
       <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/aws-lambda/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>aws-s3</title>
       <link>https://hackmysql.com/tags/aws-s3/</link>
       <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/aws-s3/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>aws-secrets-manager</title>
       <link>https://hackmysql.com/tags/aws-secrets-manager/</link>
       <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/aws-secrets-manager/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>query-metrics</title>
       <link>https://hackmysql.com/tags/query-metrics/</link>
       <pubDate>Sun, 01 Nov 2020 20:25:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/query-metrics/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>dirty-pages</title>
       <link>https://hackmysql.com/tags/dirty-pages/</link>
       <pubDate>Sun, 05 Jul 2020 18:50:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/dirty-pages/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>flushing</title>
       <link>https://hackmysql.com/tags/flushing/</link>
       <pubDate>Sun, 05 Jul 2020 18:50:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/flushing/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>parameter-group</title>
       <link>https://hackmysql.com/tags/parameter-group/</link>
       <pubDate>Mon, 29 Jun 2020 11:15:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/parameter-group/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>sys-var</title>
       <link>https://hackmysql.com/tags/sys-var/</link>
       <pubDate>Mon, 29 Jun 2020 11:15:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/sys-var/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>gtid</title>
       <link>https://hackmysql.com/tags/gtid/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/gtid/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>replication</title>
       <link>https://hackmysql.com/tags/replication/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/replication/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>archive</title>
       <link>https://hackmysql.com/tags/archive/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/archive/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>mysqlreport</title>
       <link>https://hackmysql.com/tags/mysqlreport/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/mysqlreport/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>mysqlsla</title>
       <link>https://hackmysql.com/tags/mysqlsla/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/mysqlsla/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>mysqlsniffer</title>
       <link>https://hackmysql.com/tags/mysqlsniffer/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/mysqlsniffer/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>metrics</title>
       <link>https://hackmysql.com/tags/metrics/</link>
       <pubDate>Sat, 25 Apr 2020 16:18:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/metrics/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>threads running</title>
       <link>https://hackmysql.com/tags/threads-running/</link>
       <pubDate>Sat, 25 Apr 2020 16:18:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/threads-running/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>performance</title>
       <link>https://hackmysql.com/tags/performance/</link>
       <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/performance/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>queries</title>
       <link>https://hackmysql.com/tags/queries/</link>
       <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/queries/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>auto-pos</title>
       <link>https://hackmysql.com/tags/auto-pos/</link>
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/auto-pos/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>histograms</title>
       <link>https://hackmysql.com/tags/histograms/</link>
       <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/histograms/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>percentiles</title>
       <link>https://hackmysql.com/tags/percentiles/</link>
       <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/percentiles/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>sla</title>
       <link>https://hackmysql.com/tags/sla/</link>
       <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/sla/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>monitoring</title>
       <link>https://hackmysql.com/tags/monitoring/</link>
       <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/monitoring/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>time series</title>
       <link>https://hackmysql.com/tags/time-series/</link>
       <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/time-series/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>errors</title>
       <link>https://hackmysql.com/tags/errors/</link>
       <pubDate>Mon, 25 Mar 2019 11:00:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/errors/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>golang</title>
       <link>https://hackmysql.com/tags/golang/</link>
       <pubDate>Mon, 25 Mar 2019 11:00:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/golang/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>go-metrics</title>
       <link>https://hackmysql.com/tags/go-metrics/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/go-metrics/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>linear interpolation</title>
       <link>https://hackmysql.com/tags/linear-interpolation/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/linear-interpolation/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>nearest rank</title>
       <link>https://hackmysql.com/tags/nearest-rank/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/nearest-rank/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>channels</title>
       <link>https://hackmysql.com/tags/channels/</link>
       <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/channels/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>design pattern</title>
       <link>https://hackmysql.com/tags/design-pattern/</link>
       <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/design-pattern/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>sender-closer</title>
       <link>https://hackmysql.com/tags/sender-closer/</link>
       <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/sender-closer/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>CBD</title>
       <link>https://hackmysql.com/tags/cbd/</link>
       <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/cbd/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>component-based design</title>
       <link>https://hackmysql.com/tags/component-based-design/</link>
       <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/component-based-design/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>software design</title>
       <link>https://hackmysql.com/tags/software-design/</link>
       <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/software-design/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>godoc</title>
       <link>https://hackmysql.com/tags/godoc/</link>
       <pubDate>Sun, 13 May 2018 09:00:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/godoc/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>bootloader</title>
       <link>https://hackmysql.com/tags/bootloader/</link>
       <pubDate>Sun, 04 Feb 2018 19:30:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/bootloader/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>Gunther</title>
       <link>https://hackmysql.com/tags/gunther/</link>
       <pubDate>Sun, 28 Jan 2018 11:20:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/gunther/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>scalability</title>
       <link>https://hackmysql.com/tags/scalability/</link>
       <pubDate>Sun, 28 Jan 2018 11:20:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/scalability/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>Schwartz</title>
       <link>https://hackmysql.com/tags/schwartz/</link>
       <pubDate>Sun, 28 Jan 2018 11:20:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/schwartz/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>Universal Scalability Law</title>
       <link>https://hackmysql.com/tags/universal-scalability-law/</link>
       <pubDate>Sun, 28 Jan 2018 11:20:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/universal-scalability-law/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>crash-safe</title>
       <link>https://hackmysql.com/tags/crash-safe/</link>
       <pubDate>Tue, 23 Jan 2018 18:40:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/crash-safe/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>antipatterns</title>
       <link>https://hackmysql.com/tags/antipatterns/</link>
       <pubDate>Sun, 21 Jan 2018 19:00:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/antipatterns/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>cli</title>
       <link>https://hackmysql.com/tags/cli/</link>
       <pubDate>Sun, 21 Jan 2018 19:00:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/cli/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>command-line</title>
       <link>https://hackmysql.com/tags/command-line/</link>
       <pubDate>Sun, 21 Jan 2018 19:00:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/command-line/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>business</title>
       <link>https://hackmysql.com/tags/business/</link>
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/business/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>philosophy</title>
       <link>https://hackmysql.com/tags/philosophy/</link>
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/philosophy/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>Silicon Valley</title>
       <link>https://hackmysql.com/tags/silicon-valley/</link>
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/silicon-valley/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>social responsibility</title>
       <link>https://hackmysql.com/tags/social-responsibility/</link>
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/social-responsibility/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>domain model</title>
       <link>https://hackmysql.com/tags/domain-model/</link>
       <pubDate>Sun, 10 Dec 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/domain-model/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>engineering</title>
       <link>https://hackmysql.com/tags/engineering/</link>
       <pubDate>Sun, 12 Nov 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/engineering/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>leadership</title>
       <link>https://hackmysql.com/tags/leadership/</link>
       <pubDate>Sun, 12 Nov 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/leadership/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>checklist</title>
       <link>https://hackmysql.com/tags/checklist/</link>
       <pubDate>Sun, 17 Sep 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/checklist/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>integration</title>
       <link>https://hackmysql.com/tags/integration/</link>
       <pubDate>Tue, 05 Sep 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/integration/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>tools</title>
       <link>https://hackmysql.com/tags/tools/</link>
       <pubDate>Tue, 05 Sep 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/tools/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>testing</title>
       <link>https://hackmysql.com/tags/testing/</link>
       <pubDate>Sun, 20 Aug 2017 11:20:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/testing/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>race condition</title>
       <link>https://hackmysql.com/tags/race-condition/</link>
       <pubDate>Sat, 17 Jun 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/race-condition/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>mongodb</title>
       <link>https://hackmysql.com/tags/mongodb/</link>
       <pubDate>Sun, 11 Jun 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/mongodb/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>replica set</title>
       <link>https://hackmysql.com/tags/replica-set/</link>
       <pubDate>Sun, 11 Jun 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/replica-set/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>tag set</title>
       <link>https://hackmysql.com/tags/tag-set/</link>
       <pubDate>Sun, 11 Jun 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/tag-set/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>write concern</title>
       <link>https://hackmysql.com/tags/write-concern/</link>
       <pubDate>Sun, 11 Jun 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/write-concern/</guid>
       <description></description>
     </item>
-
+    
     <item>
       <title>os/exec</title>
       <link>https://hackmysql.com/tags/os/exec/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/tags/os/exec/</guid>
       <description></description>
     </item>
-
+    
   </channel>
 </rss>

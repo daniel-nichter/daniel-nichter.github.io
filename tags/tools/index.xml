@@ -12,10 +12,10 @@
       <title>Designing Tools for Integration</title>
       <link>https://hackmysql.com/post/designing-tools-for-integration/</link>
       <pubDate>Tue, 05 Sep 2017 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/post/designing-tools-for-integration/</guid>
       <description>When we write a new tool to do X, it&amp;rsquo;s common to program the tool to do X in one way. When X is trivial or very narrow in scope, this makes sense, and programming any more would fall prey to over-engineering. However, when the tool does many things (all logically related, else it falls prey to bloat and/or feature-creep), there quickly becomes many ways to accomplish those many things. No problem, we program all those things, too, but during my tool-making career I&amp;rsquo;ve learned two things:</description>
     </item>
-
+    
   </channel>
 </rss>

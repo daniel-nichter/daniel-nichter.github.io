@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>slow-query-log on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/slow-query-log/</link>
+    <description>Recent content in slow-query-log on Hack MySQL</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2022 Daniel Nichter</copyright>
+    <lastBuildDate>Sun, 16 Jan 2022 15:40:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/slow-query-log/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Configuring MySQL Query Metrics</title>
+      <link>https://hackmysql.com/post/book-1/</link>
+      <pubDate>Sun, 16 Jan 2022 15:40:00 -0500</pubDate>
+      
+      <guid>https://hackmysql.com/post/book-1/</guid>
+      <description>&lt;p&gt;Editors and technical reviewers suggested that I cover how to configure MySQL query metrics in chapter 1 of &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt;, but I deferred because it was out of scope for the book, which focuses on engineers &lt;em&gt;using&lt;/em&gt; MySQL, not DBAs.
+As such, there&amp;rsquo;s only a note in chapter 1 that says: &amp;ldquo;Ask your DBA or read the MySQL manual.&amp;rdquo;
+But I&amp;rsquo;ll cover the topic here because that&amp;rsquo;s what this blog post series is for: behind the book.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -12,11 +12,11 @@
       <title>Thinking in Go</title>
       <link>https://hackmysql.com/post/thinking-in-go/</link>
       <pubDate>Sun, 13 May 2018 09:00:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/post/thinking-in-go/</guid>
       <description>After learning Go, it is necessary to think in Go in order to design and implement well-written, idiomatic Go. This blog post outlines aspects that I think are important for thinking in Go. A full exploration of these aspects could fill a book, but this only an orientation for experienced programmers new to Go.
 Programming languages have aspects which affect how we think, design, and implement software with the language: syntax, documentation, features/capabilities, language type (object-oriented, functional, compiled, etc.</description>
     </item>
-
+    
   </channel>
 </rss>

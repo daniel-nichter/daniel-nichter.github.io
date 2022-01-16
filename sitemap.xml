@@ -3,24 +3,33 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://hackmysql.com/tags/book/</loc>
-    <lastmod>2021-12-27T09:30:00-05:00</lastmod>
+    <lastmod>2022-01-16T15:40:00-05:00</lastmod>
   </url><url>
-    <loc>https://hackmysql.com/post/book-0/</loc>
-    <lastmod>2021-12-27T09:30:00-05:00</lastmod>
+    <loc>https://hackmysql.com/post/book-1/</loc>
+    <lastmod>2022-01-16T15:40:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/efficient-mysql-performance/</loc>
-    <lastmod>2021-12-27T09:30:00-05:00</lastmod>
+    <lastmod>2022-01-16T15:40:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/</loc>
-    <lastmod>2021-12-27T09:30:00-05:00</lastmod>
+    <lastmod>2022-01-16T15:40:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2021-12-27T09:30:00-05:00</lastmod>
+    <lastmod>2022-01-16T15:40:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/performance-schema/</loc>
+    <lastmod>2022-01-16T15:40:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2021-12-27T09:30:00-05:00</lastmod>
+    <lastmod>2022-01-16T15:40:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/slow-query-log/</loc>
+    <lastmod>2022-01-16T15:40:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2022-01-16T15:40:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/book-0/</loc>
     <lastmod>2021-12-27T09:30:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/about/</loc>

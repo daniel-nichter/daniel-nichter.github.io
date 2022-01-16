@@ -205,6 +205,13 @@ footer img {
   margin: auto;
 }
 
+dt {
+  font-style: italic;
+}
+dd {
+  margin-left: 2em;
+}
+
 .post-title {
   font-weight: 700;
   font-size: 30px;

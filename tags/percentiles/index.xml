@@ -12,20 +12,20 @@
       <title>Response Time SLA</title>
       <link>https://hackmysql.com/post/response-time-sla/</link>
       <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/post/response-time-sla/</guid>
       <description>Response time (or latency) percentiles are a ubiquitous measure of system performance. The P999 (99.9th percentile) is a high bar, so it&amp;rsquo;s a good metric to determine an SLA. For example, my team runs a system with an 800 millisecond response time SLA determined by the P999. To meet that SLA, 99.9% of all requests must take &amp;lt;= 800ms. The system meets the SLA, but here&amp;rsquo;s its P999 graph:
 Looks bad, but the system is meeting the SLA.</description>
     </item>
-
+    
     <item>
       <title>Percentiles</title>
       <link>https://hackmysql.com/eng/percentiles/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/eng/percentiles/</guid>
       <description>Percentiles Percentiles are ubiquitous in application performance monitoring, particularly the 95th (P95), 99th (P99), and 99.9th (P999) percentiles. The basic concept is simple: percentile Pn means n% of all values are &amp;lt;= than the Pn value. If the P95 value = 100ms, then 95% of all values are &amp;lt;= 100ms. In other words: 5% of all values are &amp;gt; 100ms. Percentiles discard the top (100-n)% values as outliers for various reasons which are outside the scope of this page.</description>
     </item>
-
+    
   </channel>
 </rss>
