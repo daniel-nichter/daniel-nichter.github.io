@@ -588,3 +588,11 @@ a.book-button {
     text-align: justify;
   }
 }
+
+div.book-covers p {
+  display: inline-block;
+}
+div.book-covers img {
+  height: 100px;
+  margin-left: 20px;
+}
