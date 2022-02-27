@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://hackmysql.com/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.91.1" /><link rel="canonical" href="https://hackmysql.com/" />
+  <meta name="generator" content="Hugo 0.92.1" /><link rel="canonical" href="https://hackmysql.com/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
@@ -144,38 +144,34 @@
 	<div id="posts">
 			
 			<article class="post-preview">
-				<a href="https://hackmysql.com/post/book-1/">
-					<h1 class="post-title">Configuring MySQL Query Metrics</h1>
+				<a href="https://hackmysql.com/post/book-2/">
+					<h1 class="post-title">MySQL EXPLAIN ANALYZE</h1>
 					
-						<h3 class="post-subtitle">Chapter 1</h3>
+						<h3 class="post-subtitle">Chapter 2</h3>
 					
 				</a>
 				<div class="post-entry">
 					
-						<p>Editors and technical reviewers suggested that I cover how to configure MySQL query metrics in chapter 1 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, but I deferred because it was out of scope for the book, which focuses on engineers <em>using</em> MySQL, not DBAs.
-As such, there&rsquo;s only a note in chapter 1 that says: &ldquo;Ask your DBA or read the MySQL manual.&rdquo;
-But I&rsquo;ll cover the topic here because that&rsquo;s what this blog post series is for: behind the book.</p>
-						<a href="https://hackmysql.com/post/book-1/" class="post-read-more">Read more...</a>
+						<p>As of MySQL 8.0.18, <a href="https://dev.mysql.com/doc/refman/8.0/en/explain.html#explain-analyze"><code>EXPLAIN ANALYZE</code></a> is an indispensable tool for understanding query execution because it breaks down the query execution stage of response time by measuring each step of the query execution plan.
+The information is illuminating, but the output is not intuitive: it requires practice and some understanding of how MySQL executes queries beyond the table join order shown by traditional <code>EXPLAIN</code> output.
+This blog post closely examines three different examples of <code>EXPLAIN ANALYZE</code> output.</p>
+						<a href="https://hackmysql.com/post/book-2/" class="post-read-more">Read more...</a>
 					
 				</div>
 				<div class="post-meta">
   
   
-  <div>Jan 16, 2022</div>
+  <div>Feb 27, 2022</div>
   <div class="blog-tags">
     
       
         <a href="/tags/mysql">#mysql</a>
       
+        <a href="/tags/explain">#explain</a>
+      
         <a href="/tags/book">#book</a>
       
         <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
-      
-        <a href="/tags/query-metrics">#query-metrics</a>
-      
-        <a href="/tags/performance-schema">#performance-schema</a>
-      
-        <a href="/tags/slow-query-log">#slow-query-log</a>
       
     
   </div>
@@ -185,6 +181,8 @@ But I&rsquo;ll cover the topic here because that&rsquo;s what this blog post ser
 			</article>
 			
 		<div>
+			
+				<li><time>2022-01-16</time>&nbsp;<a href="https://hackmysql.com/post/book-1/">Configuring MySQL Query Metrics</a></li>
 			
 				<li><time>2021-12-27</time>&nbsp;<a href="https://hackmysql.com/post/book-0/">Efficient MySQL Performance</a></li>
 			

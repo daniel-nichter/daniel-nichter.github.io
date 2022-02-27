@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>MySQL EXPLAIN ANALYZE</title>
+  <meta property="og:title" content="MySQL EXPLAIN ANALYZE" />
+  <meta name="description" content="Chapter 2">
+  <meta property="og:description" content="Chapter 2">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-2/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.92.1" /><link rel="canonical" href="https://hackmysql.com/post/book-2/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-left">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+                
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+                
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+                
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+                
+                  <a href="/eng/career-advice/">Career Advice</a>
+                
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
+                  <a href="/eng/percentiles/">Percentiles</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+                
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+                
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+                
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+                
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+                
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+                
+              </div>
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">MySQL EXPLAIN ANALYZE</h1>
+        <h3 class="post-subtitle">Chapter 2</h2>
+        <div class="post-meta">
+  
+  
+  <div>Feb 27, 2022</div>
+  <div class="blog-tags">
+    
+      
+        <a href="/tags/mysql">#mysql</a>
+      
+        <a href="/tags/explain">#explain</a>
+      
+        <a href="/tags/book">#book</a>
+      
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+      
+    
+  </div>
+</div>
+
+
+        <p>As of MySQL 8.0.18, <a href="https://dev.mysql.com/doc/refman/8.0/en/explain.html#explain-analyze"><code>EXPLAIN ANALYZE</code></a> is an indispensable tool for understanding query execution because it breaks down the query execution stage of response time by measuring each step of the query execution plan.
+The information is illuminating, but the output is not intuitive: it requires practice and some understanding of how MySQL executes queries beyond the table join order shown by traditional <code>EXPLAIN</code> output.
+This blog post closely examines three different examples of <code>EXPLAIN ANALYZE</code> output.</p>
+<p class="note">
+This blog post is the third of eleven: one for the preface and ten for each chapter of my book <a href="https://oreil.ly/efficient-mysql-performance"><i>Efficient MySQL Performance</i></a>.
+The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mysql-performance</a>.
+</p>
+<h2 id="background-and-terminology">Background and Terminology</h2>
+<p>Slide 9 of <a href="https://www.slideshare.net/NorvaldRyeng/mysql-80-explain-analyze">&ldquo;MySQL 8.0 EXPLAIN ANALYZE&rdquo; by Norvald Ryeng</a> enumerates and illustrates how the MySQL query executor changed in 8.0:</p>
+<p><img src="/img/slide-9-ryeng.png" alt="Slide 9"></p>
+<p>Before MySQL 8.0, instrumenting steps in a query execution plan was infeasible because the code was scattered and heterogeneous.
+As of MySQL 8.0, instrumenting steps in a query execution plan is trivial because each step is essentially the same thing: an iterator.
+And since the iterator is an interface, it&rsquo;s possible to transparently wrap each real iterator in a timing iterator (<a href="https://github.com/mysql/mysql-server/blob/8.0/sql/iterators/timing_iterator.h">sql/timing_iterator.h</a>):</p>
+<pre><code class="language-cpp">template &lt;class RealIterator&gt;
+bool TimingIterator&lt;RealIterator&gt;::Init() {
+  ++m_num_init_calls;
+  steady_clock::time_point start = now();     /* start time    */
+  bool err = m_iterator.Init();               /* real iterator */
+  steady_clock::time_point end = now();       /* end time      */
+  m_time_spent_in_first_row += end - start;
+  m_first_row = true;
+  return err;
+}
+</code></pre>
+<p>That&rsquo;s part of the <code>TimingIterator</code> class wrapping and measuring the wall-clock time of a real iterator (comments added by me).
+When executing a query, MySQL directly executes real iterators.
+For <code>EXPLAIN ANALYZE</code>, MySQL wraps each real iterator in a <code>TimingIterator</code> (and discards the result set).</p>
+<p>The iterator interface has two methods: <code>Init()</code> and <code>Read()</code>.
+A &ldquo;loop&rdquo; is one invocation of the iterator: a call to <code>Init()</code>, then <code>Read()</code> until there are no more rows.
+<code>EXPLAIN ANALYZE</code> prints measurements for each iterator, like:</p>
+<pre><code>(actual time=0.106..9.991 rows=2844 loops=2)
+</code></pre>
+<dl>
+<dt>0.106</dt>
+<dd><mark><em>Init time</em></mark>: average time (in milliseconds) for <code>Init()</code> and first row (first <code>Read()</code>)</dd>
+<dt>9.991</dt>
+<dd><mark><em>Read time</em></mark>: average time (in milliseconds) for <code>Init()</code> and all rows (all <code>Read()</code>)</dd>
+<dt>rows=2844</dt>
+<dd>Total number of rows read (all loops)</dd>
+<dt>loops=2</dt>
+<dd>Number of calls to <code>Init()</code> (number of times iterator invoked)</dd>
+</dl>
+<p>The first time value, which I call &ldquo;init time&rdquo;, is considered start up cost, and it&rsquo;s usually very low, but it depends on the iterator—the next section, <a href="#example-1-filesort">Example 1: Filesort</a>, is an example of this.</p>
+<p>The second time value, which I call &ldquo;read time&rdquo;, is the most useful when multiplied by <code>loops</code> to calculate <mark><em>iterator time</em></mark>: total time (in milliseconds) that the iterator spent reading rows.
+In this example, 9.991 ms × 2 = 19.982 ms iterator time.</p>
+<p>When <code>loops=1</code>, read time and iterator time are the same.</p>
+<p class="note">
+The terms <i>init time</i>, <i>read time</i>, and <i>iterator time</i> are my terms, not official MySQL terms because MySQL does not specific succinct names for these values.
+</p>
+<p>Generally speaking, iterator time is cumulative from leafs to root.</p>
+<pre><code class="language-none">-&gt; A (200ms loops=1)
+   -&gt; B (185ms loops=1)
+      -&gt; C (90ms loops=2)
+</code></pre>
+<p>Given the pseudo iterator tree above, the leaf iterator <code>C</code> took 180 ms (90 × 2 loops).
+Since iterator <code>B</code> calls iterator <code>C</code>, the time for iterator <code>B</code> (exclusive of iterator <code>C</code>) is 5 ms (185 ms − 180 ms).
+Likewise, iterator <code>A</code> calls iterator <code>B</code>, so the time for the former is 15 ms (200 ms − 185 ms).
+This is important because the query took 200 ms, <em>not</em> the sum of times report (565 ms).
+This is generally true, but not always—MySQL always has fun little surprises like this.</p>
+<p>For more technical details, read:</p>
+<ul>
+<li><a href="https://paperhub.s3.amazonaws.com/dace52a42c07f7f8348b08dc2b186061.pdf">Volcano—An Extensible and Parallel Query Evaluation System</a> by Goetz Graefe</li>
+<li><a href="https://dev.mysql.com/worklog/task/?id=11785">MySQL WL#11785: Volcano iterator design</a></li>
+<li><a href="https://dev.mysql.com/worklog/task/?id=12074">MySQL WL#12074: Volcano iterator executor base</a></li>
+</ul>
+<br>
+<h2 id="output-format-and-annotation">Output Format and Annotation</h2>
+<p><code>EXPLAIN ANALYZE</code> output is not trivial to read (except for trivial queries).
+Here&rsquo;s the real output format:</p>
+<pre><code class="language-none">mysql&gt; EXPLAIN ANALYZE SELECT c FROM sbtest1 WHERE k &lt; 450000 ORDER BY id\G
+*************************** 1. row ***************************
+EXPLAIN: -&gt; Sort: sbtest1.id  (cost=84245.94 rows=133184) (actual time=1347.876..1357.375 rows=68440 loops=1)
+    -&gt; Index range scan on sbtest1 using k_1, with index condition: (sbtest1.k &lt; 450000)  (cost=84245.94 rows=133184) (actual time=41.021..1298.076 rows=68440 loops=1)
+
+1 row in set (1.37 sec)
+</code></pre>
+<p>The output is dense and tedious to read when there are many iterators.
+That&rsquo;s not a criticism of MySQL, it&rsquo;s just how <code>EXPLAIN</code> output works in the MySQL CLI/shell.
+(<a href="https://www.mysql.com/products/workbench/">MySQL Workbench</a> has a &ldquo;visual EXPLAIN&rdquo; feature, but I don&rsquo;t know if it works with <code>EXPLAIN ANALYZE</code>.)</p>
+<p>Here&rsquo;s how I reformat and annotate the output in the following three examples:</p>
+<pre><code class="language-js">1 -&gt; Sort: sbtest1.id
+     (actual time=2043.416 .. 2051.792 rows=68440 loops=1)
+0     -&gt; Index range scan on sbtest1 using k_1, with index condition: (sbtest1.k &lt; 450000)
+         (actual time=109.302 .. 1996.350 rows=68440 loops=1)
+</code></pre>
+<p>The numbers in the left margin, starting with 0, number the iterators in <em>reading order</em>: how to read the output to follow the flow of row access.
+This is helpful because the output generally reads top to bottom and depth first, but not always.
+I refer to iterators by these numbers, like &ldquo;the index range scan (0) executes during…&rdquo;.</p>
+<p>Additionally, to make the output easier to read and follow:</p>
+<ul>
+<li><code>(cost=...)</code> is removed</li>
+<li><code>(actual time=...)</code> is put on its own line</li>
+<li>Init time and read time have extra white space: <code>41.021..1298.076</code> to <code>41.021 .. 1298.076</code></li>
+<li>Syntax highlighting makes the numbers stand out from the text</li>
+</ul>
+<p>Now we can examine and discuss some examples without straining your eyes too much.</p>
+<br>
+<h2 id="example-1-filesort">Example 1: Filesort</h2>
+<pre><code class="language-js">1 -&gt; Sort: sbtest1.id
+     (actual time=2043.416 .. 2051.792 rows=68440 loops=1)
+0     -&gt; Index range scan on sbtest1 using k_1, with index condition: (sbtest1.k &lt; 450000)
+         (actual time= 109.302 .. 1996.350 rows=68440 loops=1)
+</code></pre>
+<p>In chapter 2 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, which teaches index and indexing, I take a page (literally one page: page 70 in print), to use <code>EXPLAIN SELECT c FROM sbtest1 WHERE k &lt; 450000 ORDER BY id</code> to prove that the data access, not the filesort, is the slowest part of that query.</p>
+<p>I explain the output in the book, so I won&rsquo;t repeat myself here.
+Instead, let&rsquo;s reuse this simple example to more deeply understand <code>EXPLAIN ANALYZE</code> before reading more complex examples.</p>
+<p>The output of <code>EXPLAIN ANALYZE</code> is somewhat the reverse of how we think about query execution.
+For this query and others like it, we reasonably think that MySQL fetches <em>then</em> sorts rows (can&rsquo;t sort rows that haven&rsquo;t been fetched yet), but the output shows it differently: index range scan (0) nested (indented) one level within sort (1), which looks like fetching rows—index range scan (0)—happens after sort (1).
+But that&rsquo;s not the case; the annotated numbers in the left margin are the order of row access.
+The output reflects how these iterators are implemented and called, as noted in <a href="https://github.com/mysql/mysql-server/blob/8.0/sql/iterators/sorting_iterator.h">sql/iterators/sorting_iterator.h</a>:</p>
+<pre><code class="language-cpp">/**
+  An adapter that takes in another RowIterator and produces the same rows,
+  just in sorted order. (The actual sort happens in Init().)
+</code></pre>
+<p>As that comment notes, the sort iterator (1) is an <em>adapter</em> that, under the hood, calls another iterator to fetch rows—index range scan (0) in this case.
+Then sort (1) sorts the rows fetched by index range scan (0).
+And sort (1) does all this in <code>Init()</code>.
+sort (1) <code>Read()</code> simply returns the already fetched and sorted rows in order, which is why read time is very close to init time: it&rsquo;s mostly init time, with only a few milliseconds to return the sorted 68,440 rows.</p>
+<p>As a result, neither sort (1) init time nor read time are purely measurements of sorting time, which is (imho) what we&rsquo;d expect to see from timing a sort iterator since its purpose is sorting, but it&rsquo;s simply not programmed that way.
+Instead, sort (1) init time includes both index range scan (0) read time and time spent sorting rows.</p>
+<p>Since index range scan (0) read time is only time spent fetching rows, we can subtract it from sort (1) init time to roughly calculate time spent sorting rows: 2043.416 − 1996.350 = 47 ms.</p>
+<p class="warning">
+Alas, the aforementioned means that my original explanation on page 70 of <a href="https://oreil.ly/efficient-mysql-performance"><i>Efficient MySQL Performance</i></a> is not accurate.
+I wrote that "the filesort (line 1) started after [2043.416] milliseconds and ended after [2051.792]  milliseconds, which means the filesort took 8 milliseconds."
+The conclusion is still correct: "The answer is no: filesort does not make this query slow. The problem is data access: 68,439 rows is not a small result set."
+But how I arrived at the conclusion was incorrect.
+</p>
+<p>The moral of the story is: sometimes you need to understand how iterators work under the hood (in the MySQL source code) in order to correctly interpret the reported timing values.</p>
+<br>
+<h2 id="example-2-simple-join">Example 2: Simple Join</h2>
+<pre><code class="language-js">3 -&gt; Nested loop inner join
+     (actual time=0.022..0.036 rows=4 loops=1)
+1     -&gt; Filter: (elem.a in ('Ag','Au','At'))
+         (actual time=0.015..0.024 rows=4 loops=1)
+0         -&gt; Covering index range scan on elem using idx_a_b
+             (actual time=0.013..0.022 rows=4 loops=1)
+2     -&gt; Single-row index lookup on elem_names using PRIMARY (symbol=elem.a)
+         (actual time=0.002..0.002 rows=1 loops=4)
+</code></pre>
+<p>That is the <code>EXPLAIN ANALYZE</code> output for example 2-19 that you find in the book on page 74 and download the <a href="https://github.com/efficient-mysql-performance/examples/tree/main/">examples</a>.
+The query is:</p>
+<pre><code class="language-sql">SELECT name FROM elem JOIN elem_names ON (elem.a=elem_names.symbol) WHERE a IN ('Ag', 'Au', 'At');
+</code></pre>
+<p>This example highlights how you typically read <code>EXPLAIN ANALYZE</code> output: depth first.
+Although query execution is rooted in the join (3), row access starts with the covering index scan (0) on table <code>elem</code>.
+Then rows are filtered (1) for the <code>IN()</code> clause.
+Matching rows are used to lookup and join corresponding rows in table <code>elem_names</code>: primary key lookup (2).</p>
+<p>Note that <code>loops=1</code> for both covering index scan (0) and filter (1): the first table in a join is accessed once.
+But <code>loops=4</code> for the primary key lookup (2) because joined table (the second and subsequent tables in a join) are typically accessed many times for each row from preceding tables.
+Likewise, filter (1) matched <code>rows=4</code>, which corresponds with primary key lookup (2) <code>loops=4</code>: four rows from the first table cause MySQL to access the joined table four times.
+To learn more, read section &ldquo;Table Join Algorithms&rdquo; at the end of chapter 2 in <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>.</p>
+<br>
+<h2 id="example-3-sakila">Example 3: Sakila</h2>
+<pre><code class="language-js">5 -&gt; Table scan on &lt;temporary&gt;
+     (actual time=0.001 .. 0.002 rows=2 loops=1)
+4     -&gt; Aggregate using temporary table
+         (actual time=26.210 .. 26.210 rows=2 loops=1)
+3         -&gt; Nested loop inner join
+             (actual time=0.140 .. 20.580 rows=5687 loops=1)
+0             -&gt; Table scan on staff
+                 (actual time=0.023 .. 0.028 rows=2 loops=1)
+2             -&gt; Filter: (payment.payment_date like '2005-08%')
+                 (actual time=0.106 .. 9.991 rows=2844 loops=2)
+1                 -&gt; Index lookup on payment using idx_fk_staff_id (staff_id=staff.staff_id)
+                     (actual time=0.098 .. 7.099 rows=8024 loops=2)
+</code></pre>
+<p>This is the example that Norvald Ryeng uses in <a href="https://dev.mysql.com/blog-archive/mysql-explain-analyze/">MySQL EXPLAIN ANALYZE (MySQL Blog Archive)</a>.
+The query is a simple two-table join with a <code>GROUP BY</code> clause, which is why there is an aggregate (4) and temp table scan (5):</p>
+<pre><code class="language-sql">SELECT first_name, last_name, SUM(amount) AS total
+FROM staff INNER JOIN payment ON staff.staff_id=payment.staff_id AND payment_date LIKE '2005-08%'
+GROUP BY first_name, last_name;
+</code></pre>
+<p>The flow of row access from table scan (0) to index lookup (1) to filter (2) to accomplish the join (3) is similar to the previous examples.</p>
+<p>Aggregate (4) is new: it receives and groups rows from the join (3).
+Notice that join (3) <code>rows=5687</code> but aggregate (4) <code>rows=2</code>: the query returns only 2 groups (one row per group).
+Interestingly, both init time and read time for aggregate (4) are the same, which suggests that all work is done in <code>Init()</code>—we&rsquo;d have to check the MySQL source code to verify.</p>
+<p>As Norvald points out in his blog post, most of the time spent in this query is <em>not</em> the table scan (0), which is somewhat surprising because table scans are presumed to be very slow.
+But for this query there is a very simple explanation: <code>rows=2</code> on table scan (0)—the table has only two rows.
+As a result, 97% of join (3) is spent looking up and filter rows (index lookup (1) and filter (2), respectively).
+Filter (2) time includes time spent in index lookup (1), and iterator time for filter (2) is 9.991 ms × 2 = 19.982 ms, which is 97% of join (3) iterator time 20.580 ms.
+Table scans are generally slow, but this example shows that if one table is small, then index lookups on joined tables might be more time-consuming.
+Or to state it the other way: if you see <code>type: ALL</code> in an EXPLAIN plan (traditional <code>EXPLAIN</code> output), there&rsquo;s a chance that the full table scan is <em>not</em> the most time-consuming part of query response time.</p>
+<p>The weird part of this example is temp table scan (5): its times do not include the times of other iterators even though it is the root iterator.
+I can&rsquo;t tell from the MySQL source code why this is the case, but I presume it&rsquo;s because temp table scan (5) happens after aggregate (4) has completely finished, almost as if temp table scan (5) is a completely separate iterator that does not contain and call aggregate (4).</p>
+<p>In any case, the point is: you must read <code>EXPLAIN ANAZLYE</code> output quite carefully, extract the relative numbers from related (nested) iterators, and make some allowances for output that doesn&rsquo;t fit typical interpretation based on an understanding of how MySQL actually executes a query.
+Regardless of these challenges, <code>EXPLAIN ANALYZE</code> provides valuable low-level insight into query response time.</p>
+<h2 id="other-resources">Other Resources</h2>
+<p>Surprisingly, the MySQL community has written very little about <code>EXPLAIN ANALYZE</code>, and even the MySQL manually doesn&rsquo;t explain it as thoroughly as usual.
+Here are some additional resources (some of which were already linked earlier) that discuss <code>EXPALIN ANALYZE</code>:</p>
+<ul>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/explain.html#explain-analyze">Obtaining Information with EXPLAIN ANALYZE (MySQL manual)</a></li>
+<li><a href="https://dev.mysql.com/blog-archive/mysql-explain-analyze/">MySQL EXPLAIN ANALYZE (MySQL Blog Archive)</a></li>
+<li><a href="https://dev.mysql.com/worklog/task/?id=4168">WL#4168: Implement EXPLAIN ANALYZE</a></li>
+<li><a href="https://www.percona.com/blog/2019/10/28/using-explain-analyze-in-mysql-8/">Using Explain Analyze in MySQL 8 (Percona)</a></li>
+<li><a href="https://www.slideshare.net/NorvaldRyeng/mysql-80-explain-analyze">MySQL 8.0 EXPLAIN ANALYZE (slides)</a></li>
+<li><a href="https://www.youtube.com/watch?v=TukZd6LjeBc">Use MySQL EXPLAIN for Query Optimization (video)</a></li>
+<li><a href="https://link.springer.com/book/10.1007/978-1-4842-5584-1">MySQL 8 Query Performance Tuning (chapter 20)</a></li>
+</ul>
+<p>Beyond those resources and this blog post, I suggest that you practice with your own queries.
+Start with a traditional <code>EXPLAIN</code> to see the table join order, then <code>EXPLAIN ANALYZE</code> and read the output in a generally top-down, depth-first manner, taking into account the table join order to help guide you.
+If you see something that doesn&rsquo;t quite make sense, it could very well be an oddity of the output and not a misreading.</p>
+<p>Lastly, remember that <code>EXPLAIN ANALYZE</code> actually executes the query—locks and all—so do not run it on an active production server: use a read-only replica or a staging server with the same data because data is a factor in query execution and performance in general, which is a perfect segue into the next blog post in this series that I&rsquo;ll write next month (March, 2022).</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+        
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-1/" data-toggle="tooltip" data-placement="top" title="Configuring MySQL Query Metrics">&larr; </a>
+          </li>
+        
+        
+      </ul>
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+      
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>
