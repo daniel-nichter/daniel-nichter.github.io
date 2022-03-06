@@ -540,9 +540,17 @@ a.book-button {
   div#book-desc {
     text-align: justify;
   }
+
+  div#Ukraine {
+    text-align: right;
+  }
 }
 
 @media (min-width: 768px) {
+  div#Ukraine {
+    float: right;
+  }
+
   main.page {
     display: grid;
     grid-template-columns: 70% 30%;
