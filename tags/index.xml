@@ -7,11 +7,11 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 27 Feb 2022 14:28:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 19 Mar 2022 16:04:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>book</title>
       <link>https://hackmysql.com/tags/book/</link>
-      <pubDate>Sun, 27 Feb 2022 14:28:00 -0500</pubDate>
+      <pubDate>Sat, 19 Mar 2022 16:04:00 -0400</pubDate>
       
       <guid>https://hackmysql.com/tags/book/</guid>
       <description></description>
@@ -20,9 +20,27 @@
     <item>
       <title>efficient-mysql-performance</title>
       <link>https://hackmysql.com/tags/efficient-mysql-performance/</link>
-      <pubDate>Sun, 27 Feb 2022 14:28:00 -0500</pubDate>
+      <pubDate>Sat, 19 Mar 2022 16:04:00 -0400</pubDate>
       
       <guid>https://hackmysql.com/tags/efficient-mysql-performance/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mysql</title>
+      <link>https://hackmysql.com/tags/mysql/</link>
+      <pubDate>Sat, 19 Mar 2022 16:04:00 -0400</pubDate>
+      
+      <guid>https://hackmysql.com/tags/mysql/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>philosophy</title>
+      <link>https://hackmysql.com/tags/philosophy/</link>
+      <pubDate>Sat, 19 Mar 2022 16:04:00 -0400</pubDate>
+      
+      <guid>https://hackmysql.com/tags/philosophy/</guid>
       <description></description>
     </item>
     
@@ -32,15 +50,6 @@
       <pubDate>Sun, 27 Feb 2022 14:28:00 -0500</pubDate>
       
       <guid>https://hackmysql.com/tags/explain/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>mysql</title>
-      <link>https://hackmysql.com/tags/mysql/</link>
-      <pubDate>Sun, 27 Feb 2022 14:28:00 -0500</pubDate>
-      
-      <guid>https://hackmysql.com/tags/mysql/</guid>
       <description></description>
     </item>
     
@@ -554,15 +563,6 @@
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
       
       <guid>https://hackmysql.com/tags/business/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>philosophy</title>
-      <link>https://hackmysql.com/tags/philosophy/</link>
-      <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
-      
-      <guid>https://hackmysql.com/tags/philosophy/</guid>
       <description></description>
     </item>
     

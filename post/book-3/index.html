@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Performance Is Less</title>
+  <meta property="og:title" content="Performance Is Less" />
+  <meta name="description" content="Chapter 3">
+  <meta property="og:description" content="Chapter 3">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-3/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.92.1" /><link rel="canonical" href="https://hackmysql.com/post/book-3/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+                
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+                
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+                
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+                
+                  <a href="/eng/career-advice/">Career Advice</a>
+                
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
+                  <a href="/eng/percentiles/">Percentiles</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+                
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+                
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+                
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+                
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+                
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+                
+              </div>
+            </li>
+          
+        
+
+        
+      </ul>
+	</div>
+  </div>
+</nav>
+
+    
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Performance Is Less</h1>
+        <h3 class="post-subtitle">Chapter 3</h2>
+        <div class="post-meta">
+  
+  
+  <div>Mar 19, 2022</div>
+  <div class="blog-tags">
+    
+      
+        <a href="/tags/mysql">#mysql</a>
+      
+        <a href="/tags/book">#book</a>
+      
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+      
+        <a href="/tags/philosophy">#philosophy</a>
+      
+    
+  </div>
+</div>
+
+
+        <p>Is MySQL performance about &ldquo;more&rdquo; or &ldquo;less&rdquo;? From the title, you can tell that I&rsquo;m going to argue that it&rsquo;s about &ldquo;less&rdquo;. Here&rsquo;s the punchline: zero is maximum performance. Let&rsquo;s see where this philosophical blog post leads us.</p>
+<p class="note">
+This blog post is the fourth of eleven: one for the preface and ten for each chapter of my book <a href="https://oreil.ly/efficient-mysql-performance"><i>Efficient MySQL Performance</i></a>.
+The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mysql-performance</a>.
+</p>
+<h2 id="backdrop">Backdrop</h2>
+<p>Chapter 3 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a> covers data.
+In the book I write that &ldquo;data is dead weight to MySQL&rdquo;; here&rsquo;s the proof: <code>TRUNCATE TABLE</code> makes every query on the table take nearly zero seconds—super fast! amazing performance!
+Of course, that&rsquo;s a joke (do not truncate your tables).
+Nevertheless, it proves the point: without data, MySQL is blazing fast.
+The more data you saddle MySQL with, the longer it takes to churn through that data to execute queries.
+Yes, indexes help <em>a lot</em>, but that&rsquo;s covered in chapter 3 (with lead-in from chapter 2 and carry over to chapter 4).
+Data is dead weight to MySQL; it&rsquo;s only meaningful to <em>you</em>.</p>
+<h2 id="more">More</h2>
+<p>Clearly, we want <em>more</em> performance from MySQL—from hardware and software in general.
+This tends to focus the mind on achieving <em>more performance</em> in order to yield more output—a simple relationship like:</p>
+<p><img src="/img/perf_output.svg" alt="More Performance, More Output"></p>
+<p>We need the database to <em>do more work</em> (output), so we try to increase performance in terms like:</p>
+<ul>
+<li>More QPS (throughput)</li>
+<li>More transactions per second (TPS)</li>
+<li>More IOPS</li>
+<li>More RAM (efficiently; not wastefully)</li>
+<li>Support +300% more users</li>
+</ul>
+<p>And while it&rsquo;s true that more performance leads to a system doing more work, this simple focus is the brute force approach.
+It&rsquo;s like leaving a window open in winter, the house gets cold, and to warm up you turn up the heater.</p>
+<p>It is better to see performance as a function of efficiency and work:</p>
+<p><img src="/img/perf-efficiency-work.svg" alt="Performance as a Function of Efficiency and Work"></p>
+<p>Do not focus on performance <em>qua</em> performance; focus on the application workload and efficiency.
+<em>Workload</em> is the combination of queries, data, and access patterns.</p>
+<p>In simple terms: efficiency increases performance; but work decreases performance.
+You can offset increasing work by increasing the efficiency of that work.
+If you don&rsquo;t—if you increase work without increasing efficiency—the extra work will figuratively drag down (decrease) performance.
+The best way to achieve <em>remarkable</em> performance gains is to increase efficiency <em>and</em> reduce work.</p>
+<p>Unsurprisingly, this is the approach taught in <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>: increase efficiency and reduce work.
+And although I&rsquo;ve said that &ldquo;efficient&rdquo; in the title refers to &ldquo;focus&rdquo;, it also refers to this approach, which is the most efficient way to increase MySQL performance.</p>
+<h2 id="less">Less</h2>
+<p>Like many engineers, I often want <em>more</em> from computers in general, not just MySQL.
+But I have to remind myself that the real challenge and ultimate goal is less of everything: less CPU and energy, less RAM, less IOPS, store less data, access and return less data.
+Zero is the ultimate challenge and goal: no data, no work, no application, no energy, no worries.</p>
+<blockquote>
+<p>Any intelligent fool can make things bigger, more complex, and more violent. It takes a touch of genius—and a lot of courage to move in the opposite direction.
+—E. F. Schumacher</p>
+</blockquote>
+<p>In an era of big data, data analytics, and cheap, nearly limitless storage, I realize how counterintuitive and perhaps wrong this seems.
+I see many articles about how such-and-such problem was solved or new insight gained by crunching a ton of data.
+In certain fields, maybe more data is better.
+But more often I see &ldquo;big wins&rdquo; when teams dramatically reduce data and work while still doing the same business function.
+Just this week, a team announced a huge migration <em>off</em> MySQL to a data store that is faster and more efficient with less data.
+By contrast, there is another team that&rsquo;s struggling under the weight of its data and work, and they dream of a day where everything is less—especially <em>far less</em> stress and pressure on them to keep the lights on.</p>
+<p>Instead of always thinking about performance as &ldquo;more&rdquo;, I advise engineers to start with and focus on &ldquo;less&rdquo;: what can you reduce or eliminate? how can you increase efficiency (which means leas waste)? does some work truly need to be done?</p>
+<p>In accordance with the E. F. Schumacher quote above, any engineer can make databases bigger and more complex, but it takes a touch of genius—and a lot effort—to move in the opposite direction.
+Performance is making and doing less of everything until all is eliminated.
+I am happy when engineers achieve &ldquo;big numbers&rdquo; with MySQL, but I&rsquo;m truly impressed when they optimize to zero.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+        
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-2/" data-toggle="tooltip" data-placement="top" title="MySQL EXPLAIN ANALYZE">&larr; </a>
+          </li>
+        
+        
+      </ul>
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+      
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>
