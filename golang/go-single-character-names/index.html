@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Go Single-character Names</title>
+  <meta property="og:title" content="Go Single-character Names" />
+  <meta name="description" content="Go Single-character Names Go loves short names. Even the authoritative page Effective Go uses this example:
+f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err != nil { f.Close() return err } codeUsing(f, d)  Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is not idiomatic because, above all, Go is optimized for reading, especially by future engineers.">
+  <meta property="og:description" content="Go Single-character Names Go loves short names. Even the authoritative page Effective Go uses this example:
+f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err != nil { f.Close() return err } codeUsing(f, d)  Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is not idiomatic because, above all, Go is optimized for reading, especially by future engineers.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/golang/go-single-character-names/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.92.1" /><link rel="canonical" href="https://hackmysql.com/golang/go-single-character-names/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+                
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+                
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+                
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+                
+                  <a href="/eng/career-advice/">Career Advice</a>
+                
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
+                  <a href="/eng/percentiles/">Percentiles</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+                
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+                
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+                
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+                
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+                
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+                
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+                
+              </div>
+            </li>
+          
+        
+
+        
+      </ul>
+	</div>
+  </div>
+</nav>
+
+    
+<main class="page">
+	<div id="art">
+		<article role="main" class="blog-post"><h1 id="go-single-character-names">Go Single-character Names</h1>
+<p>Go loves short names. Even the authoritative page <a href="https://go.dev/doc/effective_go"><em>Effective Go</em></a> uses this example:</p>
+<pre><code class="language-go">f, err := os.Open(name)
+if err != nil {
+    return err
+}
+d, err := f.Stat()
+if err != nil {
+    f.Close()
+    return err
+}
+codeUsing(f, d)
+</code></pre>
+<p>Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is <em>not</em> idiomatic because, above all, Go is optimized for reading, especially by future engineers.
+This page describes four cases when single-character names—the shortest names possible—are idiomatic and acceptable.</p>
+<p>But first: <em>do not avoid an easy alternative</em>:</p>
+<pre><code class="language-go">f := &quot;/tmp/foo&quot;        // not ideal
+tmpFile := &quot;/tmp/foo&quot;  // better: easy alternative
+</code></pre>
+<p>Judicious use of single-character names in Go is idiomatic, but easy alternatives are far better.</p>
+<h2 id="loops">Loops</h2>
+<pre><code class="language-go">for i := 0; i &lt; 100; i++ {
+}
+
+for k, v := range someMap {
+}
+
+for _, n := range someList {
+}
+</code></pre>
+<p>Loop variables have near universal agreement for being single characters.
+In fact, not using <code>i</code>, <code>j</code>, and similar in <code>for</code> loops might even be considered bad style because this style is ubiquitous across languages.</p>
+<p>However, you will find counter arguments that even loop vars should have short, meaningful names.
+I agree and advise the same: do not avoid an easy alternative.
+For example, suppose you have a map keyed on hostname with corresponding IP address:</p>
+<pre><code class="language-go">for hostname, ip := range hostnames {
+}
+</code></pre>
+<p>In this case, <code>hostname</code> and <code>ip</code> are clearly superior to <code>k</code> and <code>v</code>—an easy alternative—and they&rsquo;re still very short.</p>
+<h2 id="blocks">Blocks</h2>
+<pre><code class="language-go">
+// Do something important with the file. I don't know what
+// because I'm a little teapot and this example isn't real.
+f, err := os.Open(name)
+if err != nil {
+    return err
+}
+d, err := f.Stat()
+if err != nil {
+    f.Close()
+    return err
+}
+codeUsing(f, d)
+
+</code></pre>
+<p>That example from <a href="https://go.dev/doc/effective_go"><em>Effective Go</em></a> is a single code block.
+(To emphasize that it&rsquo;s a block, I added blank lines and a block code comment.)
+The variables <code>f</code> and <code>d</code> are declared and used only within the block, which makes it easy for humans (without the help of an IDE) to follow and understand them.
+This would be a bad, non-idiomatic example if either variable was used outside the block (later in function, for example).</p>
+<p>Although acceptable, it&rsquo;s better to avoid single-character variables in blocks unless the block is short (tens of lines) and well contained.
+If in doubt, err on the side of caution and use short descriptive variable names.</p>
+<h2 id="receivers">Receivers</h2>
+<pre><code class="language-go">type T struct {}
+
+func (t *T) foo() {
+}
+</code></pre>
+<p>Receiver variables are often single characters, as in <code>t</code> for the method receiver on type <code>T</code>.
+If a single character is too cryptic, then use two or three characters.</p>
+<p>Using short descriptive names for receivers is less common in Go; for example:</p>
+<pre><code class="language-go">func (worker *Worker) Slog() {  // less common
+func (w *Worker) Slog() {       // more common
+</code></pre>
+<p>You see the more common form, <code>w *Worker</code>, even in <a href="https://go.dev/doc/effective_go"><em>Effective Go</em></a> examples.
+Two- and three-character receivers are acceptable and sometimes better, like <code>src</code> instead of <code>s</code>.</p>
+<p class="warning">
+Never use <code>self</code> or <code>this</code> for Go receiver names.
+</p>
+<h2 id="arguments">Arguments</h2>
+<pre><code class="language-go">// EscapeString escapes special characters ...
+func EscapeString(s string) string {}
+
+// Render renders the parse tree n to the given writer.
+func Render(w io.Writer, n *Node) error {}
+
+// Parse returns the parse tree for the HTML from the given Reader.
+func Parse(r io.Reader) (*Node, error) {}
+</code></pre>
+<p>Single character arguments are practically the norm in the Go standard library.
+The three example above are from <a href="https://pkg.go.dev/golang.org/x/net/html"><code>net/html</code></a>.</p>
+<p>There are three requirements that makes these single-character argument names acceptable and idiomatic:</p>
+<ol>
+<li>Great code comment on the function (which is why I included them in the examples)</li>
+<li>Not too many arguments</li>
+<li>Relatively limited, block-scoped usage</li>
+</ol>
+<p><code>Render</code> exemplifies the first and second; let&rsquo;s see if it exemplifies the third:</p>
+<pre><code class="language-go">func Render(w io.Writer, n *Node) error {
+	if x, ok := w.(writer); ok {
+		return render(x, n)
+	}
+	buf := bufio.NewWriter(w)
+	if err := render(buf, n); err != nil {
+		return err
+	}
+	return buf.Flush()
+}
+</code></pre>
+<p>Yes: that function is one small block that makes it easy to follow arguments <code>w</code> and <code>n</code>.</p>
+</article>
+	</div>
+	<nav id="toc">
+		<em><a href="#">Go Single-character Names</a></em>
+		<hr>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#loops">Loops</a></li>
+    <li><a href="#blocks">Blocks</a></li>
+    <li><a href="#receivers">Receivers</a></li>
+    <li><a href="#arguments">Arguments</a></li>
+  </ul>
+</nav>
+	</nav>
+</main>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

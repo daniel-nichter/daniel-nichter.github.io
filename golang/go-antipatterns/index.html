@@ -89,6 +89,8 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
                 
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
                 
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+                
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
                 
               </div>
@@ -129,7 +131,7 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
 <main class="page">
 	<div id="art">
 		<article role="main" class="blog-post"><h1 id="go-antipatterns">Go Antipatterns</h1>
-<p>These Go lang antipatterns are inspired by <a href="https://pragprog.com/book/bksqla/sql-antipatterns">SQL Antipatterns</a>. Antipattern Go code is syntactically correct, but there&rsquo;s a better way that&rsquo;s both functionally equivalent and <a href="https://hackmysql.com/golang/idiomatic-go/">idiomatic</a>.</p>
+<p>These Go lang antipatterns are inspired by <a href="https://pragprog.com/titles/bksqla/sql-antipatterns/">SQL Antipatterns</a>. Antipattern Go code is syntactically correct, but there&rsquo;s a better way that&rsquo;s both functionally equivalent and <a href="https://hackmysql.com/golang/idiomatic-go/">idiomatic</a>.</p>
 <p>These are guidelines not absolutes. For example, <a href="#generic-package">Generic Package</a> is common in practice and often difficult to avoid. Spending significant time trying to rename a <code>util</code> package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</p>
 <h2 id="critical">Critical</h2>
 <p>Critical antipatterns affect fundamental, difficult-to-change aspects of software design, functionality, or testing. As such, they are difficult to change later, so they should be fixed immediately.</p>
@@ -269,7 +271,7 @@ return fmt.Errorf(&quot;replication not running on db.localhost&quot;)
 <pre><code class="language-go">//
 // Better
 //
-return fmt.Errorf(&quot;replication not running on db.localhost: Slave_IO_Running = No, expected Yes (check SHOW SLAVE STATUS)&quot;)
+return fmt.Errorf(&quot;replication not running on db.localhost: Replica_IO_Running = No, expected Yes (check SHOW REPLICA STATUS)&quot;)
 
 </code></pre>
 <p>Opaque errors hide the &ldquo;why&rdquo; from the user: <em>why</em> is the code returning this error? There is always a &ldquo;why&rdquo;: what the code expects but fails to obtain. Not including the &ldquo;why&rdquo; in the error message is a critical antipattern because it leaves the user without insight when they need it the most, i.e. when things are not working. The antipattern example narrows the problem to replication, which is a start, but it does not state why replication is not running according to its checks; there could be many reasons why. The better example states which check failed and gives the user a hint what to do next.</p>
@@ -418,6 +420,90 @@ import (
 )
 </code></pre>
 <p>A package provides functionality around a logical and isolated part of the system. &ldquo;What can pkg X do?&rdquo; is the question we ask of that part. &ldquo;How we do X&rdquo; is an implementation detail that&rsquo;s leaked by generic package names. Of course, naming things is difficult, and generic packages are common, but we should nonetheless attempt to clarify their purpose and place in the app with a more domain-specific package name.</p>
+<h3 id="un-nom-court">Un Nom Court</h3>
+<pre><code class="language-go">//
+// Antipattern
+//
+
+var (
+    m Metrics
+    s Stats
+)
+</code></pre>
+<pre><code class="language-go">//
+// Better
+//
+var (
+    metrics Metrics
+    stats   Stats
+)
+</code></pre>
+<p>Short names are idiomatic Go, but don&rsquo;t take this style too far: Go still favors readability above all else.
+Names aren&rsquo;t required to be short; it&rsquo;s just nice (and idiomatic) when there happens to be a short yet clear name.
+In the antipattern, variable names <code>m</code> and <code>s</code> are too short, which makes them cryptic (not intention-revealing) and nearly impossible to search for (not all programmers use IDEs that follow variable references).
+Moreover, there are better names that are still short, as shown in the better example.</p>
+<blockquote>
+<p><em>Un nom court</em> is French for &ldquo;a short name&rdquo;.
+It&rsquo;s play on words since &ldquo;nom&rdquo; is an even shorter name for &ldquo;name&rdquo;.</p>
+</blockquote>
+<p>As another example, in the context of a package, idiomatic Go is function <code>Render()</code> not <code>RenderParseTreeToWriter()</code>.
+Daily Go developers probably cringe at the latter, but engineers steeped in other languages might see it as a good name and, instead, think the former is too cryptic.
+In Go, short names are idiomatic, just don&rsquo;t take it too far or eschew <em>slightly</em> longer names.</p>
+<p>See <a href="/golang/go-single-character-names/">Go Single-character Names</a> for a reference on using single-character names.
+Otherwise, use short descriptive names like shown in the better example.</p>
+<p class="note">
+In Go, <code>camelCase</code> is standard and idiomatic.
+A common exception is constant variables: <code>const ALL_CAPS_SNAKE_CASE = 1</code>.
+</p>
+<h3 id="narrative-naming">Narrative Naming</h3>
+<pre><code class="language-go">//
+// Antipattern
+//
+func (t *T) clearFlagIfTableDoesNotExist(tblstat TableStatus) {
+    // ... Table check logic ...
+    if !exists {
+        t.flag = &quot;&quot;
+    }
+}
+
+t.clearFlagIfTableDoesNotExist(tblstat)
+</code></pre>
+<pre><code class="language-go">//
+// Better
+//
+func (t *T) tableExists(tblstat TableStatus) bool {
+    exists := false
+    // ... Table check logic ...
+    return exists
+}
+
+// Some good comment about why we clear the flag when the table
+// does not exist.
+if !t.tableExists(tblstat) {
+    t.flag = &quot;&quot;
+}
+</code></pre>
+<pre><code class="language-go">//
+// Alternative
+//
+
+// clearFlag sets flag to an empty string if the table does not exist,
+// else the flag value is not changed.
+func (t *T) clearFlag(tblstat TableStatus) {
+    // ... Table check logic ...
+    if !exists {
+        t.flag = &quot;&quot;
+    }
+}
+
+// Some good comment about why we clear the flag when the table
+// does not exist.
+t.clearFlag(tblstat)
+</code></pre>
+<p>Narrative naming is the opposite of <em>un nom court</em>: names that are not just long but narrate what the object is or does.
+While this naming style is acceptable in other languages, it is an antipattern in Go; don&rsquo;t use it in Go.
+Short names in Go are a challenge: it&rsquo;s not easy finding a short name for everything.
+Avoid narrative naming, and use the shortest yet clearest, most intention-reveal name you can think of.</p>
 </article>
 	</div>
 	<nav id="toc">
@@ -449,6 +535,8 @@ import (
       <ul>
         <li><a href="#c-style-pointer">C-style Pointer</a></li>
         <li><a href="#generic-package">Generic Package</a></li>
+        <li><a href="#un-nom-court">Un Nom Court</a></li>
+        <li><a href="#narrative-naming">Narrative Naming</a></li>
       </ul>
     </li>
   </ul>
