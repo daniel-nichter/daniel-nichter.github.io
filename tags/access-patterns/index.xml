@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>access-patterns on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/access-patterns/</link>
+    <description>Recent content in access-patterns on Hack MySQL</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2022 Daniel Nichter</copyright>
+    <lastBuildDate>Sun, 17 Apr 2022 13:50:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/access-patterns/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Access Patterns for MySQL</title>
+      <link>https://hackmysql.com/post/book-4/</link>
+      <pubDate>Sun, 17 Apr 2022 13:50:00 -0400</pubDate>
+      
+      <guid>https://hackmysql.com/post/book-4/</guid>
+      <description>&lt;p&gt;Access patterns intrigue me because it seems that everyone knows what they are and talks about them, but there&amp;rsquo;s also very little written about them—in MySQL literature, at least.
+That&amp;rsquo;s why I set out to enumerate a list of access patterns (specific to MySQL).
+Since there&amp;rsquo;s no apparent standard for access patterns, I cannot say how my list measures up, but after spending most my career with MySQL, I know this: it is necessary to consider these access patterns when evaluating and improving MySQL performance.
+Simply put: you cannot ignore &lt;em&gt;how&lt;/em&gt; the application accesses MySQL.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

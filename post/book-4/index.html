@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Access Patterns for MySQL</title>
+  <meta property="og:title" content="Access Patterns for MySQL" />
+  <meta name="description" content="Chapter 4">
+  <meta property="og:description" content="Chapter 4">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-4/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.92.1" /><link rel="canonical" href="https://hackmysql.com/post/book-4/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+                
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+                
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+                
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+                
+                  <a href="/eng/career-advice/">Career Advice</a>
+                
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
+                  <a href="/eng/percentiles/">Percentiles</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+                
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+                
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+                
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+                
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+                
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+                
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+                
+              </div>
+            </li>
+          
+        
+
+        
+      </ul>
+	</div>
+  </div>
+</nav>
+
+    
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Access Patterns for MySQL</h1>
+        <h3 class="post-subtitle">Chapter 4</h2>
+        <div class="post-meta">
+  
+  
+  <div>Apr 17, 2022</div>
+  <div class="blog-tags">
+    
+      
+        <a href="/tags/mysql">#mysql</a>
+      
+        <a href="/tags/access-patterns">#access-patterns</a>
+      
+        <a href="/tags/book">#book</a>
+      
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+      
+    
+  </div>
+</div>
+
+
+        <p>Access patterns intrigue me because it seems that everyone knows what they are and talks about them, but there&rsquo;s also very little written about them—in MySQL literature, at least.
+That&rsquo;s why I set out to enumerate a list of access patterns (specific to MySQL).
+Since there&rsquo;s no apparent standard for access patterns, I cannot say how my list measures up, but after spending most my career with MySQL, I know this: it is necessary to consider these access patterns when evaluating and improving MySQL performance.
+Simply put: you cannot ignore <em>how</em> the application accesses MySQL.</p>
+<p class="note">
+This blog post is the fifth of eleven: one for the preface and ten for each chapter of my book <a href="https://oreil.ly/efficient-mysql-performance"><i>Efficient MySQL Performance</i></a>.
+The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mysql-performance</a>.
+</p>
+<p>Chapter 4 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a> enumerates access patterns for MySQL (among other related topics).
+In this blog post, I don&rsquo;t restate all the details I put in the book.
+Instead, like other posts in this series, I&rsquo;m adding &ldquo;behind the scenes&rdquo; information—things I did not put in the book.</p>
+<h2 id="access-patterns">Access Patterns</h2>
+<h3 id="throughput">Throughput</h3>
+<p>Throughput (QPS) is a weird access pattern because is it an &ldquo;access&rdquo;?
+Since we lack a precise definition of &ldquo;access&rdquo; in the term &ldquo;access pattern&rdquo;, I&rsquo;m going to claim that throughput is an access pattern because it most definitely affects many considerations.
+Or, look at it this way: no sane DBA would say that you can simply ignore throughput.</p>
+<p>Although throughput is <em>not</em> performance, it is a significant consideration in nearly everything—especially other access patterns.
+For example:</p>
+<ul>
+<li>Read-write access pattern:
+<ul>
+<li>Low throughput writes: easy.</li>
+<li>High throughput writes: very difficult.</li>
+</ul>
+</li>
+<li>Concurrency access pattern:
+<ul>
+<li>Low throughput concurrency: easy.</li>
+<li>High throughput concurrency: very difficult.</li>
+</ul>
+</li>
+</ul>
+<p>In general, I&rsquo;d say that throughput is a rough &ldquo;scaling factor&rdquo; for effort.
+At very low QPS, pretty much everything is easy.
+But the more QPS increases, the more difficult performance becomes.
+However, it must be factored in with all other access patterns—QPS by itself is almost meaningless.</p>
+<h3 id="readwrite">Read/Write</h3>
+<p>Read vs. write might be the first and most apparent access pattern: does the app read data, write it, or both?
+And how much of each: is it 90% reads and 10% writes, or vice versa?
+This is a very simple yet very powerful access pattern because:</p>
+<ul>
+<li>Reads are relatively easy to scale, especially with more memory.</li>
+<li>Writes are difficult to scale, even with better storage I/O.</li>
+</ul>
+<p>It&rsquo;s also a good tool for focusing technical debates.
+Sometimes, I encounter debates about such-and-such performance (for example, storage I/O latency in the cloud), but no one has asked: for reads, writes, or both?
+Performance for a read-heavy app has very different considerations than a write-heavy app.
+Be sure everyone is clear on this access pattern when having such debates.</p>
+<h3 id="read-consistency">Read Consistency</h3>
+<p>Speaking of reads: does the app <em>really</em> need read-after-write?
+If not, then we have a world of possibilities with respect to caching and other techniques to handle eventually consistent reads.
+This becomes necessary when read QPS is extremely high.</p>
+<h3 id="concurrency">Concurrency</h3>
+<p>Currency is perhaps the most difficult access pattern:</p>
+<ul>
+<li>High concurrency reads: easy thanks to MVCC. (Just be certain to avoid long-running transactions.)</li>
+<li>High concurrency writes: very difficult; no magical solution; MySQL <em>must</em> serialize at some point.</li>
+</ul>
+<p>High concurrency writes leads to sharding, which is not an easy feat for some developers.
+If there&rsquo;s any magic, it&rsquo;s that: sharding.
+Otherwise, this combination of access patterns (high throughput + high concurrency) has lead to new technology like <a href="http://rocksdb.org/">RocksDB</a>: a write-optimized key-value store.</p>
+<p>Also, don&rsquo;t sabotage read concurrency with unnecessary <code>SELECT..FOR UPDATE</code> or <code>SELECT...FOR SHARE</code> that basically turn non-locking reads into locking reads.</p>
+<h3 id="transaction-isolation">Transaction Isolation</h3>
+<p>In MySQL, every query is a transaction (generally speaking), which incurs a fair bit of overhead.
+If the app doesn&rsquo;t need transactions or strict transaction isolation, then that overhead is waste.</p>
+<p>Granted, MySQL is super fast and efficient with its transactions, but still: I almost never encounter developers that know with certainty that the application needs a certain transaction isolation level.
+Usually, they just write one-off queries and that&rsquo;s it; or, they do use transactions for <em>atomicy</em> but not necessarily isolation.
+Find out: if queries don&rsquo;t actually need isolation, then at least use <code>READ COMMITTED</code> to avoid holding an MVCC snapshot for the entire duration of a transaction.
+At the extreme: don&rsquo;t use a transactional data store.</p>
+<h3 id="data-age">Data Age</h3>
+<p>The presumptive norm is that total data size is much greater than total RAM.
+However, add to that the <em>working set</em>: the much smaller portion of data that the application access frequently.
+MySQL has many tricks to keep the working set in memory and swap data in and out of memory as needed.
+Keeping the working set in memory is critical for performance because it avoids hitting disk.
+But how does one do this or even know if it&rsquo;s being done?</p>
+<p>Unfortunately, this is one of the most difficult things to measure precisely in MySQL.
+There are some low-level server metrics for page eviction, but the general measurement is &ldquo;buffer pool efficiency&rdquo; that I detail in chapter 6.
+For now, the point is: it&rsquo;s difficult to truly measure the working set and whether or not it&rsquo;s staying in memory.
+Basically no one does it; they guesstimate.</p>
+<p>This access pattern is part of the guesstimating: does the app access the same data over and over?
+For example, once a row has been used in some way, is it &ldquo;forgotten to time&rdquo; and almost never accessed again?
+Or does the app continually look up (access) rows from long ago and recently and everything in between?</p>
+<p>Developers usually know this.
+For example, where I work (fintech), the last few days or weeks of financial transaction are all that people typically access.
+It&rsquo;s not usual for people to look up transactions after they&rsquo;ve settled.
+Sure, it happens sometimes, but the point is: it&rsquo;s rare enough not to &ldquo;churn&rdquo; the working set too quickly.
+As a result, MySQL does a great job of keeping the most recent data in memory, and slowly evicting old data as needed.</p>
+<p>But some apps are very different: they access tons of data from any time, all the time.
+That&rsquo;s fine if RAM is still enough to contain all that data, but it&rsquo;s easily not the case because RAM is relatively limited.
+For example, frequently accessing all the rows in a 500G table is going to be tough on 128G of RAM.
+(And that&rsquo;s just the data: what about the secondary indexes? There&rsquo;s probably a few of them, so data + indexes could be 700G, for example.)
+Then the question becomes: can you afford 256G or 384G or 512G of RAM?
+Or can you change this access pattern somehow to avoid the churn—to reduce the working set size?</p>
+<h3 id="row-access">Row Access</h3>
+<p>Broadly speaking, there are three types of row access:</p>
+<ul>
+<li>Point access: A single row</li>
+<li>Range access: Ordered rows between two values</li>
+<li>Random access: Several rows in any order</li>
+</ul>
+<p>That&rsquo;s more than a pithy categorization; it has legitimate import with respect to performance, especially when combined with other access patterns.
+For example, a high throughput read point access is basically MySQL acting like a cache: MySQL is going to keep that single row in memory (so it&rsquo;s also related to data age).
+Easy performance.
+But change it to random access and now it&rsquo;s not so easy for two reason.
+First, if it&rsquo;s truly random, that might affect the working set (data age, again).
+Second, if might affect which index MySQL choose, if any, based on cardinality (and how many rows MySQL estimates the query will match).</p>
+<p>Writes are a different story: a point read is easy, but a point write can be one of the most difficult challenges (at high concurrency and throughput) because there&rsquo;s simply no way around somewhat serialized access to that single row.
+Range or random writes might be better, but then they begin to interfere with data locks from other writes if and when row access overlaps.</p>
+<p>Therefore, like other access patterns, the type of row access is an important dimension in the overall consideration of performance.</p>
+<h3 id="result-set">Result Set</h3>
+<p>Grouping, sorting, or limiting the result set is an minor but still important access pattern.
+The best is to eliminate the first two and use the last (limiting) because that helps MySQL do less work.
+However, it&rsquo;s not really as simple as that: in chapter 3, I talk about cases when it&rsquo;s <em>better</em> to have MySQL do the grouping or sorting.
+Either way, it&rsquo;s important to know when this access pattern is the case because, for example, some data stores handle limiting differently, which is important if/when you migrate—it happens!</p>
+<h3 id="data-model">Data Model</h3>
+<p>MySQL is a relational, transactional, OLTP-optimized data store.
+Used for anything else, performance becomes &ldquo;weird&rdquo; because such cases are like using a small personal aircraft to commute to work when your office is only 20 minutes down the road.</p>
+<p>Personally, I think the JSON column type should not be used; MySQL is not a document store.
+Likewise, I often see developers use <code>BLOB</code> columns to dump data into MySQL, which becomes real &ldquo;fun&rdquo; given that <code>binlog_row_image = full</code> by default, so all those blobs squeeze through replication.
+And using MySQL as a simple key-value store is also not ideal even though it can do point reads on primary key with incredible speed and efficiency.</p>
+<p>I advise engineers to use MySQL for what it is and intended for.
+But I&rsquo;m well aware that MySQL is used for almost everything because it&rsquo;s so good at storing data and making it truly durable.
+But seriously: considering using other data stores when your data model is not relational and transactional.</p>
+<h2 id="identifying">Identifying</h2>
+<p>Identifying access patterns is something I&rsquo;ve seen done only once with MySQL (because the team was considering moving to a different data store).
+By contrast, Amazon publishes a list of access patterns for DynamoDB because it&rsquo;s critical to identify them before moving to DynamoDB: <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/dynamodb-data-modeling/step3.html">Step 3. Identify your data access patterns</a>.</p>
+<p>Access patterns must be identified by developers (and probably written down).
+Generally speaking, each single query is an access pattern.
+So we look at individual access patterns (queries), but we also consider the totality of access patterns and the affects that has on MySQL.
+For example, a single high throughput write is probably not going to cause any trouble.
+But many such access patterns are difficult to scale.</p>
+<p>Although performance is query response time, and you can get a lot of performance out of MySQL by simply ensuring that all response times are acceptable (and optimizing with response time as your North Star), professional software engineers developing and maintaining an application that relies heavily on MySQL should be fully versed in all its access patterns.
+In short: you need to know <em>how</em> the application accesses MySQL.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+        
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-3/" data-toggle="tooltip" data-placement="top" title="Performance Is Less">&larr; </a>
+          </li>
+        
+        
+      </ul>
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+      
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>
