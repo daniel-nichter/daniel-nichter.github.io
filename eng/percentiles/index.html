@@ -16,7 +16,8 @@
   <meta property="og:url" content="https://hackmysql.com/eng/percentiles/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.92.1" /><link rel="canonical" href="https://hackmysql.com/eng/percentiles/" />
+  <meta name="generator" content="Hugo 0.99.1" />
+  <link rel="canonical" href="https://hackmysql.com/eng/percentiles/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
@@ -41,91 +42,91 @@
 <img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
 </div>
       <ul class="nav navbar-nav navbar-left">
-        
-          
+
+
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-                
+
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-                
+
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-                
+
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-                
+
                   <a href="/eng/career-advice/">Career Advice</a>
-                
+
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
-                
+
                   <a href="/eng/database-operations-manual/">Database Operations Manual</a>
-                
+
                   <a href="/eng/percentiles/">Percentiles</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-                
+
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-                
+
                   <a href="/golang/go-single-character-names/">Go Single-character Names</a>
-                
+
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li>
               <a title="Help" href="/help/">Help</a>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-                
+
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-                
+
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-                
+
                   <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
-                
+
                   <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
-                
+
               </div>
             </li>
-          
-        
 
-        
+
+
+
       </ul>
 	</div>
   </div>
 </nav>
 
-    
+
 <main class="page">
 	<div id="art">
 		<article role="main" class="blog-post"><h1 id="percentiles">Percentiles</h1>
@@ -211,23 +212,23 @@ func pValue(i float64, vals []float64) float64 {
 <p>R6 and R8 (2k) use their respective R-equations, but &ldquo;Hybrid R6/7/8&rdquo; use both methods: nearest rank if the sample is full (<code>n &gt;= 2000</code>), else the respective R-equation. The reason for &ldquo;hybrid&rdquo; algorithms is discussed later. First, let&rsquo;s look at the results (click to open PDF):</p>
 <p><a href="/percentile-algo-comparison.pdf"><img src="/img/percentile-algo-comparison.png"></img></a></p>
 <p>Hybrid R8 (2k) is the clear winner: only one inaccurate value for file &ldquo;1k&rdquo;. File &ldquo;r008-5550&rdquo; demonstrates the benefit of the hybrid algorithm: R6 and R8 (2k) are wrong, but all the hybrids are accurate. Files &ldquo;1k&rdquo; and &ldquo;qt&rdquo; demonstrate why R8 is the best: R6 is wrong, and R7 is best for &ldquo;1k&rdquo; but wrong and inaccurate for other cases. Overall, the data agrees with what Hyndman and Fan concluded: R8 is the best choice. Even better: Hybrid R8, which is what <a href="https://github.com/daniel-nichter/go-metrics">go-metrics</a> uses.</p>
-<section class="footnotes" role="doc-endnotes">
+<div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn:1" role="doc-endnote">
+<li id="fn:1">
 <p>This calculation for nearest rank is formally stated as &ldquo;Definition 1&rdquo; in <a href="https://www.amherst.edu/media/view/129116/original/Sample+Quantiles.pdf">Sample Quantiles in Statistical Packages</a> (Hyndman and Fan (1996)), &ldquo;The oldest and most studied definition is the inverse of the empirical distribution function&rdquo;: <code>Freq(X<sub>k</sub> ≤ Q<sub>1</sub>(p)) = ⌈pn⌉</code>.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:2" role="doc-endnote">
+<li id="fn:2">
 <p>&ldquo;Definition 2&rdquo; and &ldquo;Definition 3&rdquo; in Hyndman and Fan (1996) are variations of Definition 1. Def. 2 averages the upper and lower boundary values if <code>p * n</code> is a whole number, else it returns the upper boundary value. Def. 3 is more exotic.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:3" role="doc-endnote">
+<li id="fn:3">
 <p><a href="https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm">https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:4" role="doc-endnote">
+<li id="fn:4">
 <p><a href="https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm">https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
-</section>
+</div>
 </article>
 	</div>
 	<nav id="toc">

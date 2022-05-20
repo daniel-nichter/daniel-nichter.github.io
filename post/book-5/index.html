@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>I Don&#39;t Want to Shard (MySQL)</title>
+  <meta property="og:title" content="I Don&#39;t Want to Shard (MySQL)" />
+  <meta name="description" content="Chapter 5">
+  <meta property="og:description" content="Chapter 5">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-5/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.99.1" />
+  <link rel="canonical" href="https://hackmysql.com/post/book-5/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">I Don&#39;t Want to Shard (MySQL)</h1>
+        <h3 class="post-subtitle">Chapter 5</h2>
+        <div class="post-meta">
+
+
+  <div>May 20, 2022</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/sharding">#sharding</a>
+
+        <a href="/tags/newsql">#newsql</a>
+
+        <a href="/tags/philosophy">#philosophy</a>
+
+        <a href="/tags/book">#book</a>
+
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+
+
+  </div>
+</div>
+
+
+        <p>Chapter 5 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a> addresses sharding, and it was difficult to write but not for technical reasons.
+Let me say a little more on the matter.</p>
+<p class="note">
+This blog post is the sixth of eleven: one for the preface and ten for each chapter of my book <a href="https://oreil.ly/efficient-mysql-performance"><i>Efficient MySQL Performance</i></a>.
+The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mysql-performance</a>.
+</p>
+<h2 id="but-first-fipar-says">But First: Fipar Says&hellip;</h2>
+<p>Here&rsquo;s a paragraph and footnote that I removed from chapter 5:</p>
+<blockquote>
+<p>However, scaling out is not intrinsic relational data stores. The reason is historical: the relational data model was created in the 1970s when scaling out was not possible because hardware was physically huge and expensive. Simply put, relational databases were not designed to scale out.[1] Consequently, scaling out a relational data store requires an extrinsic process: sharding.</p>
+<p>[1] Even though relational databases were not designed to scale out, that is neither a criticism nor a shortcoming because the relational model has not only been incredibly popular but unarguably indispensable to technology and the internet for more than 40 years.</p>
+</blockquote>
+<p>I removed that paragraph (and footnote) because it&rsquo;s misleading or wrong, as Fernando Ipar (one of my technical reviewers) pointed out:</p>
+<blockquote>
+<p>It would be good to find a way (either here or on the existing footnote) to mention that, strictly speaking, the relational model is a logical model and has nothing to say about the physical layer. This may be a bit of a personal pet peeve, but IMHO, saying the relational model doesn&rsquo;t scale because one has reached the limits of a specific relational (or, more accurately, relationally-inspired) product seems akin to saying that arithmetic doesn&rsquo;t scale because you attempted an operation that caused an overflow on a specific model of calculator. This distinction is why it is possible for other databases to support sharding along with some relational features in a way that&rsquo;s a lot more transparent to users than how it&rsquo;s done in MySQL (e.g., CockroachDB, TiDB, and even MySQL Cluster). I think a good recommendation for clearing up that matter is the section &ldquo;Model Versus Implementation&rdquo;, in Chapter One of C.J. Date&rsquo;s <a href="https://www.oreilly.com/library/view/database-in-depth/0596100124/"><em>Database in Depth</em></a>, O&rsquo;Reilly, 2005.</p>
+</blockquote>
+<p>Indeed, here&rsquo;s the pertinent statement by Date in chapter one of that book (emphasis mine):</p>
+<blockquote>
+<p>First, note that <strong>performance is fundamentally an implementation issue</strong>, not a model issue—despite extremely common misconceptions to the contrary. We&rsquo;re often told, for example, that &ldquo;joins are slow.&rdquo; But such remarks make no sense! Join is part of the model, and the model as such can&rsquo;t be said to be either fast or slow; only implementations can be said to possess any such quality. Thus, we might reasonably say that some specific product X has a faster or slower implementation of some specific join than some other specific product Y—but that&rsquo;s all.</p>
+</blockquote>
+<p>I often encounter the misconception that Date and Ipar remarked, and I nearly committed the same to print had Ipar not corrected me.
+Worse, I actually stated two somewhat conflicting reasons:</p>
+<ol>
+<li>The relational data model was created in the 1970s when scaling out was not possible because hardware was physically huge and expensive</li>
+<li>Relational databases were not designed to scale out</li>
+</ol>
+<p>On the surface, that&rsquo;s not a glaring fault of logic, but it is wrong: 1 is true, but 2 does not follow from 1.</p>
+<p>It&rsquo;s true that, from the 1970s all the way until the early 2000s, hardware was rather big and expensive (compared to today).
+As a result, companies couldn&rsquo;t simply provision 100 new databases on a whim.
+(As a point of reference, Amazon EC2 launched in 2006.)
+Procuring any server was like buying a car: a careful and expensive decision with the intention to own and operate for many years.
+Need more capacity?
+Scale up the existing servers: more RAM, bigger hard drives, and so forth.
+Need even more capacity?
+Buy a &ldquo;bigger&rdquo; server: one that supports a faster CPU, more RAM chips, more hard drive bays, and so on.</p>
+<p>But it is <em>not</em> true that &ldquo;relational databases were not designed to scale out&rdquo;.
+I shouldn&rsquo;t have added that phrasing because it&rsquo;s the very misconception that Date rails against in chapter one of his book—for good reason.
+To requote Date: <mark>performance is fundamentally an implementation issue, not a model issue.</mark>
+And scale is part of performance.</p>
+<h2 id="can-we-avoid-sharding">Can We Avoid Sharding?</h2>
+<p>It&rsquo;s May, 2022 and 1 TB of RAM exists but is far from the norm.
+The largest AWS RDS instance type is <code>db.x1e.32xlarge</code> with 3,904 GB RAM—almost 4 TB of RAM.
+That&rsquo;s impressive, but I wish it wasn&rsquo;t: I wish it was the norm in 2022.</p>
+<p>If terabytes of RAM were the norm, then a single MySQL instance <em>might</em> be able to handle tens of terabytes of data.
+I emphasis &ldquo;might&rdquo; because, while RAM is a critical factor to avoid sharding, it&rsquo;s not the only factor.
+Sometimes, sharding is required to scale writes, in which case storage I/O and latency are more critical factors.
+Some PCIe-attached NVMe systems have incredible performance, but like terabytes of RAM they are far from the norm.
+And even if RAM and storage I/O were solved problems, what about network transfer speeds?
+Transferring 10 TB at 10 Gbps takes about 2 hours.
+There are faster link speeds, but they&rsquo;re also not the norm yet.</p>
+<p>Oh, and let&rsquo;s not forget: schema migrations (OSC) and other data operations.
+Currently, MySQL has only two OSC tools: pt-online-schema-change and gh-ost.
+Both can handle terabytes of data, but neither are truly optimized for speed or parallelism, so terabytes take many hours to change.</p>
+<p>I think that, currently, it&rsquo;s not possible to avoid sharding with MySQL (or other similar relational databases).
+The reason: data growth has significantly outpaced hardware and tooling for MySQL.
+For the last 20 years, MySQL did a great job of keeping up, but I think it&rsquo;s nearing a soft limit due to commonly available (and affordable) hardware and tools.
+Right now, I&rsquo;d put that soft t 10 TB of data with favorable (viz. lightweight) access patterns, a small working set size, and a relatively stable schema (or a really patient team/company).</p>
+<h2 id="data-growth-and-the-cloud">Data Growth and the Cloud</h2>
+<p>Data sizes keep increasing.
+That&rsquo;s common knowledge even outside tech: people know that years ago devices could storage 5 GB, for example, and now they can store 256 GB.
+A timely example is the iPod: an icon evolution in people realizing &ldquo;I can storage <em>a lot</em> more data!&rdquo;
+(The example is timely because Apple just now discontinued the iPod after 20 years.)
+Let&rsquo;s presume for the moment that this long-standing trend is legitimate, not due to data bloat or waste.
+(Personally, I think we&rsquo;re extremely wasteful with data, which is why I harp on the issue at length in chapters 3 and 4 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>.)</p>
+<p>Since the advent of compute, hardware has rapidly increased in capacity (and decreased in cost)—that&rsquo;s also well known in tech.
+As a result, it kept pace with data growth such that a paradigm change was not required: just keep buying bigger hardware (as it became cheaper) and problem solved.
+That was the old paradigm: scale up the hardware you already have.
+I&rsquo;m speaking generally; there are always outliers.</p>
+<p>But four things changed in recent years:</p>
+<ol>
+<li>Growth of hardware capacity lagged a little</li>
+<li>Growth of data increased significantly</li>
+<li>Cloud became common</li>
+<li>Orchestration was invented</li>
+</ol>
+<p>Point 1 is stated cautiously because hardware capacity has certainly kept increasing; it&rsquo;s point 2 that&rsquo;s the major change that overshadows and complicates point 1.
+It&rsquo;s easy for data growth to explode because it&rsquo;s easy to generate data.
+It&rsquo;s far more difficult (and slow) to develop and proliferate hardware in the market because big changes require other new hardware (e.g. SATA to PCIe), new kernels and drivers, and new applications that can fully utilizes the preceding.</p>
+<p>While data growth was plowing ahead full speed and hardware was doing its best to keep up, the cloud (point 3) crept into existence around 2006 when Amazon EC2 launched.
+But the cloud is really just another server that you rent rather than own.
+That means, behind the scenes, AWS (and other cloud providers) are using the same hardware you might purchase.
+(This is no longer true: some cloud providers custom build their own hardware.)
+But the cloud still helped because it provided a layer of abstraction that hid the complexities of procuring and managing hardware.
+The world &ldquo;elastic&rdquo; is often used: compute resources in the cloud are elastic.
+That means you could keep storing more and more <em>and more</em> data in the cloud without (too much) care for how it works.
+In that way, the cloud was a significant evolution because, outside the cloud, the real challenge was not so much &ldquo;Can I buy a big enough hard drive?&rdquo; (you could) but rather &ldquo;How fast can I procure and provision hardware, and how long will it last?&rdquo;
+Companies could not (and would not) heedlessly buy new hardware each year.
+Instead, they&rsquo;d plan and budget and purchase and wait and receive and &ldquo;rack it&rdquo; and finally—sometimes months later—have that new hardware online.
+Given that effort, companies required the hardware to work for years (to thoroughly recoup the investment).
+That&rsquo;s why it could be difficult for companies to keep up with explosive data growth.
+But the cloud changed that by abstracting away the complexities of procuring and managing hardware: just rent whatever you need on-demand.</p>
+<p>The cloud was necessary to change the paradigm, but it wasn&rsquo;t sufficient.
+You can provision all the resources you want, but by doing so you create another problem: how to herd the proverbial cats?
+Meaning: you can provision a fleet of resources, but how then do you control and manage it?
+Enter Docker and Kubernetes in 2013 and 2014, respectively.
+These are technologies for containerization (and, by extension, microservices) but they&rsquo;re the last necessary bits that make orchestrating massive fleets of cloud resources tractable.
+So now we can programmatically (and somewhat easily) provision and orchestrate nearly limitless cloud resources and do so &ldquo;elastically&rdquo; (create and destroy and recreating resources frequently).
+Now the paradigm has changed because, in the cloud, there are practically no limits; it&rsquo;s just a matter of what you can afford.
+Loosely stated, the new paradigm is: &ldquo;just scale out in the cloud.&rdquo;
+(Where &ldquo;just&rdquo; implies that it&rsquo;s supposed to be easy given orchestration tools, but &ldquo;easy&rdquo; is, of course, highly relative.)</p>
+<h2 id="mysql-in-the-new-paradigm">MySQL in the New Paradigm</h2>
+<p>Back to MySQL: the paradigm around it has changed.</p>
+<p>On the one hand, we have relational databases like MySQL that were created <em>long</em> before the paradigm changed—back when the paradigm was still &ldquo;scale up&rdquo;: buy bigger, faster hardware.
+I think it&rsquo;s important for engineers born after 2000 to know this bit of history: MySQL, Postgres, and the alike were created at a time long before the cloud or Kubernetes.
+Back then, the idea of &ldquo;spinning up&rdquo; however many resources you wanted was simply not possible.
+The norm was scaling up the resources you already had because companies were loathe and slow to buy new hardware.
+That&rsquo;s partly why MySQL is so very good at scaling up but cannot natively scale out (why sharding is necessary).</p>
+<p>One the other hand, modern software development is moving to the new paradigm where there are virtually no resource limits—just configure Kubernetes (or whatever orchestration tool) for the size/scale you want and it will (usually) provision whatever is needed.
+(&ldquo;Usually&rdquo; because, in case you didn&rsquo;t know, the cloud does sometimes temporarily run out of resources.)
+Unsurprisingly, then, developers look to their databases to do the same but find they cannot with MySQL, Postgres, and the alike.
+What now?</p>
+<h2 id="newsql-and-the-innovators-dilemma">NewSQL and the Innovator&rsquo;s Dilemma</h2>
+<p>More and more, we&rsquo;re seeing NewSQL data stores that separate the compute and storage layers of the database so that each can scale out in the cloud with orchestration.
+This makes sense given the paradigm change, but it also makes sense given that hardware and tools have not stayed <em>ahead</em> of the curve of data growth.
+If, for example, there were hardware and tools to easily handle a single 100 TB instance of MySQL, there might not be a market for NewSQL.
+But that&rsquo;s not currently the case, so for MySQL at scale developers must implement and maintain application-level sharding—or make the leap to NewSQL.</p>
+<p>While sharding is tried and true (there&rsquo;s a lot of knowledge and success around sharding MySQL), it&rsquo;s still an non-development task that developers routinely tell me that they do not want to do.
+I can&rsquo;t blame them: they were hired to develop app features—and I was hired to make databases scale for them.
+(Granted, I wish they&rsquo;d stop being so wasteful with data, but I digress.)</p>
+<p>I think we&rsquo;re witnessing <a href="https://www.christenseninstitute.org/books/the-innovators-dilemma/">The Innovator&rsquo;s Dilemma</a> in action: SQL on single instances is the incumbent: a massive value network rooted in <em>four decades</em> of success.
+NewSQL is the disruptive little startup that&rsquo;s addressing a niche today, and it doesn&rsquo;t seem to have gained major market share (small value network).
+NewSQL has the potential to replace the incumbent, including MySQL, especially when products like <a href="https://en.pingcap.com/">TiDB</a> are explicitly being MySQL-compatible in order to tap into the incumbent value network.
+And not surprisingly, one barrier for NewSQL is cost: NewSQL databases are more complex, which requires more cloud resources, which costs more.
+But we&rsquo;ve seen that play out too: costs go down as the disruptor&rsquo;s market share goes up.</p>
+<p>Side note: Vitess and similar products are not disruptors: they are bridges from the incumbent value network to the new value network.
+If the real disruptors win, the bridges will slowly disappear.</p>
+<h2 id="so-whats-the-point">So What&rsquo;s the Point?</h2>
+<p>Sharding MySQL is still necessary because we&rsquo;re in uncertain times about what might allow engineers to avoid sharding: either an explosion in affordable hardware capacity (which really just provides more runway, moves the issue further into the future), or NewSQL successfully disrupting traditional SQL and becoming mainstream.</p>
+<p>It seems logical that, in the future, software engineers will not have to deal with application-level sharding because that&rsquo;s not really their job, and NewSQL has proven that it doesn&rsquo;t need to exist.
+That&rsquo;s why, personally, I think NewSQL will win, but it will take minimum 5 years—or 10 years more realistically.
+But don&rsquo;t worry: MySQL and other single instance relational databases will continue to be <em>vital</em> for even longer—so long that learning MySQL today is practically required given its ubiquity.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-4/" data-toggle="tooltip" data-placement="top" title="Access Patterns for MySQL">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

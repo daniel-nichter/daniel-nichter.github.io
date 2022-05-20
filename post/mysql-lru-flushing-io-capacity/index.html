@@ -20,7 +20,8 @@ This is not an intro; you&rsquo;ll need to know all the InnoDB details wrt page 
   <meta property="og:url" content="https://hackmysql.com/post/mysql-lru-flushing-io-capacity/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.92.1" /><link rel="canonical" href="https://hackmysql.com/post/mysql-lru-flushing-io-capacity/" />
+  <meta name="generator" content="Hugo 0.99.1" />
+  <link rel="canonical" href="https://hackmysql.com/post/mysql-lru-flushing-io-capacity/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
@@ -45,113 +46,113 @@ This is not an intro; you&rsquo;ll need to know all the InnoDB details wrt page 
 <img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
 </div>
       <ul class="nav navbar-nav navbar-left">
-        
-          
+
+
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-                
+
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-                
+
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-                
+
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-                
+
                   <a href="/eng/career-advice/">Career Advice</a>
-                
+
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
-                
+
                   <a href="/eng/database-operations-manual/">Database Operations Manual</a>
-                
+
                   <a href="/eng/percentiles/">Percentiles</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-                
+
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-                
+
                   <a href="/golang/go-single-character-names/">Go Single-character Names</a>
-                
+
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li>
               <a title="Help" href="/help/">Help</a>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-                
+
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-                
+
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-                
+
                   <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
-                
+
                   <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
-                
+
               </div>
             </li>
-          
-        
 
-        
+
+
+
       </ul>
 	</div>
   </div>
 </nav>
 
-    
+
 <div class="container">
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main">
         <h1 class="post-title">MySQL LRU Flushing and I/O Capacity</h1>
-        
+
         <div class="post-meta">
-  
-  
+
+
   <div>Sep 2, 2021</div>
   <div class="blog-tags">
-    
-      
+
+
         <a href="/tags/mysql">#mysql</a>
-      
+
         <a href="/tags/innodb">#innodb</a>
-      
+
         <a href="/tags/lru-flushing">#lru-flushing</a>
-      
+
         <a href="/tags/io-capacity">#io-capacity</a>
-      
-    
+
+
   </div>
 </div>
 
@@ -326,23 +327,23 @@ Query OK, 0 rows affected (0.06 sec)
 <p>Flushing (both list and LRU) starts in function <code>pc_flush_slot()</code>:</p>
 <pre><code class="language-cpp">2979     /* Flush pages from end of LRU if required */
 2980     slot-&gt;n_flushed_lru = buf_flush_LRU_list(buf_pool);
-2981 
+2981
 2982     lru_tm = ut_time_monotonic_ms() - lru_tm;
 2983     lru_pass++;
-2984 
+2984
 2985     if (!page_cleaner-&gt;is_running) {
 2986       slot-&gt;n_flushed_list = 0;
 2987       goto finish;
 2988     }
-2989 
+2989
 2990     /* Flush pages from flush_list if required */
 2991     if (page_cleaner-&gt;requested) {
 2992       list_tm = ut_time_monotonic_ms();
-2993 
+2993
 2994       slot-&gt;succeeded_list =
 2995           buf_flush_do_batch(buf_pool, BUF_FLUSH_LIST, slot-&gt;n_pages_requested,
 2996                              page_cleaner-&gt;lsn_limit, &amp;slot-&gt;n_flushed_list);
-2997 
+2997
 2998       list_tm = ut_time_monotonic_ms() - list_tm;
 2999       list_pass++;
 3000     } else {
@@ -406,27 +407,27 @@ Nevertheless, this blog post proves that LRU flushing does not use and is not li
       </article>
       <hr>
       <ul class="pager blog-pager">
-        
+
           <li class="previous">
             <a href="https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/" data-toggle="tooltip" data-placement="top" title="MySQL Data Locks: Mapping 8.0 to 5.7">&larr; </a>
           </li>
-        
-        
+
+
           <li class="next">
             <a href="https://hackmysql.com/post/book-0/" data-toggle="tooltip" data-placement="top" title="Efficient MySQL Performance"> &rarr;</a>
           </li>
-        
+
       </ul>
 
-      
-        
+
+
           <div class="disqus-comments">
             <div id="disqus_thread"></div>
 <script type="application/javascript">
-    var disqus_config = function () {
-    
-    
-    
+    window.disqus_config = function () {
+
+
+
     };
     (function() {
         if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
@@ -442,8 +443,8 @@ Nevertheless, this blog post proves that LRU flushing does not use and is not li
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
           </div>
-        
-      
+
+
     </div>
   </div>
 </div>

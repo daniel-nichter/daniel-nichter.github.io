@@ -2,28 +2,40 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/tags/book/</loc>
+    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/efficient-mysql-performance/</loc>
+    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/book-5/</loc>
+    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
+    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/newsql/</loc>
+    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/philosophy/</loc>
+    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/sharding/</loc>
+    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/post/book-4/</loc>
     <lastmod>2022-04-17T13:50:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/access-patterns/</loc>
-    <lastmod>2022-04-17T13:50:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/book/</loc>
-    <lastmod>2022-04-17T13:50:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/efficient-mysql-performance/</loc>
-    <lastmod>2022-04-17T13:50:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2022-04-17T13:50:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2022-04-17T13:50:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2022-04-17T13:50:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2022-04-17T13:50:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/golang/go-single-character-names/</loc>
@@ -39,9 +51,6 @@
     <lastmod>2022-03-25T16:55:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/book-3/</loc>
-    <lastmod>2022-03-19T16:04:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/philosophy/</loc>
     <lastmod>2022-03-19T16:04:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/explain/</loc>

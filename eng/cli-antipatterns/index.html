@@ -16,7 +16,8 @@
   <meta property="og:url" content="https://hackmysql.com/eng/cli-antipatterns/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.92.1" /><link rel="canonical" href="https://hackmysql.com/eng/cli-antipatterns/" />
+  <meta name="generator" content="Hugo 0.99.1" />
+  <link rel="canonical" href="https://hackmysql.com/eng/cli-antipatterns/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
@@ -41,91 +42,91 @@
 <img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
 </div>
       <ul class="nav navbar-nav navbar-left">
-        
-          
+
+
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-                
+
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-                
+
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-                
+
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-                
+
                   <a href="/eng/career-advice/">Career Advice</a>
-                
+
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
-                
+
                   <a href="/eng/database-operations-manual/">Database Operations Manual</a>
-                
+
                   <a href="/eng/percentiles/">Percentiles</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-                
+
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-                
+
                   <a href="/golang/go-single-character-names/">Go Single-character Names</a>
-                
+
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-                
+
               </div>
             </li>
-          
-        
-          
+
+
+
             <li>
               <a title="Help" href="/help/">Help</a>
             </li>
-          
-        
-          
+
+
+
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-                
+
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-                
+
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-                
+
                   <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
-                
+
                   <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
-                
+
               </div>
             </li>
-          
-        
 
-        
+
+
+
       </ul>
 	</div>
   </div>
 </nav>
 
-    
+
 <main class="page">
 	<div id="art">
 		<article role="main" class="blog-post"><h1 id="command-line-interface-antipatterns">Command-line Interface Antipatterns</h1>
@@ -183,7 +184,7 @@ $ echo $?
 <p>Given the first point (that this feature is already thoroughly solved by STDOUT/STDERR redirection), an explicit <code>--quiet</code> option needs a very necessary and convincing reason to exist for it not to be an antipattern.</p>
 <h2 id="--verbose">&ndash;verbose</h2>
 <p>A <code>--verbose</code> option shares two of the same problems as <code>--quiet</code>: too verbose for some people, and not verbose enough for others; and it litters the code with <code>if</code> conditionals or an object to handle printing.</p>
-<p>Verbosity is more difficult to get right than quietness because <code>--quiet</code> usually means &ldquo;no output to STDOUT&rdquo;, but there are no standards or norms for verbosity. Consequently, no two programs' <code>--verbose</code> look even remotely similar. Moreover, verbosity is sometimes a repeatable option, like <code>-vv</code> for &ldquo;very verbose&rdquo;, which complicates the option further.</p>
+<p>Verbosity is more difficult to get right than quietness because <code>--quiet</code> usually means &ldquo;no output to STDOUT&rdquo;, but there are no standards or norms for verbosity. Consequently, no two programs&rsquo; <code>--verbose</code> look even remotely similar. Moreover, verbosity is sometimes a repeatable option, like <code>-vv</code> for &ldquo;very verbose&rdquo;, which complicates the option further.</p>
 <p>Rather than <code>--verbose</code>, the developer probably wants log levels, for which there are standards, like <a href="https://en.wikipedia.org/wiki/Syslog#Severity_level">syslog severity levels</a> and others.</p>
 </article>
 	</div>
