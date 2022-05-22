@@ -2,13 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/tags/business/</loc>
+    <lastmod>2022-05-21T15:10:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2022-05-21T15:10:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/newdb/</loc>
+    <lastmod>2022-05-21T15:10:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/open-source/</loc>
+    <lastmod>2022-05-21T15:10:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/philosophy/</loc>
+    <lastmod>2022-05-21T15:10:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2022-05-21T15:10:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2022-05-21T15:10:00-04:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/tags/book/</loc>
     <lastmod>2022-05-20T19:00:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/efficient-mysql-performance/</loc>
-    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/</loc>
     <lastmod>2022-05-20T19:00:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/book-5/</loc>
@@ -20,16 +38,7 @@
     <loc>https://hackmysql.com/tags/newsql/</loc>
     <lastmod>2022-05-20T19:00:00-04:00</lastmod>
   </url><url>
-    <loc>https://hackmysql.com/tags/philosophy/</loc>
-    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
-  </url><url>
     <loc>https://hackmysql.com/tags/sharding/</loc>
-    <lastmod>2022-05-20T19:00:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2022-05-20T19:00:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/book-4/</loc>
@@ -334,9 +343,6 @@
   </url><url>
     <loc>https://hackmysql.com/eng/cli-antipatterns/</loc>
     <lastmod>2018-01-21T19:00:00-07:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/business/</loc>
-    <lastmod>2017-12-31T09:50:00-07:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/silicon-valley/</loc>
     <lastmod>2017-12-31T09:50:00-07:00</lastmod>

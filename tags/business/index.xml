@@ -7,28 +7,38 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 31 Dec 2017 09:50:00 -0700</lastBuildDate><atom:link href="https://hackmysql.com/tags/business/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 21 May 2022 15:10:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/business/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NewDB: Fate of an Open Source Database</title>
+      <link>https://hackmysql.com/post/newdb/</link>
+      <pubDate>Sat, 21 May 2022 15:10:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/post/newdb/</guid>
+      <description>Recently, I&amp;rsquo;ve had several discussions with engineers, industry experts, and business people of various titles and functions (from sales to CEO) about the fate of a new open source database. It&amp;rsquo;s not MySQL, and I won&amp;rsquo;t name the real database because it doesn&amp;rsquo;t matter for the purpose of this post. But to make writing and communication more clear, let&amp;rsquo;s call the database &amp;ldquo;NewDB&amp;rdquo; and the business &amp;ldquo;New Corp.&amp;rdquo;
+This blog post is a think piece on how New Corp.</description>
+    </item>
+
     <item>
       <title>Tech Workers Are Good People</title>
       <link>https://hackmysql.com/post/tech-workers-are-good-people/</link>
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/tech-workers-are-good-people/</guid>
       <description>The Other Tech Bubble is a provocative and interesting read. The author clearly has a lot of experience with Silicon Valley and has done their homework. There are many good insights, like &amp;ldquo;They&amp;rsquo;re still asking if it&amp;rsquo;s possible to do something, and not whether they should.&amp;rdquo; But there are two claims and one ambiguity that need to be addressed.
 Villains The first claim is:
  In 2008, it was Wall Street bankers.</description>
     </item>
-    
+
     <item>
       <title>Ideas, Leaders, and Engineers</title>
       <link>https://hackmysql.com/post/ideas-leaders-and-engineers/</link>
       <pubDate>Sun, 12 Nov 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/ideas-leaders-and-engineers/</guid>
       <description>The Senior Engineer&amp;rsquo;s Guide to Helping Others Make Decisions is a good read and good advice. I would summarize the advice as:
  &amp;ldquo;Seek first to understand, then to be understood&amp;rdquo; (Dr. Stephen Covey) Lead and guide, don&amp;rsquo;t micromanage Embrace change, which entails embracing other people&amp;rsquo;s thinking and way of doing things  In the first dialog, the senior engineer fails those three points.
 Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
     </item>
-    
+
   </channel>
 </rss>

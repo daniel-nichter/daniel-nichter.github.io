@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>NewDB: Fate of an Open Source Database</title>
+  <meta property="og:title" content="NewDB: Fate of an Open Source Database" />
+  <meta name="description" content="Recently, I&rsquo;ve had several discussions with engineers, industry experts, and business people of various titles and functions (from sales to CEO) about the fate of a new open source database. It&rsquo;s not MySQL, and I won&rsquo;t name the real database because it doesn&rsquo;t matter for the purpose of this post. But to make writing and communication more clear, let&rsquo;s call the database &ldquo;NewDB&rdquo; and the business &ldquo;New Corp.&rdquo;
+This blog post is a think piece on how New Corp.">
+  <meta property="og:description" content="Recently, I&rsquo;ve had several discussions with engineers, industry experts, and business people of various titles and functions (from sales to CEO) about the fate of a new open source database. It&rsquo;s not MySQL, and I won&rsquo;t name the real database because it doesn&rsquo;t matter for the purpose of this post. But to make writing and communication more clear, let&rsquo;s call the database &ldquo;NewDB&rdquo; and the business &ldquo;New Corp.&rdquo;
+This blog post is a think piece on how New Corp.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/newdb/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.99.1" />
+  <link rel="canonical" href="https://hackmysql.com/post/newdb/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">NewDB: Fate of an Open Source Database</h1>
+
+        <div class="post-meta">
+
+
+  <div>May 21, 2022</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/open-source">#open-source</a>
+
+        <a href="/tags/philosophy">#philosophy</a>
+
+        <a href="/tags/business">#business</a>
+
+
+  </div>
+</div>
+
+
+        <p>Recently, I&rsquo;ve had several discussions with engineers, industry experts, and business people of various titles and functions (from sales to CEO) about the fate of a new open source database.
+It&rsquo;s not MySQL, and I won&rsquo;t name the real database because it doesn&rsquo;t matter for the purpose of this post.
+But to make writing and communication more clear, let&rsquo;s call the database &ldquo;NewDB&rdquo; and the business &ldquo;New Corp.&rdquo;</p>
+<p>This blog post is a think piece on how New Corp. can win the market with NewDB by remaining true to its open source origins <em>and</em> build a profitable business.</p>
+<h1 id="ground-work">Ground Work</h1>
+<p>First, I think we all agree that &ldquo;open source is not a business model&rdquo;.
+Now that that is settled, let&rsquo;s also agree that a business founded on (or built around) an open source product <em>must make profit</em>.
+Some people disagree: they think that sullies the purity of open source.
+But open source software engineers have bills to pay, too.
+And if the company doesn&rsquo;t make a profit—not just revenue, but <em>profit</em> to weather financial storms—then it will eventually cease to exist, and so too might its open source product.
+Yes, capitalism can sully the purity of free, open source software, but it can also amplify it if practiced with principle and integrity.
+(And if we&rsquo;re going to be jaded, I&rsquo;d argue that it&rsquo;s really a lack of principle and integrity that leads businesses to abuse capitalism to the point of giving the latter a bad reputation.
+But let&rsquo;s move on.)</p>
+<p>But who pays?
+I think businesses should pay more—a lot more—for open source software that they use to make profit.
+Individuals don&rsquo;t have to worry: open source should always be free for individuals, which is so deeply rooted in the notion of open source that it&rsquo;s almost never stated explicitly.</p>
+<p>Therefore, the ground work and starting point for all the rest is that we can have a free open source product <em>and also</em> a for-profit business to build and support it.
+The two are not mutually exclusive, but the balance is difficult to strike.</p>
+<h1 id="the-moat">The Moat</h1>
+<p>The first and perhaps most pressing question at New Corp. is &ldquo;If we&rsquo;re giving away NewDB for free, then what&rsquo;s our competitive advantage—our moat?&rdquo;
+It&rsquo;s true that anyone (person or business) can fork NewDB or learn from its source code to make a newer, better database.
+But I think the history of successful databases disproves that worry: it&rsquo;s very difficult and time-consuming to create a new database, and even more difficult to get businesses to trust and use it.
+There are several open source relational databases, but MySQL and PostgreSQL dominate the market.
+Granted, those two took away significant market share from Oracle and Microsoft, but that supports the case for open source: a scrappy little database like MySQL took over the world (web 2.0, at least) even though the incumbents had every opportunity to &ldquo;steal&rdquo; its secrets and reclaim their lost market share.
+But <a href="https://claytonchristensen.com/books/the-innovators-dilemma/">The Innovator&rsquo;s Dilemma</a> teaches us why the incumbents did not.
+And for those who don&rsquo;t know the history of MySQL: Oracle bought Sun to acquire Java, not MySQL.</p>
+<p>If New Corp. spends its time, energy, and money fending of real or imagined competitors, they&rsquo;ll lose focus and lose the market.
+Instead, New Corp. must build a moat that&rsquo;s too deep and wide for competitors to cross.
+For open source software, a moat is created by its <em>usefulness</em> and <em>priority</em>.</p>
+<h2 id="usefulness">Usefulness</h2>
+<p>The more useful NewDB is to users, the deeper and wider its moat.</p>
+<p>This is one way in which MySQL won: its replication was stupid-simple and easy, and that made it tremendously useful.
+Was it technically good or rigorous?
+Maybe not; but it was easy, it worked, and it got the job done—it provided <em>value</em>, and that&rsquo;s ultimately what customers purchase: value.
+Users expect a certain degree of technical correctness and proficiency because, without them, a product is not &ldquo;enterprise-ready&rdquo;.
+But the bar is pretty low, in my opinion, because engineers are often under pressure from the business to &ldquo;ship it&rdquo;.
+Therefore, a database doesn&rsquo;t have to be the best (in technical terms), it has to be the most useful.</p>
+<p>Usefulness requires daily practice of the statement,</p>
+<blockquote>
+<p>There are no facts inside the building. -Steve Blank</p>
+</blockquote>
+<p>What&rsquo;s useful is decided and driven by customers, not New Corp.
+Let me put a very fine point on it: executives, managers, and marketing must <em>not</em> drive development because they are inside the building, and figuratively the <em>are</em> the building.
+I realize that setting direction is a core function of those three, but the difference is that they must keep New Corp. focused on real customers and their needs, not concocting strategies to increase business metrics and appease investors.
+Doing the latter is a loss of focus on the product and customers, and <em>that</em>—not free open source software—is what gives competitors an opportunity.
+It&rsquo;s easy to steal customers from a company that doesn&rsquo;t care about them.</p>
+<p>Side note: I grant one exception for sales people: since you don&rsquo;t work on NewDB, you can focus on wining new businesses as long as you do so only if NewDB is in the customer&rsquo;s best interest and will help them succeed.
+If not, then abide by your principle and integrity: tell the customer that NewDB isn&rsquo;t a fit, and suggest a better alternative.
+You might not make a sale today, but you&rsquo;ll earn their respect and they will return with cash and contract in hand when they need NewDB.</p>
+<p>Open source products backed by companies always start of by focusing on usefulness because there&rsquo;s zero chance of success if the product isn&rsquo;t useful.
+But that focus begins to wane as the business grows and the original technical founders delegate responsibilities to executives and managers and, at the same time, task them with growing the business.
+To accomplish the latter (growing the business), the executives and managers might insist on various business-focused strategies and directions.
+The important question to ask is &ldquo;How does this benefit users?&rdquo;
+If the answer is not clear and logical, it might grow the business at the expense of decreasing the moat.</p>
+<p>Another risk I see is that, early on, the open source product can&rsquo;t decide for whom it wants to be useful.
+Attempting to be useful to everyone, it winds up being useful to no one.
+MySQL, for example, never strayed much from being a relation, OLTP database.
+That was (and still is) why it&rsquo;s profoundly useful.</p>
+<h2 id="priority">Priority</h2>
+<p>The more New Corp. prioritizes development of open source NewDB, the deeper and wider its moat.</p>
+<p>The free open source edition of NewDB must always be the first priority of New Corp.—let&rsquo;s call this the &ldquo;community edition&rdquo;.
+This does not preclude an enterprise edition, but it does strongly require that the enterprise edition <em>not</em> be the focus of development.
+For simplicity, I&rsquo;ll speak in terms of community vs. enterprise, but in the next section I&rsquo;ll challenge the whole notion of an enterprise edition.</p>
+<p>This is especially true when executives, sales, or marketing try to prioritize enterprise features, thereby neglecting or excluding the community edition.
+These business people might do so in the name of prioritizing enterprise users since they are generating revenue, but it must be remembered that free users of the community edition created the market for and confidence in NewDB on which the enterprise edition is built.
+Open source is and must remain the foundation; on top of that, the business can build a skyscraper with enterprise user revenue.
+To prioritize it otherwise is to build castles in the sky.</p>
+<p>In practice, prioritizing open source (the community edition) <em>first and foremost</em> means planning and developing it <em>first and foremost</em>.
+This doesn&rsquo;t not preclude enterprise features; it means that work common to both is done in community first, then ported to enterprise.
+Never the reverse.
+But to illustrate the reverse, it would look like:</p>
+<ul>
+<li>Releasing a bug fix in enterprise first, then later in community</li>
+<li>Developing a feature in enterprise first, then later porting to community</li>
+<li>Having a roadmap or development plan for enterprise but not community</li>
+<li>Releasing enterprise versions ahead of community (major, minor, or patch releases)</li>
+</ul>
+<p>One or more of those four examples would indicate that New Corp. is not prioritizing open source NewDB and would raise doubts about whether New Corp. is actually a legitimate open source company or merely using open source as a sales and marketing ploy.
+Such ploys drain the moat and invite competitors.</p>
+<p>To further clarify, here are major areas of product development and how I think a legitimate open source company should handle them to prioritize open source and win the market by creating an impassible moat when combined with product usefulness:</p>
+<dl>
+<dt>Bug fixes</dt>
+<dd>Prioritize bug fixes (based on verification and severity) and actually fix and release them quickly.
+It&rsquo;s ok to require users to provide a reproducible case, but also help users if the bug seems obvious or easy to reproduce.
+Bugs are the responsibility of New Corp.; don&rsquo;t make them the responsibility of users.
+Never fix a bug only in the enterprise edition unless it only affects an enterprise edition feature.</dd>
+<dt>Feature fixes</dt>
+<dd>Prioritize feature fixes (based on usefulness and severity) and release them quickly.
+At the very least, explain why a feature fix is not prioritized (or rejected).
+(A &ldquo;feature fix&rdquo; is a change to a feature because it&rsquo;s not quite right [but also not wrong, which would make it a bug]; it&rsquo;s a continual pain point for users.)
+Never fix a feature only in the enterprise edition unless it only affects an enterprise edition feature.</dd>
+<dt>New features</dt>
+<dd>Continually plan and develop new features based on user needs.
+It&rsquo;s ok to reject bespoke user feature requests that wouldn&rsquo;t benefit NewDB and all users as a whole.
+No sales-driven development: developing new (or change existing features) so sales has something new to sell.
+(Sales-driven development is a particularly bad sign for open source.)</dd>
+<dt>Performance</dt>
+<dd>Continually improve core performance.
+Address &ldquo;small&rdquo; systems and data as well as high-end systems.
+(Developers usually start with small systems.)
+Never fix a performance issue only in the enterprise edition unless it only affects an enterprise edition feature.
+Also encourage third parties to help on this front because experienced engineers trust independent benchmarks the most.</dd>
+<dt>Documentation</dt>
+<dd>Prioritize documentation (hire a professional technical writer) and strive to make the NewDB docs <em>the definitive and indispensable source</em> for users, DBAs, and experts alike.
+Ensure the docs are updated frequently, continually.
+Clearly separate docs for enterprise features; do not mix community and enterprise docs.</dd>
+<dt>Issue tracking</dt>
+<dd>Use public issue tracking.
+Allow users to make their issues private only if they wish.
+When issues are de-prioritized or rejected, explain why.
+Track upcoming releases and constituent issues in the public issue tracker, too, so users can see what&rsquo;s in the pipeline.
+Use the same issue tracker for enterprise features, but perhaps make those issues private by default since they&rsquo;re from customers and your customer list is private (or, allow customers to set a default visibility for their issues).</dd>
+<dt>Community</dt>
+<dd>Plan and host community events if budgets allow.
+Support and attend related events by others.
+Have community forms and a Slack channel, but it&rsquo;s ok not to let users take advantage of these by treating them as a &ldquo;free DBA&rdquo;.
+It&rsquo;s ok to redirect such users to your paid support options.
+Never present enterprise features at community events; don&rsquo;t even mention them unless asked.</dd>
+<dt>Tooling</dt>
+<dd>If budgets allow, develop and improve open source external tooling for the most common user, DBA, and operational tasks.
+Only do this if truly committed to making tools that are designed from real-world usage and experience.
+Otherwise, it&rsquo;s better to let other individuals and companies develop (and support) tools.
+In this case, support those individuals/companies because they&rsquo;re valuable: free development.</dd>
+</dl>
+<p>When open source NewDB is the first priority and work in all areas happens <em>first</em> in the community edition, users will notice and become loyal to and advocates for the product—even when the product goes through hard times (and it will).
+Both MySQL and PostgreSQL achieved this, and for more than 20 years much larger, more powerful corporations couldn&rsquo;t stop them from winning the relational database market.</p>
+<p>If had a to philosophize why this (in the previous paragraph) occurs, I would argue that open source creates a sense of reciprocity that proprietary software never can.
+For example, MySQL was a valuable gift to the world—free of charge.
+While many companies didn&rsquo;t pay for it (but should have), countless engineers have chosen MySQL despite its quirks or shortcomings.
+And while their choosing and using MySQL doesn&rsquo;t generate revenue, it&rsquo;s a form of giving back (reciprocity) by strengthening the community and ecosystem around it such that it becomes bigger, stronger, and better—both MySQL and its community.
+For many engineers like myself, MySQL became a good career, allowing me to repay my college loans, for example.
+If NewDB can achieve this, then New Corp. will be successful, too.</p>
+<h1 id="end-of-the-enterprise">End of the Enterprise</h1>
+<p>&ldquo;Enterprise&rdquo; editions and features strike me as pre-cloud and pre-open source thinking.
+It harkens back to web 1.0 (or older) when big enterprises like IBM and Oracle ruled the market.
+But web 2.0, open source, and the cloud have become mainstream.
+Enterprise is irrelevant in today&rsquo;s fast-paced, digital-native market.
+Speed and flexibility are paramount—increasingly so when every new business idea seems to spawn a handful of copycats.</p>
+<p>What if there was only one &ldquo;edition&rdquo; of NewDB and it had <em>all</em> features?
+That immediately solves the prioritization problem, so we&rsquo;re off to a good start.</p>
+<p>But without enterprise features to sell, what does New Corp. sell and compete on?
+I think the answer is found in the change from products to services that has also become mainstream.</p>
+<h2 id="product-and-service">Product and Service</h2>
+<p>It&rsquo;s probably more lucrative for New Corp. to offer NewDB as a <em>service</em>: a cloud-based SasS offering that requires a paid subscription (or some other payment model).
+Let&rsquo;s call this &ldquo;NewDB Service&rdquo;.</p>
+<p>But the problem is: NewDB was released as an open source <em>product</em>: a standalone program that users can run wherever they like.
+How can New Corp. build its product but also offer it as a service, without the latter undercutting the former in terms of usefulness and priority for product users?
+To extend the analogy: how can New Corp. build a moat around NewDB <em>and</em> a toll bridge over it to NewDB Service?</p>
+<p>This concern is the modern-day cloud-based equivalent of enterprise undercutting community.
+Therefore, the solution is roughly the same as previously stated: ensure that the <em>product</em> remains the first priority of all development.
+But there&rsquo;s more to it than that.</p>
+<p>The community vs. enterprise debate centers on <em>functionality</em>: what enterprise can do that community cannot.
+Enterprise sells something community cannot have or do—unless community users re-implement the functionality, which is possible but nontrivial (most database development is nontrivial).
+I would argue that this makes community users feel neglected or, perhaps, cheated since (to repeat) &ldquo;free users of the community edition created the market for and confidence in NewDB&rdquo;.</p>
+<p>But the product vs. service debate can center on <em>operations</em>: how NewDB is operated in the cloud.
+New Corp. could make clear that NewDB is designed only for cloud environments: on-demand, elastic compute and storage, auto-scaling, containerization, and so forth.
+(Granted, a user with bare metal on-premise might meet these requirements, but it&rsquo;s unlikely.)
+Then New Corp. can prioritize NewDB development for the cloud and equally serve both purposes: open source product and the paid-for service of that product.
+This works especially well when there are no &ldquo;enterprise&rdquo; features: it&rsquo;s all the same database.</p>
+<p class="note">
+Compete on cloud operations, not product features.
+</p>
+<p>This is an opportunity for New Corp. because database <em>operations</em> are &ldquo;undifferentiated heavy lifting&rdquo;: exactly the kind of stuff that businesses prefer to buy rather than build.
+It also helps New Corp. corner the DBaaS market for NewDB before the cloud providers attempt to (like AWS EKS and others).
+Lastly, and perhaps most importantly, without enterprise features it truly avoids any vendor lock-in: NewDB Service users know that they can stop using NewDB Service but continue running NewDB on their own without any loss of functionality.
+In my opinion, that is a huge win and value to users that will reduce (or eliminate) hesitancy to using NewDB Service.</p>
+<p>I think this approach is uniquely suited to NewDB and other databases like it that are operationally complex and practically require the cloud.
+It&rsquo;s a tough sell for MySQL, for example, because it&rsquo;s a single binary.
+Granted, operating MySQL (or any database) requires <a href="/eng/database-operations-manual/">a lot of work</a>, but NewDB requires an order of magnitude more work than MySQL (but it&rsquo;s worth it to avoid sharding).</p>
+<h3 id="newdb-service">NewDB Service</h3>
+<p>NewDB Service will, of course, have its own propriety code for web apps and so forth.
+That&rsquo;s ok because NewDB Service is not open source; it does not preclude NewDB (the database) from being open source.
+In my opinion, this difference is widely understood and accepted: free open source product, but proprietary service.
+But this only works as long as New Corp. does not build something into the open source product that is only useful for its proprietary service—that would violate <a href="#usefulness">usefulness</a> and <a href="#priority">priority</a>.</p>
+<p>What stops other companies from offering their own NewDB Service?
+Not much except for expense and expertise, but that is also true of the product.
+But New Corp. has an unfair advantage: they make NewDB, so presumably they know best how to operate it.
+Presuming New Corp. executes NewDB Service adeptly and fairly, there would be little reason for users to chose another company.
+Other companies will attempt to undercut NewDB Service on price, but let them: focus on being the premium service that people want to use, not the cheap service they can afford to use.</p>
+<p>And lest it not be said: New Corp. must never &ldquo;weaponize&rdquo; open source NewDB to thwart a NewDB Service competitor.
+That would violate <a href="#usefulness">usefulness</a> and <a href="#priority">priority</a> and the trust of its users and customers.</p>
+<h3 id="whos-vpc">Who&rsquo;s VPC?</h3>
+<p>I think it would be best that New Corp. only run NewDB Service in cloud accounts and VPCs owned by the customer.
+For example, <a href="https://buildkite.com/cash">Buildkite</a> works this way.
+Although this is more complex for NewDB Service at the start, it has the long-term benefit of avoiding all types of compliance requirements.
+It also means New Corp. can charge only for its service and let the cloud provider bill the customer for their cloud account.
+Lastly, and perhaps most importantly, it again avoids vendor lock-in: if a NewDB Service customer stops using the service, New Corp. simply disconnects and removes their pieces, and the customer retains their NewDB databases in their cloud account—but now they&rsquo;re responsible for operations.</p>
+<h1 id="support-and-consulting">Support and Consulting</h1>
+<p>Corner the support and consulting market before Percona, Pythian, and other companies do.
+These companies have proven that support and consulting alone are enough to sustain a business and employ hundreds of people.
+They also have outsized impact in the market because, being independent third parties, users listen to and trust them.</p>
+<p>They&rsquo;ll probably enter the support and consulting market for NewDB regardless of what New Corp. does, but if New Corp. takes this market first and does an outstanding job, it&rsquo;ll be more difficult for other companies to steal customers.
+Plus, New Corp. has the unfair advantage of making NewDB, so customers know that New Corp. has the engineers to solve or explain every problem.</p>
+<h1 id="final-thoughts">Final Thoughts</h1>
+<p>I approach most long-term, strategic thinking and decision making by attempting to imagine myself in the future looking back at a long, successful history.
+(I think that if you want to be successful, you have to be able to clearly envision future success.
+If not, then it&rsquo;s like a ship on a long voyage without a destination.)
+In this case, given where the industry seems to be going—databases built for scale out on cloud, containers, orchestration—I see NewDB winning by creating a strong open source community and ecosystem, bolstered by NewDB Service for a majority of customers who don&rsquo;t want to operate it themselves—which is understandable because database operations are complex.
+While some business people might argue that open source NewDB is, in this case, a waste of time and money (they&rsquo;d rather a pure commercial service like <a href="https://www.singlestore.com/">SingleStore</a>), I think open source has proven that only it has the power to change the world.
+<em>The internet is built on open source.</em>
+If you want to make some money and fade into history, then prioritize a commercial service; don&rsquo;t feign open source.
+But if you want to change the world and make history, then build a true open source database and company.</p>
+
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-5/" data-toggle="tooltip" data-placement="top" title="I Don&#39;t Want to Shard (MySQL)">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>
