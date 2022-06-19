@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>InnoDB Page Flushing Diagram</title>
+  <meta property="og:title" content="InnoDB Page Flushing Diagram" />
+  <meta name="description" content="Chapter 6">
+  <meta property="og:description" content="Chapter 6">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-6/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.99.1" />
+  <link rel="canonical" href="https://hackmysql.com/post/book-6/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">InnoDB Page Flushing Diagram</h1>
+        <h3 class="post-subtitle">Chapter 6</h2>
+        <div class="post-meta">
+
+
+  <div>Jun 18, 2022</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/innodb">#innodb</a>
+
+        <a href="/tags/book">#book</a>
+
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+
+
+  </div>
+</div>
+
+
+        <p>Who dares diagram a system and process as complex as InnoDB page flushing?
+I do.</p>
+<p class="note">
+This blog post is the seventh of eleven: one for the preface and ten for each chapter of my book <a href="https://oreil.ly/efficient-mysql-performance"><i>Efficient MySQL Performance</i></a>.
+The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mysql-performance</a>.
+</p>
+<p><img src="/img/innodb-page-flushing.svg" alt="InnoDB Page Flushing"></p>
+<p>That digram is from chapter 6 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, which is a deep dive into the most useful MySQL server metrics.
+There is a long section on InnoDB metrics that focuses mostly on the write path: from transaction commit to buffer pool and most (but not all) of the parts in between.
+I encourage you to read the entire chapter because a short, informal blog post like this cannot begin to approach the depth and clarity of the book.
+Instead, I want to quickly discuss some points about InnoDB that new DBAa need to know.</p>
+<h3 id="avoid-optimize-and-delay">Avoid, Optimize, and Delay</h3>
+<p>InnoDB <em>acts like</em> an in-memory (yet durable) cache because all logical reads and writes occur in the buffer pool, which is in memory.
+Broadly speaking, I think it&rsquo;s helpful to view InnoDB as an in-memory cache rather than a storage engine on top of slow disks.
+This helps to avoid fixating on slow disk access.
+MySQL and InnoDB (and probably every database ever created) already know that disk access is slow.
+A big part of the <em>raison d&rsquo;être</em> of InnoDB is doing very clever things to avoid, optimize, and delay disk access.
+InnoDB is so good at those three techniques that in normal operation it acts like an in-memory cache with behind-the-scenes magic to make data durable, support transactions, and a lot more.
+As the saying goes: &ldquo;The fastest way to do something is to not do it.&rdquo;</p>
+<p class="note">
+"In memory" is synonymous with "in the buffer pool".
+MySQL and InnoDB have other in-memory data structures, but "in memory" in MySQL parlance means "in the buffer pool".
+</p>
+<h3 id="reads">Reads</h3>
+<p>Read performance is rarely an issue <em>at the storage level</em> because, again, InnoDB acts like an in-memory cache, and it&rsquo;s exceptionally good at keeping the working set in memory.
+&ldquo;But why are slow <code>SELECT</code> queries so common?&rdquo;, you ask.
+There&rsquo;s no single answer (you have to do query analysis to determine why), but physical reads (from disk) are one of the last problems I would suspect.
+For that problem, you&rsquo;d need:</p>
+<ul>
+<li>A working set size much greater than physical RAM <em>and</em></li>
+<li>Queries that almost exclusively access new data <em>and</em></li>
+<li>Throughput so high that InnoDB must continually evict older data to load new data</li>
+</ul>
+<p>I&rsquo;ve never seen, nor can I imagine, a workload with all three of those conditions.
+But if there were such a workload, the solution would be simple: don&rsquo;t use MySQL; use another data store better suited to that kind of workload.</p>
+<p>The point is that it&rsquo;s safe to presume that InnoDB is nearly always doing logical reads: from memory, not disk.
+Therefore, an individual <code>SELECT</code> is not likely to be slow due to physical or logical reads because, respectively, the data is probably already in memory (working set) and reading from memory is very fast.
+The more common problems are excessive row access and server resource contention.</p>
+<h3 id="writes">Writes</h3>
+<p>Don&rsquo;t blame MySQL or InnoDB for write performance.
+InnoDB is the only reason you get acceptable write performance in the first place because standard hardware and operating systems are not fine-tuned for databases.
+On the contrary: those two have to work reasonably well for everything, which means they&rsquo;re not fine-tuned for anything—they&rsquo;re just generally fast and efficient.
+And even if they were fine-tuned for databases, they&rsquo;d have to be fine-tuned for specific versions of MySQL, and specific hardware, and specific application-driven workloads because those three vary and combine to create different performance requirements.</p>
+<p>Alas, performance is difficult, which is why it&rsquo;s helpful to realize that InnoDB is why you get any write performance at all.
+The diagram above is only a high-level view of InnoDB page flushing; InnoDB does a lot more.
+For example, we could zoom in on the transactions log (or &ldquo;redo log&rdquo;) at top to see how it balance speed (concurrent <code>COMMIT</code>) and durability (flushing committed data changes to disk).
+Note that concurrent <code>COMMIT</code> is different than concurrent writes: the latter is easier (and more a matter of transaction isolation and row locking) because they&rsquo;re logical writes in memory.
+Data changes are made durable in the redo log on commit.</p>
+<p>It might seem like write performance is a very low-level and rather simple concern: how fast can InnoDB physically write to disk and <code>fsync</code>?
+But that&rsquo;s usually the wrong question because <a href="#avoid-optimizeand-delay">Avoid, Optimize, and Delay</a>.
+Database performance is first and foremost <em>efficiency</em>: doing the same (or more) with less.
+For example, let&rsquo;s say the top speed of your car is 260 km/h.
+Do you drive to work at 260 km/h?
+You could, but you probably shouldn&rsquo;t.
+Likewise, let&rsquo;s say your hard drives support 20k IOPS.
+Do you blast writes at 20k IOPS?
+You could, but <a href="https://www.percona.com/blog/2019/12/18/give-love-to-your-ssds-reduce-innodb_io_capacity_max/">you probably shouldn&rsquo;t</a>.</p>
+<p>Page flushing is the user-serviceable part of InnoDB that makes writes efficient.
+That&rsquo;s why I spent so much time in chapter 6 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a> to explain it.
+So rather than fixate on low-level disk access—which you can&rsquo;t change anyways unless you change the storage system or devices—learn how InnoDB page flushing works.
+Spoiler: the adaptive flushing algorithm is dynamic, so you cannot simply increase related MySQL system variables to magically effect greater write performance—again: <a href="#avoid-optimizeand-delay">Avoid, Optimize, and Delay</a>.</p>
+<h3 id="dirty-pages">Dirty Pages</h3>
+<p>It&rsquo;s important to remember that the database on disk is probably <em>not</em> current.
+(Where &ldquo;current&rdquo; means &ldquo;having all the most recent values&rdquo;.)
+That&rsquo;s a little weird since we tend to think of the database as <em>the</em> source of truth.
+It is, but the question is really &ldquo;At which point in time?&rdquo;
+Eventually the data can be (or become) current, but to repeat myself: <a href="#avoid-optimizeand-delay">Avoid, Optimize, and Delay</a>.</p>
+<p>In reality, the buffer pool is full of dirty pages (which have current values) and that&rsquo;s ok because the data changes that made those pages dirty are durable in the transaction log.
+So &ldquo;the&rdquo; source of truth is really the database plus the transaction log—when the latter is applied to the former.</p>
+<p>The transaction log is fixed-size, so InnoDB flushes dirty pages to make space in the transaction log for new data changes, not because dirty pages are &ldquo;bad&rdquo; or represent non-durable data.
+If the transaction log wasn&rsquo;t a fixed size, it could delay flushing for a very long time.
+The adaptive flushing algorithm tries to do this: it flushes only when needed and only as much as needed—that&rsquo;s what makes it &ldquo;adaptive&rdquo;.</p>
+<p>The main downside to dirty pages is that they slow down MySQL startup or shutdown, depending on how MySQL is configured.
+A <a href="https://dev.mysql.com/doc/refman/en/glossary.html#glos_fast_shutdown">fast shutdown</a> results in a slow startup.
+A slow shutdown results in a fast startup.</p>
+<h3 id="iops">IOPS</h3>
+<p>Configurable I/O limits affect flush list flushing, not <a href="/post/mysql-lru-flushing-io-capacity/">LRU flushing</a> or reading data from disk.
+That&rsquo;s an important point you don&rsquo;t often read about.
+It means that InnoDB can and will use tons of IOPS on startup, for example, when data is first loaded.
+Or when a bad query inadvertently selects nearly all rows, so InnoDB has to do physical reads to load rows into memory.</p>
+<p>But don&rsquo;t worry: as mentioned earlier, InnoDB is really good at keeping the working set in memory.
+As a result, a typical server uses IOPS mostly for page flushing—specifically, flush list flushing to free space in the transaction log.
+Together, this is how and why MySQL can sustain high throughput (QPS) with very few IOPS: reads are from memory (working set) and writes are highly optimized (page flushing).</p>
+<h3 id="binary-logs">Binary Logs</h3>
+<p>Not shown in the diagram above: durable write/flush to binary logs.
+Commits are two-phase (2PC): begin, write/flush binlogs, commit.
+This is necessary to help ensure that the redo and binary logs stay in sync; of course, failure during the 2PC is possible, and InnoDB crash recovery handles this.
+As such, you must remember to enable binary logs during benchmarking, presuming all nodes typically have binary logging enabled in production.
+Note that binary logs are handled by MySQL, not InnoDB.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/newdb/" data-toggle="tooltip" data-placement="top" title="NewDB: Fate of an Open Source Database">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>
