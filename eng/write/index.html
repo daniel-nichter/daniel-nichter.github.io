@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>How to Write Well</title>
+  <meta property="og:title" content="How to Write Well" />
+  <meta name="description" content="How to Write Well This guide is intended for engineers writing technical documents. Most of it does not apply to other audiences or purposes. For example, it would be quite difficult (or interesting) to follow this guide when writing poetry. However, impeccable writing for any audience or purpose has, in my opinion, the same impact as poetry: it moves the reader. Perhaps, then, the only difference is that engineers write technical documents to &ldquo;move&rdquo; other engineers to understand and build systems.">
+  <meta property="og:description" content="How to Write Well This guide is intended for engineers writing technical documents. Most of it does not apply to other audiences or purposes. For example, it would be quite difficult (or interesting) to follow this guide when writing poetry. However, impeccable writing for any audience or purpose has, in my opinion, the same impact as poetry: it moves the reader. Perhaps, then, the only difference is that engineers write technical documents to &ldquo;move&rdquo; other engineers to understand and build systems.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/eng/write/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.99.1" />
+  <link rel="canonical" href="https://hackmysql.com/eng/write/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<main class="page">
+	<div id="art">
+		<article role="main" class="blog-post"><h1 id="how-to-write-well">How to Write Well</h1>
+<p>This guide is intended for engineers writing technical documents.
+Most of it does <em>not</em> apply to other audiences or purposes.
+For example, it would be quite difficult (or interesting) to follow this guide when writing poetry.
+However, impeccable writing for any audience or purpose has, in my opinion, the same impact as poetry: it moves the reader.
+Perhaps, then, the only difference is that engineers write technical documents to &ldquo;move&rdquo; other engineers to understand and build systems.
+But I digress; let&rsquo;s get back to the point.</p>
+<p>The moment you need to write a technical document is the moment that writing becomes a skill for which you are responsible to execute with the same quality and professionalism as other skills.
+Let me state it more bluntly: if you&rsquo;re a programmer and you think high-quality professional writing is not your responsibility, <em>you are wrong</em>.
+Nobody is hired <em>only</em> to code.
+I will make a sweeping generalization by claiming that communicating and &ldquo;syncing&rdquo; information is implicit to every career.
+Even the most arrogant engineer who thinks they are always right will deign to communicate their brilliance to other engineers, even if only to receive their adulation.
+But imagine if that arrogant engineer did not communicate well: how would their brilliance shine brightly and clearly through the linguistic muck obscuring their revelations?
+Alas, their poor communication might have the opposite effect: leaving other engineers to wonder &ldquo;Does this person know what they&rsquo;re doing?&rdquo;</p>
+<p>The preceding is dramatic but not unrealistic: I have encountered many great engineers who do not write well—some don&rsquo;t even try.
+In my opinion, poor writing limits their potential because exceeding one&rsquo;s own abilities requires &ldquo;working through&rdquo; other engineers, which requires aligning those engineers in thought and action.
+For programming, design docs (or specifications) are the primary source that align engineers.
+Design docs are especially important, but all written communication is important because if you take the time to write something, you presumably want others to understand and agree.
+To those ends—understanding and agreement—it is imperative to write well so that your words clarify and amplify your points, rather than causing readers to stumble over them.</p>
+<p>But enough philosophy of writing—let&rsquo;s dive into specific aspects of writing that are necessary for writing well.</p>
+<h2 id="grammar">Grammar</h2>
+<p>Learn and use grammar correctly.
+I suggest <a href="https://www.penguinrandomhouse.com/books/631739/grammatically-correct-by-anne-stilman/"><em>Grammatically Correct</em></a> by Anne Stilman.</p>
+<p>Grammar is the one aspect of a language that everyone must follow because it&rsquo;s the shared foundation that makes communication possible.
+That doesn&rsquo;t mean grammar is binary or definitive in every case (there is the &ldquo;rule of cool&rdquo; as my O&rsquo;Reilly editors would say), but it does impose certain guidelines—the shared foundation has limits.
+Ignoring them precludes any semblance of professionalism.
+For example:</p>
+<ul>
+<li>Hyphen (-) and em dashes (—) are objectively different punctuation marks.</li>
+<li>There is a space before parenthetical notes (like this).</li>
+<li>Commas are flexible but objectively wrong in certain places.</li>
+<li>Proper nouns are capitalized, not random words the writer deems important.</li>
+<li>Acronyms are all uppercase: IDE, PCI, IEEE, RFC, SSD, HDD, LED, and so on.</li>
+</ul>
+<p>I emphasize grammar as the first aspect of writing well because I routinely see engineers disregard it.
+Granted, grammar is a vast and complicated subject, so a few mistakes are normal (even editors disagree on the finer points of grammar), but it&rsquo;s imperative that you understand and employ the basics correctly.
+If you&rsquo;re not sure about a grammatical rule or construct, then look it up.
+If you can&rsquo;t find an answer, then reword or restructure to avoid the questionable grammar.
+Simple is good (and often time betters).
+You don&rsquo;t have to become a grammarian, but you must get the basics right.</p>
+<p>Advanced grammar begins to bleed into style.
+For that, I suggest <a href="https://www.penguinrandomhouse.com/books/198856/it-was-the-best-of-sentences-it-was-the-worst-of-sentences-by-june-casagrande/"><em>It Was the Best of Sentences, It Was the Worst of Sentences</em></a> by June Casagrande.</p>
+<h2 id="consistency">Consistency</h2>
+<p>Define and use consistent terminology.</p>
+<p>Engineers often write to explain complex and nuanced systems.
+As such, the reader already has a difficult job: understanding that complexity and nuance.
+If the writer does not use consistent terminology, they create a moving target for the reader, making their job unnecessarily difficult.
+For example, if you&rsquo;re describing a system but you don&rsquo;t use consistent names for its parts, then every time you reference a part by a different name, the reader has to stop, think, and hopefully realize to which part you are now referring—and that extra mental work happens before the reader can understand what you&rsquo;re trying to explain.
+Consistent terminology avoids that extra mental work, which is good because it allows the reader to focus on <em>what</em> you&rsquo;re communicating rather than stumbling over <em>how</em> you&rsquo;re communicating.</p>
+<p>The greater advantage to consistency is that it&rsquo;s the foundation of a <em>domain language</em>: a shared set of terms and understanding of (and around) those terms.
+A domain language has tremendous communicative value because it acts like lossless compression of language: readers can figuratively decompress a single well-defined term into a wealth of information and understanding, which makes overall communication faster, easier, and more precise—you don&rsquo;t have to repeat yourself.
+For example, in the domain of automobiles, when I say &ldquo;engine&rdquo; you know exactly what I&rsquo;m referring to, what it does, and (maybe) its internal parts.
+That trivial bit of domain language saves both of us a lot of time by decompressing to the same general understanding in both our minds.
+We might have different levels of understanding, but the point is that I don&rsquo;t have to describe what I mean, like &ldquo;the main block with 4, 6, or 8 cylinders where the air-fuel mixture is combusted to turn the crankshaft that&rsquo;s attached to the transmission.&rdquo;</p>
+<p>Although this guide is about writing, engineers must be consistent when talking, too.
+Not surprisingly, it&rsquo;s confusing when people write one thing but say another, or vice versa.</p>
+<h2 id="short-and-simple">Short and Simple</h2>
+<p>Write straight to the point; don&rsquo;t hide it in a maze of words.</p>
+<p>Humans have a tendency to ramble, repeat, and add superfluous words.
+Most times, the excess is an unintentional side-effect of simply being able to say a lot about the subject at hand.
+For example, if you&rsquo;re writing a design document for a system, you obviously know a lot about the system.
+As a result, you &ldquo;pour&rdquo; knowledge onto the pages in the form of long, complex sentences.</p>
+<p>The problem with long, complex sentences is that they require extra mental work by the reader—like inconsistent terminology.
+Even if the reader understands what you wrote, they may not understand what you meant.
+They read the words, but they don&rsquo;t get the point.</p>
+<p>I tell engineers: <em>every sentence must punch.</em>
+Please excuse the aggressive metaphor, but &ldquo;punch&rdquo; refers to <em>swift</em> and <em>impactful</em>.
+A swift sentence is either short or so elegantly worded that it reads effortlessly.
+An impactful sentence either makes a point clear or advances the discussion.
+It&rsquo;s a weird metaphor, but I think it works because a long, slow punch is like a long, complex sentence: it doesn&rsquo;t work well.</p>
+<p>I&rsquo;ll share with you a semi-secret writing technique to help make sentences punch: <em>write one sentence per line.</em>
+When I first learned this secret, I scoffed because I had been writing (and thinking) in paragraphs my whole life.
+But I gave it a try and it was a game-changer; now it&rsquo;s the only way I write.
+(After it becomes a habit, you can return to writing in paragraphs, but your mind will continue to think sentence by sentence.)
+For example, here&rsquo;s the Markdown source for the first paragraph of this page:</p>
+<pre><code class="language-none">This guide is intended for engineers writing technical documents.
+Most of it does _not_ apply to other audiences or purposes.
+For example, it would be quite difficult (or interesting) to follow this guide when writing poetry.
+However, impeccable writing for any audience or purpose has, in my opinion, the same impact as poetry: it moves the reader.
+Perhaps, then, the only difference is that engineers write technical documents to &quot;move&quot; other engineers to understand and build systems.
+But I digress; let's get back to the point.
+</code></pre>
+<p>Writing one sentence per line quickly reveals which sentences are short (and probably simple) and which are not (and probably complex).
+In the example above, the 3rd, 4th, and 5th sentences are obviously much longer, so it&rsquo;s worth asking: are they punching?
+Rereading those three, I think it&rsquo;s clear what point each one makes in the context of the paragraph.
+But if I wanted to make them more punchy, I could revise them as follows:</p>
+<pre><code class="language-none">This guide is intended for engineers writing technical documents.
+Most of it does _not_ apply to other audiences or purposes.
+For example, it would be difficult to follow this guide when writing poetry.
+However, impeccable writing for any audience or purpose has the same impact as poetry: it moves the reader.
+Perhaps the only difference is that engineers write to &quot;move&quot; other engineers to understand and build systems.
+But I digress; let's get back to the point.
+</code></pre>
+<p>A few words have been removed from the longest sentences, but the points of the paragraph remain.
+It reads more densely now, which brings me to the next point: sentence complexity and density are different.
+Sentence complexity means the point is hidden in a maze of words and the reader has to find it—that is bad writing.
+Sentence density means the point is presented directly but stated compactly, so it requires &ldquo;unpacking&rdquo;.
+For example, this is why the first sentence (and paragraph) of <a href="https://oreil.ly/efficient-mysql-performance">my book</a> is simply:</p>
+<blockquote>
+<p>Performance is query response time.</p>
+</blockquote>
+<p>Those five words require 300 pages to unpack.
+Nothing hidden, but extremely compact.</p>
+<p>Density and terseness often go hand in hand, but not always.
+Here&rsquo;s another dense sentence that some of my colleagues will recognize:</p>
+<blockquote>
+<p>Along the way, the problems of today will not be solved by happenstance or “good enough” thinking but, rather, as the result of clear alignment on the principles, values, and purposes towards which we build this new global database infrastructure.</p>
+</blockquote>
+<p>Although that sentence is relatively long, it&rsquo;s still dense because I cannot see how to state it more compactly without losing the full meaning or being cryptic.</p>
+<p>Ironically, this explanation of &ldquo;short and simple&rdquo; is neither.
+Let me make two more points, then we&rsquo;ll move on.</p>
+<p>Presume the language is not the reader&rsquo;s native language.
+For example, if you write in English, presume English is <em>not</em> your readers&rsquo; native language.
+This helps you to write short, simple sentences—and avoid <a href="#idioms-and-slang">idioms and slang</a>.</p>
+<p>Short and simple does not mean simplistic.
+Don&rsquo;t write like an elementary school child.
+Write like a university professor, and make every sentence punch.</p>
+<h2 id="formality">Formality</h2>
+<p>Err on the side of formality and professionalism.</p>
+<p>Don&rsquo;t write like you&rsquo;re having a casual conversation with friends, family, or yourself.
+At the same time, don&rsquo;t write like you&rsquo;re addressing Congress (or Parliament).
+Write as a professional to other professionals, leaning toward formality and seriousness.
+Never be offensive, controversial (in a social sense, not a technical sense), or risqué—these have no place in <em>technical</em> writing; they only diminish your credibility and reputation.
+Avoid being sensational or dramatic unless the point truly warrants it.
+Be factual and unbiased, but don&rsquo;t shy away from arguing your points professionally and respectfully.</p>
+<p>These guidelines don&rsquo;t preclude <em>some</em> levity, quips, or jokes.
+In fact, I encourage some to avoid dull or stilted writing.
+Just be very sparing with such informality.</p>
+<h2 id="organization-and-flow">Organization and Flow</h2>
+<p>There are no general guides (that I&rsquo;m aware of) to determine how information should be organized in a document.
+Each document is different, so the common advice is to organize the document <em>logically</em>, but that&rsquo;s not very helpful because it only moves the problem and raises another question: what&rsquo;s logical?
+This line of thinking doesn&rsquo;t bear fruit, so let&rsquo;s try something else&hellip;</p>
+<p>Organization of information within a document is not a problem that I commonly see.
+Plus, technical documents often have a predetermined organization (a template).
+(Or perhaps engineers have an innate sense of organization due to it being a fundamental aspect of programming?)
+Instead, the far more common problem that I see is <em>flow</em>: how the writing leads the reader from one topic, idea, or point to another.
+An analogy might help: a document is a body, how it&rsquo;s organized is its skeletal structure (its bones), and its flow is the connecting tissue and joints between the bones.
+Organization and flow are different but connected and related, and each helps the other function.</p>
+<p>Flow is challenging because the bits of writing that constitute flow don&rsquo;t appear (at first) to be important.
+So why bother?
+Why not just state the important technical points, then abruptly change topics as needed?
+For that matter, why not just state everything in a bullet list?</p>
+<p>Flow is required to connect the topics and ideas because humans use connections to understand and grasp complex systems—hence expressions like &ldquo;connect the dots&rdquo; and &ldquo;put it all together&rdquo;.
+Without flow, a document is disconnected information—raw material.
+With flow, a document becomes a body of knowledge and understanding—a working system.
+In my opinion, great flow is the secret behind great writing: when you read something and think &ldquo;Wow this is great,&rdquo; it&rsquo;s a combination of great &ldquo;bones&rdquo; and the flow connecting them.
+Let&rsquo;s study an example.</p>
+<p>The following excerpt is a single section titled &ldquo;MySQL: Go Faster&rdquo; from chapter 1 of <a href="https://oreil.ly/efficient-mysql-performance">my book</a>.
+I highlighted the flow, and below I explain it.</p>
+<img src="/img/writing-flow.png" width="550px" alt="Writing Flow Highlighted" style="border: 1px solid lightgrey;" />
+<p>The first sentence (highlighted green) really <a href="#short-and-simple">punches</a>: that&rsquo;s the point, plain and simple—drop the mic.
+&hellip;
+But I&rsquo;m writing a book, so I need to unpack that dense bit of truth.
+I could flow right into a technical explanation, but leading with a true story can be more captivating and interesting.
+The phrases highlighted yellow show how I flow from the technical point (the first sentence) to a story about it.
+Now the reader expects a story in the next paragraph, and that&rsquo;s what they find.</p>
+<p>When the short story ends, how can I flow back to some technical discussion?
+In this case, the story is a bit of a joke: the engineer wanted to scale up 100x in 1 day.
+So I use the punchline to flow from the second to third paragraph, highlighted light blue.
+Actually, the whole third paragraph is flow: it&rsquo;s a gentle transition from &ldquo;100x in 1 day is not possible&rdquo; to &ldquo;here&rsquo;s the real issue&rdquo;: time (highlighted light magenta.)</p>
+<p>Paragraphs four and five explain what I mean about time being a hard limit to performance.
+But since it&rsquo;s a book about <em>improving</em> performance, I can&rsquo;t stop there; I have to offer solutions.
+In this case, I choose an abrupt but effective flow for offering solutions: a list (highlighted cyan).
+Then I explain each solution (each list item) in its own <em>single</em> paragraph, and I&rsquo;m careful to start each paragraph with &ldquo;Option (number)&rdquo; or the exact wording used in the list to ensure the reader can easily match the two.
+Again, this type of flow (highlighted cyan) is abrupt, so it&rsquo;s not always appropriate.
+There are alternative flows, but they&rsquo;re out of scope for this guide.
+(If you publish professionally, you&rsquo;ll undoubtedly discuss them with your editors.)</p>
+<p>The final paragraph circles back to the first sentence to recapitulate the main point, which also signals to the reader that the section is complete.
+The last part of the last sentence (highlighted light red) flows the whole section and chapter into the next chapter because—not shown here—previous sections explain &ldquo;direct and indirect query optimization&rdquo; and state that chapter two addresses the former (direct query optimization).</p>
+<p>Speaking of circling back: organization.
+The reason I focus on flow rather than organization is because flow determines organization.
+When you sit down to write a document about topics <em>A</em>, <em>B</em>, and <em>C</em>, you probably wonder if you should organize it like:</p>
+<ul>
+<li>A, B, C</li>
+<li>A, C, B</li>
+<li>C, B, A</li>
+</ul>
+<p>Instead of grappling with organization, focus instead on the flow between the topics.
+You will likely find, for example, that it&rsquo;s easy or natural to explain <em>C</em> first because that understanding leads to <em>A</em>, which together (<em>C</em> and <em>A</em>) forms a context for explaining <em>B</em>.</p>
+<p>Flow applies at every level of organization: sections and subsections; paragraphs within each section; and sentence by sentence.
+Technical documents often have a predetermined organization (a template), so there&rsquo;s little to no high-level flow between sections.
+Paragraph flow is the bulk of the work and, thus, the bulk of the challenge.
+(The excerpt above highlights flow between paragraphs within one section.)
+Work on paragraph flow first because it&rsquo;s easy (or easier) yet impactful.
+Sentence flow is more difficult (I don&rsquo;t address it in this guide), but it&rsquo;s the same basic principle as paragraph flow; only the unit of work is a lot smaller: sentences.</p>
+<p>I&rsquo;ll share another semi-secret with you: professional writers work on <em>word flow</em>, too.
+At this lowest level, we&rsquo;re concerned with every word, punctuation, <a href="#sentence-structure">structure</a>, tense, mood, tone, and more.
+For example, I don&rsquo;t use punctuation marks at random—here&rsquo;s an example:</p>
+<ul>
+<li>For example, I don&rsquo;t use punctuation marks at random: I choose every one with intention.</li>
+<li>For example, I don&rsquo;t use punctuation marks at random; I choose every one with intention.</li>
+<li>For example, I don&rsquo;t use punctuation marks at random—I choose every one with intention.</li>
+</ul>
+<p>All three variations are grammatically correct, but which one would I have chosen if I had not instead chosen to make an example of it?
+We&rsquo;ll never know&hellip;
+But I do know this: if you publish professionally, you will discuss word flow with your editors.</p>
+<h2 id="avoid">Avoid</h2>
+<p>So far I&rsquo;ve been focusing on what <em>to do</em> to write well.
+For a fun little break, let&rsquo;s look at what <em>not</em> to do.
+I highly suggest avoiding the following in professional technical writing.
+Not only does avoiding the following help <a href="#short-and-simple">make each sentence punch</a>, it also enhances technical accuracy.</p>
+<h3 id="idioms-and-slang">Idioms and Slang</h3>
+<p>&ldquo;The server bit the dust.&rdquo;
+That statement employs an idiom: <em>bite the dust</em>.
+I bet there&rsquo;s only a 50% chance that non-native English speakers understand that idiom.
+Even if the other 50% figure out the meaning from context, it&rsquo;s an unnecessary distraction, especially when (as the writer) you could have easily written &ldquo;The server failed.&rdquo;
+Avoid idioms in professional technical writing because they don&rsquo;t add technical clarity, and there&rsquo;s a high probability that some readers won&rsquo;t understand them.</p>
+<p>&ldquo;The load was crazy.&rdquo;
+That statement uses slang: <em>crazy</em> as in <em>very high</em>.
+Slang has the same problem as idioms: it doesn&rsquo;t add technical clarity, and there&rsquo;s a high probability that some readers won&rsquo;t understand it.</p>
+<p>Let me also take a moment to point out that non-native language speakers probably use a dictionary, but some dictionaries do not include or indicate slang, idioms, or vulgar language.
+For example, I have seen a dictionary that doesn&rsquo;t mention that &ldquo;shit&rdquo; is vulgar.
+Not surprisingly, the person using that dictionary used to say &ldquo;dog shit&rdquo; in polite company rather than something more acceptable like &ldquo;dog poop&rdquo;.</p>
+<h3 id="adjectives-adverbs-and-superlatives">Adjectives, Adverbs, and Superlatives</h3>
+<p>You were probably taught to use adjectives and adverbs because they enhance and sometimes clarify nouns and verbs.
+For example, a &ldquo;lit room&rdquo; is markedly different than a &ldquo;dimly lit room&rdquo;—thank you adverbs.
+But the purpose of technical writing is <em>technical</em> clarity and correctness, not literary pizazz.
+Therefore, you should avoid adjectives, adverbs, and superlatives that do not enhance <em>technical</em> clarity or correctness.
+(If you really want to add pizazz, limit it to nontechnical sections and paragraphs, like backgrounds and general introductions.)
+Let&rsquo;s study three examples.</p>
+<table>
+<thead>
+<tr>
+<th>With <em>Adjective</em></th>
+<th>Technical Rewrite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The database is <em>slow</em>.</td>
+<td>Given the current hardware and application workload, P99 response times are higher than the SLO.</td>
+</tr>
+<tr>
+<td><em>Heavy</em> load brought down the application.</td>
+<td>A 10x increase in user activity exhausted connection pools, which brought down the application.</td>
+</tr>
+<tr>
+<td>The design is <em>easy to understand</em>.</td>
+<td>(See <a href="#vacuous-phrases">Vacuous Phrases</a>.)</td>
+</tr>
+</tbody>
+</table>
+<p>As a DBA, the first example is common and important to me: what does &ldquo;slow&rdquo; mean?
+How slow?
+What part of the database is slow?
+How are you measuring or reporting &ldquo;slow&rdquo;?
+Slow <em>where</em> or doing <em>what</em>?
+&ldquo;Slow&rdquo; has no precise meaning in this context.
+The statement is hardly better than &ldquo;The database is a turtle.&rdquo;
+Of course, I understand what the statement is indicating, but that&rsquo;s the point: it&rsquo;s not precise; it only indicates.
+The technical rewrite is precise: the database is &ldquo;slow&rdquo; because P99 response times exceed the SLO.
+&ldquo;P99&rdquo;, &ldquo;response times&rdquo;, and &ldquo;SLO&rdquo; are all precise and objective—they&rsquo;re just not defined in this example.
+Moreover, it acknowledges that performance is a function of the application workload and current hardware, which is a very dense way of saying &ldquo;The database itself is fast; what you&rsquo;re asking it to do is slow.&rdquo;
+To unpack that, read my book.</p>
+<p>Likewise, most engineers understand &ldquo;heavy load&rdquo;, but does &ldquo;heavy&rdquo; <em>really</em> add technical value or clarity?
+It does not unless you define &ldquo;heavy&rdquo; in context.
+So avoid such adjectives in technical writing.</p>
+<p>The final example is a (predicate) adjective that lacks any technical specificity, but more importantly it&rsquo;s a <a href="#vacuous-phrases">vacuous phrase</a> that I address in the next section.</p>
+<p>Everything just said about adjectives applies <em>even more</em> to adverbs.
+For example, what does &ldquo;The server crashed quietly&rdquo; mean in a precise, technical sense?
+Most engineers probably understand how and why &ldquo;quietly&rdquo; is modifying &ldquo;crashed&rdquo;, but it&rsquo;s better to be precise: &ldquo;The server crashed without logging errors or triggering alerts.&rdquo;
+Now I know <em>exactly</em> what you mean, and not a single adjective or adverb was used.</p>
+<p>Superlatives are the worst.
+(See what I did there? Hilarious.)
+&ldquo;Memory has the greatest impact on performance.&rdquo;
+Really?
+<em>The greatest</em> impact?
+If that&rsquo;s true, the document must prove it.
+Otherwise, it could be technically incorrect, so drop the superlative: &ldquo;Memory has a significant impact on performance.&rdquo;
+But wait: I just swapped a superlative for an adjective: <em>significant</em>.
+If you can quantify &ldquo;significant&rdquo;, then do it; if you cannot, then strike it: &ldquo;Memory impacts performance.&rdquo;</p>
+<p>Is technical writing too dry and boring without adjectives, adverbs, or superlatives?
+I don&rsquo;t think so, and I offer <a href="https://oreil.ly/efficient-mysql-performance">my book</a> as proof.
+This guide is also proof: look at how sparingly I use adjectives, adverbs, and superlatives.
+If you&rsquo;re not asleep yet, then I suppose we can write without these and still keep the reader engaged.
+If you <em>are</em> asleep, then I&rsquo;m talking to myself, which is fine: I agree with me.</p>
+<h3 id="vacuous-phrases">Vacuous Phrases</h3>
+<p>Human speech is littered with vacuous phrases like:</p>
+<table>
+<thead>
+<tr>
+<th>Vacuous Phrase</th>
+<th>Counterpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>As you can see</td>
+<td>Can I? Maybe, maybe not. How do you know?</td>
+</tr>
+<tr>
+<td>It&rsquo;s clear from/that</td>
+<td>Is it clear? Maybe, maybe not.</td>
+</tr>
+<tr>
+<td>In fact</td>
+<td>Is it <em>really</em> a fact? Or do you just think it should be obvious?</td>
+</tr>
+</tbody>
+</table>
+<p>Vacuous phrases can be removed without affecting the sentence or its meaning, which is why they&rsquo;re vacuous.
+Since technical writing communicates complex and subtle ideas, do not waste space (and the reader&rsquo;s time) on vacuous phrases: write straight to the point; <a href="#short-and-simple">make every sentence punch</a>.
+More importantly, vacuous phrases don&rsquo;t <a href="#communicate-value">communicate value</a>, so we have two reasons to remove them.</p>
+<h2 id="sentence-structure">Sentence Structure</h2>
+<p>Consider this grammatically correct sentence that I read recently in a design doc:</p>
+<blockquote>
+<p>Detailed in this section are account vending and access considerations.</p>
+</blockquote>
+<p>That sentence is short and simple but highly inverted—actually, I would say it&rsquo;s <em>reversed</em> with respect to basic sentence structure.
+To see how, let&rsquo;s break down its grammatical parts:</p>
+<pre><code class="language-none">Detailed in this section | are    | account vending and access considerations.
+(adjective phrase)       | (verb) | (subject)
+</code></pre>
+<p>The subject appears at the end, which is opposite (reverse) of the simplest sentence structure possible: &ldquo;subject verb (object).&rdquo;
+For example, &ldquo;dogs bark&rdquo; or &ldquo;dogs eat food&rdquo;.
+Let&rsquo;s flip the sentence around:</p>
+<blockquote>
+<p>Account vending and access considerations are detailed in this section.</p>
+</blockquote>
+<pre><code class="language-none">Account vending and access considerations | are    | detailed in this section.
+(subject)                                 | (verb) | (adjective phrase)
+</code></pre>
+<p>Now its structure is more typical, which reveals another issue: <a href="https://www.grammarly.com/blog/passive-voice/">passive voice</a>.
+Without going down the rabbit hole, I&rsquo;ll simply point out the subject is not <em>doing</em> (or <em>acting upon</em>) anything, which is why it&rsquo;s passive.
+Passive voice is not incorrect or bad (on the contrary: when employed intentionally and skillfully, it can be quite impactful), but it&rsquo;s not ideal in technical writing because we want to be as direct as possible when describing complex systems.</p>
+<p>Here&rsquo;s the sentence completely restructured so it&rsquo;s both active and <a href="#short-and-simple">punching</a>:</p>
+<blockquote>
+<p>This section details account vending and access considerations.</p>
+</blockquote>
+<pre><code class="language-none">This section | details | account vending and access considerations.
+(subject)    | (verb)  | (direct object).
+</code></pre>
+<p>Simple, straight-forward sentence structure is ideal in technical writing because, honestly, we&rsquo;re not trying to write &ldquo;beautifully&rdquo;, we&rsquo;re just trying to convey technical information as correctly and precisely as possible.
+Some variation in sentence structure is good, just be mindful of extreme cases.
+And while you&rsquo;re at it, check your <a href="https://www.grammarly.com/blog/parallelism/">parallelism</a>, too.</p>
+<h2 id="present-tense">Present Tense</h2>
+<p>Default to the present tense; use the future tense when necessary.</p>
+<p>Technical documents written in the future tense are surprisingly common—at least the documents that I read.
+But it&rsquo;s understandable: engineers are thinking of the future when the system <em>will be</em>.</p>
+<p>Writing in the future tense is, of course, grammatically correct, but it&rsquo;s unnecessary and restrictive.
+It&rsquo;s unnecessary for the obvious reason: because you can (and should) write in the present tense.
+It&rsquo;s restrictive because, if everything is future tense, then how do you express a future state or action?
+Here are three examples: the first is what I commonly read and should be avoided; the second is a little better; and the third is best with respect to tense <em>and</em> <a href="#sentence-structure">sentence structure</a>:</p>
+<ol>
+<li>The service will detect if the database is offline, and it will failover.</li>
+<li>When the service detects that the database is offline, it will failover.</li>
+<li>The service fails over when it detects that the database is offline.</li>
+</ol>
+<p>The first demonstrates what should be avoided: all future tense.
+The second is a little better, but look carefully: it seems to begin in present tense, but it&rsquo;s really an inverted future tense statement: &ldquo;The service will failover when the service detects&hellip;&rdquo;
+(&ldquo;When&hellip;&rdquo; is a prepositional phrase.)
+The third is pure present tense and exceedingly clear and direct.</p>
+<p>Reserve future tense to describe things that are necessarily future because they depend on some antecedent condition.
+For example, &ldquo;We <em>will</em> diagnose why the server caught fire after extinguishing the flames.&rdquo;
+In this example, diagnosis must happen in the future, <em>after</em> the antecedent condition of putting out the flames.
+Or, a more mundane example: if a bug has caused data loss, then it&rsquo;s fair and accurate to say &ldquo;Fixing this bug will prevent further data loss.&rdquo;
+By contrast, saying &ldquo;Fixing this bug prevents data loss&rdquo; is unfair and inaccurate: data has already been lost!
+In truth, we can prevent future data loss only <em>in the future</em> by fixing this bug, so the future tense is warranted.</p>
+<p>There&rsquo;s a practical reason why you should default to the present tense: eventually, the system you&rsquo;re describing will exist.
+Once it does, present tense statements about it will continue to read well and make sense for eternity—or however long the system remains in use.</p>
+<p>While we&rsquo;re near the subject, I&rsquo;ll briefly add: avoid the conditionals &ldquo;would&rdquo; and &ldquo;could&rdquo;.
+What does &ldquo;The server could crash&rdquo; <em>really</em> mean?
+Of course it <em>could</em>, but <em>can</em> it?
+Yes it can.
+Better yet, given the preceding spiel on future tense, it&rsquo;s better to be specific: &ldquo;The server <em>will</em> crash if you throw it in a lake.&rdquo;</p>
+<h2 id="communicate-value">Communicate Value</h2>
+<p>Writing is easy, and writing is difficult.
+It&rsquo;s easy to throw words on a page.
+It&rsquo;s difficult to make every word <a href="#short-and-simple">punch</a>.</p>
+<p>Do the previous three sentences mean something?
+Yes.
+But do they communicate value?
+No.</p>
+<p><em>Communicating value</em> means that each and every sentence adds to the reader&rsquo;s knowledge.
+(<a href="#organization-and-flow">Flow</a> notwithstanding.)
+Communicating value is exceptionally difficult because humans will infer value where none is present.
+Why?
+I think it&rsquo;s a combination of politeness (we don&rsquo;t want to tell the writer that such-and-such doesn&rsquo;t communicate any value) and human nature (we actively seek and infer knowledge, especially when reading).
+As a result, a lot of writing is devoid of value (fault of the writer), and we don&rsquo;t see or admit it (fault of the reader).</p>
+<p>The first three sentences of this section were an intentional example.
+They might read nicely or have an air of insight, but let&rsquo;s be honest: they didn&rsquo;t add anything to your knowledge.</p>
+<p>When writing, scrutinize each and every sentence and ask yourself: <em>does this sentence add to the reader&rsquo;s knowledge?</em>
+If you&rsquo;re not sure, then remove the sentence and see if the points you&rsquo;re making still stand and make sense.
+In my opinion, great writing is a nonstop flow of punchy sentences that communicate value.</p>
+<h2 id="polish">Polish</h2>
+<p>Great writing requires concerted effort and <em>polish</em>: rewording, restructuring, revising.
+It requires a lot of work.</p>
+<p>Those statements apply to any skill, so they&rsquo;re probably obvious, but I state them explicitly to end this guide on the same note that started it:</p>
+<blockquote>
+<p>The moment you need to write a technical document is the moment that writing becomes a skill for which you are responsible to execute with the same quality and professionalism as other skills.</p>
+</blockquote>
+<p>With effort and polish you will produce great writing.</p>
+</article>
+	</div>
+	<nav id="toc">
+		<em><a href="#">How to Write Well</a></em>
+		<hr>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#grammar">Grammar</a></li>
+    <li><a href="#consistency">Consistency</a></li>
+    <li><a href="#short-and-simple">Short and Simple</a></li>
+    <li><a href="#formality">Formality</a></li>
+    <li><a href="#organization-and-flow">Organization and Flow</a></li>
+    <li><a href="#avoid">Avoid</a>
+      <ul>
+        <li><a href="#idioms-and-slang">Idioms and Slang</a></li>
+        <li><a href="#adjectives-adverbs-and-superlatives">Adjectives, Adverbs, and Superlatives</a></li>
+        <li><a href="#vacuous-phrases">Vacuous Phrases</a></li>
+      </ul>
+    </li>
+    <li><a href="#sentence-structure">Sentence Structure</a></li>
+    <li><a href="#present-tense">Present Tense</a></li>
+    <li><a href="#communicate-value">Communicate Value</a></li>
+    <li><a href="#polish">Polish</a></li>
+  </ul>
+</nav>
+	</nav>
+</main>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

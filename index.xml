@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Sat, 18 Jun 2022 19:09:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 04 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How to Write Well</title>
+      <link>https://hackmysql.com/eng/write/</link>
+      <pubDate>Mon, 04 Jul 2022 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmysql.com/eng/write/</guid>
+      <description>How to Write Well This guide is intended for engineers writing technical documents. Most of it does not apply to other audiences or purposes. For example, it would be quite difficult (or interesting) to follow this guide when writing poetry. However, impeccable writing for any audience or purpose has, in my opinion, the same impact as poetry: it moves the reader. Perhaps, then, the only difference is that engineers write technical documents to &amp;ldquo;move&amp;rdquo; other engineers to understand and build systems.</description>
+    </item>
+
     <item>
       <title>InnoDB Page Flushing Diagram</title>
       <link>https://hackmysql.com/post/book-6/</link>
