@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/eng/percentiles/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/eng/percentiles/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -159,46 +159,44 @@
 <p><img src="/img/Blom-1958.png" class="small-img"></img></p>
 <p>and <em>Table 3</em> on the next page which lists values for the constants, and section &ldquo;5. SUMMARY AND CONCLUSIONS&rdquo; which concludes that &ldquo;[definition 8] is the best choice.&rdquo; Definition 8 is more commonly called &ldquo;R8&rdquo;.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> R6 and R7 are good choices, too, so R6, R7, and R8 are commonly used in software.</p>
 <p>Implementing linear interpolation has two steps. The first is calculating <code>i</code> with one of the R-equations. Unlike nearest rank, <code>i</code> is <em>not</em> rounded or adjusted for the zero-indexed array. Instead, its fractional and integer parts are used in the second step. The common R-equations for linear interpolation implemented in Go:</p>
-<pre><code class="language-none">i := p * (n + 1)                 // R6
+<pre tabindex="0"><code class="language-none" data-lang="none">i := p * (n + 1)                 // R6
 i := p * (n - 1) + 1             // R7
 i := p * (n + (1/3.0)) + (1/3.0) // R8
-</code></pre>
-<p>Those lines of code are the equation solved for <em>k</em>. For R6, α=0 and β=0 which simplifies to p<sub>k</sub>=k/n+1, then k=p<sub>k</sub>(n +1) which is the first line of code (where <em>k</em> = <code>i</code>).</p>
+</code></pre><p>Those lines of code are the equation solved for <em>k</em>. For R6, α=0 and β=0 which simplifies to p<sub>k</sub>=k/n+1, then k=p<sub>k</sub>(n +1) which is the first line of code (where <em>k</em> = <code>i</code>).</p>
 <p>The second step interpolates the percentile value by adding the lower rank value to the diff of the upper and lower rank values multiplied by <code>f</code>, the fractional part of <code>i</code>. Let&rsquo;s put it all together in Go code that demonstrates using R6, R7, and R8 with known input and output values for P90:<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
-<pre><code class="language-go">package main
-
-import (
-	&quot;fmt&quot;
-	&quot;math&quot;
-	&quot;sort&quot;
-)
-
-// https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm
-var control = []float64{95.1772, 95.1567, 95.1937, 95.1959, 95.1442, 95.0610, 95.1591, 95.1195, 95.1065, 95.0925, 95.1990, 95.1682}
-
-func main() {
-    sort.Float64s(control)
-    N := float64(len(control))
-    p := 0.90
-
-    iR6 := p * (N + 1)
-    fmt.Printf(&quot;R6: %.4f\n&quot;, pValue(iR6, control))
-
-    iR7 := p*(N-1) + 1
-    fmt.Printf(&quot;R6: %.4f\n&quot;, pValue(iR7, control))
-
-    iR8 := p*(N+(1/3.0)) + (1 / 3.0)
-    fmt.Printf(&quot;R8: %.4f\n&quot;, pValue(iR8, control))
-}
-
-func pValue(i float64, vals []float64) float64 {
-    k, f := math.Modf(i)           // 8.53 -&gt; k=8, d=53
-    lower := vals[int(k)-1]        // vals[7]
-    upper := vals[int(k)]          // vals[8]
-    return lower + f*(upper-lower) // vals[7] + 0.53 * (vals[8]-vals[7])
-}
-</code></pre>
-<p>Function <code>pValue</code> is the second step of the equation which differs only by the R-calculated <code>i</code>. <code>k</code>, the integer part of <code>i</code>, is the lower boundary when subtracted by one to adjust for the zero-indexed array. <code>k</code> is also the upper boundary when <em>not</em> adjusted for the zero-indexed array. Then add and multiple the upper and lower boundary values with <code>f</code>, the fractional part of <code>i</code>, as shown. The result is an interpolated P90 value. The value is somewhere between the upper and lower rank values. Whereas nearest rank yields an observed value that might not be the actual percentile, linear interpolation yields a non-observed value that is statistically equivalent to the actual percentile.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;math&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;sort&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">control</span> = []<span style="color:#66d9ef">float64</span>{<span style="color:#ae81ff">95.1772</span>, <span style="color:#ae81ff">95.1567</span>, <span style="color:#ae81ff">95.1937</span>, <span style="color:#ae81ff">95.1959</span>, <span style="color:#ae81ff">95.1442</span>, <span style="color:#ae81ff">95.0610</span>, <span style="color:#ae81ff">95.1591</span>, <span style="color:#ae81ff">95.1195</span>, <span style="color:#ae81ff">95.1065</span>, <span style="color:#ae81ff">95.0925</span>, <span style="color:#ae81ff">95.1990</span>, <span style="color:#ae81ff">95.1682</span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sort</span>.<span style="color:#a6e22e">Float64s</span>(<span style="color:#a6e22e">control</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">N</span> <span style="color:#f92672">:=</span> float64(len(<span style="color:#a6e22e">control</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0.90</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">iR6</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span> (<span style="color:#a6e22e">N</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;R6: %.4f\n&#34;</span>, <span style="color:#a6e22e">pValue</span>(<span style="color:#a6e22e">iR6</span>, <span style="color:#a6e22e">control</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">iR7</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">p</span><span style="color:#f92672">*</span>(<span style="color:#a6e22e">N</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;R6: %.4f\n&#34;</span>, <span style="color:#a6e22e">pValue</span>(<span style="color:#a6e22e">iR7</span>, <span style="color:#a6e22e">control</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">iR8</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">p</span><span style="color:#f92672">*</span>(<span style="color:#a6e22e">N</span><span style="color:#f92672">+</span>(<span style="color:#ae81ff">1</span><span style="color:#f92672">/</span><span style="color:#ae81ff">3.0</span>)) <span style="color:#f92672">+</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">3.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;R8: %.4f\n&#34;</span>, <span style="color:#a6e22e">pValue</span>(<span style="color:#a6e22e">iR8</span>, <span style="color:#a6e22e">control</span>))
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">pValue</span>(<span style="color:#a6e22e">i</span> <span style="color:#66d9ef">float64</span>, <span style="color:#a6e22e">vals</span> []<span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">float64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">f</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">math</span>.<span style="color:#a6e22e">Modf</span>(<span style="color:#a6e22e">i</span>)           <span style="color:#75715e">// 8.53 -&gt; k=8, d=53
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lower</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">vals</span>[int(<span style="color:#a6e22e">k</span>)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]        <span style="color:#75715e">// vals[7]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">upper</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">vals</span>[int(<span style="color:#a6e22e">k</span>)]          <span style="color:#75715e">// vals[8]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">lower</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">f</span><span style="color:#f92672">*</span>(<span style="color:#a6e22e">upper</span><span style="color:#f92672">-</span><span style="color:#a6e22e">lower</span>) <span style="color:#75715e">// vals[7] + 0.53 * (vals[8]-vals[7])
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>Function <code>pValue</code> is the second step of the equation which differs only by the R-calculated <code>i</code>. <code>k</code>, the integer part of <code>i</code>, is the lower boundary when subtracted by one to adjust for the zero-indexed array. <code>k</code> is also the upper boundary when <em>not</em> adjusted for the zero-indexed array. Then add and multiple the upper and lower boundary values with <code>f</code>, the fractional part of <code>i</code>, as shown. The result is an interpolated P90 value. The value is somewhere between the upper and lower rank values. Whereas nearest rank yields an observed value that might not be the actual percentile, linear interpolation yields a non-observed value that is statistically equivalent to the actual percentile.</p>
 <p>Let&rsquo;s go back to the original question—where is P95?—with <code>[]y</code>. The <code>i</code> for each R-equation is:</p>
 <p><img src="/img/percentile_ranks.svg" alt="Percentile Ranks"></p>
 <ul>

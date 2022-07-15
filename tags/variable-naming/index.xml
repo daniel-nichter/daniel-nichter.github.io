@@ -12,11 +12,11 @@
       <title>Go Single-character Names</title>
       <link>https://hackmysql.com/golang/go-single-character-names/</link>
       <pubDate>Fri, 25 Mar 2022 16:55:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/golang/go-single-character-names/</guid>
       <description>Go Single-character Names Go loves short names. Even the authoritative page Effective Go uses this example:
-f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err != nil { f.Close() return err } codeUsing(f, d)  Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is not idiomatic because, above all, Go is optimized for reading, especially by future engineers.</description>
+f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err != nil { f.Close() return err } codeUsing(f, d) Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is not idiomatic because, above all, Go is optimized for reading, especially by future engineers.</description>
     </item>
-    
+
   </channel>
 </rss>

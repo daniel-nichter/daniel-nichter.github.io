@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/eng/cli-antipatterns/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/eng/cli-antipatterns/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -140,11 +140,10 @@
 <p>I call this antipattern &ldquo;car-tree&rdquo; for an analogy I use to describe ignoring non-zero exit status: you crash a car into a tree, but instead of stopping you back up, <em>put on a blindfold</em>, then floor it, racing off broken and blind until you run off a cliff. Don&rsquo;t endanger yourself or others by violation this simple standard: exit zero on success, and stop executing on non-zero exit.</p>
 <h2 id="poor-standards">Poor Standards</h2>
 <p>Poor or incorrect use of STDOUT and STDERR is an abomination to command-line tools. There are few Unix standards and expectations more venerable and proven than printing normal program output to STDOUT and error (and maybe warnings) to STDERR. The following should always hold true:</p>
-<pre><code>$ tool &gt;/dev/null
+<pre tabindex="0"><code>$ tool &gt;/dev/null
 $ echo $?
 0
-</code></pre>
-<p>No output to STDERR should always indicate success, as further indicated by a zero exit (see first antipattern: Car-Tree).</p>
+</code></pre><p>No output to STDERR should always indicate success, as further indicated by a zero exit (see first antipattern: Car-Tree).</p>
 <h2 id="--quiet">&ndash;quiet</h2>
 <p>First, presuming <code>--quiet</code> means &ldquo;no output&rdquo;, this &ldquo;feature&rdquo; is solved at fundamental level with STDOUT and STDERR redirection:</p>
 <table>
@@ -176,13 +175,12 @@ $ echo $?
 <p>Second, the level of quietness is never right. For some people it&rsquo;s too quiet, for others not quiet enough.</p>
 <p>Third, does <code>--quiet</code> apply to STDOUT <em>and</em> STDERR, or just the former? See previous point.</p>
 <p>Fourth, the developer will soon regret the option when it comes time to implement it because the code will be littered with <code>if</code> conditionals like:</p>
-<pre><code>if !quiet {
-   print(&quot;Midway upon the journey of our life&quot;, +
-         &quot;I found myself within a forest dark,&quot; +
-         &quot;For the straightforward pathway had been lost.&quot;)
+<pre tabindex="0"><code>if !quiet {
+   print(&#34;Midway upon the journey of our life&#34;, +
+         &#34;I found myself within a forest dark,&#34; +
+         &#34;For the straightforward pathway had been lost.&#34;)
 }
-</code></pre>
-<p>Or the developer will create and pass around a printing object to all parts of the code. And usually some line is overlooked and a bug is file: &ldquo;&ndash;quiet does not suppress all output.&rdquo;</p>
+</code></pre><p>Or the developer will create and pass around a printing object to all parts of the code. And usually some line is overlooked and a bug is file: &ldquo;&ndash;quiet does not suppress all output.&rdquo;</p>
 <p>Given the first point (that this feature is already thoroughly solved by STDOUT/STDERR redirection), an explicit <code>--quiet</code> option needs a very necessary and convincing reason to exist for it not to be an antipattern.</p>
 <h2 id="--verbose">&ndash;verbose</h2>
 <p>A <code>--verbose</code> option shares two of the same problems as <code>--quiet</code>: too verbose for some people, and not verbose enough for others; and it litters the code with <code>if</code> conditionals or an object to handle printing.</p>

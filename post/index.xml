@@ -110,7 +110,7 @@ This is not an intro; you&amp;rsquo;ll need to know all the InnoDB details wrt p
 
       <guid>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</guid>
       <description>As of MySQL 8.0, performance_schema.data_locks shows InnoDB data locks. Before MySQL 8.0, you must SET GLOBAL innodb_status_output_locks=ON and ruminate on the output of SHOW ENGINE INNODB STATUS. The image below (click to see full size) shows how the former maps to the latter for three record locks and one table lock on table t.
- Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as of MySQL 5.7 and removed as of MySQL 8.</description>
+Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as of MySQL 5.7 and removed as of MySQL 8.</description>
     </item>
 
     <item>
@@ -245,7 +245,7 @@ host.prod1.disk-free.sda host.</description>
 
       <guid>https://hackmysql.com/post/when-mysql-goes-away/</guid>
       <description>Handling MySQL errors in Go is not easy. There are a lot of MySQL server error codes, and the Go MySQL driver as its own errors, and Go database/sql has its own errors, and errors can bubble up from other packages, like net.OpError. Consequently, Go programs tend not to handle errors. Instead, they simply report errors:
-err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err }  And then the error is logged or reported somewhere.</description>
+err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err } And then the error is logged or reported somewhere.</description>
     </item>
 
     <item>
@@ -265,8 +265,8 @@ Programming languages have aspects which affect how we think, design, and implem
 
       <guid>https://hackmysql.com/post/bootloader-design-pattern/</guid>
       <description>Extensibility is a lofty goal for software design, and difficult to achieve. The Wikipedia article notes:
- Extensible design in software engineering is to accept that not everything can be designed in advance.
- That&amp;rsquo;s a paradox because it entails that extensible design does not accept that extensibility can be designed in advance! Fortunately, there&amp;rsquo;s at least one solution that can be intentionally designed and implemented in advance. I call it the &amp;ldquo;Bootloader&amp;rdquo; design pattern.</description>
+Extensible design in software engineering is to accept that not everything can be designed in advance.
+That&amp;rsquo;s a paradox because it entails that extensible design does not accept that extensibility can be designed in advance! Fortunately, there&amp;rsquo;s at least one solution that can be intentionally designed and implemented in advance. I call it the &amp;ldquo;Bootloader&amp;rdquo; design pattern.</description>
     </item>
 
     <item>
@@ -296,7 +296,7 @@ We presume that a database can scale to almost 100% of system capacity, and max 
       <guid>https://hackmysql.com/post/tech-workers-are-good-people/</guid>
       <description>The Other Tech Bubble is a provocative and interesting read. The author clearly has a lot of experience with Silicon Valley and has done their homework. There are many good insights, like &amp;ldquo;They&amp;rsquo;re still asking if it&amp;rsquo;s possible to do something, and not whether they should.&amp;rdquo; But there are two claims and one ambiguity that need to be addressed.
 Villains The first claim is:
- In 2008, it was Wall Street bankers.</description>
+In 2008, it was Wall Street bankers.</description>
     </item>
 
     <item>
@@ -315,8 +315,9 @@ Villains The first claim is:
 
       <guid>https://hackmysql.com/post/ideas-leaders-and-engineers/</guid>
       <description>The Senior Engineer&amp;rsquo;s Guide to Helping Others Make Decisions is a good read and good advice. I would summarize the advice as:
- &amp;ldquo;Seek first to understand, then to be understood&amp;rdquo; (Dr. Stephen Covey) Lead and guide, don&amp;rsquo;t micromanage Embrace change, which entails embracing other people&amp;rsquo;s thinking and way of doing things  In the first dialog, the senior engineer fails those three points.
-Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
+&amp;ldquo;Seek first to understand, then to be understood&amp;rdquo; (Dr. Stephen Covey) Lead and guide, don&amp;rsquo;t micromanage Embrace change, which entails embracing other people&amp;rsquo;s thinking and way of doing things In the first dialog, the senior engineer fails those three points.
+Av&amp;rsquo;s blog post made me think&amp;hellip;
+Good Ideas Let me jump right to the punch line: levels of seniority should not apply to ideas.</description>
     </item>
 
     <item>
@@ -371,8 +372,8 @@ Av&amp;rsquo;s blog post made me think&amp;hellip;</description>
 
       <guid>https://hackmysql.com/post/custom-mongodb-replica-set-write-concern/</guid>
       <description>One of the great things about MongoDB is write concern:
- Write concern describes the level of acknowledgement requested from MongoDB for write operations to a standalone mongod or to replica sets or to sharded clusters.
- Awesome! I want 1 write ack from any secondary in the primary DC so when the primary crashes we&amp;rsquo;re guaranteed to have an up-to-date secondary in the primary DC ready to be elected primary.</description>
+Write concern describes the level of acknowledgement requested from MongoDB for write operations to a standalone mongod or to replica sets or to sharded clusters.
+Awesome! I want 1 write ack from any secondary in the primary DC so when the primary crashes we&amp;rsquo;re guaranteed to have an up-to-date secondary in the primary DC ready to be elected primary. Here&amp;rsquo;s my production MongoDB replica set:</description>
     </item>
 
   </channel>

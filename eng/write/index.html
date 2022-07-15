@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/eng/write/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/eng/write/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -206,25 +206,23 @@ When I first learned this secret, I scoffed because I had been writing (and thin
 But I gave it a try and it was a game-changer; now it&rsquo;s the only way I write.
 (After it becomes a habit, you can return to writing in paragraphs, but your mind will continue to think sentence by sentence.)
 For example, here&rsquo;s the Markdown source for the first paragraph of this page:</p>
-<pre><code class="language-none">This guide is intended for engineers writing technical documents.
+<pre tabindex="0"><code class="language-none" data-lang="none">This guide is intended for engineers writing technical documents.
 Most of it does _not_ apply to other audiences or purposes.
 For example, it would be quite difficult (or interesting) to follow this guide when writing poetry.
 However, impeccable writing for any audience or purpose has, in my opinion, the same impact as poetry: it moves the reader.
-Perhaps, then, the only difference is that engineers write technical documents to &quot;move&quot; other engineers to understand and build systems.
-But I digress; let's get back to the point.
-</code></pre>
-<p>Writing one sentence per line quickly reveals which sentences are short (and probably simple) and which are not (and probably complex).
+Perhaps, then, the only difference is that engineers write technical documents to &#34;move&#34; other engineers to understand and build systems.
+But I digress; let&#39;s get back to the point.
+</code></pre><p>Writing one sentence per line quickly reveals which sentences are short (and probably simple) and which are not (and probably complex).
 In the example above, the 3rd, 4th, and 5th sentences are obviously much longer, so it&rsquo;s worth asking: are they punching?
 Rereading those three, I think it&rsquo;s clear what point each one makes in the context of the paragraph.
 But if I wanted to make them more punchy, I could revise them as follows:</p>
-<pre><code class="language-none">This guide is intended for engineers writing technical documents.
+<pre tabindex="0"><code class="language-none" data-lang="none">This guide is intended for engineers writing technical documents.
 Most of it does _not_ apply to other audiences or purposes.
 For example, it would be difficult to follow this guide when writing poetry.
 However, impeccable writing for any audience or purpose has the same impact as poetry: it moves the reader.
-Perhaps the only difference is that engineers write to &quot;move&quot; other engineers to understand and build systems.
-But I digress; let's get back to the point.
-</code></pre>
-<p>A few words have been removed from the longest sentences, but the points of the paragraph remain.
+Perhaps the only difference is that engineers write to &#34;move&#34; other engineers to understand and build systems.
+But I digress; let&#39;s get back to the point.
+</code></pre><p>A few words have been removed from the longest sentences, but the points of the paragraph remain.
 It reads more densely now, which brings me to the next point: sentence complexity and density are different.
 Sentence complexity means the point is hidden in a maze of words and the reader has to find it—that is bad writing.
 Sentence density means the point is presented directly but stated compactly, so it requires &ldquo;unpacking&rdquo;.
@@ -441,29 +439,26 @@ More importantly, vacuous phrases don&rsquo;t <a href="#communicate-value">commu
 </blockquote>
 <p>That sentence is short and simple but highly inverted—actually, I would say it&rsquo;s <em>reversed</em> with respect to basic sentence structure.
 To see how, let&rsquo;s break down its grammatical parts:</p>
-<pre><code class="language-none">Detailed in this section | are    | account vending and access considerations.
+<pre tabindex="0"><code class="language-none" data-lang="none">Detailed in this section | are    | account vending and access considerations.
 (adjective phrase)       | (verb) | (subject)
-</code></pre>
-<p>The subject appears at the end, which is opposite (reverse) of the simplest sentence structure possible: &ldquo;subject verb (object).&rdquo;
+</code></pre><p>The subject appears at the end, which is opposite (reverse) of the simplest sentence structure possible: &ldquo;subject verb (object).&rdquo;
 For example, &ldquo;dogs bark&rdquo; or &ldquo;dogs eat food&rdquo;.
 Let&rsquo;s flip the sentence around:</p>
 <blockquote>
 <p>Account vending and access considerations are detailed in this section.</p>
 </blockquote>
-<pre><code class="language-none">Account vending and access considerations | are    | detailed in this section.
+<pre tabindex="0"><code class="language-none" data-lang="none">Account vending and access considerations | are    | detailed in this section.
 (subject)                                 | (verb) | (adjective phrase)
-</code></pre>
-<p>Now its structure is more typical, which reveals another issue: <a href="https://www.grammarly.com/blog/passive-voice/">passive voice</a>.
+</code></pre><p>Now its structure is more typical, which reveals another issue: <a href="https://www.grammarly.com/blog/passive-voice/">passive voice</a>.
 Without going down the rabbit hole, I&rsquo;ll simply point out the subject is not <em>doing</em> (or <em>acting upon</em>) anything, which is why it&rsquo;s passive.
 Passive voice is not incorrect or bad (on the contrary: when employed intentionally and skillfully, it can be quite impactful), but it&rsquo;s not ideal in technical writing because we want to be as direct as possible when describing complex systems.</p>
 <p>Here&rsquo;s the sentence completely restructured so it&rsquo;s both active and <a href="#short-and-simple">punching</a>:</p>
 <blockquote>
 <p>This section details account vending and access considerations.</p>
 </blockquote>
-<pre><code class="language-none">This section | details | account vending and access considerations.
+<pre tabindex="0"><code class="language-none" data-lang="none">This section | details | account vending and access considerations.
 (subject)    | (verb)  | (direct object).
-</code></pre>
-<p>Simple, straight-forward sentence structure is ideal in technical writing because, honestly, we&rsquo;re not trying to write &ldquo;beautifully&rdquo;, we&rsquo;re just trying to convey technical information as correctly and precisely as possible.
+</code></pre><p>Simple, straight-forward sentence structure is ideal in technical writing because, honestly, we&rsquo;re not trying to write &ldquo;beautifully&rdquo;, we&rsquo;re just trying to convey technical information as correctly and precisely as possible.
 Some variation in sentence structure is good, just be mindful of extreme cases.
 And while you&rsquo;re at it, check your <a href="https://www.grammarly.com/blog/parallelism/">parallelism</a>, too.</p>
 <h2 id="present-tense">Present Tense</h2>

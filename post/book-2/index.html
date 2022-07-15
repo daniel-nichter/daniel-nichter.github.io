@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/post/book-2/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/post/book-2/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -168,26 +168,24 @@ The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mys
 <p>Before MySQL 8.0, instrumenting steps in a query execution plan was infeasible because the code was scattered and heterogeneous.
 As of MySQL 8.0, instrumenting steps in a query execution plan is trivial because each step is essentially the same thing: an iterator.
 And since the iterator is an interface, it&rsquo;s possible to transparently wrap each real iterator in a timing iterator (<a href="https://github.com/mysql/mysql-server/blob/8.0/sql/iterators/timing_iterator.h">sql/timing_iterator.h</a>):</p>
-<pre><code class="language-cpp">template &lt;class RealIterator&gt;
-bool TimingIterator&lt;RealIterator&gt;::Init() {
-  ++m_num_init_calls;
-  steady_clock::time_point start = now();     /* start time    */
-  bool err = m_iterator.Init();               /* real iterator */
-  steady_clock::time_point end = now();       /* end time      */
-  m_time_spent_in_first_row += end - start;
-  m_first_row = true;
-  return err;
-}
-</code></pre>
-<p>That&rsquo;s part of the <code>TimingIterator</code> class wrapping and measuring the wall-clock time of a real iterator (comments added by me).
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RealIterator</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> TimingIterator<span style="color:#f92672">&lt;</span>RealIterator<span style="color:#f92672">&gt;::</span>Init() {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">++</span>m_num_init_calls;
+</span></span><span style="display:flex;"><span>  steady_clock<span style="color:#f92672">::</span>time_point start <span style="color:#f92672">=</span> now();     <span style="color:#75715e">/* start time    */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">bool</span> err <span style="color:#f92672">=</span> m_iterator.Init();               <span style="color:#75715e">/* real iterator */</span>
+</span></span><span style="display:flex;"><span>  steady_clock<span style="color:#f92672">::</span>time_point end <span style="color:#f92672">=</span> now();       <span style="color:#75715e">/* end time      */</span>
+</span></span><span style="display:flex;"><span>  m_time_spent_in_first_row <span style="color:#f92672">+=</span> end <span style="color:#f92672">-</span> start;
+</span></span><span style="display:flex;"><span>  m_first_row <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> err;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>That&rsquo;s part of the <code>TimingIterator</code> class wrapping and measuring the wall-clock time of a real iterator (comments added by me).
 When executing a query, MySQL directly executes real iterators.
 For <code>EXPLAIN ANALYZE</code>, MySQL wraps each real iterator in a <code>TimingIterator</code> (and discards the result set).</p>
 <p>The iterator interface has two methods: <code>Init()</code> and <code>Read()</code>.
 A &ldquo;loop&rdquo; is one invocation of the iterator: a call to <code>Init()</code>, then <code>Read()</code> until there are no more rows.
 <code>EXPLAIN ANALYZE</code> prints measurements for each iterator, like:</p>
-<pre><code>(actual time=0.106..9.991 rows=2844 loops=2)
-</code></pre>
-<dl>
+<pre tabindex="0"><code>(actual time=0.106..9.991 rows=2844 loops=2)
+</code></pre><dl>
 <dt>0.106</dt>
 <dd><mark><em>Init time</em></mark>: average time (in milliseconds) for <code>Init()</code> and first row (first <code>Read()</code>)</dd>
 <dt>9.991</dt>
@@ -205,11 +203,10 @@ In this example, 9.991 ms × 2 = 19.982 ms iterator time.</p>
 The terms <i>init time</i>, <i>read time</i>, and <i>iterator time</i> are my terms, not official MySQL terms because MySQL does not specific succinct names for these values.
 </p>
 <p>Generally speaking, iterator time is cumulative from leafs to root.</p>
-<pre><code class="language-none">-&gt; A (200ms loops=1)
+<pre tabindex="0"><code class="language-none" data-lang="none">-&gt; A (200ms loops=1)
    -&gt; B (185ms loops=1)
       -&gt; C (90ms loops=2)
-</code></pre>
-<p>Given the pseudo iterator tree above, the leaf iterator <code>C</code> took 180 ms (90 × 2 loops).
+</code></pre><p>Given the pseudo iterator tree above, the leaf iterator <code>C</code> took 180 ms (90 × 2 loops).
 Since iterator <code>B</code> calls iterator <code>C</code>, the time for iterator <code>B</code> (exclusive of iterator <code>C</code>) is 5 ms (185 ms − 180 ms).
 Likewise, iterator <code>A</code> calls iterator <code>B</code>, so the time for the former is 15 ms (200 ms − 185 ms).
 This is important because the query took 200 ms, <em>not</em> the sum of times report (565 ms).
@@ -224,23 +221,21 @@ This is generally true, but not always—MySQL always has fun little surprises l
 <h2 id="output-format-and-annotation">Output Format and Annotation</h2>
 <p><code>EXPLAIN ANALYZE</code> output is not trivial to read (except for trivial queries).
 Here&rsquo;s the real output format:</p>
-<pre><code class="language-none">mysql&gt; EXPLAIN ANALYZE SELECT c FROM sbtest1 WHERE k &lt; 450000 ORDER BY id\G
+<pre tabindex="0"><code class="language-none" data-lang="none">mysql&gt; EXPLAIN ANALYZE SELECT c FROM sbtest1 WHERE k &lt; 450000 ORDER BY id\G
 *************************** 1. row ***************************
 EXPLAIN: -&gt; Sort: sbtest1.id  (cost=84245.94 rows=133184) (actual time=1347.876..1357.375 rows=68440 loops=1)
     -&gt; Index range scan on sbtest1 using k_1, with index condition: (sbtest1.k &lt; 450000)  (cost=84245.94 rows=133184) (actual time=41.021..1298.076 rows=68440 loops=1)
 
 1 row in set (1.37 sec)
-</code></pre>
-<p>The output is dense and tedious to read when there are many iterators.
+</code></pre><p>The output is dense and tedious to read when there are many iterators.
 That&rsquo;s not a criticism of MySQL, it&rsquo;s just how <code>EXPLAIN</code> output works in the MySQL CLI/shell.
 (<a href="https://www.mysql.com/products/workbench/">MySQL Workbench</a> has a &ldquo;visual EXPLAIN&rdquo; feature, but I don&rsquo;t know if it works with <code>EXPLAIN ANALYZE</code>.)</p>
 <p>Here&rsquo;s how I reformat and annotate the output in the following three examples:</p>
-<pre><code class="language-js">1 -&gt; Sort: sbtest1.id
-     (actual time=2043.416 .. 2051.792 rows=68440 loops=1)
-0     -&gt; Index range scan on sbtest1 using k_1, with index condition: (sbtest1.k &lt; 450000)
-         (actual time=109.302 .. 1996.350 rows=68440 loops=1)
-</code></pre>
-<p>The numbers in the left margin, starting with 0, number the iterators in <em>reading order</em>: how to read the output to follow the flow of row access.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#ae81ff">1</span> <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Sort</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">sbtest1</span>.<span style="color:#a6e22e">id</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">2043.416</span> .. <span style="color:#ae81ff">2051.792</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">68440</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span>     <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Index</span> <span style="color:#a6e22e">range</span> <span style="color:#a6e22e">scan</span> <span style="color:#a6e22e">on</span> <span style="color:#a6e22e">sbtest1</span> <span style="color:#a6e22e">using</span> <span style="color:#a6e22e">k_1</span>, <span style="color:#66d9ef">with</span> <span style="color:#a6e22e">index</span> <span style="color:#a6e22e">condition</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">sbtest1</span>.<span style="color:#a6e22e">k</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">450000</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">109.302</span> .. <span style="color:#ae81ff">1996.350</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">68440</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div><p>The numbers in the left margin, starting with 0, number the iterators in <em>reading order</em>: how to read the output to follow the flow of row access.
 This is helpful because the output generally reads top to bottom and depth first, but not always.
 I refer to iterators by these numbers, like &ldquo;the index range scan (0) executes during…&rdquo;.</p>
 <p>Additionally, to make the output easier to read and follow:</p>
@@ -253,23 +248,21 @@ I refer to iterators by these numbers, like &ldquo;the index range scan (0) exec
 <p>Now we can examine and discuss some examples without straining your eyes too much.</p>
 <br>
 <h2 id="example-1-filesort">Example 1: Filesort</h2>
-<pre><code class="language-js">1 -&gt; Sort: sbtest1.id
-     (actual time=2043.416 .. 2051.792 rows=68440 loops=1)
-0     -&gt; Index range scan on sbtest1 using k_1, with index condition: (sbtest1.k &lt; 450000)
-         (actual time= 109.302 .. 1996.350 rows=68440 loops=1)
-</code></pre>
-<p>In chapter 2 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, which teaches index and indexing, I take a page (literally one page: page 70 in print), to use <code>EXPLAIN SELECT c FROM sbtest1 WHERE k &lt; 450000 ORDER BY id</code> to prove that the data access, not the filesort, is the slowest part of that query.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#ae81ff">1</span> <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Sort</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">sbtest1</span>.<span style="color:#a6e22e">id</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">2043.416</span> .. <span style="color:#ae81ff">2051.792</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">68440</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span>     <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Index</span> <span style="color:#a6e22e">range</span> <span style="color:#a6e22e">scan</span> <span style="color:#a6e22e">on</span> <span style="color:#a6e22e">sbtest1</span> <span style="color:#a6e22e">using</span> <span style="color:#a6e22e">k_1</span>, <span style="color:#66d9ef">with</span> <span style="color:#a6e22e">index</span> <span style="color:#a6e22e">condition</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">sbtest1</span>.<span style="color:#a6e22e">k</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">450000</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">109.302</span> .. <span style="color:#ae81ff">1996.350</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">68440</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div><p>In chapter 2 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, which teaches index and indexing, I take a page (literally one page: page 70 in print), to use <code>EXPLAIN SELECT c FROM sbtest1 WHERE k &lt; 450000 ORDER BY id</code> to prove that the data access, not the filesort, is the slowest part of that query.</p>
 <p>I explain the output in the book, so I won&rsquo;t repeat myself here.
 Instead, let&rsquo;s reuse this simple example to more deeply understand <code>EXPLAIN ANALYZE</code> before reading more complex examples.</p>
 <p>The output of <code>EXPLAIN ANALYZE</code> is somewhat the reverse of how we think about query execution.
 For this query and others like it, we reasonably think that MySQL fetches <em>then</em> sorts rows (can&rsquo;t sort rows that haven&rsquo;t been fetched yet), but the output shows it differently: index range scan (0) nested (indented) one level within sort (1), which looks like fetching rows—index range scan (0)—happens after sort (1).
 But that&rsquo;s not the case; the annotated numbers in the left margin are the order of row access.
 The output reflects how these iterators are implemented and called, as noted in <a href="https://github.com/mysql/mysql-server/blob/8.0/sql/iterators/sorting_iterator.h">sql/iterators/sorting_iterator.h</a>:</p>
-<pre><code class="language-cpp">/**
-  An adapter that takes in another RowIterator and produces the same rows,
-  just in sorted order. (The actual sort happens in Init().)
-</code></pre>
-<p>As that comment notes, the sort iterator (1) is an <em>adapter</em> that, under the hood, calls another iterator to fetch rows—index range scan (0) in this case.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  An adapter that takes in another RowIterator and produces the same rows,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  just in sorted order. (The actual sort happens in Init().)
+</span></span></span></code></pre></div><p>As that comment notes, the sort iterator (1) is an <em>adapter</em> that, under the hood, calls another iterator to fetch rows—index range scan (0) in this case.
 Then sort (1) sorts the rows fetched by index range scan (0).
 And sort (1) does all this in <code>Init()</code>.
 sort (1) <code>Read()</code> simply returns the already fetched and sorted rows in order, which is why read time is very close to init time: it&rsquo;s mostly init time, with only a few milliseconds to return the sorted 68,440 rows.</p>
@@ -285,20 +278,18 @@ But how I arrived at the conclusion was incorrect.
 <p>The moral of the story is: sometimes you need to understand how iterators work under the hood (in the MySQL source code) in order to correctly interpret the reported timing values.</p>
 <br>
 <h2 id="example-2-simple-join">Example 2: Simple Join</h2>
-<pre><code class="language-js">3 -&gt; Nested loop inner join
-     (actual time=0.022..0.036 rows=4 loops=1)
-1     -&gt; Filter: (elem.a in ('Ag','Au','At'))
-         (actual time=0.015..0.024 rows=4 loops=1)
-0         -&gt; Covering index range scan on elem using idx_a_b
-             (actual time=0.013..0.022 rows=4 loops=1)
-2     -&gt; Single-row index lookup on elem_names using PRIMARY (symbol=elem.a)
-         (actual time=0.002..0.002 rows=1 loops=4)
-</code></pre>
-<p>That is the <code>EXPLAIN ANALYZE</code> output for example 2-19 that you find in the book on page 74 and download the <a href="https://github.com/efficient-mysql-performance/examples/tree/main/">examples</a>.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#ae81ff">3</span> <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Nested</span> <span style="color:#a6e22e">loop</span> <span style="color:#a6e22e">inner</span> <span style="color:#a6e22e">join</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.022</span>..<span style="color:#ae81ff">0.036</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>     <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Filter</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">elem</span>.<span style="color:#a6e22e">a</span> <span style="color:#66d9ef">in</span> (<span style="color:#e6db74">&#39;Ag&#39;</span>,<span style="color:#e6db74">&#39;Au&#39;</span>,<span style="color:#e6db74">&#39;At&#39;</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.015</span>..<span style="color:#ae81ff">0.024</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span>         <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Covering</span> <span style="color:#a6e22e">index</span> <span style="color:#a6e22e">range</span> <span style="color:#a6e22e">scan</span> <span style="color:#a6e22e">on</span> <span style="color:#a6e22e">elem</span> <span style="color:#a6e22e">using</span> <span style="color:#a6e22e">idx_a_b</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.013</span>..<span style="color:#ae81ff">0.022</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span>     <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Single</span><span style="color:#f92672">-</span><span style="color:#a6e22e">row</span> <span style="color:#a6e22e">index</span> <span style="color:#a6e22e">lookup</span> <span style="color:#a6e22e">on</span> <span style="color:#a6e22e">elem_names</span> <span style="color:#a6e22e">using</span> <span style="color:#a6e22e">PRIMARY</span> (<span style="color:#a6e22e">symbol</span><span style="color:#f92672">=</span><span style="color:#a6e22e">elem</span>.<span style="color:#a6e22e">a</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.002</span>..<span style="color:#ae81ff">0.002</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>)
+</span></span></code></pre></div><p>That is the <code>EXPLAIN ANALYZE</code> output for example 2-19 that you find in the book on page 74 and download the <a href="https://github.com/efficient-mysql-performance/examples/tree/main/">examples</a>.
 The query is:</p>
-<pre><code class="language-sql">SELECT name FROM elem JOIN elem_names ON (elem.a=elem_names.symbol) WHERE a IN ('Ag', 'Au', 'At');
-</code></pre>
-<p>This example highlights how you typically read <code>EXPLAIN ANALYZE</code> output: depth first.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> name <span style="color:#66d9ef">FROM</span> elem <span style="color:#66d9ef">JOIN</span> elem_names <span style="color:#66d9ef">ON</span> (elem.a<span style="color:#f92672">=</span>elem_names.symbol) <span style="color:#66d9ef">WHERE</span> a <span style="color:#66d9ef">IN</span> (<span style="color:#e6db74">&#39;Ag&#39;</span>, <span style="color:#e6db74">&#39;Au&#39;</span>, <span style="color:#e6db74">&#39;At&#39;</span>);
+</span></span></code></pre></div><p>This example highlights how you typically read <code>EXPLAIN ANALYZE</code> output: depth first.
 Although query execution is rooted in the join (3), row access starts with the covering index scan (0) on table <code>elem</code>.
 Then rows are filtered (1) for the <code>IN()</code> clause.
 Matching rows are used to lookup and join corresponding rows in table <code>elem_names</code>: primary key lookup (2).</p>
@@ -308,26 +299,24 @@ Likewise, filter (1) matched <code>rows=4</code>, which corresponds with primary
 To learn more, read section &ldquo;Table Join Algorithms&rdquo; at the end of chapter 2 in <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>.</p>
 <br>
 <h2 id="example-3-sakila">Example 3: Sakila</h2>
-<pre><code class="language-js">5 -&gt; Table scan on &lt;temporary&gt;
-     (actual time=0.001 .. 0.002 rows=2 loops=1)
-4     -&gt; Aggregate using temporary table
-         (actual time=26.210 .. 26.210 rows=2 loops=1)
-3         -&gt; Nested loop inner join
-             (actual time=0.140 .. 20.580 rows=5687 loops=1)
-0             -&gt; Table scan on staff
-                 (actual time=0.023 .. 0.028 rows=2 loops=1)
-2             -&gt; Filter: (payment.payment_date like '2005-08%')
-                 (actual time=0.106 .. 9.991 rows=2844 loops=2)
-1                 -&gt; Index lookup on payment using idx_fk_staff_id (staff_id=staff.staff_id)
-                     (actual time=0.098 .. 7.099 rows=8024 loops=2)
-</code></pre>
-<p>This is the example that Norvald Ryeng uses in <a href="https://dev.mysql.com/blog-archive/mysql-explain-analyze/">MySQL EXPLAIN ANALYZE (MySQL Blog Archive)</a>.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#ae81ff">5</span> <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Table</span> <span style="color:#a6e22e">scan</span> <span style="color:#a6e22e">on</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">temporary</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.001</span> .. <span style="color:#ae81ff">0.002</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>     <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Aggregate</span> <span style="color:#a6e22e">using</span> <span style="color:#a6e22e">temporary</span> <span style="color:#a6e22e">table</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">26.210</span> .. <span style="color:#ae81ff">26.210</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span>         <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Nested</span> <span style="color:#a6e22e">loop</span> <span style="color:#a6e22e">inner</span> <span style="color:#a6e22e">join</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.140</span> .. <span style="color:#ae81ff">20.580</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">5687</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span>             <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Table</span> <span style="color:#a6e22e">scan</span> <span style="color:#a6e22e">on</span> <span style="color:#a6e22e">staff</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.023</span> .. <span style="color:#ae81ff">0.028</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span>             <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Filter</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">payment</span>.<span style="color:#a6e22e">payment_date</span> <span style="color:#a6e22e">like</span> <span style="color:#e6db74">&#39;2005-08%&#39;</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.106</span> .. <span style="color:#ae81ff">9.991</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">2844</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>                 <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Index</span> <span style="color:#a6e22e">lookup</span> <span style="color:#a6e22e">on</span> <span style="color:#a6e22e">payment</span> <span style="color:#a6e22e">using</span> <span style="color:#a6e22e">idx_fk_staff_id</span> (<span style="color:#a6e22e">staff_id</span><span style="color:#f92672">=</span><span style="color:#a6e22e">staff</span>.<span style="color:#a6e22e">staff_id</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#a6e22e">actual</span> <span style="color:#a6e22e">time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.098</span> .. <span style="color:#ae81ff">7.099</span> <span style="color:#a6e22e">rows</span><span style="color:#f92672">=</span><span style="color:#ae81ff">8024</span> <span style="color:#a6e22e">loops</span><span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
+</span></span></code></pre></div><p>This is the example that Norvald Ryeng uses in <a href="https://dev.mysql.com/blog-archive/mysql-explain-analyze/">MySQL EXPLAIN ANALYZE (MySQL Blog Archive)</a>.
 The query is a simple two-table join with a <code>GROUP BY</code> clause, which is why there is an aggregate (4) and temp table scan (5):</p>
-<pre><code class="language-sql">SELECT first_name, last_name, SUM(amount) AS total
-FROM staff INNER JOIN payment ON staff.staff_id=payment.staff_id AND payment_date LIKE '2005-08%'
-GROUP BY first_name, last_name;
-</code></pre>
-<p>The flow of row access from table scan (0) to index lookup (1) to filter (2) to accomplish the join (3) is similar to the previous examples.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> first_name, last_name, <span style="color:#66d9ef">SUM</span>(amount) <span style="color:#66d9ef">AS</span> total
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> staff <span style="color:#66d9ef">INNER</span> <span style="color:#66d9ef">JOIN</span> payment <span style="color:#66d9ef">ON</span> staff.staff_id<span style="color:#f92672">=</span>payment.staff_id <span style="color:#66d9ef">AND</span> payment_date <span style="color:#66d9ef">LIKE</span> <span style="color:#e6db74">&#39;2005-08%&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> first_name, last_name;
+</span></span></code></pre></div><p>The flow of row access from table scan (0) to index lookup (1) to filter (2) to accomplish the join (3) is similar to the previous examples.</p>
 <p>Aggregate (4) is new: it receives and groups rows from the join (3).
 Notice that join (3) <code>rows=5687</code> but aggregate (4) <code>rows=2</code>: the query returns only 2 groups (one row per group).
 Interestingly, both init time and read time for aggregate (4) are the same, which suggests that all work is done in <code>Init()</code>—we&rsquo;d have to check the MySQL source code to verify.</p>

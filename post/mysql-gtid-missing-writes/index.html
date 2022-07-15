@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/post/mysql-gtid-missing-writes/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/post/mysql-gtid-missing-writes/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -172,47 +172,46 @@
 <p>The safe course of action is to rebuild node 1 (from a backup or clone from another node). But it <em>might</em> be safe to replicate, and rebuilding can be slow (during which the cluster has reduced redundancy). These two realities combine to make the answer &ldquo;yes&rdquo;, sometimes. In this case, you need to check for missing writes&hellip;</p>
 <h3 id="detecting-missing-writes-with-gtid">Detecting Missing Writes with GTID</h3>
 <p>If you run the Bash script below on nodes 1 and 2 after the crash (bottom diagram) it will exit 1 and report that node 1 has more writes and that node 2 is missing writes <code>node1:5-6</code> (where <code>node1</code> is its UUID).</p>
-<pre><code class="language-bash">#!/bin/bash
-
-DESCRIPTION=&quot;Exit 0 if node1 writes &lt;= node2 writes.&quot;
-
-set -eu
-
-usage() {
-  echo &quot;usage: $0 [options] node1 node2&quot;
-  echo &quot;      ${DESCRIPTION}&quot;             1&gt;&amp;2
-  echo &quot;      -h      Print this help&quot;    1&gt;&amp;2
-  exit $1
-}
-
-while getopts &quot;a&quot; opt; do
-  case &quot;$opt&quot; in
-    h) usage 0 ;;
-    *) usage 1 ;;
-  esac
-done
-
-node1=&quot;$1&quot;
-node2=&quot;$2&quot;
-
-mysql -h $node1 -sse &quot;SELECT @@hostname, @@server_uuid&quot;
-mysql -h $node2 -sse &quot;SELECT @@hostname, @@server_uuid&quot;
-
-node1writes=$(mysql -h $node1 -sse &quot;SELECT @@global.gtid_executed&quot;)
-node2writes=$(mysql -h $node2 -sse &quot;SELECT @@global.gtid_executed&quot;)
-
-is_subset=$(mysql -h $node2 -sse &quot;SELECT GTID_SUBSET('$node1writes', '$node2writes')&quot;)
-
-if [[ &quot;$is_subset&quot; != &quot;1&quot; ]]; then
-  missing_writes=$(mysql -h $node2 -sse &quot;SELECT GTID_SUBTRACT('$node1writes', '$node2writes')&quot;)
-  echo &quot;$node1 has more writes than $node2, DO NOT REPLICATE!&quot; &gt;&amp;2
-  echo &quot;$node2 is missing writes: $missing_writes&quot; &gt;&amp;2
-  exit 1
-fi
-
-echo &quot;OK, $node1 writes are a subset of $node2 writes&quot;
-</code></pre>
-<p>Read about the <a href="https://dev.mysql.com/doc/refman/8.0/en/gtid-functions.html">GTID functions</a>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>DESCRIPTION<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Exit 0 if node1 writes &lt;= node2 writes.&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>set -eu
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>usage<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;usage: </span>$0<span style="color:#e6db74"> [options] node1 node2&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;      </span><span style="color:#e6db74">${</span>DESCRIPTION<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>             1&gt;&amp;<span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;      -h      Print this help&#34;</span>    1&gt;&amp;<span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  exit $1
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> getopts <span style="color:#e6db74">&#34;a&#34;</span> opt; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;</span>$opt<span style="color:#e6db74">&#34;</span> in
+</span></span><span style="display:flex;"><span>    h<span style="color:#f92672">)</span> usage <span style="color:#ae81ff">0</span> ;;
+</span></span><span style="display:flex;"><span>    *<span style="color:#f92672">)</span> usage <span style="color:#ae81ff">1</span> ;;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">esac</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>node1<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>node2<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$2<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mysql -h $node1 -sse <span style="color:#e6db74">&#34;SELECT @@hostname, @@server_uuid&#34;</span>
+</span></span><span style="display:flex;"><span>mysql -h $node2 -sse <span style="color:#e6db74">&#34;SELECT @@hostname, @@server_uuid&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>node1writes<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mysql -h $node1 -sse <span style="color:#e6db74">&#34;SELECT @@global.gtid_executed&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>node2writes<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mysql -h $node2 -sse <span style="color:#e6db74">&#34;SELECT @@global.gtid_executed&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>is_subset<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mysql -h $node2 -sse <span style="color:#e6db74">&#34;SELECT GTID_SUBSET(&#39;</span>$node1writes<span style="color:#e6db74">&#39;, &#39;</span>$node2writes<span style="color:#e6db74">&#39;)&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$is_subset<span style="color:#e6db74">&#34;</span> !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>  missing_writes<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mysql -h $node2 -sse <span style="color:#e6db74">&#34;SELECT GTID_SUBTRACT(&#39;</span>$node1writes<span style="color:#e6db74">&#39;, &#39;</span>$node2writes<span style="color:#e6db74">&#39;)&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;</span>$node1<span style="color:#e6db74"> has more writes than </span>$node2<span style="color:#e6db74">, DO NOT REPLICATE!&#34;</span> &gt;&amp;<span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;</span>$node2<span style="color:#e6db74"> is missing writes: </span>$missing_writes<span style="color:#e6db74">&#34;</span> &gt;&amp;<span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;OK, </span>$node1<span style="color:#e6db74"> writes are a subset of </span>$node2<span style="color:#e6db74"> writes&#34;</span>
+</span></span></code></pre></div><p>Read about the <a href="https://dev.mysql.com/doc/refman/8.0/en/gtid-functions.html">GTID functions</a>.</p>
 <h3 id="having-more-writes">Having More Writes</h3>
 <p>The last paragraph of <a href="https://dev.mysql.com/doc/refman/8.0/en/replication-gtids-auto-positioning.html">17.1.3.3 GTID Auto-Positioning</a> talks about the opposite problem: post-crash, node 2 having more node 1 writes than node 1 has in its own binary logs. In other words, node 1 is missing some of its own writes. As the paragraph notes, this can happen if <code>sync_binlog=1</code> is <em>not</em> set.</p>
 <p>As noted in the <a href="https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/#gtid">GTID section of Crash-safe MySQL Replication</a>, <code>sync_binlog=1</code> is required (as is <code>innodb_flush_log_at_trx_commit=1</code>). Without these, we can have a case where, in the top diagram, node 1 write 6 (green) replicates and is applied by node 2 before it&rsquo;s persisted in node 1&rsquo;s binary logs. Then when node 1 replicates from node 2, we run into this problem: node 1 doesn&rsquo;t have it&rsquo;s own write 6 but node 2 does.</p>

@@ -20,7 +20,7 @@ This is not an intro; you&rsquo;ll need to know all the InnoDB details wrt page 
   <meta property="og:url" content="https://hackmysql.com/post/mysql-lru-flushing-io-capacity/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/post/mysql-lru-flushing-io-capacity/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -165,121 +165,117 @@ This is not an intro; you&rsquo;ll need to know all the InnoDB details wrt page 
 <h3 id="setup">Setup</h3>
 <p>Running <em>8.0.26-debug MySQL Community Server - GPL - Debug</em> on Ubuntu 21.04 (via Docker).</p>
 <p>my.cnf:</p>
-<pre><code class="language-ini">[mysqld]
-
-#
-# Super low IO caps
-#
-innodb-io-capacity=200
-innodb-io-capacity-max=400
-
-#
-# One page cleaner and double than default LRU scan depth
-# One &quot;pc&quot; ensures that all IO is due to the one pc
-#
-innodb_page_cleaners=1
-innodb_lru_scan_depth=2048
-
-#
-# Big log so checkpoint age is not an issue
-# Little to no adapative/flush list flushing
-#
-innodb_log_file_size=128M
-
-#
-# Disable stuff we don't need/avoid extra writes
-#
-innodb-flush-sync=0
-innodb-doublewrite=0
-skip-log-bin
-skip-innodb-adaptive-hash-index
-
-#
-# I like metrics
-#
-innodb_monitor_enable=module_buffer,module_log,module_trx
-</code></pre>
-<p>InnoDB buffer pool size is default: 128M.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[mysqld]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Super low IO caps</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">innodb-io-capacity</span><span style="color:#f92672">=</span><span style="color:#e6db74">200</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">innodb-io-capacity-max</span><span style="color:#f92672">=</span><span style="color:#e6db74">400</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># One page cleaner and double than default LRU scan depth</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># One &#34;pc&#34; ensures that all IO is due to the one pc</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">innodb_page_cleaners</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">innodb_lru_scan_depth</span><span style="color:#f92672">=</span><span style="color:#e6db74">2048</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Big log so checkpoint age is not an issue</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Little to no adapative/flush list flushing</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">innodb_log_file_size</span><span style="color:#f92672">=</span><span style="color:#e6db74">128M</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Disable stuff we don&#39;t need/avoid extra writes</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">innodb-flush-sync</span><span style="color:#f92672">=</span><span style="color:#e6db74">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">innodb-doublewrite</span><span style="color:#f92672">=</span><span style="color:#e6db74">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">skip-log-bin</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">skip-innodb-adaptive-hash-index</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># I like metrics</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">innodb_monitor_enable</span><span style="color:#f92672">=</span><span style="color:#e6db74">module_buffer,module_log,module_trx</span>
+</span></span></code></pre></div><p>InnoDB buffer pool size is default: 128M.</p>
 <p>Use <a href="https://github.com/akopytov/sysbench">sysbench</a> to create a table with one million rows.</p>
 <p>A silly little Go program to report IOPS and page flush rates:</p>
-<pre><code class="language-go">package main
-
-import (
-    &quot;context&quot;
-    &quot;database/sql&quot;
-    &quot;log&quot;
-    &quot;time&quot;
-
-    _ &quot;github.com/go-sql-driver/mysql&quot;
-)
-
-func main() {
-    db, err := sql.Open(&quot;mysql&quot;, &quot;root:test@tcp(127.0.0.1:3306)/&quot;)
-    if err != nil {
-        log.Fatal(err)
-    }
-    if err := db.Ping(); err != nil {
-        log.Fatal(err)
-    }
-
-    q := &quot;SELECT name, count FROM information_schema.innodb_metrics WHERE name IN ('os_data_reads','os_data_writes','buffer_flush_adaptive_total_pages','buffer_LRU_batch_flush_total_pages','buffer_flush_background_total_pages')&quot;
-    var pr, pw, pl, plru, pbg int
-
-    t := time.NewTicker(1 * time.Second)
-    for range t.C {
-        var reads, writes, list, lru, bg int
-        rows, err := db.QueryContext(context.Background(), q)
-        if err != nil {
-            log.Fatal(err)
-        }
-        for rows.Next() {
-            var name string
-            var val int
-            if err := rows.Scan(&amp;name, &amp;val); err != nil {
-                log.Fatal(err)
-            }
-            switch name {
-            case &quot;os_data_reads&quot;:
-                reads = val
-            case &quot;os_data_writes&quot;:
-                writes = val
-            case &quot;buffer_flush_adaptive_total_pages&quot;:
-                list = val
-            case &quot;buffer_LRU_batch_flush_total_pages&quot;:
-                lru = val
-            case &quot;buffer_flush_background_total_pages&quot;:
-                bg = val
-            default:
-                log.Fatalf(&quot;unknown var %s&quot;, name)
-            }
-        }
-        rows.Close()
-
-        log.Printf(&quot;read = %4d  write = %4d | list = %4d  LRU = %4d  bg = %4d&quot;,
-            reads-pr, writes-pw, list-pl, lru-plru, bg-pbg)
-
-        pr = reads
-        pw = writes
-        pl = list
-        plru = lru
-        pbg = bg
-    }
-}
-</code></pre>
-<h3 id="few-free-pages-but-many-dirty-pages">Few Free Pages but Many Dirty Pages</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;context&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;database/sql&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;time&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;github.com/go-sql-driver/mysql&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#e6db74">&#34;mysql&#34;</span>, <span style="color:#e6db74">&#34;root:test@tcp(127.0.0.1:3306)/&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Ping</span>(); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">q</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;SELECT name, count FROM information_schema.innodb_metrics WHERE name IN (&#39;os_data_reads&#39;,&#39;os_data_writes&#39;,&#39;buffer_flush_adaptive_total_pages&#39;,&#39;buffer_LRU_batch_flush_total_pages&#39;,&#39;buffer_flush_background_total_pages&#39;)&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">pr</span>, <span style="color:#a6e22e">pw</span>, <span style="color:#a6e22e">pl</span>, <span style="color:#a6e22e">plru</span>, <span style="color:#a6e22e">pbg</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">NewTicker</span>(<span style="color:#ae81ff">1</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">C</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">reads</span>, <span style="color:#a6e22e">writes</span>, <span style="color:#a6e22e">list</span>, <span style="color:#a6e22e">lru</span>, <span style="color:#a6e22e">bg</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">rows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">QueryContext</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#a6e22e">q</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Next</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">val</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Scan</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">name</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">name</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;os_data_reads&#34;</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">reads</span> = <span style="color:#a6e22e">val</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;os_data_writes&#34;</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">writes</span> = <span style="color:#a6e22e">val</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;buffer_flush_adaptive_total_pages&#34;</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">list</span> = <span style="color:#a6e22e">val</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;buffer_LRU_batch_flush_total_pages&#34;</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">lru</span> = <span style="color:#a6e22e">val</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;buffer_flush_background_total_pages&#34;</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">bg</span> = <span style="color:#a6e22e">val</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;unknown var %s&#34;</span>, <span style="color:#a6e22e">name</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;read = %4d  write = %4d | list = %4d  LRU = %4d  bg = %4d&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">reads</span><span style="color:#f92672">-</span><span style="color:#a6e22e">pr</span>, <span style="color:#a6e22e">writes</span><span style="color:#f92672">-</span><span style="color:#a6e22e">pw</span>, <span style="color:#a6e22e">list</span><span style="color:#f92672">-</span><span style="color:#a6e22e">pl</span>, <span style="color:#a6e22e">lru</span><span style="color:#f92672">-</span><span style="color:#a6e22e">plru</span>, <span style="color:#a6e22e">bg</span><span style="color:#f92672">-</span><span style="color:#a6e22e">pbg</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">pr</span> = <span style="color:#a6e22e">reads</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">pw</span> = <span style="color:#a6e22e">writes</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">pl</span> = <span style="color:#a6e22e">list</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">plru</span> = <span style="color:#a6e22e">lru</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">pbg</span> = <span style="color:#a6e22e">bg</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="few-free-pages-but-many-dirty-pages">Few Free Pages but Many Dirty Pages</h3>
 <p>Since the page cleaners are <em>background</em> threads, you normally can&rsquo;t disable them.
 But with a debug build of MySQL, you can:</p>
-<pre><code class="language-sql">SET GLOBAL innodb_page_cleaner_disabled_debug=1;
-</code></pre>
-<p>This proof would be nearly impossible without that switch because, normally, the page cleaners will keep free pages at or near <a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_lru_scan_depth"><code>innodb_lru_scan_depth</code></a>, which means you can&rsquo;t cause big LRU flushes.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SET</span> <span style="color:#66d9ef">GLOBAL</span> innodb_page_cleaner_disabled_debug<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>;
+</span></span></code></pre></div><p>This proof would be nearly impossible without that switch because, normally, the page cleaners will keep free pages at or near <a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_lru_scan_depth"><code>innodb_lru_scan_depth</code></a>, which means you can&rsquo;t cause big LRU flushes.</p>
 <p>But with the page cleaner disabled (normally, there are 4 page cleaners by default, by see my.cnf above: I configured only 1 page cleaner for this proof), you can nearly fill the buffer pool with unflushed dirty pages:</p>
-<pre><code>mysql&gt; UPDATE sbtest2 SET c='a' WHERE id &lt; 500000;
+<pre tabindex="0"><code>mysql&gt; UPDATE sbtest2 SET c=&#39;a&#39; WHERE id &lt; 500000;
 Query OK, 400000 rows affected (36.11 sec)
 Rows matched: 499999  Changed: 400000  Warnings: 0
-</code></pre>
-<p>The query doesn&rsquo;t matter.
+</code></pre><p>The query doesn&rsquo;t matter.
 What matters is that it creates many dirty pages:</p>
-<pre><code>mysql&gt; SELECT name, count FROM innodb_metrics WHERE name LIKE 'buffer_pool_pages_%';
+<pre tabindex="0"><code>mysql&gt; SELECT name, count FROM innodb_metrics WHERE name LIKE &#39;buffer_pool_pages_%&#39;;
 +-------------------------+-------+
 | name                    | count |
 +-------------------------+-------+
@@ -289,30 +285,26 @@ What matters is that it creates many dirty pages:</p>
 | buffer_pool_pages_dirty |  5685 |
 | buffer_pool_pages_free  |    64 |
 +-------------------------+-------+
-</code></pre>
-<p>This is the weird situation needed to prove that LRU flushing does not use I/O capacities: significantly more dirty pages and LRU scan depth than max I/O, but almost no free pages to make LRU flushing kick in and work at peak rate.
+</code></pre><p>This is the weird situation needed to prove that LRU flushing does not use I/O capacities: significantly more dirty pages and LRU scan depth than max I/O, but almost no free pages to make LRU flushing kick in and work at peak rate.
 And that&rsquo;s the crux of the test: is the peak rate of LRU flushing <code>innodb_io_capacity_max</code> or <code>innodb_lru_scan_depth</code>?
 If it&rsquo;s the former (<code>innodb_io_capacity_max</code>), then LRU flushing will proceed in batches of (roughly) that many pages, especially since <code>innodb_flush_sync = 0</code>.
 But if it&rsquo;s the latter (<code>innodb_lru_scan_depth</code>), then LRU flushing will proceed in a batch of (roughly) that many pages, which is greater than max I/O capacity.</p>
 <h3 id="lru-flush-greater-than-max-io-capacity">LRU Flush Greater Than Max I/O Capacity</h3>
 <p>Run the Go program (above), enable MySQL debugging/tracking, then enable the page cleaner:</p>
-<pre><code>mysql&gt; SET GLOBAL DEBUG='d:t:i:o,/tmp/mysqld.trace:F:L';
+<pre tabindex="0"><code>mysql&gt; SET GLOBAL DEBUG=&#39;d:t:i:o,/tmp/mysqld.trace:F:L&#39;;
 Query OK, 0 rows affected (0.00 sec)
 
 mysql&gt; SET GLOBAL innodb_page_cleaner_disabled_debug=0;
 Query OK, 0 rows affected (0.06 sec)
-</code></pre>
-<p>The trace file confirms:</p>
-<pre><code># grep 'flush 0' mysqld.trace
+</code></pre><p>The trace file confirms:</p>
+<pre tabindex="0"><code># grep &#39;flush 0&#39; mysqld.trace
  ?file:  1986: ib_buf: flush 0 completed, 1178 pages
  ?file:  1986: ib_buf: flush 0 completed, 0 pages
-</code></pre>
-<p>&ldquo;flush 0&rdquo; is LRU flushing. (&ldquo;flush 1&rdquo;, not shown, is adaptive/LSN/flush list flushing.)</p>
+</code></pre><p>&ldquo;flush 0&rdquo; is LRU flushing. (&ldquo;flush 1&rdquo;, not shown, is adaptive/LSN/flush list flushing.)</p>
 <p>Also in the trace file:</p>
-<pre><code> ?file:  1998: ib_buf: flush completed, from flush_list 122 pages, from LRU_list 1178 pages
-</code></pre>
-<p>The rates from the Go program match perfectly, affirming the trace data through other metrics:</p>
-<pre><code class="language-none">2021/09/02 14:09:49 read =    0  write =    0 | list =    0  LRU =    0  bg =    0
+<pre tabindex="0"><code> ?file:  1998: ib_buf: flush completed, from flush_list 122 pages, from LRU_list 1178 pages
+</code></pre><p>The rates from the Go program match perfectly, affirming the trace data through other metrics:</p>
+<pre tabindex="0"><code class="language-none" data-lang="none">2021/09/02 14:09:49 read =    0  write =    0 | list =    0  LRU =    0  bg =    0
 2021/09/02 14:09:50 read =    0  write =    0 | list =    0  LRU =    0  bg =    0
 2021/09/02 14:09:51 read =    0  write =    0 | list =    0  LRU =    0  bg =    0
 2021/09/02 14:09:52 read =    0  write = 1300 | list =  122  LRU = 1178  bg =    0
@@ -320,57 +312,53 @@ Query OK, 0 rows affected (0.06 sec)
 2021/09/02 14:09:54 read =    0  write =  200 | list =    0  LRU =    0  bg =  200
 2021/09/02 14:09:55 read =    0  write =  201 | list =    0  LRU =    0  bg =  200
 2021/09/02 14:09:56 read =    0  write =  201 | list =    0  LRU =    0  bg =  200
-</code></pre>
-<p>First 3 lines were before the page cleaner was re-enabled: zero activity.</p>
+</code></pre><p>First 3 lines were before the page cleaner was re-enabled: zero activity.</p>
 <p>Fourth line is the proof: 1,178 pages flushed at 1,3000 write IOPS.</p>
 <p>In the latter lines, the configured background flush rate is observed: 200.</p>
 <h3 id="quick-source-code-analysis">Quick Source Code Analysis</h3>
 <p>Background page flushing happens in <code>storage/innobase/buf/buf0flu.cc</code>.</p>
 <p>Flushing (both list and LRU) starts in function <code>pc_flush_slot()</code>:</p>
-<pre><code class="language-cpp">2979     /* Flush pages from end of LRU if required */
-2980     slot-&gt;n_flushed_lru = buf_flush_LRU_list(buf_pool);
-2981
-2982     lru_tm = ut_time_monotonic_ms() - lru_tm;
-2983     lru_pass++;
-2984
-2985     if (!page_cleaner-&gt;is_running) {
-2986       slot-&gt;n_flushed_list = 0;
-2987       goto finish;
-2988     }
-2989
-2990     /* Flush pages from flush_list if required */
-2991     if (page_cleaner-&gt;requested) {
-2992       list_tm = ut_time_monotonic_ms();
-2993
-2994       slot-&gt;succeeded_list =
-2995           buf_flush_do_batch(buf_pool, BUF_FLUSH_LIST, slot-&gt;n_pages_requested,
-2996                              page_cleaner-&gt;lsn_limit, &amp;slot-&gt;n_flushed_list);
-2997
-2998       list_tm = ut_time_monotonic_ms() - list_tm;
-2999       list_pass++;
-3000     } else {
-3001       slot-&gt;n_flushed_list = 0;
-3002       slot-&gt;succeeded_list = true;
-3003     }
-</code></pre>
-<p>(Line numbers added.)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#ae81ff">2979</span>     <span style="color:#75715e">/* Flush pages from end of LRU if required */</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2980</span>     slot<span style="color:#f92672">-&gt;</span>n_flushed_lru <span style="color:#f92672">=</span> buf_flush_LRU_list(buf_pool);
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2981</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2982</span>     lru_tm <span style="color:#f92672">=</span> ut_time_monotonic_ms() <span style="color:#f92672">-</span> lru_tm;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2983</span>     lru_pass<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2984</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2985</span>     <span style="color:#a6e22e">if</span> (<span style="color:#f92672">!</span>page_cleaner<span style="color:#f92672">-&gt;</span>is_running) {
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2986</span>       slot<span style="color:#f92672">-&gt;</span>n_flushed_list <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2987</span>       <span style="color:#66d9ef">goto</span> finish;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2988</span>     }
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2989</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2990</span>     <span style="color:#75715e">/* Flush pages from flush_list if required */</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2991</span>     <span style="color:#66d9ef">if</span> (page_cleaner<span style="color:#f92672">-&gt;</span>requested) {
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2992</span>       list_tm <span style="color:#f92672">=</span> ut_time_monotonic_ms();
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2993</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2994</span>       slot<span style="color:#f92672">-&gt;</span>succeeded_list <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2995</span>           buf_flush_do_batch(buf_pool, BUF_FLUSH_LIST, slot<span style="color:#f92672">-&gt;</span>n_pages_requested,
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2996</span>                              page_cleaner<span style="color:#f92672">-&gt;</span>lsn_limit, <span style="color:#f92672">&amp;</span>slot<span style="color:#f92672">-&gt;</span>n_flushed_list);
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2997</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2998</span>       list_tm <span style="color:#f92672">=</span> ut_time_monotonic_ms() <span style="color:#f92672">-</span> list_tm;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2999</span>       list_pass<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3000</span>     } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3001</span>       slot<span style="color:#f92672">-&gt;</span>n_flushed_list <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3002</span>       slot<span style="color:#f92672">-&gt;</span>succeeded_list <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3003</span>     }
+</span></span></code></pre></div><p>(Line numbers added.)</p>
 <p>In function <code>buf_flush_LRU_list()</code>:</p>
-<pre><code class="language-cpp">2267   /* Currently one of page_cleaners is the only thread
-       that can trigger an LRU flush at the same time.
-       So, it is not possible that a batch triggered during
-       last iteration is still running, */
-2271   buf_flush_do_batch(buf_pool, BUF_FLUSH_LRU, scan_depth, 0, &amp;n_flushed);
-</code></pre>
-<p>And there it is: <code>scan_depth</code>.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#ae81ff">2267</span>   <span style="color:#75715e">/* Currently one of page_cleaners is the only thread
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">       that can trigger an LRU flush at the same time.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">       So, it is not possible that a batch triggered during
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">       last iteration is still running, */</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2271</span>   buf_flush_do_batch(buf_pool, BUF_FLUSH_LRU, scan_depth, <span style="color:#ae81ff">0</span>, <span style="color:#f92672">&amp;</span>n_flushed);
+</span></span></code></pre></div><p>And there it is: <code>scan_depth</code>.
 If you continue following the code, you&rsquo;ll see that nothing attenuates <code>scan_depth</code> (the argument changes changes; ironically, in some functions the argument is <code>min</code> and in others it&rsquo;s <code>max</code>—MySQL source code is veritable jungle).</p>
 <h3 id="io-capacity-max">I/O Capacity Max</h3>
 <p>As expected and understood by everyone in the rarefied world of InnoDB internals, the adaptive flushing algorithm uses and limits flush list flushing to <a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_io_capacity"><code>innodb_io_capcity</code></a> or <a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_io_capacity_max"><code>innodb_io_capacity_max</code></a>.</p>
 <p>Back in <code>pc_flush_slot()</code>:</p>
-<pre><code class="language-cpp">2994       slot-&gt;succeeded_list =
-2995           buf_flush_do_batch(buf_pool, BUF_FLUSH_LIST, slot-&gt;n_pages_requested,
-2996                              page_cleaner-&gt;lsn_limit, &amp;slot-&gt;n_flushed_list);
-</code></pre>
-<p>Argument <code>slot-&gt;n_pages_requested</code> is set by the adaptive flushing algorithm.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#ae81ff">2994</span>       slot<span style="color:#f92672">-&gt;</span>succeeded_list <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2995</span>           buf_flush_do_batch(buf_pool, BUF_FLUSH_LIST, slot<span style="color:#f92672">-&gt;</span>n_pages_requested,
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2996</span>                              page_cleaner<span style="color:#f92672">-&gt;</span>lsn_limit, <span style="color:#f92672">&amp;</span>slot<span style="color:#f92672">-&gt;</span>n_flushed_list);
+</span></span></code></pre></div><p>Argument <code>slot-&gt;n_pages_requested</code> is set by the adaptive flushing algorithm.
 And you&rsquo;ll notice it&rsquo;s the same lower-level function call that LRU flushing uses: <code>buf_flush_do_batch()</code>.</p>
 <h3 id="quick-historical-analysis">Quick Historical Analysis</h3>
 <p>Is LRU flushing supposed to be limited by configured I/O capacity?
@@ -378,12 +366,11 @@ Was it ever?
 If yes, when did it stop?
 Down the rabbit hole of history!</p>
 <p>In function <code>buf_flush_LRU_list_batch()</code>:</p>
-<pre><code class="language-cpp">1832   /* We keep track of all flushes happening as part of LRU
-       flush. When estimating the desired rate at which flush_list
-       should be flushed, we factor in this value. */
-1835   buf_lru_flush_page_count += count;
-</code></pre>
-<p>That code comment is very old and it&rsquo;s wrong: we do <em>not</em> keep track of this any longer—we haven&rsquo;t for a very long time.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#ae81ff">1832</span>   <span style="color:#75715e">/* We keep track of all flushes happening as part of LRU
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">       flush. When estimating the desired rate at which flush_list
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">       should be flushed, we factor in this value. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1835</span>   buf_lru_flush_page_count <span style="color:#f92672">+=</span> count;
+</span></span></code></pre></div><p>That code comment is very old and it&rsquo;s wrong: we do <em>not</em> keep track of this any longer—we haven&rsquo;t for a very long time.
 <code>buf_lru_flush_page_count</code> is not used anywhere: it&rsquo;s incremented here, but never used.</p>
 <p>This variable was last used in 5.5.
 As of 5.6, it stopped being used (aside from being incremented).

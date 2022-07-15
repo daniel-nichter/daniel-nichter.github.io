@@ -98,7 +98,7 @@ The preface explains why this book is unique:&lt;/p&gt;</description>
 
       <guid>https://hackmysql.com/mysql-terminology-updates/</guid>
       <description>MySQL Terminology Updates This page reproduces the blog post &amp;ldquo;MySQL Terminology Updates&amp;rdquo; from the defunct web site https://mysqlhighavailability.com/mysql-terminology-updates/. The original page—written by Kenny Gryp on July 1, 2020—is quoted below.
- It’s been 20 years since MySQL Replication was introduced in MySQL 3.23.15 (Released in May 2000). Since then, virtually every MySQL Database deployment in production has been using Replication in order to achieve high availability, disaster recovery, read scale out and various other purposes.</description>
+It’s been 20 years since MySQL Replication was introduced in MySQL 3.23.15 (Released in May 2000). Since then, virtually every MySQL Database deployment in production has been using Replication in order to achieve high availability, disaster recovery, read scale out and various other purposes.</description>
     </item>
 
     <item>
@@ -119,7 +119,7 @@ This is not an intro; you&amp;rsquo;ll need to know all the InnoDB details wrt p
 
       <guid>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</guid>
       <description>As of MySQL 8.0, performance_schema.data_locks shows InnoDB data locks. Before MySQL 8.0, you must SET GLOBAL innodb_status_output_locks=ON and ruminate on the output of SHOW ENGINE INNODB STATUS. The image below (click to see full size) shows how the former maps to the latter for three record locks and one table lock on table t.
- Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as of MySQL 5.7 and removed as of MySQL 8.</description>
+Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as of MySQL 5.7 and removed as of MySQL 8.</description>
     </item>
 
     <item>
@@ -224,7 +224,7 @@ Many things can affect performance. For example, if the system runs out of memor
 
       <guid>https://hackmysql.com/post/when-mysql-goes-away/</guid>
       <description>Handling MySQL errors in Go is not easy. There are a lot of MySQL server error codes, and the Go MySQL driver as its own errors, and Go database/sql has its own errors, and errors can bubble up from other packages, like net.OpError. Consequently, Go programs tend not to handle errors. Instead, they simply report errors:
-err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err }  And then the error is logged or reported somewhere.</description>
+err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err } And then the error is logged or reported somewhere.</description>
     </item>
 
     <item>

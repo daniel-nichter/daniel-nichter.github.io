@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/post/three-golang-channel-red-flags/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/post/three-golang-channel-red-flags/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -173,36 +173,33 @@
 <p>Using a channel for communication and coordination is usually a red flag. Communication is the well known Go adage: <a href="https://blog.golang.org/share-memory-by-communicating">Share Memory By Communicating</a>. Coordination (aka synchronization) is handling concurrency, multiple goroutines, etc. (e.g. <a href="https://blog.golang.org/pipelines">Go Concurrency Patterns: Pipelines and cancellation</a> and the links at the end).</p>
 <p>There is a use case for communication and coordination, which I&rsquo;ll cover next, but in general mixing the two is often a sign that the purpose of the channel is not clear, which leads to bugs and panics. For example, if the channel is closed before communication is done, the program will panic sending on a closed channel. Or, receivers might block unexpectedly and silently deadlock the program (if there are no recv timeouts).</p>
 <p>Since channels are lightweight, use more to keep their purpose clear. I often used <code>doneChan chan interface{}</code> as a coordination channel for lower-level code to signal that it is done (<code>defer close(doneChan)</code>). This signal is effectively broadcast to N-many higher-level code &ldquo;listeners&rdquo;:</p>
-<pre><code class="language-go">switch {
-case &lt;-doneChan:
-    // lower-level code is done
-default:
-    // it's still running
-}
-</code></pre>
-<p>All code checking <code>doneChan</code> like that will be notified when the lower-level code is done. This is how <a href="https://golang.org/pkg/context/#Context">Context.Done()</a> is used. The reverse works, too: high-level code makes and passes <code>stopChan chan interface{}</code> to N-many lower-level code, then the high-level code closes <code>stopChan</code> to stop all the lower-level code. This is <a href="https://golang.org/pkg/context/">Context</a> in general. Channels like these are pure coordination; their purpose is clear. They are not conflated like <code>stopChan chan bool</code> and doing <code>stopChan &lt;- true</code>: does this communicate that the receiver should stop, or that the sender has stopped?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">switch</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">doneChan</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// lower-level code is done
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// it&#39;s still running
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>All code checking <code>doneChan</code> like that will be notified when the lower-level code is done. This is how <a href="https://golang.org/pkg/context/#Context">Context.Done()</a> is used. The reverse works, too: high-level code makes and passes <code>stopChan chan interface{}</code> to N-many lower-level code, then the high-level code closes <code>stopChan</code> to stop all the lower-level code. This is <a href="https://golang.org/pkg/context/">Context</a> in general. Channels like these are pure coordination; their purpose is clear. They are not conflated like <code>stopChan chan bool</code> and doing <code>stopChan &lt;- true</code>: does this communicate that the receiver should stop, or that the sender has stopped?</p>
 <p>By contrast, pure communication channels like <code>primeNumbers chan int</code> are very clear and <a href="http://www.cs.uakron.edu/~chanc/CS490/SeniorSeminar2012/Lecture%202%20-%20Program%20Style/programming%20style.pdf">intention-revealing</a>. It is not (or should not) be used to coordinate goroutines like <code>stopChan</code>.</p>
 <p>However, as mentioned earlier, there is a use case for both communication and coordination: the sender-closer pattern:</p>
-<pre><code class="language-go">// https://blog.golang.org/pipelines
-func gen(nums ...int) &lt;-chan int {
-    out := make(chan int, len(nums))
-    for _, n := range nums {
-        out &lt;- n
-    }
-    close(out)
-    return out
-}
-</code></pre>
-<p>The returned channel, <code>out</code>, is closed when done so that the caller knows there are no more numbers. That example illustrates the point, but it&rsquo;s not the best choice in general. Let&rsquo;s look closer at the sender-closer pattern.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// https://blog.golang.org/pipelines
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">gen</span>(<span style="color:#a6e22e">nums</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">int</span>) <span style="color:#f92672">&lt;-</span><span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">out</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span>, len(<span style="color:#a6e22e">nums</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">nums</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">out</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">n</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    close(<span style="color:#a6e22e">out</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">out</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The returned channel, <code>out</code>, is closed when done so that the caller knows there are no more numbers. That example illustrates the point, but it&rsquo;s not the best choice in general. Let&rsquo;s look closer at the sender-closer pattern.</p>
 <h3 id="sender-closer-pattern">Sender-Closer Pattern</h3>
 <p>If the example above was real code, it would be better without the channel:</p>
-<pre><code class="language-go">func gen(nums ...int) []int {
-    n := make([]int, len(nums))
-    copy(n, nums)
-    return n
-}
-</code></pre>
-<p>Return a slice of int, not a chan. The code is simpler, probably a lot faster, and much easier to test. The last point is key: testing. To test if the return value is correct is trivial. But to test <code>chan int</code> requires the test to drain the channel into a slice, then test that slice. In short: <code>chan int</code> is overkill in this and most cases like this.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">gen</span>(<span style="color:#a6e22e">nums</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">int</span>) []<span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">int</span>, len(<span style="color:#a6e22e">nums</span>))
+</span></span><span style="display:flex;"><span>    copy(<span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">nums</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">n</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Return a slice of int, not a chan. The code is simpler, probably a lot faster, and much easier to test. The last point is key: testing. To test if the return value is correct is trivial. But to test <code>chan int</code> requires the test to drain the channel into a slice, then test that slice. In short: <code>chan int</code> is overkill in this and most cases like this.</p>
 <p>The sender-closer pattern is best used when at least one of the following is true:</p>
 <ol>
 <li>High cost of each value, <em>or</em></li>

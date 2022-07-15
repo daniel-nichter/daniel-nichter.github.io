@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/post/three-golang-error-types/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/post/three-golang-error-types/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -154,80 +154,74 @@
         <p>This is not a post about Go error handling, it&rsquo;s a post about Go error &ldquo;types&rdquo;: three different ways to construct and use the built-in <a href="https://golang.org/pkg/builtin/#error">error interface type</a>. <code>error</code> is deceptively simple. When used in the ways described here, it allows us to design meaningful errors and error handling in large Go programs. Errors should be first-class citizens because when things break (and they always do), errors are the first—and often only—information we have. So make them great.</p>
 <h2 id="error-message">Error Message</h2>
 <p>The most basic, and maybe most common, error is something like:</p>
-<pre><code class="language-go">if err := CheckDatabase(); err != nil {
-    return fmt.Errorf(&quot;database check failed: %s&quot;, err)
-}
-</code></pre>
-<p>The caller probably logs/prints the returned <code>error</code>, an error message like &ldquo;database check failed: replication lag = 100s, expected &lt; 1s&rdquo;. <mark>This type of error is completely defined by its error message string. Code should not inspect the message or make any decisions based on it because it&rsquo;s dynamic for two reasons.</mark> The first reason is <code>%s&quot;, err</code>: <code>CheckDatabase()</code> can return different errors, and maybe it calls functions which returns errors which it returns. The point is: there&rsquo;s an unknown call stack of functions returning error strings, so the final error message is highly variable. Second reason: different developers tweak and change the error message. Some day, a developer might change &ldquo;database check failed:&rdquo; to &ldquo;CheckDatabase error:&rdquo;. That&rsquo;s fine; it doesn&rsquo;t affect the end result. For these two reasons, no code should rely on the content or wording of the error message. It&rsquo;s merely a message that should be reported to the user.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">CheckDatabase</span>(); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;database check failed: %s&#34;</span>, <span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The caller probably logs/prints the returned <code>error</code>, an error message like &ldquo;database check failed: replication lag = 100s, expected &lt; 1s&rdquo;. <mark>This type of error is completely defined by its error message string. Code should not inspect the message or make any decisions based on it because it&rsquo;s dynamic for two reasons.</mark> The first reason is <code>%s&quot;, err</code>: <code>CheckDatabase()</code> can return different errors, and maybe it calls functions which returns errors which it returns. The point is: there&rsquo;s an unknown call stack of functions returning error strings, so the final error message is highly variable. Second reason: different developers tweak and change the error message. Some day, a developer might change &ldquo;database check failed:&rdquo; to &ldquo;CheckDatabase error:&rdquo;. That&rsquo;s fine; it doesn&rsquo;t affect the end result. For these two reasons, no code should rely on the content or wording of the error message. It&rsquo;s merely a message that should be reported to the user.</p>
 <p>Error messages are simple but powerful. They are the nuts and bolts of most Go code because, ultimately, a human needs to see some error message. Even if the system can correct or work around the error, it should still log it so that a human is aware. Consequently, error messages need to be well-written and informative. That&rsquo;s a topic for another blog post, but in short: every error messages should, at least, state what check or conditions in the code resulted in the error being returned. For example, <code>CheckDatabase()</code> should return error messages like the one given above: &ldquo;replication lag = 100s, expected &lt; 1s&rdquo;. That clearly states the expected but observed conditions that caused the error to be returned. Note: the cause of the error is a different issue, i.e. why the replica has 100s of lag is a different issue which the code probably can&rsquo;t ascertain, it only knows that it should be &lt; 1s but it&rsquo;s not.</p>
 <p>Use error messages in two cases. First: when code is new or being changed frequently. In this case, it&rsquo;s probably not clear if or where the other two error types should be used, so defer the decision until the code is more settled. Switching from error messages to other types is usually safe and relatively easy because there&rsquo;s only one <a href="https://golang.org/pkg/builtin/#error">error interface type</a>. Second: in unique or one-off error cases. For example, a program that loads a config file probably doesn&rsquo;t need the other error types because loading the config is a one-off event. If it fails, we only need to know why; a great error message is sufficient.</p>
 <h2 id="package-error-variable">Package Error Variable</h2>
 <p>Package error variables are idiomatically defined like:</p>
-<pre><code class="language-go">import errors
-
-
-var (
-    // ErrNotFound is returned when the user is not found.
-    ErrNotFound = errors.New(&quot;not found&quot;)
-
-    // ErrTooMany is returned when too many users match.
-    ErrTooMany = errors.New(&quot;too many&quot;)
-)
-</code></pre>
-<p>For example: <a href="https://golang.org/pkg/io/#pkg-variables">io</a>, <a href="https://golang.org/pkg/bytes/#pkg-variables">bytes</a>, <a href="https://golang.org/pkg/net/http/#pkg-variables">net/http</a>, and many others. Although these are vars, they must be treated as const. <em>Never modify a package error variable!</em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#a6e22e">errors</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ErrNotFound is returned when the user is not found.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">ErrNotFound</span> = <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;not found&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ErrTooMany is returned when too many users match.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">ErrTooMany</span> = <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;too many&#34;</span>)
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>For example: <a href="https://golang.org/pkg/io/#pkg-variables">io</a>, <a href="https://golang.org/pkg/bytes/#pkg-variables">bytes</a>, <a href="https://golang.org/pkg/net/http/#pkg-variables">net/http</a>, and many others. Although these are vars, they must be treated as const. <em>Never modify a package error variable!</em></p>
 <p><mark>The variable itself is what&rsquo;s important. Its string (error message) is usually not important or logged.</mark> Instead, the variable is used by the caller for error handling like:</p>
-<pre><code class="language-go">if err := DeleteUser(name); err != nil {
-    switch {
-    case ErrNotFound:
-        log.Printf(&quot;user %s already deleted&quot;, name)
-        return nil
-    case ErrTooMany:
-        return fmt.Errorf(&quot;%s matches too many users&quot;, name)
-    default:
-        return err
-    }
-}
-</code></pre>
-<p>If <code>DeleteUser(name)</code> returns <code>ErrNotFound</code> we just log and return <code>nil</code>, i.e. we suppress the error because delete is idempotent (or whatever reason; this is just an example). If the func returns <code>ErrTooMany</code> we wrap and return that in an new error message to add more context. In this case, perhaps we know the caller logs return errors, so we need a great error message (ironically, this one is not so great because it doesn&rsquo;t specify what &ldquo;too many&rdquo; means; better would be: &ldquo;%s matches %d users, only 100 allowed&rdquo;). Finally, when handling errors like this, always handle the <code>default</code> case because the errors in <code>DeleteUser()</code> can change and it can return errors from functions it calls that we cannot see (especially if it&rsquo;s calling 3rd-party pkgs). In this case, if we don&rsquo;t explicitly handle the error, we simply return the unaltered error and let the caller deal with it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">DeleteUser</span>(<span style="color:#a6e22e">name</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">ErrNotFound</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;user %s already deleted&#34;</span>, <span style="color:#a6e22e">name</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">ErrTooMany</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;%s matches too many users&#34;</span>, <span style="color:#a6e22e">name</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>If <code>DeleteUser(name)</code> returns <code>ErrNotFound</code> we just log and return <code>nil</code>, i.e. we suppress the error because delete is idempotent (or whatever reason; this is just an example). If the func returns <code>ErrTooMany</code> we wrap and return that in an new error message to add more context. In this case, perhaps we know the caller logs return errors, so we need a great error message (ironically, this one is not so great because it doesn&rsquo;t specify what &ldquo;too many&rdquo; means; better would be: &ldquo;%s matches %d users, only 100 allowed&rdquo;). Finally, when handling errors like this, always handle the <code>default</code> case because the errors in <code>DeleteUser()</code> can change and it can return errors from functions it calls that we cannot see (especially if it&rsquo;s calling 3rd-party pkgs). In this case, if we don&rsquo;t explicitly handle the error, we simply return the unaltered error and let the caller deal with it.</p>
 <p>These types are errors are common because they&rsquo;re very powerful for both package and caller. In my opinion, they&rsquo;re a defining quality of a well-designed, mature package. They show that the package knows itself, so to speak. By contrast, a poorly-designed package returns a barrage of random errors—it&rsquo;s anyone&rsquo;s guess! That often indicates that the package doesn&rsquo;t care or handle errors well, it returns whatever and forces the caller to figure it out, i.e. the package isn&rsquo;t actively trying to help the caller. But when a package like <a href="https://golang.org/pkg/io/#pkg-variables">io</a> has documented error variables, I know what to expect and what it means, and that helps me as the caller.</p>
 <p>Use package error variables liberally when the code is stable enough to make it clear what kind of errors the package commonly returns. Look at Go core packages for many examples. But don&rsquo;t overdo it. It&rsquo;s perfectly fine and normal for packages to return some, or many, error messages. Package error vars should be common (frequently returned or returned by many functions) or important (something the caller should know about and handle specifically). Remember: once a package exposes an error variable, removing it is a breaking code change requiring a new minor level release.</p>
 <h2 id="custom-error-type">Custom Error Type</h2>
 <p>Custom error types are objects (struct) that implement the <a href="https://golang.org/pkg/builtin/#error">error interface type</a>:</p>
-<pre><code class="language-go">type DbError struct {
-    Schema  string
-    Message string
-    Code    int
-}
-
-type (e DbError) Error() string {
-    return fmt.Sprintf(&quot;using %s: error %d: %s&quot;, e.Schema, e.Code, e.Message)
-}
-</code></pre>
-<p>Custom error types encapsulate app-specific information. They are custom but also plain &lsquo;ol error types because they implement the error interface. So they can be used for the previous two types, error messages and package error variables, but they can also be used like:</p>
-<pre><code class="language-go">// In an API controller
-if err := DeleteUser(name); err != nil {
-    switch v := err.(type) {
-    case DbError:
-        switch v.Code {
-	case 1836: // ER_READ_ONLY_MODE
-	    http.Error(w, &quot;db is read-only, try again&quot;, http.StatusServiceUnavailable)
-	default:
-	    http.Error(w, &quot;db error: &quot; + v.Error(), http.StatusInternalServerError)
-        }
-    default:
-        http.Error(w, &quot;API error: &quot; + err.Error(), http.StatusInternalServerError)
-    }
-    return
-}
-</code></pre>
-<p>The custom erorr type lets the caller do fine-grain error handling. In this example, the API controller returns HTTP status code 503 (http.StatusServiceUnavailable) if the database is read-only. A robust client will handle this code and retry the request. The custom type also injects more useful, contextual information into the error message: the schema name. Any app-specific information can be added to the custom type which helps make the error very specific and detailed.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DbError</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Schema</span>  <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Message</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Code</span>    <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> (<span style="color:#a6e22e">e</span> <span style="color:#a6e22e">DbError</span>) <span style="color:#a6e22e">Error</span>() <span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;using %s: error %d: %s&#34;</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">Schema</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">Code</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">Message</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Custom error types encapsulate app-specific information. They are custom but also plain &lsquo;ol error types because they implement the error interface. So they can be used for the previous two types, error messages and package error variables, but they can also be used like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// In an API controller
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">DeleteUser</span>(<span style="color:#a6e22e">name</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">err</span>.(<span style="color:#66d9ef">type</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">DbError</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">v</span>.<span style="color:#a6e22e">Code</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1836</span>: <span style="color:#75715e">// ER_READ_ONLY_MODE
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Error</span>(<span style="color:#a6e22e">w</span>, <span style="color:#e6db74">&#34;db is read-only, try again&#34;</span>, <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusServiceUnavailable</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>	    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Error</span>(<span style="color:#a6e22e">w</span>, <span style="color:#e6db74">&#34;db error: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">v</span>.<span style="color:#a6e22e">Error</span>(), <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusInternalServerError</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Error</span>(<span style="color:#a6e22e">w</span>, <span style="color:#e6db74">&#34;API error: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">Error</span>(), <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusInternalServerError</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The custom erorr type lets the caller do fine-grain error handling. In this example, the API controller returns HTTP status code 503 (http.StatusServiceUnavailable) if the database is read-only. A robust client will handle this code and retry the request. The custom type also injects more useful, contextual information into the error message: the schema name. Any app-specific information can be added to the custom type which helps make the error very specific and detailed.</p>
 <p>Package error variables can be custom error types:</p>
-<pre><code class="language-go">var (
-    // ErrReadOnlyDb is returned when the database is read-only.
-    ErrReadOnlyDb = DbError{Code: 1836, Message: &quot;db is read-only&quot;}
-)
-</code></pre>
-<p>Some Go core packages use this, but it&rsquo;s less common in the wild. Use sparingly and only when needed.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ErrReadOnlyDb is returned when the database is read-only.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">ErrReadOnlyDb</span> = <span style="color:#a6e22e">DbError</span>{<span style="color:#a6e22e">Code</span>: <span style="color:#ae81ff">1836</span>, <span style="color:#a6e22e">Message</span>: <span style="color:#e6db74">&#34;db is read-only&#34;</span>}
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>Some Go core packages use this, but it&rsquo;s less common in the wild. Use sparingly and only when needed.</p>
 <p>Use custom error types when simpler package error variables don&rsquo;t convey enough app-specifc, contextual information that callers need. Package error variables are usually sufficient, so wait to use custom error types until there&rsquo;s a need.</p>
 
       </article>

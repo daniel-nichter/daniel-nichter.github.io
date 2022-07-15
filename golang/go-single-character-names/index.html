@@ -7,9 +7,9 @@
   <title>Go Single-character Names</title>
   <meta property="og:title" content="Go Single-character Names" />
   <meta name="description" content="Go Single-character Names Go loves short names. Even the authoritative page Effective Go uses this example:
-f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err != nil { f.Close() return err } codeUsing(f, d)  Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is not idiomatic because, above all, Go is optimized for reading, especially by future engineers.">
+f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err != nil { f.Close() return err } codeUsing(f, d) Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is not idiomatic because, above all, Go is optimized for reading, especially by future engineers.">
   <meta property="og:description" content="Go Single-character Names Go loves short names. Even the authoritative page Effective Go uses this example:
-f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err != nil { f.Close() return err } codeUsing(f, d)  Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is not idiomatic because, above all, Go is optimized for reading, especially by future engineers.">
+f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err != nil { f.Close() return err } codeUsing(f, d) Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is not idiomatic because, above all, Go is optimized for reading, especially by future engineers.">
   <meta name="author" content="Daniel Nichter"/>
   <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
@@ -18,7 +18,7 @@ f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err !
   <meta property="og:url" content="https://hackmysql.com/golang/go-single-character-names/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/golang/go-single-character-names/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -135,93 +135,84 @@ f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err !
 	<div id="art">
 		<article role="main" class="blog-post"><h1 id="go-single-character-names">Go Single-character Names</h1>
 <p>Go loves short names. Even the authoritative page <a href="https://go.dev/doc/effective_go"><em>Effective Go</em></a> uses this example:</p>
-<pre><code class="language-go">f, err := os.Open(name)
-if err != nil {
-    return err
-}
-d, err := f.Stat()
-if err != nil {
-    f.Close()
-    return err
-}
-codeUsing(f, d)
-</code></pre>
-<p>Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is <em>not</em> idiomatic because, above all, Go is optimized for reading, especially by future engineers.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">name</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">d</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Stat</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">codeUsing</span>(<span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">d</span>)
+</span></span></code></pre></div><p>Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is <em>not</em> idiomatic because, above all, Go is optimized for reading, especially by future engineers.
 This page describes four cases when single-character names—the shortest names possible—are idiomatic and acceptable.</p>
 <p>But first: <em>do not avoid an easy alternative</em>:</p>
-<pre><code class="language-go">f := &quot;/tmp/foo&quot;        // not ideal
-tmpFile := &quot;/tmp/foo&quot;  // better: easy alternative
-</code></pre>
-<p>Judicious use of single-character names in Go is idiomatic, but easy alternatives are far better.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">f</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;/tmp/foo&#34;</span>        <span style="color:#75715e">// not ideal
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">tmpFile</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;/tmp/foo&#34;</span>  <span style="color:#75715e">// better: easy alternative
+</span></span></span></code></pre></div><p>Judicious use of single-character names in Go is idiomatic, but easy alternatives are far better.</p>
 <h2 id="loops">Loops</h2>
-<pre><code class="language-go">for i := 0; i &lt; 100; i++ {
-}
-
-for k, v := range someMap {
-}
-
-for _, n := range someList {
-}
-</code></pre>
-<p>Loop variables have near universal agreement for being single characters.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">someMap</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">someList</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Loop variables have near universal agreement for being single characters.
 In fact, not using <code>i</code>, <code>j</code>, and similar in <code>for</code> loops might even be considered bad style because this style is ubiquitous across languages.</p>
 <p>However, you will find counter arguments that even loop vars should have short, meaningful names.
 I agree and advise the same: do not avoid an easy alternative.
 For example, suppose you have a map keyed on hostname with corresponding IP address:</p>
-<pre><code class="language-go">for hostname, ip := range hostnames {
-}
-</code></pre>
-<p>In this case, <code>hostname</code> and <code>ip</code> are clearly superior to <code>k</code> and <code>v</code>—an easy alternative—and they&rsquo;re still very short.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">hostname</span>, <span style="color:#a6e22e">ip</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">hostnames</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>In this case, <code>hostname</code> and <code>ip</code> are clearly superior to <code>k</code> and <code>v</code>—an easy alternative—and they&rsquo;re still very short.</p>
 <h2 id="blocks">Blocks</h2>
-<pre><code class="language-go">
-// Do something important with the file. I don't know what
-// because I'm a little teapot and this example isn't real.
-f, err := os.Open(name)
-if err != nil {
-    return err
-}
-d, err := f.Stat()
-if err != nil {
-    f.Close()
-    return err
-}
-codeUsing(f, d)
-
-</code></pre>
-<p>That example from <a href="https://go.dev/doc/effective_go"><em>Effective Go</em></a> is a single code block.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Do something important with the file. I don&#39;t know what
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// because I&#39;m a little teapot and this example isn&#39;t real.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">name</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">d</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Stat</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">codeUsing</span>(<span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">d</span>)
+</span></span></code></pre></div><p>That example from <a href="https://go.dev/doc/effective_go"><em>Effective Go</em></a> is a single code block.
 (To emphasize that it&rsquo;s a block, I added blank lines and a block code comment.)
 The variables <code>f</code> and <code>d</code> are declared and used only within the block, which makes it easy for humans (without the help of an IDE) to follow and understand them.
 This would be a bad, non-idiomatic example if either variable was used outside the block (later in function, for example).</p>
 <p>Although acceptable, it&rsquo;s better to avoid single-character variables in blocks unless the block is short (tens of lines) and well contained.
 If in doubt, err on the side of caution and use short descriptive variable names.</p>
 <h2 id="receivers">Receivers</h2>
-<pre><code class="language-go">type T struct {}
-
-func (t *T) foo() {
-}
-</code></pre>
-<p>Receiver variables are often single characters, as in <code>t</code> for the method receiver on type <code>T</code>.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">T</span> <span style="color:#66d9ef">struct</span> {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">foo</span>() {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Receiver variables are often single characters, as in <code>t</code> for the method receiver on type <code>T</code>.
 If a single character is too cryptic, then use two or three characters.</p>
 <p>Using short descriptive names for receivers is less common in Go; for example:</p>
-<pre><code class="language-go">func (worker *Worker) Slog() {  // less common
-func (w *Worker) Slog() {       // more common
-</code></pre>
-<p>You see the more common form, <code>w *Worker</code>, even in <a href="https://go.dev/doc/effective_go"><em>Effective Go</em></a> examples.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">worker</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Worker</span>) <span style="color:#a6e22e">Slog</span>() {  <span style="color:#75715e">// less common
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">w</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Worker</span>) <span style="color:#a6e22e">Slog</span>() {       <span style="color:#75715e">// more common
+</span></span></span></code></pre></div><p>You see the more common form, <code>w *Worker</code>, even in <a href="https://go.dev/doc/effective_go"><em>Effective Go</em></a> examples.
 Two- and three-character receivers are acceptable and sometimes better, like <code>src</code> instead of <code>s</code>.</p>
 <p class="warning">
 Never use <code>self</code> or <code>this</code> for Go receiver names.
 </p>
 <h2 id="arguments">Arguments</h2>
-<pre><code class="language-go">// EscapeString escapes special characters ...
-func EscapeString(s string) string {}
-
-// Render renders the parse tree n to the given writer.
-func Render(w io.Writer, n *Node) error {}
-
-// Parse returns the parse tree for the HTML from the given Reader.
-func Parse(r io.Reader) (*Node, error) {}
-</code></pre>
-<p>Single character arguments are practically the norm in the Go standard library.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// EscapeString escapes special characters ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">EscapeString</span>(<span style="color:#a6e22e">s</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">string</span> {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Render renders the parse tree n to the given writer.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Render</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Writer</span>, <span style="color:#a6e22e">n</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Node</span>) <span style="color:#66d9ef">error</span> {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Parse returns the parse tree for the HTML from the given Reader.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">r</span> <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Reader</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">Node</span>, <span style="color:#66d9ef">error</span>) {}
+</span></span></code></pre></div><p>Single character arguments are practically the norm in the Go standard library.
 The three example above are from <a href="https://pkg.go.dev/golang.org/x/net/html"><code>net/html</code></a>.</p>
 <p>There are three requirements that makes these single-character argument names acceptable and idiomatic:</p>
 <ol>
@@ -230,18 +221,17 @@ The three example above are from <a href="https://pkg.go.dev/golang.org/x/net/ht
 <li>Relatively limited, block-scoped usage</li>
 </ol>
 <p><code>Render</code> exemplifies the first and second; let&rsquo;s see if it exemplifies the third:</p>
-<pre><code class="language-go">func Render(w io.Writer, n *Node) error {
-	if x, ok := w.(writer); ok {
-		return render(x, n)
-	}
-	buf := bufio.NewWriter(w)
-	if err := render(buf, n); err != nil {
-		return err
-	}
-	return buf.Flush()
-}
-</code></pre>
-<p>Yes: that function is one small block that makes it easy to follow arguments <code>w</code> and <code>n</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Render</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Writer</span>, <span style="color:#a6e22e">n</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Node</span>) <span style="color:#66d9ef">error</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">w</span>.(<span style="color:#a6e22e">writer</span>); <span style="color:#a6e22e">ok</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">render</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">n</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">buf</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">bufio</span>.<span style="color:#a6e22e">NewWriter</span>(<span style="color:#a6e22e">w</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">render</span>(<span style="color:#a6e22e">buf</span>, <span style="color:#a6e22e">n</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">buf</span>.<span style="color:#a6e22e">Flush</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Yes: that function is one small block that makes it easy to follow arguments <code>w</code> and <code>n</code>.</p>
 </article>
 	</div>
 	<nav id="toc">

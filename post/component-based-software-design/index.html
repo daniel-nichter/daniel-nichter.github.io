@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/post/component-based-software-design/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/post/component-based-software-design/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -186,15 +186,14 @@
 </ul>
 <p>Sound familiar? We&rsquo;ve all seen code that exemplifies the second list. It is difficult for a system to be well-designed if exhibiting too many of those counterpoints.</p>
 <p><em>Delineation</em> and <em>Identity</em> are the most important aspects of a well-designed system because they define components. What is a component of any system if not separate (delineated) and identifiable? This sounds trivially true, but in software it is very often not true. To illustrate this further, imagine how a human body might be implemented in software. An engineer might design the heart and liver as a single component by reasoning that, since blood passes through both as a necessary part of their function, they are a &ldquo;blood processing&rdquo; component:</p>
-<pre><code class="language-go">package blood
-
-type Processor interface {
-    Pump(rate float64) error
-    Detoxify() error
-}
-</code></pre>
-<p>That is a delineated component, so it&rsquo;s a good start, but its identity is conflated. The identify of a component is its <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">single responsibility</a>. To test identity, try to answer the question &ldquo;What does it do?&rdquo; in a single sentence that accurately and completely captures its high-level responsibility. For <code>blood.Processor</code>, saying, &ldquo;It processes blood.&rdquo;, is neither accurate nor complete because &ldquo;processes&rdquo; is too vague. In software, most components &ldquo;process&rdquo;, &ldquo;store&rdquo;, &ldquo;transfer&rdquo;, &ldquo;calculate&rdquo;, and other generic computing terms. These are not always bad design, but they should be thoroughly scrutinized by the team to see if a generically-named component is really several specific components. Let&rsquo;s further this example by adding to <code>blood.Processor</code> another method: <code>Oxygenate() error</code>. The lungs oxygenate blood. This is a type of processing, but now <code>blood.Processor</code> is quite conflated because in this example we know that liver, heart, and lungs are very different components. A better design is:</p>
-<pre><code>package blood
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">blood</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Processor</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Pump</span>(<span style="color:#a6e22e">rate</span> <span style="color:#66d9ef">float64</span>) <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Detoxify</span>() <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>That is a delineated component, so it&rsquo;s a good start, but its identity is conflated. The identify of a component is its <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">single responsibility</a>. To test identity, try to answer the question &ldquo;What does it do?&rdquo; in a single sentence that accurately and completely captures its high-level responsibility. For <code>blood.Processor</code>, saying, &ldquo;It processes blood.&rdquo;, is neither accurate nor complete because &ldquo;processes&rdquo; is too vague. In software, most components &ldquo;process&rdquo;, &ldquo;store&rdquo;, &ldquo;transfer&rdquo;, &ldquo;calculate&rdquo;, and other generic computing terms. These are not always bad design, but they should be thoroughly scrutinized by the team to see if a generically-named component is really several specific components. Let&rsquo;s further this example by adding to <code>blood.Processor</code> another method: <code>Oxygenate() error</code>. The lungs oxygenate blood. This is a type of processing, but now <code>blood.Processor</code> is quite conflated because in this example we know that liver, heart, and lungs are very different components. A better design is:</p>
+<pre tabindex="0"><code>package blood
 
 type Pumper interface {
     // Set current rate, return previous rate.
@@ -224,8 +223,7 @@ type Breather interface {
     // Return current VO2 max rate.
     VO2() float64
 }
-</code></pre>
-<p>Huge difference! Two of which are important. First, for each component we can better answer the identity test question:</p>
+</code></pre><p>Huge difference! Two of which are important. First, for each component we can better answer the identity test question:</p>
 <ul>
 <li><code>blood.Pumper</code> pumps blood.</li>
 <li><code>blood.Cleaner</code> cleans blood.</li>
@@ -263,17 +261,16 @@ type Breather interface {
 <h2 id="from-layer-to-component">From Layer to Component</h2>
 <p>We must think of and see software systems in terms of components. Forget the data layer. Data is not a layer; the whole system is data. Everything is data. Data is everywhere.</p>
 <p>To illustrate, let&rsquo;s use the <a href="https://godoc.org/github.com/square/spincycle/request-manager/joblog">joblog</a> component of Spin Cycle, a large open-source project my colleagues and I are developing. The fact that we can study the <code>joblog</code> in isolation is a direct result and benefit of component-based design. Spin Cycle has many components, but we can ignore them. We only need to know that the <code>joblog</code> stores job log entries (JLE). (That&rsquo;s another good example of the identity test question.) It is sufficient background to say that Spin Cycle runs <em>requests</em>: infrastructure tasks, like &ldquo;allocate host&rdquo;, which are accomplished by a series of discrete jobs. Each job is logged by the <code>joblog</code>:</p>
-<pre><code class="language-go">package joblog
-
-type Store interface {
-    Create(requestId string, jle proto.JobLog) (proto.JobLog, error)
-    Get(requestId string, jobId string) (proto.JobLog, error)
-    GetFull(requestId string) ([]proto.JobLog, error)
-}
-
-func NewStore(db *sql.DB) Store
-</code></pre>
-<p>The code above is the whole <code>joblog</code> component. It is tiny, but it illustrates many points. First and to the main point: no data layer or model. To appreciate this, consider instead how it would be organized in the Ruby on Rails framework:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">joblog</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Store</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Create</span>(<span style="color:#a6e22e">requestId</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">jle</span> <span style="color:#a6e22e">proto</span>.<span style="color:#a6e22e">JobLog</span>) (<span style="color:#a6e22e">proto</span>.<span style="color:#a6e22e">JobLog</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">requestId</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">jobId</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">proto</span>.<span style="color:#a6e22e">JobLog</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">GetFull</span>(<span style="color:#a6e22e">requestId</span> <span style="color:#66d9ef">string</span>) ([]<span style="color:#a6e22e">proto</span>.<span style="color:#a6e22e">JobLog</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewStore</span>(<span style="color:#a6e22e">db</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">DB</span>) <span style="color:#a6e22e">Store</span>
+</span></span></code></pre></div><p>The code above is the whole <code>joblog</code> component. It is tiny, but it illustrates many points. First and to the main point: no data layer or model. To appreciate this, consider instead how it would be organized in the Ruby on Rails framework:</p>
 <ul>
 <li>app/helpers/joblog.rb</li>
 <li>app/models/joblog.rb</li>

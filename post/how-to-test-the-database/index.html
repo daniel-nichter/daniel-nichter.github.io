@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/post/how-to-test-the-database/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/post/how-to-test-the-database/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -212,39 +212,37 @@
 <p>Second reason I stress &ldquo;real&rdquo;: <em>please, do not wrap the database driver</em>. Do not attempt to escape the extra work of setting up sandbox instances and dealing with the myriad aspects of a real database by wrapping the database client driver so that you can pass code under test a mock driver that simulates database access. This is a pretty extreme measure, so if you haven&rsquo;t seen it, it&rsquo;s like:</p>
 <p><img src="/img/db-driver-wrapper.svg" alt="Database Driver Wrapper"></p>
 <p>At top, you have only the database driver with, for example, two methods: <code>Connect()</code> and <code>Query()</code>. At bottom, you have what strives to be a transparent wrapper, <code>MyDriver</code>, around the real driver. <code>MyDriver</code> has the same methods at <code>DbDriver</code> (not shown), so its code is mostly:</p>
-<pre><code class="language-go">func (my *MyDriver) Connect() {
-    return my.realDriver.Connect()
-}
-
-func (my *MyDriver) Query() {
-    return my.realDriver.Query()
-}
-</code></pre>
-<p>Why do this? The intent is to define an interface that <code>MyDriver</code> implements, then pass around the interface type (instead of the low-level <code>DbDriver</code> type) which allows us to have a <code>MockDriver</code> for testing. Good intention but, in my humble opinion, 1) its <em>way</em> more work and trouble than it&rsquo;s worth especially because 2) there&rsquo;s a better, more clean design.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">my</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">MyDriver</span>) <span style="color:#a6e22e">Connect</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">my</span>.<span style="color:#a6e22e">realDriver</span>.<span style="color:#a6e22e">Connect</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">my</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">MyDriver</span>) <span style="color:#a6e22e">Query</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">my</span>.<span style="color:#a6e22e">realDriver</span>.<span style="color:#a6e22e">Query</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Why do this? The intent is to define an interface that <code>MyDriver</code> implements, then pass around the interface type (instead of the low-level <code>DbDriver</code> type) which allows us to have a <code>MockDriver</code> for testing. Good intention but, in my humble opinion, 1) its <em>way</em> more work and trouble than it&rsquo;s worth especially because 2) there&rsquo;s a better, more clean design.</p>
 <blockquote>
 <p>But what about one of my favorite adages: &ldquo;Most problems in software can be solved by one more layer of abstraction.&rdquo;? Yes, this is one more layer of abstraction, but that adage doesn&rsquo;t mean &ldquo;abstract whatever, wherever.&rdquo;</p>
 </blockquote>
 <p>Take a look at the <a href="https://golang.org/pkg/database/sql/">Go SQL driver</a>. Wrapping that fully is a lot of work, and getting it right (i.e. not introducing bugs in the wrapper), is a lot of work. All that work when we don&rsquo;t even need the wrapper. Going back to <code>GetData()</code> (above), that method (with a better name) is or should be part of a package or component that provides higher-level, domain-specific functionality. Let&rsquo;s pretend it&rsquo;s a <a href="https://msdn.microsoft.com/en-us/library/ff649690.aspx">repository</a>:</p>
-<pre><code class="language-go">type DataRepo interface {
-    GetData()
-}
-
-//
-// Implementations of DataRepo
-//
-
-type MySQLDataRepo struct {}
-type FileDataRepo  struct {}
-type MockDataRepo  struct {}
-</code></pre>
-<p>That&rsquo;s all very generic and poorly named, but you get the point. <code>MySQLDataRepo</code> uses the low-level driver whereas the other implementations do not. To test the database for real, we test <code>MySQLDataRepo</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DataRepo</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">GetData</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Implementations of DataRepo
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MySQLDataRepo</span> <span style="color:#66d9ef">struct</span> {}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FileDataRepo</span>  <span style="color:#66d9ef">struct</span> {}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MockDataRepo</span>  <span style="color:#66d9ef">struct</span> {}
+</span></span></code></pre></div><p>That&rsquo;s all very generic and poorly named, but you get the point. <code>MySQLDataRepo</code> uses the low-level driver whereas the other implementations do not. To test the database for real, we test <code>MySQLDataRepo</code>.</p>
 <h1 id="when-the-database-isnt-data">When the Database Isn&rsquo;t Data</h1>
 <p>Earlier I mentioned &ldquo;Programs are largely &ldquo;data in, data out&rdquo;. &hellip; when it comes to databases this is usually what&rsquo;s happening. (<em>Usually</em>, but not always, which we&rsquo;ll explore later.)&rdquo;. Let&rsquo;s explore this now.</p>
 <p>Apart from its data, a database is just another service, and as such it needs to be configured. For example: replication. So what if we need to programmatically configure and enable replication? In that case, we need a service.</p>
 <p><img src="/img/data-logic-service.svg" alt="Data, Logic, Service"></p>
 <p>We&rsquo;ve talked extensively about data and logic; a third broad category is &ldquo;service&rdquo;. Almost everything in a program is one of these three, so it&rsquo;s a helpful way to think about and breakdown a program from a <em>very</em> high level. In other words, we ask: &ldquo;Is this a matter of data, logic, or service?&rdquo; A service, as its name implies, provides some kind of service, i.e. it <em>does</em> something. A service is defined by what it <em>does</em>, whereas data is defined by its structure and content (i.e. the data itself), and logic is defined by its rules, flow control, etc. (I&rsquo;m glossing a lot since this blog post is already pretty long.)</p>
 <p>Therefore, when MySQL is being treated as a service (and not a source of data), create a new service in the code like:</p>
-<pre><code>type MySQLConfigurator interface {
+<pre tabindex="0"><code>type MySQLConfigurator interface {
     EnableReplication()
 }
 
@@ -254,8 +252,7 @@ type MockDataRepo  struct {}
 
 type RealMySQLConfigurator struct {}
 type MockMySQLConfigurator struct {}
-</code></pre>
-<p>Again, poorly named but you get the point. <code>RealMySQLConfigurator</code> would actually connect to MySQL and attempt to do whatever, whereas <code>MockMySQLConfigurator</code> can be used to test code that uses a <code>MySQLConfigurator</code> because that code, being cleanly separated and unconcerned with implementation details, doesn&rsquo;t need a real MySQL instance. This also allows us to simulate service failures in <code>MockMySQLConfigurator</code>, which is typically very difficult with a real database.</p>
+</code></pre><p>Again, poorly named but you get the point. <code>RealMySQLConfigurator</code> would actually connect to MySQL and attempt to do whatever, whereas <code>MockMySQLConfigurator</code> can be used to test code that uses a <code>MySQLConfigurator</code> because that code, being cleanly separated and unconcerned with implementation details, doesn&rsquo;t need a real MySQL instance. This also allows us to simulate service failures in <code>MockMySQLConfigurator</code>, which is typically very difficult with a real database.</p>
 <h1 id="conclusion">Conclusion</h1>
 <p>There are good, clean solutions for testing the database. If the database is a source of data (the usual case), factor out data access (e.g. <a href="https://msdn.microsoft.com/en-us/library/ff649690.aspx">repository</a>). If the database is being treated as a service, create a service class/package/component that exposes service abilities and hides the implementation details (e.g. actually reconfiguring the database).</p>
 <p>As with most software design and development, a clean solution is a matter of separating the &ldquo;parts&rdquo;, concerns, roles, and responsibilities. One way to help do this from a very high level is thinking of software in terms of data, logic, and services. When code mixes these too much—for example, a function that handles both data (access) and logic on that data—you&rsquo;ll know it because it will feel difficult to test. That feeling is &ldquo;code push-back&rdquo;, or &ldquo;the code pushing back&rdquo; (or &ldquo;code smell&rdquo;). Don&rsquo;t ignore it; there&rsquo;s a better way, as hopefully this post began to demonstrate.</p>

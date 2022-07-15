@@ -12,11 +12,11 @@
       <title>MySQL Data Locks: Mapping 8.0 to 5.7</title>
       <link>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</link>
       <pubDate>Mon, 26 Jul 2021 15:40:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</guid>
       <description>As of MySQL 8.0, performance_schema.data_locks shows InnoDB data locks. Before MySQL 8.0, you must SET GLOBAL innodb_status_output_locks=ON and ruminate on the output of SHOW ENGINE INNODB STATUS. The image below (click to see full size) shows how the former maps to the latter for three record locks and one table lock on table t.
- Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as of MySQL 5.7 and removed as of MySQL 8.</description>
+Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as of MySQL 5.7 and removed as of MySQL 8.</description>
     </item>
-    
+
   </channel>
 </rss>

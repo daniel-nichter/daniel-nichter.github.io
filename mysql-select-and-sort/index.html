@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/mysql-select-and-sort/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/mysql-select-and-sort/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -146,7 +146,7 @@
 <li><code>Sort_rows</code></li>
 </ul>
 <p>Using MySQL 8.0.22 Community, the test tables are:</p>
-<pre><code>CREATE TABLE `t1` (
+<pre tabindex="0"><code>CREATE TABLE `t1` (
   `id` int NOT NULL AUTO_INCREMENT,
   `c1` int NOT NULL,
   `c2` int NOT NULL,
@@ -161,8 +161,7 @@ CREATE TABLE `t2` (
   PRIMARY KEY (`id`),
   KEY `c1` (`c1`)
 ) ENGINE=InnoDB
-</code></pre>
-<p>Each table has about 30 rows.</p>
+</code></pre><p>Each table has about 30 rows.</p>
 <h2 id="select">Select</h2>
 <table>
 <thead>
@@ -202,7 +201,7 @@ CREATE TABLE `t2` (
 </table>
 <p><code>Select_scan</code> and <code>Select_range</code> apply to the first (or only) table. <code>Select_full_join</code>, <code>Select_full_range_join</code>, and <code>Select_range_check</code> apply to the second and subsequent tables.</p>
 <p>MySQL table join order is determined by the query planner (to create the best execution plan) not the <a href="https://dev.mysql.com/doc/refman/8.0/en/join.html">JOIN clause</a> clause (unless STRAIGHT_JOIN is used).</p>
-<pre><code>mysql&gt; EXPLAIN SELECT * FROM t1, t2 WHERE t1.c1 = t2.c2 ORDER BY t1.c2;
+<pre tabindex="0"><code>mysql&gt; EXPLAIN SELECT * FROM t1, t2 WHERE t1.c1 = t2.c2 ORDER BY t1.c2;
 +-------------+-------+------+---------------+------+---------+------------+------+----------+---------------------------------+
 | select_type | table | type | possible_keys | key  | key_len | ref        | rows | filtered | Extra                           |
 +-------------+-------+------+---------------+------+---------+------------+------+----------+---------------------------------+
@@ -220,8 +219,7 @@ mysql&gt; EXPLAIN FORMAT=TREE SELECT * FROM t1, t2 WHERE t1.c1 = t2.c2 ORDER BY 
             -&gt; Table scan on t2  (cost=2.85 rows=26)
             -&gt; Index lookup on t1 using c1 (c1=t2.c2)  (cost=0.25 rows=1) |
 +-------------------------------------------------------------------------+
-</code></pre>
-<p>Top output is a standard EXPLAIN plan with the first table on top, so <code>t2</code> is the first table and <code>t1</code> is the second table. Note that the tables are listed differently in the FROM clause. MySQL is accessing table <code>t2</code> first because it produces a better execution plan which you can see in detail by <a href="https://dev.mysql.com/doc/internals/en/optimizer-tracing.html">tracing the optimizer</a>.</p>
+</code></pre><p>Top output is a standard EXPLAIN plan with the first table on top, so <code>t2</code> is the first table and <code>t1</code> is the second table. Note that the tables are listed differently in the FROM clause. MySQL is accessing table <code>t2</code> first because it produces a better execution plan which you can see in detail by <a href="https://dev.mysql.com/doc/internals/en/optimizer-tracing.html">tracing the optimizer</a>.</p>
 <p>Bottom output is an &ldquo;EXPLAIN tree&rdquo; which is new as of MySQL 8.0. It shows the query execution plan <em>from the bottom up, per-node</em>. The EXPLAIN tree reads:</p>
 <ol>
 <li>Nested loop inner join
@@ -235,7 +233,7 @@ mysql&gt; EXPLAIN FORMAT=TREE SELECT * FROM t1, t2 WHERE t1.c1 = t2.c2 ORDER BY 
 </ol>
 <p>Step 3 refers to &ldquo;Using temporary&rdquo; in the EXPLAIN plan, and step 4 refers to &ldquo;Using filesort&rdquo;. See <a href="https://petrunia.net/2007/08/29/how-mysql-executes-order-by/">How MySQL executes ORDER BY</a> by Sergei Petrunia for a beautifully illustrated explanation of MySQL ORDER BY.</p>
 <p>The first table, <code>t2</code>, is a table scan (&ldquo;type: ALL&rdquo;), so <code>Select_scan</code> will be incremented. The second table, <code>t1</code>, is neither a table scan nor a range scan, so no metric will be incremented because there are no select metrics for other <a href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain-join-types">join types</a>. Let&rsquo;s clear the session metrics, execute the query, and check the select metrics:</p>
-<pre><code>mysql&gt; FLUSH STATUS;
+<pre tabindex="0"><code>mysql&gt; FLUSH STATUS;
 
 mysql&gt; SELECT * FROM t1, t2 WHERE t1.c1 = t2.c2 ORDER BY t1.c2;
 --
@@ -243,7 +241,7 @@ mysql&gt; SELECT * FROM t1, t2 WHERE t1.c1 = t2.c2 ORDER BY t1.c2;
 --
 20 rows in set (0.00 sec)
 
-mysql&gt; SHOW SESSION STATUS LIKE 'Select_%';
+mysql&gt; SHOW SESSION STATUS LIKE &#39;Select_%&#39;;
 +------------------------+-------+
 | Variable_name          | Value |
 +------------------------+-------+
@@ -253,8 +251,7 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Select_%';
 | Select_range_check     | 0     |
 | Select_scan            | 1     | -- t2
 +------------------------+-------+
-</code></pre>
-<p>As expected, <code>Select_scan</code> = 1 due to the table scan on <code>t2</code>.</p>
+</code></pre><p>As expected, <code>Select_scan</code> = 1 due to the table scan on <code>t2</code>.</p>
 <h3 id="select_scan">Select_scan</h3>
 <p><code>Select_scan</code> refers to the first table in a join, or the only table if there is only one table. It means MySQL did a table <em>or</em> index scan. For such tables, EXPLAIN lists &ldquo;ALL&rdquo; or &ldquo;index&rdquo; in the &ldquo;type&rdquo; column.</p>
 <p>Table scans (&ldquo;type: ALL&rdquo;) are usually (but not always) terrible for performance because reading an entire table is slow. However, table scans are common. It&rsquo;s not uncommon to see a server where 50% of all SELECT queries are <code>Select_scan</code>. A SELECT results in a table scan when no index can be used to for the WHERE conditions. From a performance perspective it&rsquo;s safe to say that you always want to decrease <code>Select_scan</code>—zero is best. However, in some cases the value of <code>Select_scan</code> can increase after optimizing queries because MySQL is able to do more. Ultimately, <code>Select_scan</code> is a performance limiter which should decrease to allow increased overall QPS (queries per second).</p>
@@ -264,7 +261,7 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Select_%';
 <h3 id="select_full_join">Select_full_join</h3>
 <p><code>Select_full_join</code> refers to the second or greater table in a join. It means MySQL did a table scan to join the table to the preceding table. For such tables, EXPLAIN lists &ldquo;ALL&rdquo; in the &ldquo;type&rdquo; column. <code>Select_full_join</code> results when no index can be used to join the table. Like <code>Select_scan</code>, this is a performance limiter that should be avoided.</p>
 <p>The worst case is a table scan on both join tables:</p>
-<pre><code>mysql&gt; EXPLAIN SELECT * FROM t1, t2 WHERE t1.c2 = t2.c2 ;
+<pre tabindex="0"><code>mysql&gt; EXPLAIN SELECT * FROM t1, t2 WHERE t1.c2 = t2.c2 ;
 +-------------+-------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
 | select_type | table | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra                                      |
 +-------------+-------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
@@ -282,7 +279,7 @@ mysql&gt; EXPLAIN FORMAT=TREE SELECT * FROM t1, t2 WHERE t1.c2 = t2.c2 ;
         -&gt; Table scan on t1  (cost=2.25 rows=20)                          |
 +-------------------------------------------------------------------------+
 
-mysql&gt; SHOW SESSION STATUS LIKE 'Select_%';
+mysql&gt; SHOW SESSION STATUS LIKE &#39;Select_%&#39;;
 +------------------------+-------+
 | Variable_name          | Value |
 +------------------------+-------+
@@ -292,8 +289,7 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Select_%';
 | Select_range_check     | 0     |
 | Select_scan            | 1     | -- t1
 +------------------------+-------+
-</code></pre>
-<p>The &ldquo;type: ALL&rdquo; for both tables indicates a table scan. <code>Select_full_join</code> was incremented for the table scan on the second table (<code>t2</code>), and <code>Select_scan</code> was incremented for the table scan on the first table (<code>t1</code>). This query does table scans because the tables are joined on column <code>c2</code> which is not indexed on either table.</p>
+</code></pre><p>The &ldquo;type: ALL&rdquo; for both tables indicates a table scan. <code>Select_full_join</code> was incremented for the table scan on the second table (<code>t2</code>), and <code>Select_scan</code> was incremented for the table scan on the first table (<code>t1</code>). This query does table scans because the tables are joined on column <code>c2</code> which is not indexed on either table.</p>
 <p>This is the worst case because, as the MySQL manual notes:</p>
 <blockquote>
 <p>Because type is ALL for each table, this output indicates that MySQL is generating a Cartesian product of all the tables; that is, every combination of rows. This takes quite a long time, because the product of the number of rows in each table must be examined.</p>
@@ -302,7 +298,7 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Select_%';
 <p>Both EXPLAIN outputs show another new feature in MySQL 8.0: <a href="https://dev.mysql.com/doc/refman/8.0/en/hash-joins.html">hash joins</a>. See <a href="https://mysqlserverteam.com/hash-join-in-mysql-8/">Hash join in MySQL 8</a> by the MySQL Server Team for an illustrated explanation.</p>
 <h3 id="select_full_range_join">Select_full_range_join</h3>
 <p><code>Select_full_range_join</code> refers to the second or greater table in a join. It means MySQL joined the table to the preceding table using a range scan, which is significantly better than <code>Select_full_join</code>. For such tables, EXPLAIN lists &ldquo;type: range&rdquo;. Like <code>Select_range</code>, <code>Select_full_range_join</code> requires an index and the same <a href="https://dev.mysql.com/doc/refman/8.0/en/range-optimization.html">range optimizations</a> apply.</p>
-<pre><code>mysql&gt; EXPLAIN SELECT * FROM t1, t2 WHERE t1.c1 = 10 AND t2.c1 &gt; 13;
+<pre tabindex="0"><code>mysql&gt; EXPLAIN SELECT * FROM t1, t2 WHERE t1.c1 = 10 AND t2.c1 &gt; 13;
 +-------------+-------+-------+---------------+------+---------+-------+------+----------+------------------------------------------------------+
 | select_type | table | type  | possible_keys | key  | key_len | ref   | rows | filtered | Extra                                                |
 +-------------+-------+-------+---------------+------+---------+-------+------+----------+------------------------------------------------------+
@@ -320,7 +316,7 @@ mysql&gt; EXPLAIN FORMAT=TREE SELECT * FROM t1, t2 WHERE t1.c1 = 10 AND t2.c1 &g
         -&gt; Index lookup on t1 using c1 (c1=10)  (cost=0.35 rows=1)                              |
 +-----------------------------------------------------------------------------------------------+
 
-mysql&gt; SHOW STATUS LIKE 'Select_%';
+mysql&gt; SHOW STATUS LIKE &#39;Select_%&#39;;
 +------------------------+-------+
 | Variable_name          | Value |
 +------------------------+-------+
@@ -330,11 +326,10 @@ mysql&gt; SHOW STATUS LIKE 'Select_%';
 | Select_range_check     | 0     |
 | Select_scan            | 0     |
 +------------------------+-------+
-</code></pre>
-<p>Note that the condition on <code>t1</code> is constant: <code>t1.c1 = 10</code>. Since MySQL knows column values from the preceding table (<code>t1</code>), it also knows that it can use those column values to range scan the join table (<code>t2</code>). This is not always the case, as the next select metric indicates.</p>
+</code></pre><p>Note that the condition on <code>t1</code> is constant: <code>t1.c1 = 10</code>. Since MySQL knows column values from the preceding table (<code>t1</code>), it also knows that it can use those column values to range scan the join table (<code>t2</code>). This is not always the case, as the next select metric indicates.</p>
 <h3 id="select_range_check">Select_range_check</h3>
 <p><code>Select_range_check</code> refers to the second or greater table in a join. It means &ldquo;MySQL checks whether it is possible to use a range or index_merge access method to retrieve rows.&rdquo; In other words, it means MySQL wants to do <code>Select_full_range_join</code> but cannot because it does not know the column values from the preceding table, so it checks the index on the join table for each new row (column values) from the preceding table.</p>
-<pre><code>mysql&gt; EXPLAIN SELECT * FROM t1, t2 WHERE t1.c1 &gt; t2.c1;
+<pre tabindex="0"><code>mysql&gt; EXPLAIN SELECT * FROM t1, t2 WHERE t1.c1 &gt; t2.c1;
 +-------------+-------+------+---------------+------+---------+------+------+----------+------------------------------------------------+
 | select_type | table | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra                                          |
 +-------------+-------+------+---------------+------+---------+------+------+----------+------------------------------------------------+
@@ -352,7 +347,7 @@ mysql&gt; EXPLAIN FORMAT=TREE SELECT * FROM t1, t2 WHERE t1.c1 &gt; t2.c1;
         -&gt; Index range scan on t2 (re-planned for each iteration)  (cost=0.06 rows=26) |
 +--------------------------------------------------------------------------------------+
 
-mysql&gt; SHOW SESSION STATUS LIKE 'Select_%';
+mysql&gt; SHOW SESSION STATUS LIKE &#39;Select_%&#39;;
 +------------------------+-------+
 | Variable_name          | Value |
 +------------------------+-------+
@@ -362,8 +357,7 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Select_%';
 | Select_range_check     | 1     | -- t2
 | Select_scan            | 1     | -- t1
 +------------------------+-------+
-</code></pre>
-<p>The condition <code>t1.c1 &gt; t2.c1</code> triggers the range check. As MySQL scans <code>t1</code>, it reads column <code>c1</code> values. In this example, we know the values ahead of time because the test table is tiny and static. But in a real database, table writes and transaction isolation levels mean the values can change, therefore MySQL cannot know them ahead of time. For each row, MySQL checks if can use the index on <code>t2.c1</code> to read the <code>t2</code> row matching the current <code>t1.c1</code> value. It is possible that <code>t1.c1</code> has values not in <code>t2.c1</code>.</p>
+</code></pre><p>The condition <code>t1.c1 &gt; t2.c1</code> triggers the range check. As MySQL scans <code>t1</code>, it reads column <code>c1</code> values. In this example, we know the values ahead of time because the test table is tiny and static. But in a real database, table writes and transaction isolation levels mean the values can change, therefore MySQL cannot know them ahead of time. For each row, MySQL checks if can use the index on <code>t2.c1</code> to read the <code>t2</code> row matching the current <code>t1.c1</code> value. It is possible that <code>t1.c1</code> has values not in <code>t2.c1</code>.</p>
 <p>Even if MySQL determines that it can do a range scan (or index merge), it does <em>not</em> increment <code>Select_full_range_join</code>. Only <code>Select_range_check</code> is incremented.</p>
 <p>See &ldquo;Range checked for each record&rdquo; in <a href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html">EXPLAIN Output Format</a> for a good explanation.</p>
 <h2 id="sort">Sort</h2>
@@ -378,29 +372,25 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Select_%';
 <p>The value of <code>Sort_scan</code> is usually very high because sorting rows is common. Monitor the rate of this metric (sort ops/second) and watch for unexpected changes.</p>
 <h3 id="sort_range">Sort_range</h3>
 <p>As of MySQL 8.0, <code>Sort_range</code> means nothing. The status variable remains, but the code that incremented it was removed. In MySQL 5.7 the code was in <code>sql/filesort.cc</code>:</p>
-<pre><code class="language-cpp">  if (tab-&gt;quick())
-    thd-&gt;inc_status_sort_range();
-  else
-    thd-&gt;inc_status_sort_scan();
-</code></pre>
-<p>But in MySQL 8.0 that if-else block was replaced with a single line:</p>
-<pre><code class="language-cpp">  thd-&gt;inc_status_sort_scan();
-</code></pre>
-<p>In MySQL 5.7 and older, <code>Sort_range</code> and <code>Sort_scan</code> were mutually exclusive, as shown in the code snippet above. <code>Sort_range</code> was incremented instead of <code>Sort_scan</code> for queries using a range scan.</p>
-<pre><code>`Select_scan`  + filesort = `Sort_scan`++
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> (tab<span style="color:#f92672">-&gt;</span>quick())
+</span></span><span style="display:flex;"><span>    thd<span style="color:#f92672">-&gt;</span>inc_status_sort_range();
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    thd<span style="color:#f92672">-&gt;</span>inc_status_sort_scan();
+</span></span></code></pre></div><p>But in MySQL 8.0 that if-else block was replaced with a single line:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>  thd<span style="color:#f92672">-&gt;</span>inc_status_sort_scan();
+</span></span></code></pre></div><p>In MySQL 5.7 and older, <code>Sort_range</code> and <code>Sort_scan</code> were mutually exclusive, as shown in the code snippet above. <code>Sort_range</code> was incremented instead of <code>Sort_scan</code> for queries using a range scan.</p>
+<pre tabindex="0"><code>`Select_scan`  + filesort = `Sort_scan`++
 `Select_range` + filesort = `Sort_range`++
-</code></pre>
-<p>Let&rsquo;s use MySQL 5.7.31 and the <code>salaries</code> table in the <a href="https://dev.mysql.com/doc/employee/en/">employees sample database</a>:</p>
-<pre><code>CREATE TABLE `salaries` (
+</code></pre><p>Let&rsquo;s use MySQL 5.7.31 and the <code>salaries</code> table in the <a href="https://dev.mysql.com/doc/employee/en/">employees sample database</a>:</p>
+<pre tabindex="0"><code>CREATE TABLE `salaries` (
   `emp_no` int(11) NOT NULL,
   `salary` int(11) NOT NULL,
   `from_date` date NOT NULL,
   `to_date` date NOT NULL,
   PRIMARY KEY (`emp_no`,`from_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-</code></pre>
-<p>Column <code>salary</code> is not indexed, so the following query causes a table scan, not a range scan, which means <code>Sort_scan</code> will be incremented:</p>
-<pre><code>mysql&gt; EXPLAIN SELECT emp_no, salary FROM salaries WHERE salary &gt; 250000 ORDER BY emp_no, salary LIMIT 10;
+</code></pre><p>Column <code>salary</code> is not indexed, so the following query causes a table scan, not a range scan, which means <code>Sort_scan</code> will be incremented:</p>
+<pre tabindex="0"><code>mysql&gt; EXPLAIN SELECT emp_no, salary FROM salaries WHERE salary &gt; 250000 ORDER BY emp_no, salary LIMIT 10;
 +-------------+----------+------------+------+---------------+------+---------+------+---------+----------+-----------------------------+
 | select_type | table    | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra                       |
 +-------------+----------+------------+------+---------------+------+---------+------+---------+----------+-----------------------------+
@@ -410,7 +400,7 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Select_%';
 mysql&gt; SELECT emp_no, salary FROM salaries WHERE salary &gt; 250000 ORDER BY emp_no, salary LIMIT 10;
 Empty set (0.74 sec)
 
-mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
+mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 +-------------------+-------+
 | Variable_name     | Value |
 +-------------------+-------+
@@ -419,9 +409,8 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
 | Sort_rows         | 0     |
 | Sort_scan         | 1     | -- Due to type: ALL
 +-------------------+-------+
-</code></pre>
-<p>Now the proof: index <code>salary</code> to cause a range scan:</p>
-<pre><code>mysql&gt; ALTER TABLE salaries ADD INDEX (salary);
+</code></pre><p>Now the proof: index <code>salary</code> to cause a range scan:</p>
+<pre tabindex="0"><code>mysql&gt; ALTER TABLE salaries ADD INDEX (salary);
 Query OK, 0 rows affected (15.52 sec)
 Records: 0  Duplicates: 0  Warnings: 0
 
@@ -437,7 +426,7 @@ mysql&gt; FLUSH STATUS;
 mysql&gt; SELECT emp_no, salary FROM salaries WHERE salary &gt; 250000 ORDER BY emp_no, salary LIMIT 10;
 Empty set (0.18 sec)
 
-mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
+mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 +-------------------+-------+
 | Variable_name     | Value |
 +-------------------+-------+
@@ -446,34 +435,31 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
 | Sort_rows         | 0     |
 | Sort_scan         | 0     |
 +-------------------+-------+
-</code></pre>
-<p>Therefore, in MySQL 5.7 and older, the total number of all sort operations is <code>Sort_scan + Sort_range</code>.</p>
+</code></pre><p>Therefore, in MySQL 5.7 and older, the total number of all sort operations is <code>Sort_scan + Sort_range</code>.</p>
 <h3 id="sort_merge_passes">Sort_merge_passes</h3>
 <p><code>Sort_merge_passes</code> is the number of merge buffer operations. <code>Sort_merge_passes</code> is incremented by 1 each time function <code>merge_buffers()</code> is called (in <code>sql/filesort.cc</code>).</p>
 <p>When <a href="https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_sort_buffer_size">sort_buffer_size</a> is not large enough to hold all unsorted rows, MySQL writes &ldquo;merge buffers&rdquo; to temporary files on disk, then merges the buffers to produce the final, sorted result.</p>
 <p>Let&rsquo;s use a table with 1 million rows created by <a href="https://github.com/akopytov/sysbench">sysbench</a>:</p>
-<pre><code>CREATE TABLE `sbtest1` (
+<pre tabindex="0"><code>CREATE TABLE `sbtest1` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `k` int NOT NULL DEFAULT '0',
-  `c` char(120) NOT NULL DEFAULT '',
-  `pad` char(60) NOT NULL DEFAULT '',
+  `k` int NOT NULL DEFAULT &#39;0&#39;,
+  `c` char(120) NOT NULL DEFAULT &#39;&#39;,
+  `pad` char(60) NOT NULL DEFAULT &#39;&#39;,
   PRIMARY KEY (`id`),
   KEY `k_1` (`k`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000001 DEFAULT CHARSET=utf8 |
-</code></pre>
-<p>The query,</p>
-<pre><code class="language-none">SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c
-</code></pre>
-<p>produces a sorted result of 999,900 rows which does not fit in any sane <code>sort_buffer_size</code>, thereby causing merge buffers to disk and sort merge passes.</p>
+</code></pre><p>The query,</p>
+<pre tabindex="0"><code class="language-none" data-lang="none">SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c
+</code></pre><p>produces a sorted result of 999,900 rows which does not fit in any sane <code>sort_buffer_size</code>, thereby causing merge buffers to disk and sort merge passes.</p>
 <p>As mentioned at the beginning of the <a href="#sort">Sort</a> section: <em>Resist the temptation to “tune” this variable or simply increase its value.</em> But to demonstrate how <code>sort_buffer_size</code> affects <code>Sort_merge_passes</code> and query response time, let&rsquo;s try the query above with different sort buffer sizes: 32 KB (minimum), 10 MB (very large), 32 MB (dangerous), and 128 MB (insane).</p>
 <p><em><strong>sort_buffer_size = 32 KB (minimum)</strong></em></p>
-<pre><code>mysql&gt; SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c;
+<pre tabindex="0"><code>mysql&gt; SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c;
 --
 -- Output removed
 --
 999900 rows in set (3.60 sec)
 
-mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
+mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 +-------------------+--------+
 | Variable_name     | Value  |
 +-------------------+--------+
@@ -482,31 +468,29 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
 | Sort_rows         | 999900 |
 | Sort_scan         | 1      |
 +-------------------+--------+
-</code></pre>
-<pre><code class="language-json">&quot;filesort_summary&quot;: {
-  &quot;memory_available&quot;: 32768,
-  &quot;key_size&quot;: 240,
-  &quot;row_size&quot;: 610,
-  &quot;max_rows_per_buffer&quot;: 53,
-  &quot;num_rows_estimate&quot;: 493200,
-  &quot;num_rows_found&quot;: 999900,
-  &quot;num_initial_chunks_spilled_to_disk&quot;: 11494,
-  &quot;peak_memory_used&quot;: 33368,
-  &quot;sort_algorithm&quot;: &quot;std::sort&quot;,
-  &quot;sort_mode&quot;: &quot;&lt;fixed_sort_key, packed_additional_fields&gt;&quot;
-}
-</code></pre>
-<p>With only 32 KB, MySQL must use 11,494 merge buffers as indicated by <code>num_initial_chunks_spilled_to_disk</code> in the <a href="https://dev.mysql.com/doc/internals/en/optimizer-tracing.html">optimizer trace</a> output at bottom. (This value was fixed as of <a href="https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-2.html">MySQL 8.0.2</a>: &ldquo;In optimizer trace output, num_tmp_files did not actually indicate number of files. It has been renamed to num_initial_chunks_spilled_to_disk and indicates the number of chunks before any merging has occurred. (Bug #25733784, Bug #85487)&rdquo;.) The number of merge passes (1,917) is far less because each call to <code>merge_buffers()</code> merges several buffers (currently 7: <code>constexpr size_t MERGEBUFF = 7;</code> in <code>sql/sql_sort.h</code>). All 32 KB was used, as indicated by <code>peak_memory_used</code>.</p>
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;filesort_summary&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;memory_available&#34;</span>: <span style="color:#ae81ff">32768</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;key_size&#34;</span>: <span style="color:#ae81ff">240</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;row_size&#34;</span>: <span style="color:#ae81ff">610</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;max_rows_per_buffer&#34;</span>: <span style="color:#ae81ff">53</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_estimate&#34;</span>: <span style="color:#ae81ff">493200</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_found&#34;</span>: <span style="color:#ae81ff">999900</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_initial_chunks_spilled_to_disk&#34;</span>: <span style="color:#ae81ff">11494</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;peak_memory_used&#34;</span>: <span style="color:#ae81ff">33368</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_algorithm&#34;</span>: <span style="color:#e6db74">&#34;std::sort&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_mode&#34;</span>: <span style="color:#e6db74">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>With only 32 KB, MySQL must use 11,494 merge buffers as indicated by <code>num_initial_chunks_spilled_to_disk</code> in the <a href="https://dev.mysql.com/doc/internals/en/optimizer-tracing.html">optimizer trace</a> output at bottom. (This value was fixed as of <a href="https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-2.html">MySQL 8.0.2</a>: &ldquo;In optimizer trace output, num_tmp_files did not actually indicate number of files. It has been renamed to num_initial_chunks_spilled_to_disk and indicates the number of chunks before any merging has occurred. (Bug #25733784, Bug #85487)&rdquo;.) The number of merge passes (1,917) is far less because each call to <code>merge_buffers()</code> merges several buffers (currently 7: <code>constexpr size_t MERGEBUFF = 7;</code> in <code>sql/sql_sort.h</code>). All 32 KB was used, as indicated by <code>peak_memory_used</code>.</p>
 <p>The query took 3.6s to execute.</p>
 <p><em><strong>sort_buffer_size = 10 MB (very large)</strong></em></p>
 <p>Does a very large sort buffer increase query response time? Let&rsquo;s try 10 MB:</p>
-<pre><code>mysql&gt; SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c;
+<pre tabindex="0"><code>mysql&gt; SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c;
 --
 -- Output removed
 --
 999900 rows in set (2.49 sec)
 
-mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
+mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 +-------------------+--------+
 | Variable_name     | Value  |
 +-------------------+--------+
@@ -515,29 +499,27 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
 | Sort_rows         | 999900 |
 | Sort_scan         | 1      |
 +-------------------+--------+
-</code></pre>
-<pre><code class="language-json">&quot;filesort_summary&quot;: {
-  &quot;memory_available&quot;: 10485760,
-  &quot;key_size&quot;: 240,
-  &quot;row_size&quot;: 610,
-  &quot;max_rows_per_buffer&quot;: 17189,
-  &quot;num_rows_estimate&quot;: 493200,
-  &quot;num_rows_found&quot;: 999900,
-  &quot;num_initial_chunks_spilled_to_disk&quot;: 36,
-  &quot;peak_memory_used&quot;: 10486104,
-  &quot;sort_algorithm&quot;: &quot;std::stable_sort&quot;,
-  &quot;sort_mode&quot;: &quot;&lt;fixed_sort_key, packed_additional_fields&gt;&quot;
-}
-</code></pre>
-<p>Yes, query response time decreased 30% to 2.49s due to a 99.7% decrease in <code>Sort_merge_passes</code>: 1917 to 6. MySQL used all 10 MB of the sort buffer.</p>
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;filesort_summary&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;memory_available&#34;</span>: <span style="color:#ae81ff">10485760</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;key_size&#34;</span>: <span style="color:#ae81ff">240</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;row_size&#34;</span>: <span style="color:#ae81ff">610</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;max_rows_per_buffer&#34;</span>: <span style="color:#ae81ff">17189</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_estimate&#34;</span>: <span style="color:#ae81ff">493200</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_found&#34;</span>: <span style="color:#ae81ff">999900</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_initial_chunks_spilled_to_disk&#34;</span>: <span style="color:#ae81ff">36</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;peak_memory_used&#34;</span>: <span style="color:#ae81ff">10486104</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_algorithm&#34;</span>: <span style="color:#e6db74">&#34;std::stable_sort&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_mode&#34;</span>: <span style="color:#e6db74">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Yes, query response time decreased 30% to 2.49s due to a 99.7% decrease in <code>Sort_merge_passes</code>: 1917 to 6. MySQL used all 10 MB of the sort buffer.</p>
 <p><em><strong>sort_buffer_size = 32 MB (dangerous)</strong></em></p>
-<pre><code>mysql&gt; SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c;
+<pre tabindex="0"><code>mysql&gt; SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c;
 --
 -- Output removed
 --
 999900 rows in set (2.24 sec)
 
-mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
+mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 +-------------------+--------+
 | Variable_name     | Value  |
 +-------------------+--------+
@@ -546,30 +528,28 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
 | Sort_rows         | 999900 |
 | Sort_scan         | 1      |
 +-------------------+--------+
-</code></pre>
-<pre><code class="language-json">&quot;filesort_summary&quot;: {
-  &quot;memory_available&quot;: 33554432,
-  &quot;key_size&quot;: 240,
-  &quot;row_size&quot;: 610,
-  &quot;max_rows_per_buffer&quot;: 55007,
-  &quot;num_rows_estimate&quot;: 493200,
-  &quot;num_rows_found&quot;: 999900,
-  &quot;num_initial_chunks_spilled_to_disk&quot;: 12,
-  &quot;peak_memory_used&quot;: 33557336,
-  &quot;sort_algorithm&quot;: &quot;std::stable_sort&quot;,
-  &quot;sort_mode&quot;: &quot;&lt;fixed_sort_key, packed_additional_fields&gt;&quot;
-}
-</code></pre>
-<p>With a 32 MB sort buffer, merge passes drops to 1 but query response time remains similar to a 10 MB sort buffer: 2.24s vs. 2.49s, respectively. Not surprising: 1 merge pass vs. 6 is not a significant difference.</p>
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;filesort_summary&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;memory_available&#34;</span>: <span style="color:#ae81ff">33554432</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;key_size&#34;</span>: <span style="color:#ae81ff">240</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;row_size&#34;</span>: <span style="color:#ae81ff">610</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;max_rows_per_buffer&#34;</span>: <span style="color:#ae81ff">55007</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_estimate&#34;</span>: <span style="color:#ae81ff">493200</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_found&#34;</span>: <span style="color:#ae81ff">999900</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_initial_chunks_spilled_to_disk&#34;</span>: <span style="color:#ae81ff">12</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;peak_memory_used&#34;</span>: <span style="color:#ae81ff">33557336</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_algorithm&#34;</span>: <span style="color:#e6db74">&#34;std::stable_sort&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_mode&#34;</span>: <span style="color:#e6db74">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>With a 32 MB sort buffer, merge passes drops to 1 but query response time remains similar to a 10 MB sort buffer: 2.24s vs. 2.49s, respectively. Not surprising: 1 merge pass vs. 6 is not a significant difference.</p>
 <p>I call a 32 MB <code>sort_buffer_size</code> &ldquo;dangerous&rdquo; for two reasons. First, sort buffers are allocated per-connection, so it can use a lot of memory on busy servers. Second, several MySQL experts recommend against large values. Granted, each server is different, so do your own analysis and use a larger <code>sort_buffer_size</code> if there is a proven need for it. As of MySQL 8.0.12, <code>sort_buffer_size</code> is allocated incrementally as needed, so it is less dangerous.</p>
 <p><em><strong>sort_buffer_size = 128 MB (insane)</strong></em></p>
-<pre><code>mysql&gt; SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c;
+<pre tabindex="0"><code>mysql&gt; SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c;
 --
 -- Output removed
 --
 999900 rows in set (2.52 sec)
 
-mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
+mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 +-------------------+--------+
 | Variable_name     | Value  |
 +-------------------+--------+
@@ -578,21 +558,19 @@ mysql&gt; SHOW SESSION STATUS LIKE 'Sort_%';
 | Sort_rows         | 999900 |
 | Sort_scan         | 1      |
 +-------------------+--------+
-</code></pre>
-<pre><code class="language-json">&quot;filesort_summary&quot;: {
-  &quot;memory_available&quot;: 134217728,
-  &quot;key_size&quot;: 240,
-  &quot;row_size&quot;: 610,
-  &quot;max_rows_per_buffer&quot;: 220029,
-  &quot;num_rows_estimate&quot;: 493200,
-  &quot;num_rows_found&quot;: 999900,
-  &quot;num_initial_chunks_spilled_to_disk&quot;: 3,
-  &quot;peak_memory_used&quot;: 134229360,
-  &quot;sort_algorithm&quot;: &quot;std::stable_sort&quot;,
-  &quot;sort_mode&quot;: &quot;&lt;fixed_sort_key, packed_additional_fields&gt;&quot;
-}
-</code></pre>
-<p>A 128 MB <code>sort_buffer_size</code> proves an important point: <mark>performance can <em>decrease</em>  when <code>sort_buffer_size</code> is too large</mark>.</p>
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;filesort_summary&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;memory_available&#34;</span>: <span style="color:#ae81ff">134217728</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;key_size&#34;</span>: <span style="color:#ae81ff">240</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;row_size&#34;</span>: <span style="color:#ae81ff">610</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;max_rows_per_buffer&#34;</span>: <span style="color:#ae81ff">220029</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_estimate&#34;</span>: <span style="color:#ae81ff">493200</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_found&#34;</span>: <span style="color:#ae81ff">999900</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_initial_chunks_spilled_to_disk&#34;</span>: <span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;peak_memory_used&#34;</span>: <span style="color:#ae81ff">134229360</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_algorithm&#34;</span>: <span style="color:#e6db74">&#34;std::stable_sort&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_mode&#34;</span>: <span style="color:#e6db74">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>A 128 MB <code>sort_buffer_size</code> proves an important point: <mark>performance can <em>decrease</em>  when <code>sort_buffer_size</code> is too large</mark>.</p>
 <p>Query response time was 2.52s with 128 MB compared to 2.24s with 32 MB and 2.49s with 10 MB. Why? I do not have formal proof, but I am confident that it is due to the fact that <code>Sort_merge_passes</code> is negligible (1, 1, 6, respectively) but it takes longer to allocate 128 MB since, as of MySQL 8.0.12, sort buffer memory is allocated incrementally as needed which means more overhead to allocate large amounts of memory.</p>
 <h3 id="sort_rows">Sort_rows</h3>
 <p><code>Sort_rows</code> is the total number of rows sorted. The value is usually so high that it is nearly meaningless, even as a rate (rows sorted/second). If necessary, monitor the rate and watch for unexpected changes.</p>

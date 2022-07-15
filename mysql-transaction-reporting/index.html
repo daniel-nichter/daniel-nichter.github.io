@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://hackmysql.com/mysql-transaction-reporting/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.99.1" />
+  <meta name="generator" content="Hugo 0.101.0" />
   <link rel="canonical" href="https://hackmysql.com/mysql-transaction-reporting/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -139,96 +139,92 @@ With vast improvements to the <a href="https://dev.mysql.com/doc/refman/8.0/en/p
 <p>For now, the &ldquo;solution&rdquo; is copy-pasting queries like the ones below to gain insight into past and present transactions.
 When time allows me, I&rsquo;ll dig into the state of this art deeper, talk with more MySQL DBAs, and see if we can&rsquo;t create better solutions.</p>
 <h3 id="report-latest-query-for-transactions-active-longer-than-1-second">Report latest query for transactions active longer than 1 second</h3>
-<pre><code class="language-sql">--
--- Example 8-2. Report latest query for transactions active longer than 1 second
---
-
-SELECT
-  ROUND(trx.timer_wait/1000000000000,3) AS trx_runtime,
-  trx.thread_id AS thread_id,
-  trx.event_id AS trx_event_id,
-  trx.isolation_level,
-  trx.autocommit,
-  stm.current_schema AS db,
-  stm.sql_text AS query,
-  stm.rows_examined AS rows_examined,
-  stm.rows_affected AS rows_affected,
-  stm.rows_sent AS rows_sent,
-  IF(stm.end_event_id IS NULL, 'running', 'done') AS exec_state,
-  ROUND(stm.timer_wait/1000000000000,3) AS exec_time
-FROM
-       performance_schema.events_transactions_current trx
-  JOIN performance_schema.events_statements_current   stm USING (thread_id)
-WHERE
-      trx.state = 'ACTIVE'
-  AND trx.timer_wait &gt; 1000000000000 * 1\G
-</code></pre>
-<h3 id="report-transaction-summary">Report transaction summary</h3>
-<pre><code class="language-sql">--
--- Example 8-3. Report transaction summary
---
-
-SELECT
-  trx.thread_id AS thread_id,
-  MAX(trx.event_id) AS trx_event_id,
-  MAX(ROUND(trx.timer_wait/1000000000000,3)) AS trx_runtime,
-  SUM(ROUND(stm.timer_wait/1000000000000,3)) AS exec_time,
-  SUM(stm.rows_examined) AS rows_examined,
-  SUM(stm.rows_affected) AS rows_affected,
-  SUM(stm.rows_sent) AS rows_sent
-FROM
-       performance_schema.events_transactions_current trx
-  JOIN performance_schema.events_statements_history   stm
-    ON stm.thread_id = trx.thread_id AND stm.nesting_event_id = trx.event_id
-WHERE
-      stm.event_name LIKE 'statement/sql/%'
-  AND trx.state = 'ACTIVE'
-  AND trx.timer_wait &gt; 1000000000000 * 1
-GROUP BY trx.thread_id\G
-</code></pre>
-<h3 id="report-transaction-history">Report transaction history</h3>
-<pre><code class="language-sql">--
--- Example 8-4. Report transaction history
---
-
-SELECT
-  stm.rows_examined AS rows_examined,
-  stm.rows_affected AS rows_affected,
-  stm.rows_sent AS rows_sent,
-  ROUND(stm.timer_wait/1000000000000,3) AS exec_time,
-  stm.sql_text AS query
-FROM
-  performance_schema.events_statements_history stm
-WHERE
-       stm.thread_id = 0
-  AND  stm.nesting_event_id = 0
-ORDER BY stm.event_id;
-</code></pre>
-<h3 id="report-basic-metrics-for-committed-transactions">Report basic metrics for committed transactions</h3>
-<pre><code class="language-sql">--
--- Example 8-5. Report basic metrics for committed transactions
---
-
-SELECT
-  ROUND(MAX(trx.timer_wait)/1000000000,3) AS trx_time,
-  ROUND(SUM(stm.timer_end-stm.timer_start)/1000000000,3) AS query_time,
-  ROUND((MAX(trx.timer_wait)-SUM(stm.timer_end-stm.timer_start))/1000000000, 3)
-    AS idle_time,
-  COUNT(stm.event_id)-1 AS query_count,
-  SUM(stm.rows_examined) AS rows_examined,
-  SUM(stm.rows_affected) AS rows_affected,
-  SUM(stm.rows_sent) AS rows_sent
-FROM
-      performance_schema.events_transactions_history trx
- JOIN performance_schema.events_statements_history   stm
-   ON stm.nesting_event_id = trx.event_id
-WHERE
-      trx.state = 'COMMITTED'
-  AND trx.nesting_event_id IS NOT NULL
-GROUP BY
-  trx.thread_id, trx.event_id;
-</code></pre>
-</article>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">--
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Example 8-2. Report latest query for transactions active longer than 1 second
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">--
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
+</span></span><span style="display:flex;"><span>  ROUND(trx.timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span>,<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">AS</span> trx_runtime,
+</span></span><span style="display:flex;"><span>  trx.thread_id <span style="color:#66d9ef">AS</span> thread_id,
+</span></span><span style="display:flex;"><span>  trx.event_id <span style="color:#66d9ef">AS</span> trx_event_id,
+</span></span><span style="display:flex;"><span>  trx.isolation_level,
+</span></span><span style="display:flex;"><span>  trx.autocommit,
+</span></span><span style="display:flex;"><span>  stm.current_schema <span style="color:#66d9ef">AS</span> db,
+</span></span><span style="display:flex;"><span>  stm.sql_text <span style="color:#66d9ef">AS</span> query,
+</span></span><span style="display:flex;"><span>  stm.rows_examined <span style="color:#66d9ef">AS</span> rows_examined,
+</span></span><span style="display:flex;"><span>  stm.rows_affected <span style="color:#66d9ef">AS</span> rows_affected,
+</span></span><span style="display:flex;"><span>  stm.rows_sent <span style="color:#66d9ef">AS</span> rows_sent,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">IF</span>(stm.end_event_id <span style="color:#66d9ef">IS</span> <span style="color:#66d9ef">NULL</span>, <span style="color:#e6db74">&#39;running&#39;</span>, <span style="color:#e6db74">&#39;done&#39;</span>) <span style="color:#66d9ef">AS</span> exec_state,
+</span></span><span style="display:flex;"><span>  ROUND(stm.timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span>,<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">AS</span> exec_time
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
+</span></span><span style="display:flex;"><span>       performance_schema.events_transactions_current trx
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">JOIN</span> performance_schema.events_statements_current   stm <span style="color:#66d9ef">USING</span> (thread_id)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
+</span></span><span style="display:flex;"><span>      trx.<span style="color:#66d9ef">state</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ACTIVE&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> trx.timer_wait <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1000000000000</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
+</span></span></code></pre></div><h3 id="report-transaction-summary">Report transaction summary</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">--
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Example 8-3. Report transaction summary
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">--
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
+</span></span><span style="display:flex;"><span>  trx.thread_id <span style="color:#66d9ef">AS</span> thread_id,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">MAX</span>(trx.event_id) <span style="color:#66d9ef">AS</span> trx_event_id,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">MAX</span>(ROUND(trx.timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span>,<span style="color:#ae81ff">3</span>)) <span style="color:#66d9ef">AS</span> trx_runtime,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(ROUND(stm.timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span>,<span style="color:#ae81ff">3</span>)) <span style="color:#66d9ef">AS</span> exec_time,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_examined) <span style="color:#66d9ef">AS</span> rows_examined,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_affected) <span style="color:#66d9ef">AS</span> rows_affected,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_sent) <span style="color:#66d9ef">AS</span> rows_sent
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
+</span></span><span style="display:flex;"><span>       performance_schema.events_transactions_current trx
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">JOIN</span> performance_schema.events_statements_history   stm
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">ON</span> stm.thread_id <span style="color:#f92672">=</span> trx.thread_id <span style="color:#66d9ef">AND</span> stm.nesting_event_id <span style="color:#f92672">=</span> trx.event_id
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
+</span></span><span style="display:flex;"><span>      stm.event_name <span style="color:#66d9ef">LIKE</span> <span style="color:#e6db74">&#39;statement/sql/%&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> trx.<span style="color:#66d9ef">state</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ACTIVE&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> trx.timer_wait <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1000000000000</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> trx.thread_id<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
+</span></span></code></pre></div><h3 id="report-transaction-history">Report transaction history</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">--
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Example 8-4. Report transaction history
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">--
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
+</span></span><span style="display:flex;"><span>  stm.rows_examined <span style="color:#66d9ef">AS</span> rows_examined,
+</span></span><span style="display:flex;"><span>  stm.rows_affected <span style="color:#66d9ef">AS</span> rows_affected,
+</span></span><span style="display:flex;"><span>  stm.rows_sent <span style="color:#66d9ef">AS</span> rows_sent,
+</span></span><span style="display:flex;"><span>  ROUND(stm.timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span>,<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">AS</span> exec_time,
+</span></span><span style="display:flex;"><span>  stm.sql_text <span style="color:#66d9ef">AS</span> query
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
+</span></span><span style="display:flex;"><span>  performance_schema.events_statements_history stm
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
+</span></span><span style="display:flex;"><span>       stm.thread_id <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span>  stm.nesting_event_id <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> stm.event_id;
+</span></span></code></pre></div><h3 id="report-basic-metrics-for-committed-transactions">Report basic metrics for committed transactions</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">--
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Example 8-5. Report basic metrics for committed transactions
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">--
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
+</span></span><span style="display:flex;"><span>  ROUND(<span style="color:#66d9ef">MAX</span>(trx.timer_wait)<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000</span>,<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">AS</span> trx_time,
+</span></span><span style="display:flex;"><span>  ROUND(<span style="color:#66d9ef">SUM</span>(stm.timer_end<span style="color:#f92672">-</span>stm.timer_start)<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000</span>,<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">AS</span> query_time,
+</span></span><span style="display:flex;"><span>  ROUND((<span style="color:#66d9ef">MAX</span>(trx.timer_wait)<span style="color:#f92672">-</span><span style="color:#66d9ef">SUM</span>(stm.timer_end<span style="color:#f92672">-</span>stm.timer_start))<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000</span>, <span style="color:#ae81ff">3</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">AS</span> idle_time,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">COUNT</span>(stm.event_id)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">AS</span> query_count,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_examined) <span style="color:#66d9ef">AS</span> rows_examined,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_affected) <span style="color:#66d9ef">AS</span> rows_affected,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_sent) <span style="color:#66d9ef">AS</span> rows_sent
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
+</span></span><span style="display:flex;"><span>      performance_schema.events_transactions_history trx
+</span></span><span style="display:flex;"><span> <span style="color:#66d9ef">JOIN</span> performance_schema.events_statements_history   stm
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">ON</span> stm.nesting_event_id <span style="color:#f92672">=</span> trx.event_id
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
+</span></span><span style="display:flex;"><span>      trx.<span style="color:#66d9ef">state</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;COMMITTED&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> trx.nesting_event_id <span style="color:#66d9ef">IS</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span>
+</span></span><span style="display:flex;"><span>  trx.thread_id, trx.event_id;
+</span></span></code></pre></div></article>
 	</div>
 	<nav id="toc">
 		<em><a href="#">MySQL Transaction Reporting</a></em>
