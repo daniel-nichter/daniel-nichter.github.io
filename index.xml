@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Mon, 04 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 27 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Career Advice</title>
+      <link>https://hackmysql.com/eng/career-advice/</link>
+      <pubDate>Wed, 27 Jul 2022 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmysql.com/eng/career-advice/</guid>
+      <description>Career Advice 1. Add Value Success follows value.
+Ensure that the work you do adds value to the business and other people.
+2. Write Well When writing any document that&amp;rsquo;s read by other people (even if it&amp;rsquo;s just a README), always use proper grammar and style. Read Grammatically Correct if you need to learn grammar, and read It was the best of sentences, it was the worst of sentences if you need to learn style.</description>
+    </item>
+
     <item>
       <title>How to Write Well</title>
       <link>https://hackmysql.com/eng/write/</link>
@@ -180,17 +191,6 @@ This is not an intro; you&amp;rsquo;ll need to know all the InnoDB details wrt p
       <guid>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</guid>
       <description>As of MySQL 8.0, performance_schema.data_locks shows InnoDB data locks. Before MySQL 8.0, you must SET GLOBAL innodb_status_output_locks=ON and ruminate on the output of SHOW ENGINE INNODB STATUS. The image below (click to see full size) shows how the former maps to the latter for three record locks and one table lock on table t.
 Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as of MySQL 5.7 and removed as of MySQL 8.</description>
-    </item>
-
-    <item>
-      <title>Career Advice</title>
-      <link>https://hackmysql.com/eng/career-advice/</link>
-      <pubDate>Mon, 12 Apr 2021 00:00:00 +0000</pubDate>
-
-      <guid>https://hackmysql.com/eng/career-advice/</guid>
-      <description>Career Advice 1. Add Value Success follows value.
-Ensure that the work you do adds value to the business and other people.
-2. Write Well When writing any document that&amp;rsquo;s read by other people (even if it&amp;rsquo;s just a README), always use proper grammar and style. Read Grammatically Correct if you need to learn grammar, and read It was the best of sentences, it was the worst of sentences if you need to learn style.</description>
     </item>
 
     <item>

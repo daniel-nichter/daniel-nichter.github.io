@@ -2,11 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/eng/career-advice/</loc>
+    <lastmod>2022-07-27T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/eng/</loc>
-    <lastmod>2022-07-04T00:00:00+00:00</lastmod>
+    <lastmod>2022-07-27T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/</loc>
-    <lastmod>2022-07-04T00:00:00+00:00</lastmod>
+    <lastmod>2022-07-27T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/eng/write/</loc>
     <lastmod>2022-07-04T00:00:00+00:00</lastmod>
@@ -133,9 +136,6 @@
   </url><url>
     <loc>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</loc>
     <lastmod>2021-07-26T15:40:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/eng/career-advice/</loc>
-    <lastmod>2021-04-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/mysql-select-and-sort/</loc>
     <lastmod>2021-01-14T15:42:00-05:00</lastmod>

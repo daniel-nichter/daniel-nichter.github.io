@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Mon, 04 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/eng/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 27 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/eng/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Career Advice</title>
+      <link>https://hackmysql.com/eng/career-advice/</link>
+      <pubDate>Wed, 27 Jul 2022 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmysql.com/eng/career-advice/</guid>
+      <description>Career Advice 1. Add Value Success follows value.
+Ensure that the work you do adds value to the business and other people.
+2. Write Well When writing any document that&amp;rsquo;s read by other people (even if it&amp;rsquo;s just a README), always use proper grammar and style. Read Grammatically Correct if you need to learn grammar, and read It was the best of sentences, it was the worst of sentences if you need to learn style.</description>
+    </item>
+
     <item>
       <title>How to Write Well</title>
       <link>https://hackmysql.com/eng/write/</link>
@@ -26,17 +37,6 @@
       <description>Database Operations Manual Running a database is easy, especially in the cloud, but operating a database is complicated. This page outlines operational aspects (OA) required to operate a database in production, at scale.
 Last updated: October 16, 2021
 1. Security Security is the first priority: nothing else matters if the database is compromised. It is better for a database to be offline than hacked. Security permeates every operational aspects (OA), but these OA address the most critical aspects, like root (super) access and encryption.</description>
-    </item>
-
-    <item>
-      <title>Career Advice</title>
-      <link>https://hackmysql.com/eng/career-advice/</link>
-      <pubDate>Mon, 12 Apr 2021 00:00:00 +0000</pubDate>
-
-      <guid>https://hackmysql.com/eng/career-advice/</guid>
-      <description>Career Advice 1. Add Value Success follows value.
-Ensure that the work you do adds value to the business and other people.
-2. Write Well When writing any document that&amp;rsquo;s read by other people (even if it&amp;rsquo;s just a README), always use proper grammar and style. Read Grammatically Correct if you need to learn grammar, and read It was the best of sentences, it was the worst of sentences if you need to learn style.</description>
     </item>
 
     <item>
