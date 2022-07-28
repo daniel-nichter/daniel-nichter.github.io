@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Sat, 18 Jun 2022 19:09:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 28 Jul 2022 13:57:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Better Replication Heartbeats</title>
+      <link>https://hackmysql.com/post/book-7/</link>
+      <pubDate>Thu, 28 Jul 2022 13:57:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/post/book-7/</guid>
+      <description>&lt;p&gt;We&amp;rsquo;ve been measuring MySQL replication lag with heartbeats for more than a decade.
+It works, but can we do better?
+Let&amp;rsquo;s see.&lt;/p&gt;</description>
+    </item>
+
     <item>
       <title>InnoDB Page Flushing Diagram</title>
       <link>https://hackmysql.com/post/book-6/</link>

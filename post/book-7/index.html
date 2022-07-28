@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Better Replication Heartbeats</title>
+  <meta property="og:title" content="Better Replication Heartbeats" />
+  <meta name="description" content="Chapter 7">
+  <meta property="og:description" content="Chapter 7">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-7/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.101.0" />
+  <link rel="canonical" href="https://hackmysql.com/post/book-7/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Better Replication Heartbeats</h1>
+        <h3 class="post-subtitle">Chapter 7</h2>
+        <div class="post-meta">
+
+
+  <div>Jul 28, 2022</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/replication">#replication</a>
+
+        <a href="/tags/book">#book</a>
+
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+
+
+  </div>
+</div>
+
+
+        <p>We&rsquo;ve been measuring MySQL replication lag with heartbeats for more than a decade.
+It works, but can we do better?
+Let&rsquo;s see.</p>
+<p class="note">
+This blog post is the eighth of eleven: one for the preface and ten for each chapter of my book <a href="https://oreil.ly/efficient-mysql-performance"><i>Efficient MySQL Performance</i></a>.
+The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mysql-performance</a>.
+</p>
+<p>Replication lag must be greater than zero because networks have latency that is commonly measured in milliseconds.
+(A local network can have microsecond latency, but I presume MySQL replicas are remote [or in the cloud], so millisecond latency is the norm.)
+This fact establishes two goals for managing MySQL replication lag:</p>
+<ol>
+<li>Keep lag as close to network latency as possible</li>
+<li>Measure lag with millisecond precision</li>
+</ol>
+<p>Goal 1 is primarily the responsibility of the application and its developers, not the DBAs.
+It&rsquo;s the reason I wrote chapter 7 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>: to help app developers understand just enough about the plumbing of MySQL replication to keep lag as close to network latency as possible.
+Any higher and the risk is unacceptable data loss.
+Granted, all data loss is unacceptable, but MySQL defaults to asynchronous replication and well&hellip; it&rsquo;s a long, complicated story that&rsquo;s out of scope for this blog post.
+The point is: the application and its developers are responsible for replication lag.</p>
+<p>Goal 2 is the responsibility of DBAs.
+It&rsquo;s common knowledge that <code>Seconds_Behind_Source</code> (or <code>Seconds_Behind_Master</code> before MySQL 8.0.22) is not reliable.
+(If that&rsquo;s new to you, read chapter of 7 of my book.)
+Consequently, it&rsquo;s been standard practice in the MySQL industry to use external heartbeats (high-resolution timestamps) to measure replication lag.
+I say <em>external</em> heartbeats because MySQL replication has <a href="https://dev.mysql.com/doc/refman/8.0/en/replication-administration-status.html">built-in heartbeats</a>, but for various reasons they haven&rsquo;t become the norm for measuring replication lag.
+Instead, it&rsquo;s far more common to use a tool like <a href="https://www.percona.com/doc/percona-toolkit/LATEST/pt-heartbeat.html">pt-heartbeat</a> (or program a simpler version of that tool) to periodically write heartbeats on the source and measure the time difference on the replica.</p>
+<p>The calculation is <code>lag = NOW() - heartbeat</code>.
+If a heartbeat is written on the source at <code>T1 = 1000 ms</code> and observed on the replica at <code>T2 = 2000 ms</code>, then lag is 1,000 ms: the replica is 1 second behind the source.
+Sounds simple, but as an engineer you&rsquo;ve probably already guessed: it&rsquo;s more complicated than that.</p>
+<p>The main issue is when to write the heartbeats on the source and when to measure them on the replica?
+Until now, practically the only solution has been clock-aligned heartbeats.</p>
+<p>In the following diagrams:</p>
+<ul>
+<li>Colored circles are heartbeats: same color, same heartbeat</li>
+<li>Solid circles at top are heartbeat writes on the source</li>
+<li>Dotted circles at bottom indicate when the corresponding heartbeat arrives on the replica</li>
+<li>Between the two is a time scale from left to right with intervals labeled T0, T1, T2, T3</li>
+<li>Measurements on the replica (at bottom) are labeled M1, M2, M3</li>
+</ul>
+<h2 id="clock-aligned-heartbeats">Clock-Aligned Heartbeats</h2>
+<p>Let&rsquo;s start with diagram 1 (top): clock-aligned heartbeats at 1-second intervals.</p>
+<p><img src="/img/heartbeat_repl_1.svg" alt="Heartbeat Diagrams 1 and 2">
+<small><em>Diagram 1 (top): Clock-aligned heartbeats at 1s intervals</em><br><em>Diagram 2 (bottom): Offsets and measurements</em></small></p>
+<p><em>Clock-aligned</em> means that heartbeats are written at the beginning (or &ldquo;top&rdquo;) of each interval.
+We&rsquo;re using 1-second intervals, so clock-aligned is (for example) 12:35:01.000, 12:35:02.000, and so on.
+Diagram 1 illustrates this with abstract intervals: T0, T1, T2, and T3.</p>
+<p>With virtually zero lag, we could write a heartbeat on the source (solid red circle) on read it on the replica (dotted red circle) both at T0.
+That might be the case on a local network with only a few microseconds of lag, but the more realistic case is illustrated by the green and blue circles.
+The green heartbeat is written at T1 and arrives (on the replica) a little later: maybe 250 ms of lag.
+The blue heartbeat is written at T2 but doesn&rsquo;t arrive until T3: a full second of lag.</p>
+<p>Diagram 2 begins to illustrate the current state of the art.
+The dark shaded areas after the beginning of each interval are 500 ms waits before each measurement (M1, M2, M3).
+Waits are used for three reasons that, depending on the tool, might not be clear or correct, but here they are:</p>
+<ul>
+<li><strong>Clock skew</strong>: If the hardware clocks on the source and replica aren&rsquo;t in sync, then the skew can artificially increase or decrease the lag measurement.</li>
+<li><strong>Clock-alignment offset</strong>: The writer and reader are both clock-aligned, but the writer writes at <code>T</code> and the reader reads at <code>T+offset</code> because we can only measure something <em>after</em> it occurs.</li>
+<li><strong>Network latency</strong>: Replication lag is always greater than zero due to network latency, so there must be some amount of wait to account for the latter.</li>
+</ul>
+<p>Waits are not always clear or correct (depending on the tool), but the salient point is: tools wait once, then measure once.
+Diagram 2 illustrates this, and this section and the next detail the pitfalls of this approach.</p>
+<p>It&rsquo;s common for tools to calculate <code>lag = NOW() - heartbeat - wait</code> because the wait comes from the tool, not replication lag.
+However, that means the green heartbeat, which is lagged by 250 ms, is reported a zero lag because it arrived during the wait.
+By the numbers, presuming <code>T1 = 1000 ms</code> and the wait is 500 ms, then  <code>lag = (1000 + 500) - 1000 - 500 = 0</code>.
+That&rsquo;s why I shade the waits black: they&rsquo;re black holes of observability.
+On the upside, we can say that replication is leas than 500 ms.
+That&rsquo;s better than <code>Seconds_Behind_Source</code>.</p>
+<p>Ironically, this approach is most accurate when lag equals the interval, as illustrated by the blue heartbeat: written at T2, <em>not</em> observed at M2, then arrives at T3.
+(Ironic because the lag needs to be bad for the accuracy to be good.)
+The measurement at M3 reports <code>lag = (3000 + 500) - 2000 - 500 = 1s</code>, which is perfectly accurate.
+If the heartbeat had lagged only 700 ms, it would still be reported as 1s because its timestamp is T2 (2000) and it&rsquo;s not measured until M3.</p>
+<p>This approach does not truly measure replication lag; it only reports if lag is less than the wait.</p>
+<h3 id="waiting-less-work-more">Waiting Less, Work More</h3>
+<p>&ldquo;Easy fix,&rdquo; you say, &ldquo;just decrease the wait time and the &lsquo;black hole of observability&rsquo; virtually goes away.&rdquo;</p>
+<p><img src="/img/heartbeat_repl_2.svg" alt="Heartbeat Diagrams 3 and 4">
+<small><em>Diagram 3 (top): 1s heartbeats and 200 ms waits</em><br><em>Diagram 4 (bottom): 50 ms heartbeats and waits</em></small></p>
+<p>Diagram 3 is the same situation as diagram 2 but with 200 ms waits instead of 500 ms.
+Now the green heartbeat, which lags by 250 ms, does not disappear into the black hole of observability, but we run into the same irony as before: the lag needs to be bad for the accuracy to be good.
+The green heartbeat is not observed until M2, so it&rsquo;s reported as <code>lag = (2000 + 200) - 1000 - 200 = 1s</code>.</p>
+<p>The curved arrow in diagram 3 shows that this approach measures lag as the interval from measurement (M2 minus the wait) to when the heartbeat was <em>written</em> (solid green circle).
+It does not actually measure how long it took the heartbeat to arrive, which is the real meaning of lag.</p>
+<p>Diagram 4 illustrates a possible but inefficient solution: write and measure heartbeats at short intervals: 50 ms.
+This works by brute force: it can measure replication lag with 50 ms of precision.
+But it&rsquo;s terribly inefficient, especially given that replication lag should be the exception, never the norm.
+It&rsquo;s like (weird analogy) telling someone &ldquo;Yell every 50 ms to let me know that everything is okay&rdquo;, instead of just &ldquo;Call me when there&rsquo;s a problem.&rdquo;</p>
+<h2 id="coordinated-heartbeats">Coordinated Heartbeats</h2>
+<p>Let&rsquo;s first improve the accuracy and efficiency of replication lag measurement as shown in diagram 5.</p>
+<p><img src="/img/heartbeat_repl_3.svg" alt="Heartbeat Diagrams 5 and 6">
+<small><em>Diagram 5 (top): Accurate replication lag measurement</em><br><em>Diagram 6 (bottom): Coordinated heartbeats</em></small></p>
+<p>True replication lag is the difference between the time when a heartbeat is written and when it&rsquo;s observed on a replica.
+This is shown in diagram 5 as dotted boxes around M1 and M2.
+We&rsquo;ll come back to digram 6; for now, let&rsquo;s zoom in on diagram 5 shown below.</p>
+<p>The small slice of time after the interval in <span style="color:cyan"><b>cyan</b></span> is a wait for network latency.
+But don&rsquo;t worry: this does not introduce the same problems with waits described earlier.
+On the contrary: instead of an arbitrary wait, network latency is meaningful and measurable because there is a finite (and usually pretty steady) amount of network latency between source and replica.
+A heartbeat cannot possibly arrive on the replica before the minimum latency of the network.
+Therefore, the <span style="color:cyan"><b>cyan</b></span> time is set to the minimum network latency—no more, no less.</p>
+<p><img src="/img/heartbeat-future-zoom.png" alt="Heartbeat Diagram 7">
+<small><em>Diagram 7: Zoom in on diagram 5</em></small></p>
+<p>Once a tool has waited the minimum network latency, it starts figuratively looking for the heartbeat on the replica.
+If lag equals the minimum network latency, then the heartbeat will be observed on the first measurement, shown in diagram 7 as the first dotted horizontal line.
+But in this example, the heartbeat hasn&rsquo;t arrived yet, so the tool waits a short duration and looks a second time—the second dotted horizontal line.
+But the heartbeat still hasn&rsquo;t arrived yet, so the tools waits a short duration and looks a third time—now the heartbeat has arrived (third dotted horizontal line through the center of the dotted green circle).
+Lag, as shown by the curved arrow, is the difference between when the heartbeat was observed and when it should have arrived (immediately after the minimum network latency).
+This new approach correctly and accurately measures true replication lag.</p>
+<p>The blue heartbeat lags the full interval.
+What&rsquo;s important is that the duration between measurements (dotted horizontal lines) becomes longer the more the heartbeat lags.
+As a result, <mark>this approach is accurate in the normal case when there&rsquo;s little to no lag, and also efficient when appreciable lag occurs.</mark>
+When a heartbeat lags past a certain point (about 1s or so), further precision isn&rsquo;t needed: lag 1.2s and 2.3s are both bad.
+Once lag exceeds several seconds, we can measure every few seconds until it returns to near-zero, then resume high-precision measurements.
+That&rsquo;s possible with this new approach that (for lack of a better name) I call <em>coordinated heartbeats</em>.</p>
+<p>But what makes this new approach &ldquo;coordinated&rdquo;?
+Scroll back up to digram 6 and notice that the time interval labels (T1, T2, T3) are gone.
+(We could remove T0, too, but time has to start at some time&hellip; or does it?)
+<mark>Coordinated heartbeats include a timestamp <em>and</em> the number of milliseconds until the <strong>next</strong> heartbeat will be written.</mark>
+As shown in diagram 6, the receiver calculates the next interval and waits until then plus the minimum network latency.
+Heartbeats are <em>not</em> clock-aligned (they occur at any time), and the heartbeat writer coordinates the heartbeat reader.</p>
+<p>Paired with accurate and efficient measurements (diagrams 5 and 7), coordinated heartbeats decouple write frequency from reporting accuracy.
+You can write heartbeats every 2s but still measure and report replication lag with millisecond accuracy.
+That makes coordinated heartbeats far more efficient overall: less work without loss of accuracy.</p>
+<p>To answer the opening question of this blog post, &ldquo;Can we do better?&rdquo;, I think the answer is yes: coordinated heartbeats are better.
+I implemented them in a new open source tool that I&rsquo;ll announce soon.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-6/" data-toggle="tooltip" data-placement="top" title="InnoDB Page Flushing Diagram">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

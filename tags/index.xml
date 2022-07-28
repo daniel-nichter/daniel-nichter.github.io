@@ -7,11 +7,11 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Sat, 18 Jun 2022 19:09:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 28 Jul 2022 13:57:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>book</title>
       <link>https://hackmysql.com/tags/book/</link>
-      <pubDate>Sat, 18 Jun 2022 19:09:00 -0400</pubDate>
+      <pubDate>Thu, 28 Jul 2022 13:57:00 -0400</pubDate>
 
       <guid>https://hackmysql.com/tags/book/</guid>
       <description></description>
@@ -20,9 +20,27 @@
     <item>
       <title>efficient-mysql-performance</title>
       <link>https://hackmysql.com/tags/efficient-mysql-performance/</link>
-      <pubDate>Sat, 18 Jun 2022 19:09:00 -0400</pubDate>
+      <pubDate>Thu, 28 Jul 2022 13:57:00 -0400</pubDate>
 
       <guid>https://hackmysql.com/tags/efficient-mysql-performance/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>mysql</title>
+      <link>https://hackmysql.com/tags/mysql/</link>
+      <pubDate>Thu, 28 Jul 2022 13:57:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/mysql/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>replication</title>
+      <link>https://hackmysql.com/tags/replication/</link>
+      <pubDate>Thu, 28 Jul 2022 13:57:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/replication/</guid>
       <description></description>
     </item>
 
@@ -32,15 +50,6 @@
       <pubDate>Sat, 18 Jun 2022 19:09:00 -0400</pubDate>
 
       <guid>https://hackmysql.com/tags/innodb/</guid>
-      <description></description>
-    </item>
-
-    <item>
-      <title>mysql</title>
-      <link>https://hackmysql.com/tags/mysql/</link>
-      <pubDate>Sat, 18 Jun 2022 19:09:00 -0400</pubDate>
-
-      <guid>https://hackmysql.com/tags/mysql/</guid>
       <description></description>
     </item>
 
@@ -293,15 +302,6 @@
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
 
       <guid>https://hackmysql.com/tags/gtid/</guid>
-      <description></description>
-    </item>
-
-    <item>
-      <title>replication</title>
-      <link>https://hackmysql.com/tags/replication/</link>
-      <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
-
-      <guid>https://hackmysql.com/tags/replication/</guid>
       <description></description>
     </item>
 
