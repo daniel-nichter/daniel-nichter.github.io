@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>MySQL Transaction Reporting</title>
   <meta property="og:title" content="MySQL Transaction Reporting" />
-  <meta name="description" content="MySQL Transaction Reporting In chapter 8 of my forthcoming book (more on this later), I discuss reporting MySQL transactions (among many other related topics). In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&rsquo;t monitor or report them in the world of MySQL. Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.">
-  <meta property="og:description" content="MySQL Transaction Reporting In chapter 8 of my forthcoming book (more on this later), I discuss reporting MySQL transactions (among many other related topics). In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&rsquo;t monitor or report them in the world of MySQL. Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.">
+  <meta name="description" content="MySQL Transaction Reporting In chapter 8 of Efficient MySQL Performance, I discuss reporting MySQL transactions (among many other related topics). In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&rsquo;t monitor or report them in the world of MySQL. Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.">
+  <meta property="og:description" content="MySQL Transaction Reporting In chapter 8 of Efficient MySQL Performance, I discuss reporting MySQL transactions (among many other related topics). In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&rsquo;t monitor or report them in the world of MySQL. Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.">
   <meta name="author" content="Daniel Nichter"/>
   <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
@@ -42,102 +42,103 @@
 <img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
 </div>
       <ul class="nav navbar-nav navbar-left">
-
-
+        
+          
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-
+                
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-
+                
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-
+                
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-
+                
                   <a href="/eng/career-advice/">Career Advice</a>
-
+                
                   <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
-
+                
                   <a href="/eng/database-operations-manual/">Database Operations Manual</a>
-
+                
                   <a href="/eng/write/">How to Write Well</a>
-
+                
                   <a href="/eng/percentiles/">Percentiles</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-
+                
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-
+                
                   <a href="/golang/go-single-character-names/">Go Single-character Names</a>
-
+                
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li>
               <a title="Help" href="/help/">Help</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-
+                
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-
+                
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-
+                
                   <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
-
+                
                   <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
-
+                
               </div>
             </li>
+          
+        
 
-
-
-
+        
       </ul>
 	</div>
   </div>
 </nav>
 
-
+    
 <main class="page">
 	<div id="art">
 		<article role="main" class="blog-post"><h1 id="mysql-transaction-reporting">MySQL Transaction Reporting</h1>
-<p>In chapter 8 of my forthcoming book (more on this later), I discuss reporting MySQL transactions (among many other related topics).
+<p>In chapter 8 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, I discuss reporting MySQL transactions (among many other related topics).
 In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&rsquo;t monitor or report them in the world of MySQL.
 Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.
 With vast improvements to the <a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html">Performance Schema</a>, MySQL transaction report is possible but there are no tools to make it easy, as far as I know.</p>
 <p>For now, the &ldquo;solution&rdquo; is copy-pasting queries like the ones below to gain insight into past and present transactions.
 When time allows me, I&rsquo;ll dig into the state of this art deeper, talk with more MySQL DBAs, and see if we can&rsquo;t create better solutions.</p>
+<p>See also <a href="/post/book-8/">Mining the MySQL Performance Schema for Transactions</a>.</p>
 <h3 id="report-latest-query-for-transactions-active-longer-than-1-second">Report latest query for transactions active longer than 1 second</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">--
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Example 8-2. Report latest query for transactions active longer than 1 second

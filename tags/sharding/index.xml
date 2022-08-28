@@ -12,11 +12,11 @@
       <title>I Don&#39;t Want to Shard (MySQL)</title>
       <link>https://hackmysql.com/post/book-5/</link>
       <pubDate>Fri, 20 May 2022 19:00:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-5/</guid>
       <description>&lt;p&gt;Chapter 5 of &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt; addresses sharding, and it was difficult to write but not for technical reasons.
 Let me say a little more on the matter.&lt;/p&gt;</description>
     </item>
-
+    
   </channel>
 </rss>

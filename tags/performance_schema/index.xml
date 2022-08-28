@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>performance_schema on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/performance_schema/</link>
+    <description>Recent content in performance_schema on Hack MySQL</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2022 Daniel Nichter</copyright>
+    <lastBuildDate>Sun, 28 Aug 2022 13:29:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/performance_schema/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mining the MySQL Performance Schema for Transactions</title>
+      <link>https://hackmysql.com/post/book-8/</link>
+      <pubDate>Sun, 28 Aug 2022 13:29:00 -0400</pubDate>
+      
+      <guid>https://hackmysql.com/post/book-8/</guid>
+      <description>&lt;p&gt;The MySQL &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html&#34;&gt;Performance Schema&lt;/a&gt; is a gold mine of valuable data.
+Among the many nuggets you can extract from it is an historical report of transactions: how long a transaction took to execute, what queries were executed in it (with query metrics), and idle time between queries.
+Mining this information is not trivial, but it&amp;rsquo;s fun and this blog post shows how to start.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>MySQL Transaction Reporting</title>
+      <link>https://hackmysql.com/mysql-transaction-reporting/</link>
+      <pubDate>Sun, 28 Aug 2022 13:28:00 -0400</pubDate>
+      
+      <guid>https://hackmysql.com/mysql-transaction-reporting/</guid>
+      <description>MySQL Transaction Reporting In chapter 8 of Efficient MySQL Performance, I discuss reporting MySQL transactions (among many other related topics). In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&amp;rsquo;t monitor or report them in the world of MySQL. Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.</description>
+    </item>
+    
+  </channel>
+</rss>

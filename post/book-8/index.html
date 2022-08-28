@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Mining the MySQL Performance Schema for Transactions</title>
+  <meta property="og:title" content="Mining the MySQL Performance Schema for Transactions" />
+  <meta name="description" content="Chapter 8">
+  <meta property="og:description" content="Chapter 8">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-8/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.101.0" />
+  <link rel="canonical" href="https://hackmysql.com/post/book-8/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+                
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+                
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+                
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+                
+                  <a href="/eng/career-advice/">Career Advice</a>
+                
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+                
+                  <a href="/eng/write/">How to Write Well</a>
+                
+                  <a href="/eng/percentiles/">Percentiles</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+                
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+                
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+                
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+                
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+                
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+                
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+                
+              </div>
+            </li>
+          
+        
+
+        
+      </ul>
+	</div>
+  </div>
+</nav>
+
+    
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Mining the MySQL Performance Schema for Transactions</h1>
+        <h3 class="post-subtitle">Chapter 8</h2>
+        <div class="post-meta">
+  
+  
+  <div>Aug 28, 2022</div>
+  <div class="blog-tags">
+    
+      
+        <a href="/tags/mysql">#mysql</a>
+      
+        <a href="/tags/transactions">#transactions</a>
+      
+        <a href="/tags/performance_schema">#performance_schema</a>
+      
+        <a href="/tags/book">#book</a>
+      
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+      
+    
+  </div>
+</div>
+
+
+        <p>The MySQL <a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html">Performance Schema</a> is a gold mine of valuable data.
+Among the many nuggets you can extract from it is an historical report of transactions: how long a transaction took to execute, what queries were executed in it (with query metrics), and idle time between queries.
+Mining this information is not trivial, but it&rsquo;s fun and this blog post shows how to start.</p>
+<p class="note">
+This blog post is the ninth of eleven: one for the preface and ten for each chapter of my book <a href="https://oreil.ly/efficient-mysql-performance"><i>Efficient MySQL Performance</i></a>.
+The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mysql-performance</a>.
+</p>
+<h2 id="queries-vs-transactions">Queries vs. Transactions</h2>
+<p>First, why care about transactions rather than queries?
+After all, performance is <em>query</em> response time.
+While that&rsquo;s true, and query response time is the North Star of MySQL performance, <em>transactions</em> are units of work with respect to the application.</p>
+<p>For example, an app might have a multi-statement transaction to update a user profile.
+From the app point of view, &ldquo;update user profile&rdquo; is a single logical event (that comprises multiple statements).
+Therefore, it&rsquo;s useful knowing and analyzing the response time of that event—the transaction.
+(It&rsquo;s throughput and other metrics are also useful to know, but we&rsquo;ll stick to response time for simplicity.)
+Moreover, as we&rsquo;ll see later in this blog post, <mark>transaction response time is not the sum of its constituent query response times.</mark>
+The event hierarchy begins to explain why.</p>
+<h2 id="event-hierarchy">Event Hierarchy</h2>
+<pre tabindex="0"><code class="language-none" data-lang="none"> transactions
+ └── statements
+     └── stages
+         └── waits
+</code></pre><p>To quote the MySQL manual:</p>
+<blockquote>
+<p>The Performance Schema monitors server events. An “event” is anything the server does that takes time and has been instrumented so that timing information can be collected. In general, an event could be a function call, a wait for the operating system, a stage of an SQL statement execution such as parsing or sorting, or an entire statement or group of statements.</p>
+</blockquote>
+<p>MySQL organizes events into the hierarchy shown above.
+Practically speaking, every event is a transaction.
+Transactions contain statements, which are usually queries, but not always.
+Statements have various stages of execution: parse SQL, open tables, execute, and so on.
+And last but not least, stages incur waits, like waiting for disk I/O or the client.</p>
+<p>This brief introduction to events and the event hierarchy is why chapter 8 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a> begins with:</p>
+<blockquote>
+<p>MySQL has non-transactional storage engines, like MyISAM, but InnoDB is the default and the presumptive norm. Therefore, practically speaking, every MySQL query executes in a transaction by default, even a single SELECT statement.</p>
+</blockquote>
+<p>To inspect transactions, you must descend into the event hierarchy and its various tables.
+The Performance Schema is vast, so I cannot cover it in a simple blog post.
+At the very least, read:</p>
+<ul>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema-event-tables.html">27.9 Performance Schema Tables for Current and Historical Events</a>.</li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema-table-descriptions.html">27.12 Performance Schema Table Descriptions</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema-table-reference.html">27.12.1 Performance Schema Table Reference</a></li>
+</ul>
+<p>Those three pages will give you a lay of the land.</p>
+<p>Apart from that, it&rsquo;s important to know that every event has an <em>event ID</em> that is a monotonically increasing integer value <em>per thread</em>.
+So the primary key of event tables is usually <code>(thread_id, event_id)</code>.
+And since events are organized in a hierarchy, most event tables have columns <code>end_event_id</code>, <code>nesting_event_id</code>, and <code>nesting_event_type</code>.
+This allows us to mine the Performance Schema for transactions by joining all events nested under a given transaction event ID.</p>
+<p class="note">
+I don't discuss how to setup or configure the Performance Schema in this blog post.
+For the examples below, I have enabled most instruments to produce a full example, but such extensive instrumentation is probably not a good idea on a busy production server.
+</p>
+<h2 id="inspecting-a-transaction">Inspecting a Transaction</h2>
+<p>For the following example, I&rsquo;m using table <code>elem</code> that&rsquo;s used throughout my book; you can download it at <a href="https://github.com/efficient-mysql-performance/examples">https://github.com/efficient-mysql-performance/examples</a>.</p>
+<p>The transaction is super simple:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">BEGIN</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">TABLE</span> elem;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">DELETE</span> <span style="color:#66d9ef">FROM</span> elem <span style="color:#66d9ef">WHERE</span> id<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">COMMIT</span>;
+</span></span></code></pre></div><p>I typed those four queries manually, which is an important detail that we&rsquo;ll see later.</p>
+<p>But those four queries aren&rsquo;t the focus; the transaction is the focus and <mark>the goal is to extract all events from the Performance Schema</mark>, thereby reconstituting the entire transaction after it has committed.</p>
+<p>Easier said than done.</p>
+<p>I&rsquo;m going to present this example two ways.
+First as &ldquo;raw ore&rdquo;: raw queries and output from the related Performance Schema tables.
+Like raw ore, this data needs to be refined to be useful.
+Second as &ldquo;ingots&rdquo;: the raw data refined into color-coded groups of related events so it&rsquo;s easier to inspect the transaction from start to finish.</p>
+<h3 id="raw-ore">Raw Ore</h3>
+<h4 id="transaction">Transaction</h4>
+<p>First we extract the transaction (the top of the hierarchy):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
+</span></span><span style="display:flex;"><span>  thread_id, event_id, end_event_id, event_name, nesting_event_id, nesting_event_type,
+</span></span><span style="display:flex;"><span>  ROUND(timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000</span>) t
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
+</span></span><span style="display:flex;"><span>  events_transactions_history
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
+</span></span><span style="display:flex;"><span>  autocommit<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;NO&#39;</span>;
+</span></span></code></pre></div><pre tabindex="0"><code class="language-none" data-lang="none">+-----------+----------+--------------+-------------+------------------+--------------------+---------+
+| thread_id | event_id | end_event_id | event_name  | NESTING_EVENT_ID | NESTING_EVENT_TYPE | t       |
++-----------+----------+--------------+-------------+------------------+--------------------+---------+
+|         1 |      123 |          126 | transaction |             NULL | NULL               |      26 |
+|        54 |      233 |          281 | transaction |              229 | STATEMENT          | 7729078 |
++-----------+----------+--------------+-------------+------------------+--------------------+---------+
+</code></pre><p>Thread ID 1 is the main MySQL thread, so ignore that.
+Our thread ID is 54, and that&rsquo;s important: we only want nested events where <code>thread_id=54</code>.</p>
+<p>The <code>autocommit='NO'</code> predicate is also important: MySQL <a href="https://dev.mysql.com/doc/refman/en/server-system-variables.html#sysvar_autocommit"><code>autocommit</code></a> is on by default.
+A single <code>SELECT</code> with autocommit enabled is an implicit transaction: the user (or app) didn&rsquo;t explicitly execute <code>BEGIN</code> or <code>START TRANSACTION</code>.
+As such, implicit transactions are usually single statements (queries).
+But what we really want to inspect is explicit multi-statement transactions, like this example.
+Therefore, we have to filter where <code>autocommit='NO'</code>.</p>
+<p>Note, however, that even with <code>autocommit</code> enabled, the following explicit transaction is possible but wasteful:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">BEGIN</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- One query
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">COMMIT</span>;
+</span></span></code></pre></div><p>I say that&rsquo;s wasteful because the <code>BEGIN</code> and <code>COMMIT</code> are two wasted round trips when <code>autocommit</code> is enabled.
+Surprisingly, I see some ORMs do exactly that, but that&rsquo;s a topic for next month when I cover chapter 9 titled &ldquo;Other Challenges.&rdquo;</p>
+<p>Scroll right on the output and notice <code>t | 7729078</code>: the transaction took 7.7s to execute.
+(The query converts the time from picoseconds to microseconds.)
+Of course, MySQL didn&rsquo;t execute any of the four statements that slowly.
+As I hinted at earlier in this blog post, the transaction time is due to idle time between statements because I typed the queries manually one by one.</p>
+<p><mark>Idle time between statements in a transaction is one of the most important reasons to inspect transactions.</mark>
+Transaction idle time does not show up in query analysis because it&rsquo;s not a property of any query, it&rsquo;s time <em>between</em> queries.
+So although query analysis cannot reveal it, the application (and users) will experience it.
+Why does transaction idle time occur?
+Read section &ldquo;Common Problems&rdquo; in chapter 8 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>.</p>
+<p>Notice <code>NESTING_EVENT_TYPE | STATEMENT</code> in the output.
+That means the transaction is nested in/under a statement event, which contradicts the <a href="#event-hierarchy">event hierarchy</a>.
+The full explanation is complicated (and documented in the MySQL manual); the short answer is: the <code>BEGIN</code> statement occurs first and creates the transaction.</p>
+<p>The <code>end_event_id</code> is important because it allows us to query the nested tables efficiently: using only the primary key on <code>(thread_id, event_id)</code>.
+We know the thread ID: 54.
+And since event IDs are monotonically increasing per thread, we know that all nested events must be between 229 (the <code>BEGIN</code> that created the transaction) and 281 (the transaction <code>end_event_id</code>).
+Now we&rsquo;re ready to query the next level down in the hierarchy: statements.</p>
+<h4 id="statements">Statements</h4>
+<p>Then we extract the statements within the transaction:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
+</span></span><span style="display:flex;"><span>  event_id, end_event_id, event_name, <span style="color:#66d9ef">source</span>,
+</span></span><span style="display:flex;"><span>  ROUND(timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000</span>) t,
+</span></span><span style="display:flex;"><span>  ROUND(lock_time<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000</span>) lockt,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">LEFT</span>(sql_text,<span style="color:#ae81ff">1000</span>),
+</span></span><span style="display:flex;"><span>  COALESCE(current_schema,<span style="color:#e6db74">&#39;&#39;</span>) db,
+</span></span><span style="display:flex;"><span>  nesting_event_id, nesting_event_type
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
+</span></span><span style="display:flex;"><span>  events_statements_history
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
+</span></span><span style="display:flex;"><span>      thread_id<span style="color:#f92672">=</span><span style="color:#ae81ff">54</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> event_id <span style="color:#66d9ef">BETWEEN</span> <span style="color:#ae81ff">229</span> <span style="color:#66d9ef">and</span> <span style="color:#ae81ff">281</span>;
+</span></span></code></pre></div><pre tabindex="0"><code class="language-none" data-lang="none">+----------+--------------+----------------------+---------------------------------+------+-------+------------------------------+------+------------------+--------------------+
+| event_id | end_event_id | event_name           | source                          | t    | lockt | LEFT(sql_text,1000)          | db   | NESTING_EVENT_ID | NESTING_EVENT_TYPE |
++----------+--------------+----------------------+---------------------------------+------+-------+------------------------------+------+------------------+--------------------+
+|      229 |          237 | statement/sql/begin  | init_net_server_extension.cc:97 |   48 |     0 | begin                        | test |             NULL | NULL               |
+|      239 |          258 | statement/sql/select | init_net_server_extension.cc:97 |  226 |     2 | select * from elem           | test |              233 | TRANSACTION        |
+|      260 |          275 | statement/sql/delete | init_net_server_extension.cc:97 |  303 |     2 | delete from elem where id=10 | test |              233 | TRANSACTION        |
+|      277 |          285 | statement/sql/commit | init_net_server_extension.cc:97 |  750 |     0 | commit                       | test |              233 | TRANSACTION        |
++----------+--------------+----------------------+---------------------------------+------+-------+------------------------------+------+------------------+--------------------+
+</code></pre><p>Notice the <code>WHERE</code> clause: by thread ID and range of beginning and ending event IDs as explained above.</p>
+<p>As expected, we extract the four SQL statements of the transaction.
+Column <code>t</code> in the output is query execution time in microseconds.
+The full range of query metrics is available in the table (<code>events_statements_history</code>), just not shown here for brevity.
+Also as expected, each query was fast: less than 1 millisecond.
+Total query execution time is 1.3 milliseconds, which is dramatically less than 7.7 <em>seconds</em> of transaction execution time due to idle time between statements.</p>
+<p>Notice <code>NESTING_EVENT_TYPE | NULl</code> for the <code>BEGIN</code> because it started the whole chain of events, but <code>NESTING_EVENT_TYPE | TRANSACTION</code> for other statements, which agrees with the <a href="#event-hierarchy">event hierarchy</a>.</p>
+<p>The end event ID for each statement is several events more than the statement because nested within each statement are stages.
+Notice that the last statement (<code>COMMIT</code>) has ending event ID <strong>285</strong>, which is nested stage event ID and larger than the <code>BETWEEN</code> values used in the query on this table.
+We need to use this stage event ID when querying nested stages to ensure we extract all stages.</p>
+<h4 id="stages">Stages</h4>
+<p>Third, we extract the stages within the statements:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
+</span></span><span style="display:flex;"><span>  event_id, end_event_id, event_name,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">source</span>,
+</span></span><span style="display:flex;"><span>  nesting_event_id, nesting_event_type
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
+</span></span><span style="display:flex;"><span>  events_stages_history
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
+</span></span><span style="display:flex;"><span>      thread_id<span style="color:#f92672">=</span><span style="color:#ae81ff">54</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> event_id <span style="color:#66d9ef">BETWEEN</span> <span style="color:#ae81ff">229</span> <span style="color:#66d9ef">and</span> <span style="color:#ae81ff">285</span>;
+</span></span></code></pre></div><pre tabindex="0"><code class="language-none" data-lang="none">+----------+--------------+------------------------------------------------+----------------------------------+------------------+--------------------+
+| event_id | end_event_id | event_name                                     | source                           | nesting_event_id | nesting_event_type |
++----------+--------------+------------------------------------------------+----------------------------------+------------------+--------------------+
+|      230 |          230 | stage/sql/starting                             | init_net_server_extension.cc:103 |              229 | STATEMENT          |
+|      231 |          231 | stage/sql/Executing hook on transaction begin. | rpl_handler.cc:1472              |              229 | STATEMENT          |
+|      232 |          233 | stage/sql/starting                             | rpl_handler.cc:1474              |              229 | STATEMENT          |
+|      234 |          234 | stage/sql/query end                            | sql_parse.cc:4735                |              229 | STATEMENT          |
+|      235 |          235 | stage/sql/closing tables                       | sql_parse.cc:4794                |              229 | STATEMENT          |
+|      236 |          236 | stage/sql/freeing items                        | sql_parse.cc:5249                |              229 | STATEMENT          |
+|      237 |          237 | stage/sql/cleaning up                          | sql_parse.cc:2381                |              229 | STATEMENT          |
+|      240 |          240 | stage/sql/starting                             | init_net_server_extension.cc:103 |              239 | STATEMENT          |
+|      241 |          241 | stage/sql/checking permissions                 | sql_authorization.cc:2160        |              239 | STATEMENT          |
+|      242 |          242 | stage/sql/Opening tables                       | sql_base.cc:5796                 |              239 | STATEMENT          |
+|      243 |          243 | stage/sql/init                                 | sql_select.cc:562                |              239 | STATEMENT          |
+|      244 |          245 | stage/sql/System lock                          | lock.cc:331                      |              239 | STATEMENT          |
+|      246 |          246 | stage/sql/optimizing                           | sql_optimizer.cc:296             |              239 | STATEMENT          |
+|      247 |          247 | stage/sql/statistics                           | sql_optimizer.cc:624             |              239 | STATEMENT          |
+|      248 |          248 | stage/sql/preparing                            | sql_optimizer.cc:708             |              239 | STATEMENT          |
+|      249 |          250 | stage/sql/executing                            | sql_union.cc:1198                |              239 | STATEMENT          |
+|      251 |          251 | stage/sql/end                                  | sql_select.cc:595                |              239 | STATEMENT          |
+|      252 |          252 | stage/sql/query end                            | sql_parse.cc:4735                |              239 | STATEMENT          |
+|      253 |          253 | stage/sql/waiting for handler commit           | handler.cc:1595                  |              239 | STATEMENT          |
+|      254 |          254 | stage/sql/closing tables                       | sql_parse.cc:4794                |              239 | STATEMENT          |
+|      255 |          255 | stage/sql/freeing items                        | sql_parse.cc:5249                |              239 | STATEMENT          |
+|      256 |          257 | stage/sql/logging slow query                   | log.cc:1648                      |              239 | STATEMENT          |
+|      258 |          258 | stage/sql/cleaning up                          | sql_parse.cc:2381                |              239 | STATEMENT          |
+|      261 |          261 | stage/sql/starting                             | init_net_server_extension.cc:103 |              260 | STATEMENT          |
+|      262 |          262 | stage/sql/checking permissions                 | sql_authorization.cc:2160        |              260 | STATEMENT          |
+|      263 |          263 | stage/sql/Opening tables                       | sql_base.cc:5796                 |              260 | STATEMENT          |
+|      264 |          264 | stage/sql/init                                 | sql_select.cc:562                |              260 | STATEMENT          |
+|      265 |          266 | stage/sql/System lock                          | lock.cc:331                      |              260 | STATEMENT          |
+|      267 |          269 | stage/sql/updating                             | sql_delete.cc:561                |              260 | STATEMENT          |
+|      270 |          270 | stage/sql/end                                  | sql_select.cc:595                |              260 | STATEMENT          |
+|      271 |          271 | stage/sql/query end                            | sql_parse.cc:4735                |              260 | STATEMENT          |
+|      272 |          272 | stage/sql/waiting for handler commit           | handler.cc:1595                  |              260 | STATEMENT          |
+|      273 |          273 | stage/sql/closing tables                       | sql_parse.cc:4794                |              260 | STATEMENT          |
+|      274 |          274 | stage/sql/freeing items                        | sql_parse.cc:5249                |              260 | STATEMENT          |
+|      275 |          275 | stage/sql/cleaning up                          | sql_parse.cc:2381                |              260 | STATEMENT          |
+|      278 |          278 | stage/sql/starting                             | init_net_server_extension.cc:103 |              277 | STATEMENT          |
+|      279 |          281 | stage/sql/waiting for handler commit           | handler.cc:1595                  |              277 | STATEMENT          |
+|      282 |          282 | stage/sql/query end                            | sql_parse.cc:4735                |              277 | STATEMENT          |
+|      283 |          283 | stage/sql/closing tables                       | sql_parse.cc:4794                |              277 | STATEMENT          |
+|      284 |          284 | stage/sql/freeing items                        | sql_parse.cc:5249                |              277 | STATEMENT          |
+|      285 |          285 | stage/sql/cleaning up                          | sql_parse.cc:2381                |              277 | STATEMENT          |
++----------+--------------+------------------------------------------------+----------------------------------+------------------+--------------------+
+</code></pre><p>The output is overwhelming, but there&rsquo;s a pattern: each <em>statement</em> begins with stage <code>stage/sql/starting</code> and ends with stage <code>stage/sql/cleaning up</code>.
+Scroll to the right of the output and look at the repeating blocks of <code>nesting_event_id</code> values: one for each statement by statement event ID:</p>
+<table>
+<thead>
+<tr>
+<th>Statement Event ID</th>
+<th>SQL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>229</td>
+<td><code>BEGIN</code></td>
+</tr>
+<tr>
+<td>239</td>
+<td><code>SELECT</code></td>
+</tr>
+<tr>
+<td>260</td>
+<td><code>DELETE</code></td>
+</tr>
+<tr>
+<td>277</td>
+<td><code>COMMIT</code></td>
+</tr>
+</tbody>
+</table>
+<p>Executing the actual query (the SQL statement) is just one stage of many.
+Stages have execution time, too, but I didn&rsquo;t include it here because I don&rsquo;t think it&rsquo;s particularly useful.
+Why?
+Two reasons: stages are usually not a problem; and there&rsquo;s nothing you can do about a slow stage unless it&rsquo;s the query execution stage, in which case you optimize the query, not the stage.</p>
+<h4 id="waits">Waits</h4>
+<p>Finally, we extract the waits within the stages:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
+</span></span><span style="display:flex;"><span>  event_id, end_event_id, event_name,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">source</span>,
+</span></span><span style="display:flex;"><span>  ROUND(timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000</span>) t,
+</span></span><span style="display:flex;"><span>  COALESCE(object_type, <span style="color:#e6db74">&#39;&#39;</span>) obj_type,
+</span></span><span style="display:flex;"><span>  COALESCE(object_schema,<span style="color:#e6db74">&#39;&#39;</span>) obj_scheme,
+</span></span><span style="display:flex;"><span>  COALESCE(object_name,<span style="color:#e6db74">&#39;&#39;</span>) obj_name,
+</span></span><span style="display:flex;"><span>  COALESCE(index_name, <span style="color:#e6db74">&#39;&#39;</span>) idx,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">operation</span> op,
+</span></span><span style="display:flex;"><span>  number_of_bytes n,
+</span></span><span style="display:flex;"><span>  nesting_event_id, nesting_event_type
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
+</span></span><span style="display:flex;"><span>  events_waits_history
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
+</span></span><span style="display:flex;"><span>      thread_id<span style="color:#f92672">=</span><span style="color:#ae81ff">54</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> event_id <span style="color:#66d9ef">BETWEEN</span> <span style="color:#ae81ff">229</span> <span style="color:#66d9ef">and</span> <span style="color:#ae81ff">285</span>;
+</span></span></code></pre></div><pre tabindex="0"><code class="language-none" data-lang="none">+----------+--------------+-----------------------------+---------------------------------+---------+----------+------------+-----------------------------------------+---------+----------------+------+------------------+--------------------+
+| event_id | end_event_id | event_name                  | source                          | t       | obj_type | obj_scheme | obj_name                                | idx     | op             | n    | nesting_event_id | nesting_event_type |
++----------+--------------+-----------------------------+---------------------------------+---------+----------+------------+-----------------------------------------+---------+----------------+------+------------------+--------------------+
+|      238 |          238 | idle                        | init_net_server_extension.cc:67 | 2688899 |          |            |                                         |         | idle           | NULL |             NULL | NULL               |
+|      245 |          245 | wait/lock/table/sql/handler | handler.cc:7901                 |       1 | TABLE    | test       | elem                                    | PRIMARY | read external  | NULL |              244 | STAGE              |
+|      250 |          250 | wait/io/table/sql/handler   | handler.cc:2993                 |      25 | TABLE    | test       | elem                                    |         | fetch          |   10 |              249 | STAGE              |
+|      257 |          257 | wait/io/file/sql/slow_log   | mf_iocache.cc:1691              |      35 | FILE     |            | /usr/local/var/mysql@8.0/slow-query.log |         | write          |  571 |              256 | STAGE              |
+|      259 |          259 | idle                        | init_net_server_extension.cc:67 | 3824614 |          |            |                                         |         | idle           | NULL |             NULL | NULL               |
+|      266 |          266 | wait/lock/table/sql/handler | handler.cc:7901                 |       1 | TABLE    | test       | elem                                    | PRIMARY | write external | NULL |              265 | STAGE              |
+|      268 |          268 | wait/io/table/sql/handler   | handler.cc:3264                 |      20 | TABLE    | test       | elem                                    | PRIMARY | fetch          |    1 |              267 | STAGE              |
+|      269 |          269 | wait/io/table/sql/handler   | handler.cc:8027                 |      32 | TABLE    | test       | elem                                    | PRIMARY | delete         |    1 |              267 | STAGE              |
+|      276 |          276 | idle                        | init_net_server_extension.cc:67 | 1214261 |          |            |                                         |         | idle           | NULL |             NULL | NULL               |
+|      280 |          280 | wait/io/file/sql/binlog     | mf_iocache.cc:1691              |      19 | FILE     |            | /usr/local/var/mysql@8.0/binlog.000077  |         | write          |  295 |              279 | STAGE              |
+|      281 |          281 | wait/io/file/sql/binlog     | basic_ostream.cc:88             |     137 | FILE     |            | /usr/local/var/mysql@8.0/binlog.000077  |         | sync           | NULL |              279 | STAGE              |
++----------+--------------+-----------------------------+---------------------------------+---------+----------+------------+-----------------------------------------+---------+----------------+------+------------------+--------------------+
+</code></pre><p>I love how the MySQL manual defines <em>waits</em>:</p>
+<blockquote>
+<p>The Performance Schema instruments waits, which are events that take time.</p>
+</blockquote>
+<p>So waits are events that take time&hellip; but wait (pun intended), doesn&rsquo;t every event take time?
+<span style="font-size:22pt">🤔</span></p>
+<p><mark>I define waits as time MySQL spent waiting for a shared resource or the client.</mark></p>
+<p>Shared resources include storage and network I/O, data locks, and synchronization mechanisms.
+For example, all storage I/O takes a non-zero amount of time.
+Even the fastest storage systems have a few microseconds of latency.
+And pretty much every database has locks and synchronization (like mutexes) that incur a non-zero amount of wait time to acquire, especially under high concurrent load.</p>
+<p>Waiting for the client is a special wait event called <code>idle</code>, as reported three times in the output above.
+Idle events are described in <a href="https://dev.mysql.com/doc/mysql-perfschema-excerpt/8.0/en/performance-schema-socket-instances-table.html">10.3.5 The socket_instances Table</a>:</p>
+<blockquote>
+<p>The socket status, either IDLE or ACTIVE. Wait times for active sockets are tracked using the corresponding socket instrument. Wait times for idle sockets are tracked using the <code>idle</code> instrument.</p>
+<p>A socket is idle if it is waiting for a request from the client. When a socket becomes idle, the event row in <code>socket_instances</code> that is tracking the socket switches from a status of ACTIVE to IDLE. The <code>EVENT_NAME</code> value remains <code>wait/io/socket/*</code>, but timing for the instrument is suspended. Instead, an event is generated in the <code>events_waits_current</code> table with an <code>EVENT_NAME</code> value of <code>idle</code>.</p>
+<p>When the next request is received, the <code>idle</code> event terminates, the socket instance switches from IDLE to ACTIVE, and timing of the socket instrument resumes.</p>
+</blockquote>
+<p>Waits are normally nested in stages, but the idle event is an exception (scroll right on the output).
+For example, the first idle event has ID 238, but what does this correspond to?
+Since event IDs are monotonically increasing (per thread), this idle event occurred immediately after <a href="#statements">statement event</a> ID 229 (<code>BEGIN</code>) that <em>ended</em> at event ID 237:</p>
+<table>
+<thead>
+<tr>
+<th>Event ID</th>
+<th>Event Type</th>
+<th>End Event ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>229</td>
+<td>Statement (<code>BEGIN</code>)</td>
+<td><mark>237</mark></td>
+</tr>
+<tr>
+<td><mark>238</mark></td>
+<td>Wait (<code>idle</code>)</td>
+<td>238</td>
+</tr>
+<tr>
+<td><mark>239</mark></td>
+<td>Statement (<code>SELECT</code>)</td>
+<td>258</td>
+</tr>
+</tbody>
+</table>
+<p>Remember: I typed these queries manually, so MySQL was idle for 2.7s (<code>t | 2688899</code> µs) between the statements, waiting for me (the client).</p>
+<p>The other waits in the output are waits on shared resources: two table locks and several disk I/O waits.
+These are nested in stage events, but follow the nesting event IDs up the hierarchy and you find that the waits are incurred in (or by) statements.
+For example, the last two waits are nested in stage event ID 279, which are nested in statement event ID 277: <code>COMMIT</code>.
+Back down in the waits again, columns <code>obj_name</code> and <code>op</code> (short for <code>operation</code>) list what MySQL was waiting on during commit: the binary logs.</p>
+<p>There&rsquo;s more to know about MySQL wait events than I present here.
+The purpose of this blog post is only to show how to start mining the Performance Schema for transactions.
+But I&rsquo;ll say a few more things about waits with respect to MySQL performance.</p>
+<p>It&rsquo;s impossible for there to be zero waits (or zero wait time) because latency is inherit to all computer systems.
+As I mentioned earlier, all storage (and network) I/O takes a non-zero amount of time.
+Therefore, with respect to waits, the goal is to reduce wait time as close to zero as possible.
+This is especially important for the <code>idle</code> wait event (waiting for the client) because it&rsquo;s caused by the application, so it&rsquo;s something you can directly address.
+Again, read section &ldquo;Common Problems&rdquo; in chapter 8 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>.</p>
+<p>In the world of MySQL, using waits in performance troubleshooting is not as common as one might imagine, especially since they&rsquo;ve been available since MySQL 5.5, which was released 12 years ago (in 2010).
+Instead, almost everything you read (or listen) about MySQL performance—including my book—focuses on what MySQL <em>is doing</em> and how long that took—primarily statement events.
+We could view these two approaches are two sides of the same coin: execution time vs. wait time.
+MySQL is either executing or waiting.
+But I think that&rsquo;s a little misleading because, as the <a href="#event-hierarchy">event hierarchy</a> correctly models, execution causes waits: <em>execute → wait</em>.
+(The idle wait event is an exception, which is why it is not nested in any event.)
+Therefore, if we focus on waits first, there&rsquo;s not much we can learn from them alone or do to reduce them.
+For example, let&rsquo;s say the Performance Schema reveals that a query spends a lot of time waiting on disk I/O.
+If you don&rsquo;t consider <em>why</em> the query is accessing so much data, practically the only solution is to reduce disk I/O latency and increase disk IOPS by upgrading the storage system.
+That might work, but it&rsquo;s wildly inefficient, probably very expensive, and I assure you that no MySQL expert will suggest this approach.
+Rather, the correct and most efficient approach is what my book is all about: query response time.
+In this example again, you start by looking that the statement causing the disk I/O waits.
+Perhaps you find the query lacks a good index, or has a needless <a href="https://dev.mysql.com/doc/refman/en/order-by-optimization.html"><code>ORDER BY</code></a> clause, or myriad other reasons that make the statement inefficient, which incurs disk I/O waits.
+You can optimize the query almost for free—a lot easier than upgrading the storage system.</p>
+<p>In my opinion, waits are useful for MySQL experts doing deep analyses, or intrepid software engineers who really want to dig deep into query response time because waits are part of response time.
+Either way, MySQL performance is query response time.</p>
+<h3 id="ingots">Ingots</h3>
+<p>The previous section is titled <a href="#raw-ore">Raw Ore</a> and now you can see why: a simple four-statement transaction yields a lot of raw output that&rsquo;s hierarchical in the model but flat and kind of mixed up when you query it.
+To better visualize and understand the transaction, I combined events for each statement and color-coded the output.</p>
+<p><em>Color codes</em>:</p>
+<ul>
+<li>Statement</li>
+<li><span style="color:blue">Stage</span></li>
+<li><span style="color:red">Wait</span></li>
+<li><span style="color:red; background:lightgray;">Idle</span></li>
+</ul>
+<p>For example, the <code>SELECT</code> and idle event after begins with the statement event at top.
+Underneath that are four <span style="color:blue">stages</span>.
+Under each <span style="color:blue">stage</span> are corresponding <span style="color:red">waits</span>.
+And last, an <span style="color:red; background:lightgray;">idle</span> event: MySQL waiting for me (the client) to type and enter the next statement.</p>
+<p><strong>Click the images to view the full size.</strong></p>
+<p><code>BEGIN</code> and idle:
+<a href="/img/performance-schema-transaction-output-1.png"><img src="/img/performance-schema-transaction-output-1.png" alt="Performance Schema Transaction Output 1"></a></p>
+<hr>
+<p><code>SELECT</code> and idle:
+<a href="/img/performance-schema-transaction-output-2.png"><img src="/img/performance-schema-transaction-output-2.png" alt="Performance Schema Transaction Output 2"></a></p>
+<hr>
+<p><code>DELETE</code> and idle:
+<a href="/img/performance-schema-transaction-output-3.png"><img src="/img/performance-schema-transaction-output-3.png" alt="Performance Schema Transaction Output 3"></a></p>
+<hr>
+<p><code>COMMIT</code>
+<a href="/img/performance-schema-transaction-output-4.png"><img src="/img/performance-schema-transaction-output-4.png" alt="Performance Schema Transaction Output 4"></a></p>
+<br>
+<h2 id="state-of-the-art">State of the Art</h2>
+<p>To my knowledge, there are currently no open-source tools that mine the Performance Schema and process the raw data into something easy and useful for human consumption.
+The <a href="https://dev.mysql.com/doc/refman/8.0/en/sys-schema.html">MySQL sys Schema</a> has many views that use raw Performance Schema data, but that&rsquo;s still pretty raw and incapable of expressing a full transaction as shown here.
+Plus, the Performance Schema has a lot more data than I showed here, so the industry really needs a sophisticated tool that can extract and refine the vast wealth of data in the Performance Schema into gold: deep and practically completely insight into MySQL performance.</p>
+<p>But until then, the state of the art with respect to transactions reporting is copy-paste, as I wrote in chapter 8 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, reproduced at <a href="https://hackmysql.com/trx">https://hackmysql.com/trx</a>, and expanded upon in this blog post.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+        
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-7/" data-toggle="tooltip" data-placement="top" title="Better Replication Heartbeats">&larr; </a>
+          </li>
+        
+        
+      </ul>
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+      
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

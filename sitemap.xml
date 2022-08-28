@@ -2,28 +2,40 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/tags/book/</loc>
+    <lastmod>2022-08-28T13:29:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/efficient-mysql-performance/</loc>
+    <lastmod>2022-08-28T13:29:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2022-08-28T13:29:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/book-8/</loc>
+    <lastmod>2022-08-28T13:29:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
+    <lastmod>2022-08-28T13:29:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/performance_schema/</loc>
+    <lastmod>2022-08-28T13:29:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2022-08-28T13:29:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2022-08-28T13:29:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/transactions/</loc>
+    <lastmod>2022-08-28T13:29:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/mysql-transaction-reporting/</loc>
+    <lastmod>2022-08-28T13:28:00-04:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/post/book-7/</loc>
     <lastmod>2022-07-28T13:57:00-04:00</lastmod>
   </url><url>
-    <loc>https://hackmysql.com/tags/book/</loc>
-    <lastmod>2022-07-28T13:57:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/efficient-mysql-performance/</loc>
-    <lastmod>2022-07-28T13:57:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2022-07-28T13:57:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2022-07-28T13:57:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2022-07-28T13:57:00-04:00</lastmod>
-  </url><url>
     <loc>https://hackmysql.com/tags/replication/</loc>
-    <lastmod>2022-07-28T13:57:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2022-07-28T13:57:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/eng/career-advice/</loc>
@@ -106,12 +118,6 @@
   </url><url>
     <loc>https://hackmysql.com/about/</loc>
     <lastmod>2021-12-25T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/mysql-transaction-reporting/</loc>
-    <lastmod>2021-12-08T09:00:00-05:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/trx/</loc>
-    <lastmod>2021-12-08T09:00:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/database/</loc>
     <lastmod>2021-10-16T00:00:00+00:00</lastmod>
