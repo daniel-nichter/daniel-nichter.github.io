@@ -7,25 +7,34 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 21 Jan 2018 19:00:00 -0700</lastBuildDate><atom:link href="https://hackmysql.com/tags/antipatterns/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 16 Sep 2022 16:01:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/antipatterns/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How Not to Use MySQL</title>
+      <link>https://hackmysql.com/post/book-9/</link>
+      <pubDate>Fri, 16 Sep 2022 16:01:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/post/book-9/</guid>
+      <description>&lt;p&gt;Chapter 9 of &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt; changed in development. Originally, it was a chapter titled &amp;ldquo;Not MySQL&amp;rdquo;, as in &amp;ldquo;how not to use MySQL.&amp;rdquo; But we (O&amp;rsquo;Reilly and I) pulled the chapter, and the current chapter 9 in print is &amp;ldquo;Other Challenges&amp;rdquo;: an important laundry list of other challenges engineers using MySQL must be aware of and address. This blog post is a sketch of the unwritten chapter 9: how not to use MySQL.&lt;/p&gt;</description>
+    </item>
+
     <item>
       <title>Command-line Interface Antipatterns</title>
       <link>https://hackmysql.com/eng/cli-antipatterns/</link>
       <pubDate>Sun, 21 Jan 2018 19:00:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/cli-antipatterns/</guid>
       <description>Command-line Interface Antipatterns Apps (web, mobile, and native) and APIs do not lessen the need or importance of command-line tools. A beautifully designed command-line user experience is arguably more important and than a graphical UX because the command line is deceptively simple: text on a screen. Wielding mere text on screen is an art akin to wielding mere paint on canvas. This page documents what I believe to be command-line interface (CLI) antipatterns which, in the long or short run, detract from both UX and developer effectiveness.</description>
     </item>
-    
+
     <item>
       <title>Go Antipatterns</title>
       <link>https://hackmysql.com/golang/go-antipatterns/</link>
       <pubDate>Sat, 03 Jun 2017 18:51:14 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/golang/go-antipatterns/</guid>
       <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&amp;rsquo;s a better way that&amp;rsquo;s both functionally equivalent and idiomatic.
 These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</description>
     </item>
-    
+
   </channel>
 </rss>

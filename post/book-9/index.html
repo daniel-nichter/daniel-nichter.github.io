@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>How Not to Use MySQL</title>
+  <meta property="og:title" content="How Not to Use MySQL" />
+  <meta name="description" content="Chapter 9">
+  <meta property="og:description" content="Chapter 9">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-9/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.101.0" />
+  <link rel="canonical" href="https://hackmysql.com/post/book-9/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">How Not to Use MySQL</h1>
+        <h3 class="post-subtitle">Chapter 9</h2>
+        <div class="post-meta">
+
+
+  <div>Sep 16, 2022</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/antipatterns">#antipatterns</a>
+
+        <a href="/tags/book">#book</a>
+
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+
+
+  </div>
+</div>
+
+
+        <p>Chapter 9 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a> changed in development. Originally, it was a chapter titled &ldquo;Not MySQL&rdquo;, as in &ldquo;how not to use MySQL.&rdquo; But we (O&rsquo;Reilly and I) pulled the chapter, and the current chapter 9 in print is &ldquo;Other Challenges&rdquo;: an important laundry list of other challenges engineers using MySQL must be aware of and address. This blog post is a sketch of the unwritten chapter 9: how not to use MySQL.</p>
+<p class="note">
+This blog post is the tenth of eleven: one for the preface and ten for each chapter of my book <a href="https://oreil.ly/efficient-mysql-performance"><i>Efficient MySQL Performance</i></a>.
+The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mysql-performance</a>.
+</p>
+<h2 id="mysql-is-too-good">MySQL Is Too Good</h2>
+<p>MySQL is a paragon of an OLTP data store: SQL, relational, transactional, row locking, MVCC, ACID, and of course: <em>fast</em>.
+It&rsquo;s incredibly good at what it is and does.</p>
+<p>But perhaps it&rsquo;s <em>too</em> good at what does because it&rsquo;s used for all sorts of others purposes.
+Why?
+Because it works surprisingly well for other purposes.
+It&rsquo;s like a hammer, wrench, drill, and screwdriver all in one.</p>
+<p>Long ago, there weren&rsquo;t many viable options.
+But in the last 10 years, there&rsquo;s been an explosion of data stores.
+More importantly, there&rsquo;s also been a change in the industry mindset towards polyglot data being the norm.
+That means using the best data store for the job, not simply the most ubiquitous data store—which was MySQL for a long time.</p>
+<hr>
+<p>If you need a MySQL expert to say that it&rsquo;s ok not to use MySQL and, instead, better to use another data store, here it is:</p>
+<p><mark><em>It&rsquo;s ok not to use MySQL; use another data store that&rsquo;s purpose-built or better suited to the data model.</em></mark></p>
+<hr>
+<h2 id="rule-of-thumb-structured-and-relational">Rule of Thumb: Structured and Relational</h2>
+<p>As a rule of thumb, MySQL is best for data that is structured and relational.
+That shouldn&rsquo;t be a surprise because it&rsquo;s an SQL database, and &ldquo;structured&rdquo; is the &ldquo;S&rdquo; in SQL.
+And SQL is the query language developed on top of E. F. Codd&rsquo;s relational model.
+Granted, some say that SQL isn&rsquo;t true to the relational model, but for our purposes it doesn&rsquo;t matter: SQL (and relational) won.</p>
+<p>Note that &ldquo;OLTP&rdquo; or even just &ldquo;transactional&rdquo; are not part of the rule of thumb.
+Yes, MySQL is an OLTP-optimized data store, but a workload dominated by point SELECTs is still a good use case even though it&rsquo;s barely OLTP or transactional in the full sense of these two terms.</p>
+<p><em>Structured</em> and <em>relational</em> are very closely related, but they can come apart.
+For example, a document store can have relations within the data, but documents don&rsquo;t have a fixed structured—that&rsquo;s why NoSQL/document stores are so useful: flexible &ldquo;structure&rdquo;.
+On the other hand, a key-value store like DynamoDB requires a somewhat fixed structure in terms of partition key and secondary indexes, but it doesn&rsquo;t really have relations.</p>
+<p>When data has a known structure, and there are relations among the structured data, MySQL is able to figure out how to efficiently access data for an infinite number of queries.
+To state it directly: rigid data allows flexible queries.
+For example, DynamoDB does <em>not</em> have flexible queries: you must use either the partition key or one of the few secondary indexes, and you can&rsquo;t join tables.
+The data is very flexible (dump anything you want in DynamoDB), but the queries are not.
+But for that trade-off, you get extremely fast data access and horizontal scalability.
+The reverse is true for MySQL.
+The data structure is not flexible, but the queries are very flexible (with reasonable indexes) because MySQL figures out how to access data for a query based on the fixed structure—and, of course, you can join tables any way you want (and MySQL can, too).</p>
+<p>MySQL is fundamentally a relational data store.
+Almost every thing about it—internally and externally—is designed and optimized to be a relational data store.
+Consequently, that&rsquo;s the best use case for MySQL: structured and relational data.</p>
+<h2 id="how-not-to-use-mysql">How Not to Use MySQL</h2>
+<p>MySQL works for the following uses cases (sometimes quite well), but none of them exhibit structured and relational data.
+As such, to some degree they work against MySQL.</p>
+<h3 id="cache">Cache</h3>
+<p>Caches are usually ephemeral: in-memory only.
+But MySQL is durable by default.
+That durability is fundamentally at odds with (and wasted overhead compared to) in-memory caching.</p>
+<p>Caches are not meant to be transactional or relational.
+They&rsquo;re usually far simpler, like key-value or everything <a href="https://redis.io/">Redis</a> can do.
+But MySQL is inherently transactional and relational, and all the &ldquo;machinery&rdquo; to make those two happens is (again) at odds with caching.</p>
+<p>Although the InnoDB buffer pool acts like an in-memory cache, you should never think of it as that.
+If you read <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a> it will be clear why: pages in the buffer pool are doing <em>a lot</em> more than simply caching data.</p>
+<p>Instead, use a real cache like <a href="https://memcached.org/">memcached</a> or <a href="https://redis.io/">Redis</a>.</p>
+<h3 id="queue">Queue</h3>
+<p>Queues are meant for fast-moving, transient data.
+Some queues are durable, others are not.
+And typically the only access pattern to a queue is &ldquo;Give me N messages&rdquo;—one doesn&rsquo;t query a queue.</p>
+<p>What really makes MySQL a poor queue is that every query in MySQL must go through the full process of being a transaction in a relational database.
+So whereas a queue just wants to quickly input and output a little message, MySQL says &ldquo;Wait. Hold on&hellip; Let&rsquo;s treat this query with the full dignity of an ACID transaction&hellip; We gotta start a transaction, establish a consistent snapshot of the <em>whole</em> database, check and acquire locks, insert the row, update the page, possibly split or merge the index tree, commit the transaction, wait for the binary logs, add a dirty page to the lists, and&hellip;&rdquo; on and on.
+It&rsquo;s like you want to drive to the grocery story for almond milk, but you fly across the world to a store that doesn&rsquo;t have almond milk, so they order it for you, and meanwhile you rent a hotel in that foreign land and wait until it arrives, then you fly back home.
+Weird and ridiculous.
+So don&rsquo;t use MySQL as a queue.</p>
+<h3 id="olap">OLAP</h3>
+<p>MySQL is an OLTP database.
+OLTP != OLAP.</p>
+<p>MySQL is a teapot; don&rsquo;t use it to boil the ocean.
+Use a real OLAP data store.</p>
+<h3 id="big-data-store">Big data store</h3>
+<p>A somewhat common question I get from developers is how much data MySQL can store.
+The quick <em>technical</em> answer is 64 TB, but see <a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-limits.html">15.22 InnoDB Limits</a>.
+The more realistic answer is (as I write in chapter 5 my book):</p>
+<blockquote>
+<p>4 TB: For exceptionally optimized queries and access patterns, mid- to high-end hardware is sufficient for acceptable performance, but operations might take slightly longer than acceptable.</p>
+</blockquote>
+<p>Yes, MySQL can store 64 TB, but you&rsquo;re going to run into serious problems long before that.
+For example, how long do you think it&rsquo;ll take to do an <code>ALTER</code> or online schema migration (OSC) on 10 TB?
+A very long time on a busy production database.
+Then there&rsquo;s the issue of working set size: how big is that vs. how much RAM you can afford?</p>
+<p>All that said, I manage a few databases around 7 TB.
+(Where I work, we use microservices, so we have thousands of databases, but most are kept small.)
+But these work because it&rsquo;s mostly cold, infrequently accessed data.
+If you want to store <em>and</em> access tens of terabytes, you need a different data store than MySQL, especially depending on other access patterns.
+MySQL can do it, but it&rsquo;s not ideal.</p>
+<h3 id="document-store">Document store</h3>
+<p>I&rsquo;ll tell you a secret: I dislike and discourage the use of <a href="https://dev.mysql.com/doc/refman/8.0/en/json.html">the JSON data type</a>.
+I&rsquo;m not against storing JSON blobs in <code>BLOB</code> columns even though that begins to treat MySQL like an object store (like Amazon S3).
+But using the JSON column type for document-like access is patently not what MySQL is designed for.
+We know this because there are purpose-built document stores like <a href="https://www.mongodb.com/">MongoDB</a> and <a href="https://aws.amazon.com/documentdb/">Amazon DocumentDB</a> (based on the former), and they&rsquo;re nothing like MySQL.
+For one thing, true document stores don&rsquo;t use SQL.
+As a result, SQL syntax for document access is a hacky kludge—especially compared to the query language of true document stores.</p>
+<p>Document stores scale horizontally.
+That&rsquo;s partly why they were (somewhat derisively) called &ldquo;web scale&rdquo; many years ago.
+If your data is document-oriented, you&rsquo;ll have a better query language <em>and</em> built-in horizontal scalability by using a true document store.
+Remember: it&rsquo;s ok not to use MySQL.</p>
+<h3 id="key-value-store">Key-value store</h3>
+<p>Admittedly, MySQL works pretty well as a key-value store when a table has only a primary key because, as a clustered index in the InnoDB buffer pool, this is the fastest access possible.
+MySQL is blazing fast at single table primary key lookups.
+If this is one access pattern among others, and otherwise the data is structured and relational, then it&rsquo;s ok: it&rsquo;s simply an efficient point lookup; it&rsquo;s not surreptitiously treating MySQL as a key-value store.</p>
+<p>The problem and suboptimal use case occurs when this type of access is intentional: using point lookups for key-value access because the former happen to be blazing fast.
+The problem is, again, that every query in MySQL is a transaction that incurs all the transactional, relational overhead.</p>
+<p>But more importantly, like using MySQL for a document store, you don&rsquo;t get horizontal scalability for free.
+You would if you used a true key-value store like DynamoDB or <a href="https://www.scylladb.com/">ScyllaiDB</a>.</p>
+<h3 id="programming-language">Programming language</h3>
+<p>Long ago (and still in some corners of the relational database world), it was common to put stored procedures in the database.
+<a href="https://en.wikipedia.org/wiki/PL/SQL">PL/SQL</a> for example.
+But the various problems with this are now readily found in books.
+For one thing, it&rsquo;s difficult to unit test code in a stored procedure, which is especially bad given that the code is very important: it messes with data at the source of truth (the database).</p>
+<p>In my experience, this is not common in MySQL even though it has <a href="https://dev.mysql.com/doc/refman/8.0/en/create-procedure.html">stored procedures</a>.
+So let&rsquo;s keep it this way: don&rsquo;t hide important code in MySQL.
+Keep all code with your application code, unit tested, and in Git (or whatever VCS you use).</p>
+<p>Plus, code inside MySQL doesn&rsquo;t scale well.
+Why burden the one writable MySQL instance with running such code when your application probably scales out horizontally through Kubernetes?</p>
+<br>
+<hr>
+<br>
+<h1 id="chapter-9-in-print-other-challenges">Chapter 9 in Print: Other Challenges</h1>
+<p>This is a very quick &ldquo;part 2&rdquo; of this blog post.
+For completeness, I&rsquo;ll list the sections of chapter 9 in print with a one-liner about the importance of this &ldquo;other challenge&rdquo;.</p>
+<table>
+<thead>
+<tr>
+<th>Section Title</th>
+<th>One-liner Point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Split-brain Is the Greatest Risk</td>
+<td>A moment of split-brain can create an avalanche of inconsistent data</td>
+</tr>
+<tr>
+<td>Data Drift Is Real but Invisible</td>
+<td>Inconsistent data tends to spread and become more inconsistent</td>
+</tr>
+<tr>
+<td>Don’t Trust an ORM</td>
+<td>ORM libraries are optimized for developers, not databases</td>
+</tr>
+<tr>
+<td>Schemas Always Change</td>
+<td>You will need <a href="https://docs.percona.com/percona-toolkit/pt-online-schema-change.html">pt-online-schema-change</a> or <a href="https://github.com/github/gh-ost">gh-ost</a></td>
+</tr>
+<tr>
+<td>MySQL Extends Standard SQL</td>
+<td>MySQL has quirks and surprises; expect them</td>
+</tr>
+<tr>
+<td>Noisy Neighbors</td>
+<td>Other programs steal system resources and inadvertently hurt MySQL performance</td>
+</tr>
+<tr>
+<td>Applications Do Not Fail Gracefully</td>
+<td>Practice chaos engineering to test the mettle of your application</td>
+</tr>
+<tr>
+<td>High Performance MySQL Is Difficult</td>
+<td>MySQL performance becomes easier with time and experience, but it&rsquo;s always challenging</td>
+</tr>
+</tbody>
+</table>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-8/" data-toggle="tooltip" data-placement="top" title="Mining the MySQL Performance Schema for Transactions">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>
