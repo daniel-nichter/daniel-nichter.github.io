@@ -7,7 +7,17 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Fri, 16 Sep 2022 16:01:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/book/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 15 Oct 2022 16:31:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/book/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Is MySQL in the Cloud the End of the DBA?</title>
+      <link>https://hackmysql.com/post/book-10/</link>
+      <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/post/book-10/</guid>
+      <description>&lt;p&gt;No, I don&amp;rsquo;t think so.
+But it is does change our profession and have important implications for software engineers using (not managing) MySQL.&lt;/p&gt;</description>
+    </item>
+
     <item>
       <title>How Not to Use MySQL</title>
       <link>https://hackmysql.com/post/book-9/</link>

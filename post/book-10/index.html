@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Is MySQL in the Cloud the End of the DBA?</title>
+  <meta property="og:title" content="Is MySQL in the Cloud the End of the DBA?" />
+  <meta name="description" content="Chapter 10">
+  <meta property="og:description" content="Chapter 10">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/book-10/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.104.3" />
+  <link rel="canonical" href="https://hackmysql.com/post/book-10/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Is MySQL in the Cloud the End of the DBA?</h1>
+        <h3 class="post-subtitle">Chapter 10</h2>
+        <div class="post-meta">
+
+
+  <div>Oct 15, 2022</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/cloud">#cloud</a>
+
+        <a href="/tags/business">#business</a>
+
+        <a href="/tags/philosophy">#philosophy</a>
+
+        <a href="/tags/book">#book</a>
+
+        <a href="/tags/efficient-mysql-performance">#efficient-mysql-performance</a>
+
+
+  </div>
+</div>
+
+
+        <p>No, I don&rsquo;t think so.
+But it is does change our profession and have important implications for software engineers using (not managing) MySQL.</p>
+<p class="note">
+This blog post is the eleventh of eleven: one for the preface and ten for each chapter of my book <a href="https://oreil.ly/efficient-mysql-performance"><i>Efficient MySQL Performance</i></a>.
+The full list is <a href="/tags/efficient-mysql-performance/">tags/efficient-mysql-performance</a>.
+</p>
+<p>Several years ago, I was at a local meetup hosted by Oracle.
+The redoubtable Kenny Gryp was there.
+But what I recall most was a conversation with another DBA whom I&rsquo;m not well acquainted, so forgive me whoever you are that I have since forgotten your name.
+But I remember what you said in response to me saying that I think MySQL needs more DBAs: you said no because the cloud is taking over MySQL administration.</p>
+<p>Years later, I see this playing out: it&rsquo;s extremely difficult to hire an experienced MySQL DBA; instead, we hire good software engineers (sometimes right out of college) and train them to operate a preexisting MySQL fleet, and we don&rsquo;t expect them to &ldquo;go deep&rdquo; on MySQL—we certainly don&rsquo;t expect them to become MySQL experts.</p>
+<p>The independent<sup>*</sup> MySQL experts that exist today are the last of our kind.
+We&rsquo;re a dying breed.
+And that&rsquo;s ok.</p>
+<small>
+<sup>&ast;</sup><i>Independent</i> means using MySQL, not developing it.
+Of course, Oracle will continue to hire and train engineers to develop MySQL, and they'll be experts in their area of development, but I'm talking about DBAs: people managing MySQL and publicly writing and presenting about it&mdash;people who choose to go deep and become experts, not people hired to become experts.
+</small>
+<p>That&rsquo;s ok because, today, MySQL DBA work is less about MySQL and more about everything around MySQL: storage, compute, security, compliance, data platform, applications, and software engineers.
+Of course, there are new developments, ongoing bugs, and all the usual things for which some number of independent experts will exist to surface and solve for the wider industry.
+But all things considered, with a standard setup MySQL itself <em>just works</em>.</p>
+<p>And this is where the cloud comes in because no DBA honestly wants to operate MySQL on a bare metal fleet.
+Yes, it&rsquo;s really cool and technical—makes you feel special.
+But unless you&rsquo;re in a stable (or very slow changing) environment, you&rsquo;ll spend too much time chasing hardware changes and issues.
+Like our personal electronic devices, enterprise hardware changes pretty frequently because sales people need newer, shiner things to sell.
+Those 5 TB enterprise-grade SSDs in your rack server with the ideal combination of BIOS, firmware, and kernel that help MySQL perform so well?
+Can&rsquo;t buy &rsquo;em any longer.
+Also, the latest BIOS changes fan speed management, which affects CPU temperature, which affects CPU clock speed, which wreaks havoc on query response time.
+And when testing the backup power panel causes both of them to fail, your eyes turn skyward&hellip;</p>
+<p>As I write in chapter 10 of <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, the cloud runs MySQL but it doesn&rsquo;t not replace the need for DBA work:</p>
+<p><img src="/img/cloud-dba-work.png" alt="Cloud DBA Work"></p>
+<p>Although the number of checks under &ldquo;You&rdquo; is double the number under &ldquo;Cloud&rdquo;, the five checks under the latter are important because they handle all the low-level work (especially hardware) that can be simultaneously the most burdensome and the least impactful.
+The five cloud checks have different implications depending on your relation to MySQL:</p>
+<ul>
+<li><strong>DBA</strong>
+<ul>
+<li>The cloud lets DBAs focus on providing a better user experience with respect to the checks under &ldquo;DBA&rdquo;.
+For example, better server and query metrics to help users (software engineers) understand how the application affects MySQL and its performance.
+This is how our profession has changed: instead of wrestling with MySQL at a low level, we can work with software engineers at a high level to understand and utilize MySQL more efficiently.
+This is especially important in the cloud where &ldquo;big hardware&rdquo; is quite expensive, or pay-per-usage can run amuck.<br><br></li>
+</ul>
+</li>
+<li><strong>Software Engineer</strong>
+<ul>
+<li>The cloud will run MySQL for you, but that&rsquo;s not the same as managing it.
+You&rsquo;ll quickly find that the cloud still leaves a lot of DBA work for you (or your DBA) to do.
+In the world of MySQL, online schema change (running <code>ALTER</code> statements without blocking any queries) is a common need that no cloud solves.
+So if you&rsquo;re new to MySQL in the cloud, be aware and don&rsquo;t be surprised: you&rsquo;ll need to do a fair bit more work to make MySQL in the cloud truly production-ready—presuming you care about things like security and disaster recovery (DR).</li>
+</ul>
+</li>
+</ul>
+<p>In time, I think cloud providers will earn more checks.
+For example, Amazon has solutions for server metrics, query metrics, DR, and HA; but, frankly, I don&rsquo;t think they&rsquo;re good enough yet to earn a check under &ldquo;Cloud&rdquo;.
+For example, one thing that really annoys me about Amazon RDS and Aurora: when you set up cross-region replication for DR, Amazon does not monitor or alert you if replication stops due to an issue on their side—and they certainly don&rsquo;t fix it, either.
+That annoys me because, in this case, replication is <em>their</em> product feature, so they should monitor and ensure it continues to work.
+But it can and will fail silently unless you know to monitor and fix it yourself.
+And even then, because it&rsquo;s something they set up on their side, I have had cases where I couldn&rsquo;t fix it from my side.
+And if you&rsquo;re still not convinced: I&rsquo;ve also had a case where AWS said replication was setup according to their API, but MySQL was not configured for replication—a clear and serious bug on the AWS side, for which there is currently no easy fix.
+<em>Caveat emptor</em>.</p>
+<p>MySQL in the cloud is improving, which means the traditional DBA will focus less on running MySQL and more on helping software engineers use MySQL efficiently.
+This is one reason why I wrote <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>: for software engineers using MySQL, not DBAs, because the latter have won the proverbial war: MySQL runs appreciable parts of the world, and it <em>just works</em>.
+But relational databases are complex, which obscures the path to what software engineers need most from MySQL: performance.</p>
+<p>But the cloud doesn&rsquo;t care about MySQL performance.
+Whether fast or slow, it&rsquo;ll bill you all the same.
+That&rsquo;s why the cloud will never be the end of the DBA.
+And it&rsquo;s also why we come full circle to the first sentence of my book:</p>
+<p><img src="/img/first-sentence.png" alt="First sentence of Efficient MySQL Performance"></p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-9/" data-toggle="tooltip" data-placement="top" title="How Not to Use MySQL">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

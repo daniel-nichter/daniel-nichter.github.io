@@ -7,29 +7,38 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Fri, 16 Sep 2022 16:01:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>antipatterns</title>
-      <link>https://hackmysql.com/tags/antipatterns/</link>
-      <pubDate>Fri, 16 Sep 2022 16:01:00 -0400</pubDate>
-
-      <guid>https://hackmysql.com/tags/antipatterns/</guid>
-      <description></description>
-    </item>
-
+    <lastBuildDate>Sat, 15 Oct 2022 16:31:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>book</title>
       <link>https://hackmysql.com/tags/book/</link>
-      <pubDate>Fri, 16 Sep 2022 16:01:00 -0400</pubDate>
+      <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
 
       <guid>https://hackmysql.com/tags/book/</guid>
       <description></description>
     </item>
 
     <item>
+      <title>business</title>
+      <link>https://hackmysql.com/tags/business/</link>
+      <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/business/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>cloud</title>
+      <link>https://hackmysql.com/tags/cloud/</link>
+      <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/cloud/</guid>
+      <description></description>
+    </item>
+
+    <item>
       <title>efficient-mysql-performance</title>
       <link>https://hackmysql.com/tags/efficient-mysql-performance/</link>
-      <pubDate>Fri, 16 Sep 2022 16:01:00 -0400</pubDate>
+      <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
 
       <guid>https://hackmysql.com/tags/efficient-mysql-performance/</guid>
       <description></description>
@@ -38,9 +47,27 @@
     <item>
       <title>mysql</title>
       <link>https://hackmysql.com/tags/mysql/</link>
-      <pubDate>Fri, 16 Sep 2022 16:01:00 -0400</pubDate>
+      <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
 
       <guid>https://hackmysql.com/tags/mysql/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>philosophy</title>
+      <link>https://hackmysql.com/tags/philosophy/</link>
+      <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/philosophy/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>antipatterns</title>
+      <link>https://hackmysql.com/tags/antipatterns/</link>
+      <pubDate>Fri, 16 Sep 2022 16:01:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/antipatterns/</guid>
       <description></description>
     </item>
 
@@ -81,29 +108,11 @@
     </item>
 
     <item>
-      <title>business</title>
-      <link>https://hackmysql.com/tags/business/</link>
-      <pubDate>Sat, 21 May 2022 15:10:00 -0400</pubDate>
-
-      <guid>https://hackmysql.com/tags/business/</guid>
-      <description></description>
-    </item>
-
-    <item>
       <title>open-source</title>
       <link>https://hackmysql.com/tags/open-source/</link>
       <pubDate>Sat, 21 May 2022 15:10:00 -0400</pubDate>
 
       <guid>https://hackmysql.com/tags/open-source/</guid>
-      <description></description>
-    </item>
-
-    <item>
-      <title>philosophy</title>
-      <link>https://hackmysql.com/tags/philosophy/</link>
-      <pubDate>Sat, 21 May 2022 15:10:00 -0400</pubDate>
-
-      <guid>https://hackmysql.com/tags/philosophy/</guid>
       <description></description>
     </item>
 
