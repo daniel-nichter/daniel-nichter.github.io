@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>MySQL IOPS for Reads and Surprsies</title>
+  <meta property="og:title" content="MySQL IOPS for Reads and Surprsies" />
+  <meta name="description" content="When you think about IOPS, you probably think about writes because MySQL write I/O has a long tradition of optimization, benchmarking, new algorithms, new storage engines, and so forth. There&rsquo;s no shortage of material on MySQL write I/O; just two examples from Percona are Scaling IO-Bound Workloads for MySQL in the Cloud and Tuning MySQL/InnoDB Flushing for a Write-Intensive Workload. But in this short blog post I highlight two other, less common aspects of MySQL I/O: reads and surprises.">
+  <meta property="og:description" content="When you think about IOPS, you probably think about writes because MySQL write I/O has a long tradition of optimization, benchmarking, new algorithms, new storage engines, and so forth. There&rsquo;s no shortage of material on MySQL write I/O; just two examples from Percona are Scaling IO-Bound Workloads for MySQL in the Cloud and Tuning MySQL/InnoDB Flushing for a Write-Intensive Workload. But in this short blog post I highlight two other, less common aspects of MySQL I/O: reads and surprises.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/mysql-iops-for-reads-and-surprsies/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.105.0">
+  <link rel="canonical" href="https://hackmysql.com/post/mysql-iops-for-reads-and-surprsies/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">MySQL IOPS for Reads and Surprsies</h1>
+
+        <div class="post-meta">
+
+
+  <div>Nov 20, 2022</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/iops">#iops</a>
+
+
+  </div>
+</div>
+
+
+        <p>When you think about IOPS, you probably think about writes because MySQL write I/O has a long tradition of optimization, benchmarking, new algorithms, new storage engines, and so forth.
+There&rsquo;s no shortage of material on MySQL write I/O; just two examples from Percona are <a href="https://www.percona.com/blog/2018/08/29/scaling-io-bound-workloads-mysql-cloud/">Scaling IO-Bound Workloads for MySQL in the Cloud</a> and <a href="https://www.percona.com/blog/2020/05/14/tuning-mysql-innodb-flushing-for-a-write-intensive-workload/">Tuning MySQL/InnoDB Flushing for a Write-Intensive Workload</a>.
+But in this short blog post I highlight two other, less common aspects of MySQL I/O: reads and surprises.</p>
+<!--more--->
+<h2 id="reads">Reads</h2>
+<p>Read IOPS are not usually an issue because of the InnoDB buffer pool: frequently used data (the working set) is kept in memory, so both reads and writes are essentially in-memory operations.
+&ldquo;Not usually an issue&rdquo; is a good thing because <mark>read IOPS are unlimited</mark>.</p>
+<p>By contrast, write IOPS are both limited and stabilized by the <a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-buffer-pool-flushing.html#innodb-adaptive-flushing">adaptive flushing algorithm</a>.
+Apart from reducing SSD wear, this is necessary to ensure consistent and manageable performance, which is necessary to collocate many MySQL instances on a single physical server.
+Imagine if write IOPS were erratic, spiky, and unpredictable: how would several MySQL instances share the same underlying storage system without battling each other for IOPS?
+Like any fine-tuned machines, we need to know what we&rsquo;re working with in order to work with it effectively.</p>
+<p>But read IOPS have no such algorithm.
+When a client needs data that&rsquo;s not already in the buffer pool, MySQL loads it as fast as possible.
+And if that&rsquo;s a lot of data or a lot of clients, the result can be a tsunami of IOPS.</p>
+<p>But again: it&rsquo;s not usually an issue because InnoDB is really good a keeping the working set in memory, so normal production servers should not have noticeable read I/O spikes.
+However, if a MySQL server does have this problem, it can really siphon the available IOPS.
+For example, I recently ran across a MySQL server that I manage doing 30,000 IOPS for reads.
+Why?
+A rare combination of the server being drastically under-provisioned (huge working set vs. small amount of RAM) <em>plus</em> running Amazon Aurora that has pay-per-use IOPS.</p>
+<p>Speaking of the cloud: whereas MySQL does not limit read IOPS, your cloud provider might limit total IOPS.
+This is a good reason to remember that read IOPS aren&rsquo;t limited by MySQL because, in a worst case, read IOPS can starve write IOPS in the cloud.</p>
+<h2 id="surprises">Surprises</h2>
+<p>Talk about IOPS is usually in the context of normal operations: the application humming along with MySQL as usual.
+But a few surprises can cause abnormal I/O usage:</p>
+<ul>
+<li>Online schema changes (<code>ALTER</code>)</li>
+<li>Data backfills</li>
+<li>Application bugs</li>
+<li>Collateral damage</li>
+<li>Free page waits</li>
+</ul>
+<p>Surprises like these can cause spikes in read or write IOPS.
+The first three are relatively self-explanatory, but I&rsquo;ll tell a quick story of the fourth (collateral damage) and briefly explain the fifth (free page waits).</p>
+<p>One time I helped a team fix a database-related outage in application X that called application Y.
+But we fixed X almost too well: its performance increased so greatly that it overwhelmed Y, causing a second outage in Y.
+The fix to X caused collateral damage to Y.</p>
+<p>I&rsquo;ve also seen cases where teams increase queue consumers because something caused a backlog in the queue and they want to catch up.
+Great&hellip; except they forgot that queue processing results in some database writes, and now MySQL is struggling, which slows down queue processing again.
+Whatever issue affected the queue caused collateral damage to MySQL.</p>
+<p>A free page wait occurs when MySQL needs to read data into memory, but there are no free pages in the InnoDB pool to store the data.
+To make space (free pages), InnoDB it will evict old pages from the buffer pool.
+If the pages to evict are dirty, MySQL will flush (write) them first.
+This is a worst-case scenario because, instead of reading from memory (no IOPS), it incurs IOPS for the read and IOPS for the write.
+But this should be so expectationally rare that it&rsquo;s a surprise when it occurs.
+And surprises do occur:</p>
+<p><img src="/img/free-page-waits.png" alt="Free Page Waits Graph"></p>
+<p>Free pages waits are the <em>right</em> Y axis: the red spikes.
+(The left Y axis is the percentage of reads from disk, which is also very high.)
+This was during a benchmark (MySQL in the cloud), so I know that the workload was steady.
+What&rsquo;s surprising is that nothing seems to have precipitated this spike in free page waits, and it didn&rsquo;t occur again.</p>
+
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/book-10/" data-toggle="tooltip" data-placement="top" title="Is MySQL in the Cloud the End of the DBA?">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

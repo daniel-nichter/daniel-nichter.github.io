@@ -7,7 +7,25 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Sat, 15 Oct 2022 16:31:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 20 Nov 2022 13:00:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>iops</title>
+      <link>https://hackmysql.com/tags/iops/</link>
+      <pubDate>Sun, 20 Nov 2022 13:00:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/tags/iops/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>mysql</title>
+      <link>https://hackmysql.com/tags/mysql/</link>
+      <pubDate>Sun, 20 Nov 2022 13:00:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/tags/mysql/</guid>
+      <description></description>
+    </item>
+
     <item>
       <title>book</title>
       <link>https://hackmysql.com/tags/book/</link>
@@ -41,15 +59,6 @@
       <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
 
       <guid>https://hackmysql.com/tags/efficient-mysql-performance/</guid>
-      <description></description>
-    </item>
-
-    <item>
-      <title>mysql</title>
-      <link>https://hackmysql.com/tags/mysql/</link>
-      <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
-
-      <guid>https://hackmysql.com/tags/mysql/</guid>
       <description></description>
     </item>
 

@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2022-11-20T13:00:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/iops/</loc>
+    <lastmod>2022-11-20T13:00:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
+    <lastmod>2022-11-20T13:00:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/mysql-iops-for-reads-and-surprsies/</loc>
+    <lastmod>2022-11-20T13:00:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2022-11-20T13:00:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2022-11-20T13:00:00-05:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/tags/book/</loc>
     <lastmod>2022-10-15T16:31:00-04:00</lastmod>
   </url><url>
@@ -14,22 +32,10 @@
     <loc>https://hackmysql.com/tags/efficient-mysql-performance/</loc>
     <lastmod>2022-10-15T16:31:00-04:00</lastmod>
   </url><url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2022-10-15T16:31:00-04:00</lastmod>
-  </url><url>
     <loc>https://hackmysql.com/post/book-10/</loc>
     <lastmod>2022-10-15T16:31:00-04:00</lastmod>
   </url><url>
-    <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2022-10-15T16:31:00-04:00</lastmod>
-  </url><url>
     <loc>https://hackmysql.com/tags/philosophy/</loc>
-    <lastmod>2022-10-15T16:31:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2022-10-15T16:31:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2022-10-15T16:31:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/antipatterns/</loc>
