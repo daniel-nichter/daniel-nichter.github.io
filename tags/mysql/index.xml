@@ -12,279 +12,269 @@
       <title>MySQL IOPS for Reads and Surprsies</title>
       <link>https://hackmysql.com/post/mysql-iops-for-reads-and-surprsies/</link>
       <pubDate>Sun, 20 Nov 2022 13:00:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/mysql-iops-for-reads-and-surprsies/</guid>
       <description>When you think about IOPS, you probably think about writes because MySQL write I/O has a long tradition of optimization, benchmarking, new algorithms, new storage engines, and so forth. There&amp;rsquo;s no shortage of material on MySQL write I/O; just two examples from Percona are Scaling IO-Bound Workloads for MySQL in the Cloud and Tuning MySQL/InnoDB Flushing for a Write-Intensive Workload. But in this short blog post I highlight two other, less common aspects of MySQL I/O: reads and surprises.</description>
     </item>
-
+    
     <item>
       <title>Is MySQL in the Cloud the End of the DBA?</title>
       <link>https://hackmysql.com/post/book-10/</link>
       <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-10/</guid>
       <description>&lt;p&gt;No, I don&amp;rsquo;t think so.
 But it is does change our profession and have important implications for software engineers using (not managing) MySQL.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>How Not to Use MySQL</title>
       <link>https://hackmysql.com/post/book-9/</link>
       <pubDate>Fri, 16 Sep 2022 16:01:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-9/</guid>
       <description>&lt;p&gt;Chapter 9 of &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt; changed in development. Originally, it was a chapter titled &amp;ldquo;Not MySQL&amp;rdquo;, as in &amp;ldquo;how not to use MySQL.&amp;rdquo; But we (O&amp;rsquo;Reilly and I) pulled the chapter, and the current chapter 9 in print is &amp;ldquo;Other Challenges&amp;rdquo;: an important laundry list of other challenges engineers using MySQL must be aware of and address. This blog post is a sketch of the unwritten chapter 9: how not to use MySQL.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>Mining the MySQL Performance Schema for Transactions</title>
       <link>https://hackmysql.com/post/book-8/</link>
       <pubDate>Sun, 28 Aug 2022 13:29:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-8/</guid>
       <description>&lt;p&gt;The MySQL &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html&#34;&gt;Performance Schema&lt;/a&gt; is a gold mine of valuable data.
 Among the many nuggets you can extract from it is an historical report of transactions: how long a transaction took to execute, what queries were executed in it (with query metrics), and idle time between queries.
 Mining this information is not trivial, but it&amp;rsquo;s fun and this blog post shows how to start.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>MySQL Transaction Reporting</title>
       <link>https://hackmysql.com/mysql-transaction-reporting/</link>
       <pubDate>Sun, 28 Aug 2022 13:28:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/mysql-transaction-reporting/</guid>
       <description>MySQL Transaction Reporting In chapter 8 of Efficient MySQL Performance, I discuss reporting MySQL transactions (among many other related topics). In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&amp;rsquo;t monitor or report them in the world of MySQL. Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.</description>
     </item>
-
+    
     <item>
       <title>Better Replication Heartbeats</title>
       <link>https://hackmysql.com/post/book-7/</link>
       <pubDate>Thu, 28 Jul 2022 13:57:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-7/</guid>
       <description>&lt;p&gt;We&amp;rsquo;ve been measuring MySQL replication lag with heartbeats for more than a decade.
 It works, but can we do better?
 Let&amp;rsquo;s see.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>InnoDB Page Flushing Diagram</title>
       <link>https://hackmysql.com/post/book-6/</link>
       <pubDate>Sat, 18 Jun 2022 19:09:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-6/</guid>
       <description>&lt;p&gt;Who dares diagram a system and process as complex as InnoDB page flushing?
 I do.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>I Don&#39;t Want to Shard (MySQL)</title>
       <link>https://hackmysql.com/post/book-5/</link>
       <pubDate>Fri, 20 May 2022 19:00:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-5/</guid>
       <description>&lt;p&gt;Chapter 5 of &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt; addresses sharding, and it was difficult to write but not for technical reasons.
 Let me say a little more on the matter.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>Access Patterns for MySQL</title>
       <link>https://hackmysql.com/post/book-4/</link>
       <pubDate>Sun, 17 Apr 2022 13:50:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-4/</guid>
       <description>&lt;p&gt;Access patterns intrigue me because it seems that everyone knows what they are and talks about them, but there&amp;rsquo;s also very little written about them—in MySQL literature, at least.
 That&amp;rsquo;s why I set out to enumerate a list of access patterns (specific to MySQL).
 Since there&amp;rsquo;s no apparent standard for access patterns, I cannot say how my list measures up, but after spending most my career with MySQL, I know this: it is necessary to consider these access patterns when evaluating and improving MySQL performance.
 Simply put: you cannot ignore &lt;em&gt;how&lt;/em&gt; the application accesses MySQL.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>Performance Is Less</title>
       <link>https://hackmysql.com/post/book-3/</link>
       <pubDate>Sat, 19 Mar 2022 16:04:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-3/</guid>
       <description>&lt;p&gt;Is MySQL performance about &amp;ldquo;more&amp;rdquo; or &amp;ldquo;less&amp;rdquo;? From the title, you can tell that I&amp;rsquo;m going to argue that it&amp;rsquo;s about &amp;ldquo;less&amp;rdquo;. Here&amp;rsquo;s the punchline: zero is maximum performance. Let&amp;rsquo;s see where this philosophical blog post leads us.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>MySQL EXPLAIN ANALYZE</title>
       <link>https://hackmysql.com/post/book-2/</link>
       <pubDate>Sun, 27 Feb 2022 14:28:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-2/</guid>
       <description>&lt;p&gt;As of MySQL 8.0.18, &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/explain.html#explain-analyze&#34;&gt;&lt;code&gt;EXPLAIN ANALYZE&lt;/code&gt;&lt;/a&gt; is an indispensable tool for understanding query execution because it breaks down the query execution stage of response time by measuring each step of the query execution plan.
 The information is illuminating, but the output is not intuitive: it requires practice and some understanding of how MySQL executes queries beyond the table join order shown by traditional &lt;code&gt;EXPLAIN&lt;/code&gt; output.
 This blog post closely examines three different examples of &lt;code&gt;EXPLAIN ANALYZE&lt;/code&gt; output.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>Configuring MySQL Query Metrics</title>
       <link>https://hackmysql.com/post/book-1/</link>
       <pubDate>Sun, 16 Jan 2022 15:40:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-1/</guid>
       <description>&lt;p&gt;Editors and technical reviewers suggested that I cover how to configure MySQL query metrics in chapter 1 of &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt;, but I deferred because it was out of scope for the book, which focuses on engineers &lt;em&gt;using&lt;/em&gt; MySQL, not DBAs.
 As such, there&amp;rsquo;s only a note in chapter 1 that says: &amp;ldquo;Ask your DBA or read the MySQL manual.&amp;rdquo;
 But I&amp;rsquo;ll cover the topic here because that&amp;rsquo;s what this blog post series is for: behind the book.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>Efficient MySQL Performance</title>
       <link>https://hackmysql.com/post/book-0/</link>
       <pubDate>Mon, 27 Dec 2021 09:30:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/book-0/</guid>
       <description>&lt;p&gt;After 17 years with MySQL, I wrote a book: &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;ll make a bold claim: a MySQL book like this has never been written—not even close.
 The preface explains why this book is unique:&lt;/p&gt;</description>
     </item>
-
-    <item>
-      <title>MySQL Terminology Updates</title>
-      <link>https://hackmysql.com/mysql-terminology-updates/</link>
-      <pubDate>Fri, 08 Oct 2021 16:06:00 -0400</pubDate>
-
-      <guid>https://hackmysql.com/mysql-terminology-updates/</guid>
-      <description>MySQL Terminology Updates This page reproduces the blog post &amp;ldquo;MySQL Terminology Updates&amp;rdquo; from the defunct web site https://mysqlhighavailability.com/mysql-terminology-updates/. The original page—written by Kenny Gryp on July 1, 2020—is quoted below.
-It’s been 20 years since MySQL Replication was introduced in MySQL 3.23.15 (Released in May 2000). Since then, virtually every MySQL Database deployment in production has been using Replication in order to achieve high availability, disaster recovery, read scale out and various other purposes.</description>
-    </item>
-
+    
     <item>
       <title>MySQL LRU Flushing and I/O Capacity</title>
       <link>https://hackmysql.com/post/mysql-lru-flushing-io-capacity/</link>
       <pubDate>Thu, 02 Sep 2021 18:11:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/mysql-lru-flushing-io-capacity/</guid>
       <description>&lt;p&gt;InnoDB background LRU list flushing is &lt;em&gt;not&lt;/em&gt; limited by &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_io_capacity&#34;&gt;&lt;code&gt;innodb_io_capcity&lt;/code&gt;&lt;/a&gt; or &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_io_capacity_max&#34;&gt;&lt;code&gt;innodb_io_capacity_max&lt;/code&gt;&lt;/a&gt;.
 I&amp;rsquo;ll prove it in this blog post, but since MySQL experts disagree (or don&amp;rsquo;t know for sure), I&amp;rsquo;d like you to prove me wrong.
 This is not an intro; you&amp;rsquo;ll need to know all the InnoDB details wrt page flushing.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>MySQL Data Locks: Mapping 8.0 to 5.7</title>
       <link>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</link>
       <pubDate>Mon, 26 Jul 2021 15:40:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</guid>
       <description>As of MySQL 8.0, performance_schema.data_locks shows InnoDB data locks. Before MySQL 8.0, you must SET GLOBAL innodb_status_output_locks=ON and ruminate on the output of SHOW ENGINE INNODB STATUS. The image below (click to see full size) shows how the former maps to the latter for three record locks and one table lock on table t.
 Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as of MySQL 5.7 and removed as of MySQL 8.</description>
     </item>
-
+    
     <item>
       <title>MySQL Select and Sort Status Variables</title>
       <link>https://hackmysql.com/mysql-select-and-sort/</link>
       <pubDate>Thu, 14 Jan 2021 15:42:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/mysql-select-and-sort/</guid>
       <description>MySQL Select and Sort Status Variables This page is a reboot of the original written 15 years ago in 2005. Back then, I must have been using MySQL 4.1 or 5.0. Today, I am using MySQL 8.0.22. A lot changed in MySQL from 4.1 to 8.0, but it still has the same Select_% and Sort_% status variables which are equally important today in 2021. Let&amp;rsquo;s examine them in greater detail and with better examples.</description>
     </item>
-
+    
     <item>
       <title>MySQL Password Rotation with AWS</title>
       <link>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</link>
       <pubDate>Mon, 28 Dec 2020 12:09:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</guid>
       <description>If you run MySQL on Amazon RDS and use passwords, I sure hope you frequently rotate those passwords (among many other security best practices). But if you don&amp;rsquo;t rotate them, I might know why: it&amp;rsquo;s quite difficult to set up when you really get into it. It seems easy at first, but if you&amp;rsquo;ve ever tried you know how quickly it becomes complicated. At least, that was my experience. So to help others overcome the challenges and do frequent password rotation, I wrote up a long read: MySQL Password Rotation with AWS Secrets Manager and Lambda.</description>
     </item>
-
+    
     <item>
       <title>MySQL Password Rotation with AWS Secrets Manager and Lambda</title>
       <link>https://hackmysql.com/mysql-password-rotation-lambda/</link>
       <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/mysql-password-rotation-lambda/</guid>
       <description>MySQL Password Rotation with AWS Secrets Manager and Lambda MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and Terraform for cloud infrastructure.</description>
     </item>
-
+    
     <item>
       <title>Query Metrics Requirements for MySQL</title>
       <link>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</link>
       <pubDate>Sun, 01 Nov 2020 20:25:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</guid>
       <description>Let&amp;rsquo;s answer a question which, to my knowledge, has never been systematically addressed: What are the requirements for a production-ready query metrics app at scale? I am uniquely qualified to answer that because I have written four query metrics apps, two of which are the open-source standard for MySQL: pt-query-digest and the original (v1) code behind the query metrics/analysis part of Percona Monitoring and Management. I&amp;rsquo;ve also published a couple of packages related to query metrics: go-mysql/slowlog and go-mysql/query.</description>
     </item>
-
+    
     <item>
       <title>What the Flush?</title>
       <link>https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/</link>
       <pubDate>Sun, 05 Jul 2020 18:50:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/</guid>
       <description>&lt;p&gt;Yves Trudeau and Francisco Bordenave, MySQL experts at Percona, recently published a three-part post:
 (1) &lt;a href=&#34;https://www.percona.com/blog/2019/12/18/give-love-to-your-ssds-reduce-innodb_io_capacity_max/&#34;&gt;Give Love to Your SSDs – Reduce innodb_io_capacity_max!&lt;/a&gt;;
 (2) &lt;a href=&#34;https://www.percona.com/blog/2020/01/22/innodb-flushing-in-action-for-percona-server-for-mysql/&#34;&gt;InnoDB Flushing in Action for Percona Server for MySQL&lt;/a&gt;;
 (3) &lt;a href=&#34;https://www.percona.com/blog/2020/05/14/tuning-mysql-innodb-flushing-for-a-write-intensive-workload/&#34;&gt;Tuning MySQL/InnoDB Flushing for a Write-Intensive Workload&lt;/a&gt;. It&amp;rsquo;s a fantastic read from start to finish, and it made me realize: dirty pages sound bad, but they are good. I suspect the opposite (&amp;ldquo;dirty pages are &lt;em&gt;not&lt;/em&gt; good&amp;rdquo;) is a misconception due to an incomplete picture. Let&amp;rsquo;s complete the picture.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>21 Parameter Group Values to Change in Amazon RDS for MySQL</title>
       <link>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</link>
       <pubDate>Mon, 29 Jun 2020 11:15:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</guid>
       <description>Amazon RDS for MySQL uses many default values for system variables, but it also sets a few &amp;ldquo;sys vars&amp;rdquo; with different values. As with any database, neither product (MySQL) nor provider (AWS) defaults can best suite all use cases. It&amp;rsquo;s our responsibility to carefully review and set every important system variable. This is tedious and difficult, but I&amp;rsquo;ve done it for you.
 Below are are 21 MySQL 5.7 system variables that I recommend changing by creating a new parameter group.</description>
     </item>
-
+    
     <item>
       <title>Missing Writes with MySQL GTID</title>
       <link>https://hackmysql.com/post/mysql-gtid-missing-writes/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/post/mysql-gtid-missing-writes/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html&#34;&gt;GTID-based replication&lt;/a&gt; makes managing replication topology easy: just &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html&#34;&gt;CHANGE MASTER&lt;/a&gt; to any node and voilà. It &lt;a href=&#34;https://hackmysql.com/post/fixing-ghosted-gtids/&#34;&gt;doesn&amp;rsquo;t always work&lt;/a&gt;, but for the most part it does. That&amp;rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &amp;ldquo;OK, sure!&amp;rdquo;, which is most of the time, you should double check it.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>MySQL Threads Running</title>
       <link>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</link>
       <pubDate>Sat, 25 Apr 2020 16:18:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</guid>
       <description>&lt;p&gt;Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by &lt;em&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Threads_running&#34;&gt;Threads_running&lt;/a&gt;&lt;/em&gt;, expressed as a gauge (whereas QPS is a rate). Before discussing &lt;em&gt;Threads_running&lt;/em&gt;, let&amp;rsquo;s consider an analogy:&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>Queries Effect Performance</title>
       <link>https://hackmysql.com/post/queries-effect-performance/</link>
       <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/post/queries-effect-performance/</guid>
       <description>Queries effect database performance. That&amp;rsquo;s not a typo: &amp;ldquo;effect&amp;rdquo; not &amp;ldquo;affect&amp;rdquo;. The difference is not a word game but an important way to think about database performance.
 Many things can affect performance. For example, if the system runs out of memory then starts swapping which causes high disk IO latency, that will negatively affect performance. But external factors like that notwithstanding (i.e. when hardware and MySQL are normal and stable), it&amp;rsquo;s important to understand that queries effect performance.</description>
     </item>
-
+    
     <item>
       <title>Fixing Ghosted GTIDs</title>
       <link>https://hackmysql.com/post/fixing-ghosted-gtids/</link>
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/post/fixing-ghosted-gtids/</guid>
       <description>MySQL auto-positioning is an integral part of replication with GTID, but it&amp;rsquo;s neither required nor guaranteed to work. It&amp;rsquo;s possible to enable GTIDs but disable auto-positioning, and it&amp;rsquo;s possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.</description>
     </item>
-
+    
     <item>
       <title>When MySQL Goes Away</title>
       <link>https://hackmysql.com/post/when-mysql-goes-away/</link>
       <pubDate>Sun, 22 Jul 2018 18:00:00 -0300</pubDate>
-
+      
       <guid>https://hackmysql.com/post/when-mysql-goes-away/</guid>
       <description>Handling MySQL errors in Go is not easy. There are a lot of MySQL server error codes, and the Go MySQL driver as its own errors, and Go database/sql has its own errors, and errors can bubble up from other packages, like net.OpError. Consequently, Go programs tend not to handle errors. Instead, they simply report errors:
 err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err } And then the error is logged or reported somewhere.</description>
     </item>
-
+    
     <item>
       <title>Crash-safe MySQL Replication</title>
       <link>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</link>
       <pubDate>Tue, 23 Jan 2018 18:40:00 -0700</pubDate>
-
+      
       <guid>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</guid>
       <description>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it&amp;rsquo;s not consistently understood or applied. The MySQL manual on the topic, 16.3.2 Handling an Unexpected Halt of a Replication Slave, is correct and authoritative, but unless you grok MySQL replication that page doesn&amp;rsquo;t make it obvious why crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient.</description>
     </item>
-
+    
   </channel>
 </rss>

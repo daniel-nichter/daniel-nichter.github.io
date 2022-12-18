@@ -6,8 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>How to Write Well</title>
   <meta property="og:title" content="How to Write Well" />
-  <meta name="description" content="How to Write Well This guide is intended for engineers writing technical documents. Most of it does not apply to other audiences or purposes. For example, it would be quite difficult (or interesting) to follow this guide when writing poetry. However, impeccable writing for any audience or purpose has, in my opinion, the same impact as poetry: it moves the reader. Perhaps, then, the only difference is that engineers write technical documents to &ldquo;move&rdquo; other engineers to understand and build systems.">
-  <meta property="og:description" content="How to Write Well This guide is intended for engineers writing technical documents. Most of it does not apply to other audiences or purposes. For example, it would be quite difficult (or interesting) to follow this guide when writing poetry. However, impeccable writing for any audience or purpose has, in my opinion, the same impact as poetry: it moves the reader. Perhaps, then, the only difference is that engineers write technical documents to &ldquo;move&rdquo; other engineers to understand and build systems.">
+  <meta name="description" content="How to Write Well I wrote this page before reading On Writing Well by William Zinsser.
+To my surprise and delight, he reinforces everything I wrote below. In fact, he goes further and makes the points stronger. For example, near the end of the book he writes:
+No writing decision is too small to be worth a large expenditure of time.
+Zinsser is (or was: he died in 2015) an authority on writing, and I&rsquo;m just an amateur by comparison.">
+  <meta property="og:description" content="How to Write Well I wrote this page before reading On Writing Well by William Zinsser.
+To my surprise and delight, he reinforces everything I wrote below. In fact, he goes further and makes the points stronger. For example, near the end of the book he writes:
+No writing decision is too small to be worth a large expenditure of time.
+Zinsser is (or was: he died in 2015) an authority on writing, and I&rsquo;m just an amateur by comparison.">
   <meta name="author" content="Daniel Nichter"/>
   <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
@@ -16,7 +22,7 @@
   <meta property="og:url" content="https://hackmysql.com/eng/write/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.105.0">
+  <meta name="generator" content="Hugo 0.108.0">
   <link rel="canonical" href="https://hackmysql.com/eng/write/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -42,96 +48,107 @@
 <img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
 </div>
       <ul class="nav navbar-nav navbar-left">
-
-
+        
+          
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-
+                
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-
+                
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-
+                
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-
+                
                   <a href="/eng/career-advice/">Career Advice</a>
-
-                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
-
+                
                   <a href="/eng/database-operations-manual/">Database Operations Manual</a>
-
+                
                   <a href="/eng/write/">How to Write Well</a>
-
+                
                   <a href="/eng/percentiles/">Percentiles</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-
+                
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-
+                
                   <a href="/golang/go-single-character-names/">Go Single-character Names</a>
-
+                
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li>
               <a title="Help" href="/help/">Help</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-
+                
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-
+                
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-
-                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
-
+                
                   <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
-
+                
               </div>
             </li>
+          
+        
 
-
-
-
+        
       </ul>
 	</div>
   </div>
 </nav>
 
-
+    
 <main class="page">
 	<div id="art">
 		<article role="main" class="blog-post"><h1 id="how-to-write-well">How to Write Well</h1>
+<p>I wrote this page before reading <a href="https://www.goodreads.com/book/show/53343.On_Writing_Well"><em>On Writing Well</em></a> by William Zinsser.</p>
+<p><a href="https://www.goodreads.com/book/show/53343.On_Writing_Well"><img src="/img/On-Writing-Well.jpeg" alt="On Writing Well book cover"></a></p>
+<p>To my surprise and delight, he reinforces everything I wrote below.
+In fact, he goes further and makes the points stronger.
+For example, near the end of the book he writes:</p>
+<blockquote>
+<p>No writing decision is too small to be worth a large expenditure of time.</p>
+</blockquote>
+<p>Zinsser is (or was: he died in 2015) an authority on writing, and I&rsquo;m just an amateur by comparison.
+So I <em>strongly</em> encourage you to read his book because it&rsquo;s amazing and flawless from the very first word to the very last word.
+There are several chapters I was going to skip because they seemed irrelevant to me (like writing about sports), but I gave them a chance and every time—every chapter—surprised me with its insights.
+Read <em>On Writing Well</em> front to cover and you&rsquo;ll learn a tremendous amount about writing well.</p>
+<p>But if you want the TL;DR of the book, this page provides one.
+Just remember: I&rsquo;m being easy and generous here (compared to Zinsser) because my intended audience is engineers who are trying to engineer, not write.</p>
+<hr style="border-top: dotted 3px;" />
 <p>This guide is intended for engineers writing technical documents.
 Most of it does <em>not</em> apply to other audiences or purposes.
 For example, it would be quite difficult (or interesting) to follow this guide when writing poetry.

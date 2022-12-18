@@ -36,7 +36,7 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
       <guid>https://hackmysql.com/golang/idiomatic-go/</guid>
       <description>Idiomatic Go Canon can·on /ˈkanən/ noun : a general law, rule, principle, or criterion by which something is judged
 These texts explicitly and implicitly define idiomatic Go code. Read, memorize, and refer to them often. Use them to settle debates.
-Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names Recommended Go Code Review Comments Best practices for a new Go developer Reducing Type Hierarchies </description>
+Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names Recommended Best practices for a new Go developer Go Code Review Comments Reducing Type Hierarchies </description>
     </item>
     
   </channel>

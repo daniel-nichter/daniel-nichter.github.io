@@ -8,10 +8,10 @@
   <meta property="og:title" content="Idiomatic Go" />
   <meta name="description" content="Idiomatic Go Canon can·on /ˈkanən/ noun : a general law, rule, principle, or criterion by which something is judged
 These texts explicitly and implicitly define idiomatic Go code. Read, memorize, and refer to them often. Use them to settle debates.
-Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names Recommended Go Code Review Comments Best practices for a new Go developer Reducing Type Hierarchies ">
+Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names Recommended Best practices for a new Go developer Go Code Review Comments Reducing Type Hierarchies ">
   <meta property="og:description" content="Idiomatic Go Canon can·on /ˈkanən/ noun : a general law, rule, principle, or criterion by which something is judged
 These texts explicitly and implicitly define idiomatic Go code. Read, memorize, and refer to them often. Use them to settle debates.
-Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names Recommended Go Code Review Comments Best practices for a new Go developer Reducing Type Hierarchies ">
+Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names Recommended Best practices for a new Go developer Go Code Review Comments Reducing Type Hierarchies ">
   <meta name="author" content="Daniel Nichter"/>
   <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
@@ -20,7 +20,7 @@ Effective Go Golang FAQ Go at Google: Language Design in the Service of Software
   <meta property="og:url" content="https://hackmysql.com/golang/idiomatic-go/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.105.0">
+  <meta name="generator" content="Hugo 0.108.0">
   <link rel="canonical" href="https://hackmysql.com/golang/idiomatic-go/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -46,93 +46,89 @@ Effective Go Golang FAQ Go at Google: Language Design in the Service of Software
 <img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
 </div>
       <ul class="nav navbar-nav navbar-left">
-
-
+        
+          
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-
+                
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-
+                
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-
+                
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-
+                
                   <a href="/eng/career-advice/">Career Advice</a>
-
-                  <a href="/eng/cli-antipatterns/">Command-line Interface Antipatterns</a>
-
+                
                   <a href="/eng/database-operations-manual/">Database Operations Manual</a>
-
+                
                   <a href="/eng/write/">How to Write Well</a>
-
+                
                   <a href="/eng/percentiles/">Percentiles</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-
+                
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-
+                
                   <a href="/golang/go-single-character-names/">Go Single-character Names</a>
-
+                
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li>
               <a title="Help" href="/help/">Help</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-
+                
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-
+                
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-
-                  <a href="/mysql-terminology-updates/">MySQL Terminology Updates</a>
-
+                
                   <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
-
+                
               </div>
             </li>
+          
+        
 
-
-
-
+        
       </ul>
 	</div>
   </div>
 </nav>
 
-
+    
 <main class="page">
 	<div id="art">
 		<article role="main" class="blog-post"><h1 id="idiomatic-go">Idiomatic Go</h1>
@@ -140,17 +136,17 @@ Effective Go Golang FAQ Go at Google: Language Design in the Service of Software
 <p>can·on  /ˈkanən/  noun : <em>a general law, rule, principle, or criterion by which something is judged</em></p>
 <p>These texts explicitly and implicitly define idiomatic Go code. Read, memorize, and refer to them often. Use them to settle debates.</p>
 <ul>
-<li><a href="https://golang.org/doc/effective_go.html">Effective Go</a></li>
-<li><a href="https://golang.org/doc/faq">Golang FAQ</a></li>
-<li><a href="https://talks.golang.org/2012/splash.article">Go at Google: Language Design in the Service of Software Engineering</a></li>
-<li><a href="https://golang.org/pkg/#stdlib">Go Standard Library Packages</a></li>
-<li><a href="https://blog.golang.org/godoc-documenting-go-code">Godoc: documenting Go code</a></li>
-<li><a href="https://blog.golang.org/package-names">Go Package Names</a></li>
+<li><a href="https://go.dev/doc/effective_go">Effective Go</a></li>
+<li><a href="https://go.dev/doc/faq">Golang FAQ</a></li>
+<li><a href="https://go.dev/talks/2012/splash.article">Go at Google: Language Design in the Service of Software Engineering</a></li>
+<li><a href="https://pkg.go.dev/std#stdlib">Go Standard Library Packages</a></li>
+<li><a href="https://go.dev/blog/godoc">Godoc: documenting Go code</a></li>
+<li><a href="https://go.dev/blog/package-names">Go Package Names</a></li>
 </ul>
 <h2 id="recommended">Recommended</h2>
 <ul>
+<li><a href="https://www.cloudbees.com/blog/best-practices-for-a-new-go-developer">Best practices for a new Go developer</a></li>
 <li><a href="https://github.com/golang/go/wiki/CodeReviewComments">Go Code Review Comments</a></li>
-<li><a href="https://blog.rubylearning.com/best-practices-for-a-new-go-developer-8660384302fc">Best practices for a new Go developer</a></li>
 <li><a href="https://www.goinggo.net/2016/10/reducing-type-hierarchies.html">Reducing Type Hierarchies</a></li>
 </ul>
 </article>
