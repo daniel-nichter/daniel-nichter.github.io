@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Blip: A New Open Source MySQL Metrics Collector</title>
+  <meta property="og:title" content="Blip: A New Open Source MySQL Metrics Collector" />
+  <meta name="description" content="Blip is a new open source MySQL metrics collector, or &ldquo;MySQL monitor&rdquo; for short. But isn&rsquo;t collecting MySQL metrics easy? And don&rsquo;t we already have some open source MySQL monitors? Let&rsquo;s take a trip down memory lane&hellip;
+Past In ancient times, generic monitors like statsd and collectd were used to collect MySQL metrics for back ends like Graphite. Some people still use this tech to collect MySQL metrics.
+Then along came Prometheus in 2015, and with it mysqld_exporter became the new standard.">
+  <meta property="og:description" content="Blip is a new open source MySQL metrics collector, or &ldquo;MySQL monitor&rdquo; for short. But isn&rsquo;t collecting MySQL metrics easy? And don&rsquo;t we already have some open source MySQL monitors? Let&rsquo;s take a trip down memory lane&hellip;
+Past In ancient times, generic monitors like statsd and collectd were used to collect MySQL metrics for back ends like Graphite. Some people still use this tech to collect MySQL metrics.
+Then along came Prometheus in 2015, and with it mysqld_exporter became the new standard.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/blip-v1.0.0-released/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.105.0">
+  <link rel="canonical" href="https://hackmysql.com/post/blip-v1.0.0-released/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Blip: A New Open Source MySQL Metrics Collector</h1>
+
+        <div class="post-meta">
+
+
+  <div>Dec 22, 2022</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/metrics">#metrics</a>
+
+        <a href="/tags/monitoring">#monitoring</a>
+
+        <a href="/tags/blip">#blip</a>
+
+
+  </div>
+</div>
+
+
+        <p><a href="https://github.com/cashapp/blip">Blip</a> is a new open source MySQL metrics collector, or &ldquo;MySQL monitor&rdquo; for short.
+But isn&rsquo;t collecting MySQL metrics easy?
+And don&rsquo;t we already have some open source MySQL monitors?
+Let&rsquo;s take a trip down <a href="https://www.merriam-webster.com/dictionary/memory%20lane">memory lane</a>&hellip;</p>
+<!-- more -->
+<h2 id="past">Past</h2>
+<p>In ancient times, generic monitors like <code>statsd</code> and <code>collectd</code> were used to collect MySQL metrics for back ends like Graphite.
+Some people still use this tech to collect MySQL metrics.</p>
+<p>Then along came Prometheus in 2015, and with it <code>mysqld_exporter</code> became the new standard.
+Release history for <code>mysqld_exporter</code> is heavy in 2015 and 2016, then it dwindled:</p>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Number of Releases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2017</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2018</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2019</td>
+<td>2</td>
+</tr>
+<tr>
+<td>2020</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2021</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2022</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Releases per year is <em>not</em> the only indicator of liveliness or relevance.
+It&rsquo;s quite possible that <code>mysqld_exporter</code> wasn&rsquo;t updated more frequently because it didn&rsquo;t need to be: few bugs, works great, all is well.
+But I don&rsquo;t think that&rsquo;s the case based on its pileup of feature requests, which is a reflection of another bit of MySQL history&hellip;</p>
+<p>MySQL 5.7 and <code>mysqld_exporter</code> were released in 2015.
+Without digressing too much, 5.7 was the culmination of about 15 years of work and improvements—an amazing product.
+Three years later, MySQL 8.0 was released, but (in my opinion) its adoption paled in comparison to how the industry adopted past versions from 3.23 through v4 and v5.
+Why?
+Because 5.7 was so great (why upgrade?), and the broader industry was changing in various ways.
+Although 8.0 adoption was slow, MySQL and the industry kept changing, which means that <code>mysqld_exporter</code> had to keep up, but I don&rsquo;t think it did.
+Consequently, Percona forked <code>mysqld_exporter</code> for <a href="https://www.percona.com/software/database-tools/percona-monitoring-and-management">Percona Monitoring and Management (PMM)</a>.</p>
+<p>But Percona was more interested in PMM than <code>mysqld_exporter</code>, and I would know: I created PMM v1.0.
+Fun fact: we (at Percona) did develop an open source MySQL monitor, but we never released it because, instead, we decided to use the existing open source solution: <code>mysqld_exporter</code>.
+I opposed this change because I have never thought <code>mysqld_exporter</code> is well designed, and I think the scrape/pull model is inefficient and cumbersome for databases (especially at scale).
+It took many years, but a friendly &ldquo;I told you so&rdquo;: <a href="https://docs.percona.com/percona-monitoring-and-management/details/victoria-metrics.html">Percona stopped using Prometheus</a>.</p>
+<p>MySQL monitors have languished for the last several years.
+Today, no open source MySQL monitors is even remotely close to being a modern, cloud-ready, flexible solution for collecting MySQL metrics.
+The fundamental reason is simple: no one has created a MySQL monitor <em>only for MySQL</em>.</p>
+<p><code>mysqld_exporter</code> was successful not because it&rsquo;s a good MySQL monitor (it&rsquo;s not), but because <a href="https://prometheus.io/">Prometheus</a> is a great product.
+Although I don&rsquo;t like that exporter, I really like Prometheus (and <a href="https://grafana.com/">Grafana</a>).
+The exporter was created for the Prometheus ecosystem, not for MySQL and not for a general audience.
+That&rsquo;s fundamentally why its design and usability are flawed and limited <em>as a MySQL monitor</em>.
+In other words: as a Prometheus exporter, it&rsquo;s a great exporter; but as a MySQL monitor, it&rsquo;s not a good tool.</p>
+<p>This true for every MySQL monitor available: they&rsquo;re built for some other product or purpose, not <em>only for MySQL</em>.
+For example, the <a href="https://docs.datadoghq.com/integrations/mysql/">Datadog Agent for MySQL</a> is actually a pretty good MySQL monitor.
+I&rsquo;m impressed by the extensive list of metrics it collects and its flexibility.
+However, it only works for Datadog—of course!</p>
+<h2 id="present">Present</h2>
+<p>Collecting MySQL metrics is not easy because there are <em>a lot</em> of MySQL metrics.
+As a 20+ year old product, MySQL has grown and changed in many ways.
+Today, <code>SHOW GLOBAL STATUS</code> is a mess.
+Some of the output isn&rsquo;t metrics at all!
+And InnoDB metrics?
+Some tools still parse the text dump of <code>SHOW ENGINE INNODB STATUS</code>.
+And what about the MySQL 8.0 terminology changes?</p>
+<p>Moreover, the industry around MySQL has changed, too.
+For example, where do you report the metrics?
+SaaS metric and graphing platforms are increasingly common, like Datadog, Splunk (which acquired SignalFx), Chronosphere, and more.</p>
+<p>Collecting MySQL metrics correctly and efficiently for a general audience is quite difficult.</p>
+<h2 id="future">Future</h2>
+<p>I wrote <a href="https://github.com/cashapp/blip">Blip</a> for MySQL and for the future.
+That means several things, but for this blog post I&rsquo;ll highlight only two.</p>
+<p>First, that means Blip works with any distro of MySQL 5.7 and newer.
+(It probably works for 5.6, but that&rsquo;s not supported because 5.6 was EOL in February, 2021.)
+From Oracle to Percona to Maria to AWS and everyone else: Blip doesn&rsquo;t care as long as whatever it connects to &ldquo;speaks&rdquo; MySQL.</p>
+<p>Second, that means Blip was designed to be <em>easily</em> updated and expanded without any core code changes.
+This is possible because I gave it a plugin architecture around a central core.
+The central core is, of course, collecting MySQL metrics.
+Once the surrounding complexities are handled, the main job of <em>collecting metrics</em> is invariant: execute some commands, filter and save the values.
+In the last year or so since we&rsquo;ve been battle-testing Blip where I work, no one has had to touch the core—it just works.
+The really hard part is all the surrounding complexities&hellip;</p>
+<p>Having written Blip, I&rsquo;m pretty sure why no one did this years ago: it&rsquo;s really difficult to account for all the various ways and places people run MySQL.
+But my career has given me a unique advantage: I&rsquo;ve run MySQL in the most common ways and places.
+For example, where I work we have two different MySQL fleets: Percona Server running on bare metal in data centers, and AWS Aurora in the cloud.
+(We actually have more, but I&rsquo;m keeping things simple for this blog post.)
+There&rsquo;s almost nothing similar about those two except they&rsquo;re both MySQL under the hood.</p>
+<p>So how does one program account for all the surrounding complexities?
+With well-defined abstractions and plugins, which in <a href="https://go.dev/">Go</a> are interfaces.
+For example, one thing I cannot know is where users will <em>send</em> metrics.
+Obviously, everyone <em>collects</em> metrics from MySQL (that&rsquo;s the central core mentioned above), but after that it&rsquo;s anyone&rsquo;s guess.
+So in Blip, metrics reporting (sending) is implemented as &ldquo;metric sinks&rdquo;, which are small plugins that send metrics somewhere, anywhere.
+Blip ships with some default sinks (for things we use where I work), but it&rsquo;s easy for you to write your own sink to send metrics wherever.</p>
+<p>Of course, it&rsquo;s all easier said than done, but now it&rsquo;s done in Blip.</p>
+<p>There&rsquo;s a lot more I could say, but I already spent months writing the <a href="https://cashapp.github.io/blip/">Blip documentation</a> to explain it all.</p>
+<h2 id="thank-you">Thank You</h2>
+<p>Blip took 6 months of focused developed, an additional 8 months of testing and documentation, and thousands of MySQL instances on bare metal and in the cloud.
+All that time and all those resources were made possible by <a href="https://cash.app/">Cash App</a> and <a href="https://squareup.com/">Square</a>—both parts of <a href="https://www.block.xyz/">Block</a>, where I work.
+And my colleagues who contributed significant code, testing, and feedback:</p>
+<ul>
+<li>Joy Nag</li>
+<li>Wenhui Sun</li>
+<li>Ian Oberst</li>
+<li>Prudhvi Dhulipalla</li>
+<li>Serj Sililian</li>
+<li>Jemiah Westerman</li>
+<li>Allan Liu</li>
+<li>Morgan Tocker</li>
+<li>Jash Lal</li>
+</ul>
+<p>And Percona where, many years ago, I developed similar tools that gave me the background and experience that made designing Blip easier—and for carrying the torch of independent open source software that Blip reflects.</p>
+
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/mysql-iops-for-reads-and-surprsies/" data-toggle="tooltip" data-placement="top" title="MySQL IOPS for Reads and Surprsies">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2022 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

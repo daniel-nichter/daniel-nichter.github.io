@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>blip on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/blip/</link>
+    <description>Recent content in blip on Hack MySQL</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2022 Daniel Nichter</copyright>
+    <lastBuildDate>Thu, 22 Dec 2022 12:55:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/blip/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blip: A New Open Source MySQL Metrics Collector</title>
+      <link>https://hackmysql.com/post/blip-v1.0.0-released/</link>
+      <pubDate>Thu, 22 Dec 2022 12:55:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/post/blip-v1.0.0-released/</guid>
+      <description>Blip is a new open source MySQL metrics collector, or &amp;ldquo;MySQL monitor&amp;rdquo; for short. But isn&amp;rsquo;t collecting MySQL metrics easy? And don&amp;rsquo;t we already have some open source MySQL monitors? Let&amp;rsquo;s take a trip down memory lane&amp;hellip;
+Past In ancient times, generic monitors like statsd and collectd were used to collect MySQL metrics for back ends like Graphite. Some people still use this tech to collect MySQL metrics.
+Then along came Prometheus in 2015, and with it mysqld_exporter became the new standard.</description>
+    </item>
+
+  </channel>
+</rss>
