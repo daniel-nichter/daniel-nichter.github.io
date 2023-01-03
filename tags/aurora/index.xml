@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>aurora on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/aurora/</link>
+    <description>Recent content in aurora on Hack MySQL</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2022 Daniel Nichter</copyright>
+    <lastBuildDate>Mon, 02 Jan 2023 20:18:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/aurora/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>COMMIT Latency: Aurora vs. RDS MySQL 8.0</title>
+      <link>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</link>
+      <pubDate>Mon, 02 Jan 2023 20:18:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</guid>
+      <description>&lt;p&gt;Let&amp;rsquo;s examine &lt;code&gt;COMMIT&lt;/code&gt; latency on Aurora v2 (MySQL 5.7) vs. Aurora v3 (MySQL 8.0) vs. RDS MySQL 8.0 2-AZ vs. RDS MySQL 8.0 3-AZ &amp;ldquo;cluster&amp;rdquo;.&lt;/p&gt;</description>
+    </item>
+
+  </channel>
+</rss>

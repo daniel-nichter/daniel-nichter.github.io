@@ -2,28 +2,40 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/tags/aurora/</loc>
+    <lastmod>2023-01-02T20:18:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/aws/</loc>
+    <lastmod>2023-01-02T20:18:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/benchmarks/</loc>
+    <lastmod>2023-01-02T20:18:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</loc>
+    <lastmod>2023-01-02T20:18:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2023-01-02T20:18:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
+    <lastmod>2023-01-02T20:18:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2023-01-02T20:18:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2023-01-02T20:18:00-05:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/tags/blip/</loc>
     <lastmod>2022-12-22T12:55:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/blip-v1.0.0-released/</loc>
     <lastmod>2022-12-22T12:55:00-05:00</lastmod>
   </url><url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2022-12-22T12:55:00-05:00</lastmod>
-  </url><url>
     <loc>https://hackmysql.com/tags/metrics/</loc>
     <lastmod>2022-12-22T12:55:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/monitoring/</loc>
-    <lastmod>2022-12-22T12:55:00-05:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2022-12-22T12:55:00-05:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2022-12-22T12:55:00-05:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2022-12-22T12:55:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/eng/career-advice/</loc>

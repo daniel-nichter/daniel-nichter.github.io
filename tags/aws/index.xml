@@ -6,19 +6,15 @@
     <description>Recent content in aws on Hack MySQL</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>2020 Daniel Nichter</copyright>
-    <lastBuildDate>Mon, 28 Dec 2020 11:50:00 -0500</lastBuildDate>
-
-	<atom:link href="https://hackmysql.com/tags/aws/index.xml" rel="self" type="application/rss+xml" />
-
-
+    <copyright>2022 Daniel Nichter</copyright>
+    <lastBuildDate>Mon, 02 Jan 2023 20:18:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/aws/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>MySQL Password Rotation with AWS</title>
-      <link>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</link>
-      <pubDate>Mon, 28 Dec 2020 11:50:00 -0500</pubDate>
+      <title>COMMIT Latency: Aurora vs. RDS MySQL 8.0</title>
+      <link>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</link>
+      <pubDate>Mon, 02 Jan 2023 20:18:00 -0500</pubDate>
 
-      <guid>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</guid>
-      <description>MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and Terraform for cloud infrastructure.</description>
+      <guid>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</guid>
+      <description>&lt;p&gt;Let&amp;rsquo;s examine &lt;code&gt;COMMIT&lt;/code&gt; latency on Aurora v2 (MySQL 5.7) vs. Aurora v3 (MySQL 8.0) vs. RDS MySQL 8.0 2-AZ vs. RDS MySQL 8.0 3-AZ &amp;ldquo;cluster&amp;rdquo;.&lt;/p&gt;</description>
     </item>
 
   </channel>

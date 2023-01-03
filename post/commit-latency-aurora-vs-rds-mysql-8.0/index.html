@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>COMMIT Latency: Aurora vs. RDS MySQL 8.0</title>
+  <meta property="og:title" content="COMMIT Latency: Aurora vs. RDS MySQL 8.0" />
+  <meta name="description" content="Let&rsquo;s examine COMMIT latency on Aurora v2 (MySQL 5.7) vs. Aurora v3 (MySQL 8.0) vs. RDS MySQL 8.0 2-AZ vs. RDS MySQL 8.0 3-AZ &ldquo;cluster&rdquo;.">
+  <meta property="og:description" content="Let&rsquo;s examine COMMIT latency on Aurora v2 (MySQL 5.7) vs. Aurora v3 (MySQL 8.0) vs. RDS MySQL 8.0 2-AZ vs. RDS MySQL 8.0 3-AZ &ldquo;cluster&rdquo;.">
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.105.0">
+  <link rel="canonical" href="https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">COMMIT Latency: Aurora vs. RDS MySQL 8.0</h1>
+
+        <div class="post-meta">
+
+
+  <div>Jan 2, 2023</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/benchmarks">#benchmarks</a>
+
+        <a href="/tags/aws">#aws</a>
+
+        <a href="/tags/aurora">#aurora</a>
+
+
+  </div>
+</div>
+
+
+        <p>Let&rsquo;s examine <code>COMMIT</code> latency on Aurora v2 (MySQL 5.7) vs. Aurora v3 (MySQL 8.0) vs. RDS MySQL 8.0 2-AZ vs. RDS MySQL 8.0 3-AZ &ldquo;cluster&rdquo;.</p>
+<h2 id="why-commit-latency">Why COMMIT Latency?</h2>
+<p><code>COMMIT</code> is when MySQL incurs storage latency to make data changes durable.
+Before that, reads and writes are ideally (but not always) in-memory operations.
+Therefore, CPU and memory (and a few other concerns) affect query response time before <code>COMMIT</code>, but on <code>COMMIT</code> response time is largely a result of how fast the storage system can physically write and flush.
+In the cloud, storage is usually network-backed, so <code>COMMIT</code> latency can be orders of magnitude higher than locally-attached SSDs—milliseconds versus microseconds.</p>
+<p class="note">
+I use the term <em>latency</em> specifically because storage has true latency: delay inherent in a system.
+Readers of <a href="https://oreil.ly/efficient-mysql-performance">my book</a> know that normally I use (and insist upon) the term <em>response time</em>, not latency, because response time is not a delay inherit in a system.
+But COMMIT latency is true latency.
+</p>
+<p><code>COMMIT</code> latency is also important because it affects transaction throughput (transactions/second [TPS]).
+Presuming negligible lock waits and intra-query delays (caused by the application), TPS is limited by how fast MySQL can finish the transaction on <code>COMMIT</code>.
+For example, in the cloud a transaction might have these response times:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">BEGIN</span>      <span style="color:#75715e">--  0 ms
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> ... <span style="color:#75715e">--  5 ms
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">UPDATE</span> ... <span style="color:#75715e">--  1 ms
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">COMMIT</span>     <span style="color:#75715e">-- 20 ms (latency)
+</span></span></span></code></pre></div><p>The <code>SELECT</code> and <code>UPDATE</code> take almost no time, but the <code>COMMIT</code> takes a full 20 milliseconds because it&rsquo;s writing and flushing to an EBS volume, for example.
+Given that latency, the transaction is limited to about 50 TPS (1,000 ms / 20 ms = 50) per thread.
+If, for example, you have 48 threads (clients), you&rsquo;ll get about 50 * 48 = 2,400 TPS.
+Point being: if your application uses multi-statement transactions, <code>COMMIT</code> and TPS can be more important than individual query response time when the queries are fast but the storage is slow.</p>
+<h2 id="benchmarks">Benchmarks</h2>
+<p>TL;DR: Aurora has the lowest (fastest) and most stable <code>COMMIT</code> latency.</p>
+<p class="note">Click charts for full-size PNG image.</p>
+<p><a href="/img/COMMIT-latency-Aurora-v2.png"><img src="/img/COMMIT-latency-Aurora-v2.svg" alt="Aurora v2 COMMIT Latency scatter plot"></a></p>
+<p>Min 574 <em>μs</em> or 1.56 ms → Max 214 ms</p>
+<p><a href="/img/COMMIT-latency-Aurora-v3.png"><img src="/img/COMMIT-latency-Aurora-v3.svg" alt="Aurora v3 COMMIT Latency scatter plot"></a></p>
+<p>Min 1.86 ms → Max 226 ms</p>
+<p><a href="/img/COMMIT-latency-RDS-MySQL-8.0-2AZ.png"><img src="/img/COMMIT-latency-RDS-MySQL-8.0-2AZ.svg" alt="Amazon RDS MySQL 8.0 2-AZ COMMIT Latency scatter plot"></a></p>
+<p>Min: 4.08 ms → Max: 922 ms; 780 ms; 382 ms</p>
+<p><a href="/img/COMMIT-latency-RDS-MySQL-8.0-3AZ-cluster.png"><img src="/img/COMMIT-latency-RDS-MySQL-8.0-3AZ-cluster.svg" alt="Amazon RDS MySQL 8.0 3-AZ Cluster COMMIT Latency scatter plot"></a></p>
+<p>Min 1.93 ms → Max 345 ms</p>
+<p class="note">Click charts for full-size PNG image.</p>
+<h2 id="observations">Observations</h2>
+<p>This post is intended for MySQL experts, so I&rsquo;ll let the four charts above speak for themselves.
+However, I&rsquo;ll make a few points:</p>
+<ul>
+<li>
+<p>It&rsquo;s no surprise that Aurora beats standard RDS for MySQL: the former was purpose-built for more efficient storage I/O.
+You can find lots of resources published by Amazon about Aurora storage, so I won&rsquo;t repeat them here.</p>
+</li>
+<li>
+<p>Aurora v2 and v3 have similar <code>COMMIT</code> latency, but the v3 values are slightly higher and more variable.
+For the minimum, v2 is very steady but v3 shows more variation, but the different is microseconds; both have a minimum of roughly 2 ms.
+For the P99.9 and maximum, v2 values are tightly clustered in the 20-30 ms range with semi-regular spikes in the 60-70 ms range, but v3 is loosely clustered in the 20-30 ms range with semi-regular spikes around 100 ms.
+I don&rsquo;t know if Aurora v2 and v3 have different storage servers (only Amazon would know), so the slight difference in numbers might be random performance differences inherit to multi-tenant (shared) hardware.</p>
+</li>
+<li>
+<p>The 574 <em>microsecond</em> (μs) <code>COMMIT</code> latency observed on Aurora v2 is such a surprising outlier that I would dismiss it, especially since it&rsquo;s the only sub-millisecond measurement observed in tens of millions of <code>COMMIT</code>.
+It might even be an error of some sort.</p>
+</li>
+<li>
+<p>RDS for MySQL 8.0 (2 AZ) has double the minimum <code>COMMIT</code> latency as Aurora: about 4 ms.
+I suspect this is due to redo log flushing (and full page writes) and synchronous EBS writes to the second AZ—neither of which Aurora have because its storage is completely different.
+4 ms isn&rsquo;t terrible; it&rsquo;s the P99.9 and max that are troublesome&hellip;</p>
+</li>
+<li>
+<p>RDS for MySQL 8.0 (2 AZ) has P99.9 and max <code>COMMIT</code> latency in the 50-100 ms range with random spikes all the way up to 922 ms.
+The max value of 922 ms occurred only once.
+The 2nd highest was 780 ms that also occurred only once.
+The 3rd highest value was 382 ms, which was more representative of reoccurring max <code>COMMIT</code> latency.
+No matter how you look at it, these values are troublesome.
+Not knowing if a <code>COMMIT</code> will take 50 ms or <em>double</em> (100 ms) or <em>maybe</em> an unacceptable half-second (or more!) makes working with the database onerous for developers who need reliable write transaction throughput.</p>
+</li>
+<li>
+<p>RDS for MySQL 8.0 (3 AZ) &ldquo;cluster&rdquo; is an interesting product.
+Amazon calls it <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/multi-az-db-clusters-concepts.html">&ldquo;multi-AZ clusters&rdquo;</a>, but I think that&rsquo;s confusing for a couple reasons, so I call it 3-AZ &ldquo;clusters&rdquo;.
+If you&rsquo;re not familiar with this product (whatever you call it), read the link.
+On the one hand, the locally-attached NVMe seem to help keep minimum <code>COMMIT</code> latency consistency low: about 2 ms, same as Aurora.
+But the variability up to the P99.9 and max is terrible: widely scattered around 150 ms.
+So the <code>COMMIT</code> might take 2 ms, or <em>75 times longer</em>, or somewhere in between.
+Crazy.
+My guess is that this is due to semi-sync replication, but more benchmarking of this product is needed to know for sure.</p>
+</li>
+</ul>
+<h2 id="methodology">Methodology</h2>
+<p>You&rsquo;re not going to recognize this methodology or benchmark run in general because I developed a new benchmark tool last year (2022) that I&rsquo;ll release later this year.
+But for now, I&rsquo;ll dump some information how I obtained the values for the charts above so it&rsquo;s not all smoke and mirrors.</p>
+<h3 id="database">Database</h3>
+<dl>
+<dt>Configuration</dt>
+<dd><ul>
+<li>Amazon default parameter group <em>plus</em> binary logging with GTID</li>
+</ul>
+</dd>
+<dd><ul>
+<li><em>Exception</em>: query cache disabled in Aurora v2 (AWS enables it by default)</li>
+</ul>
+</dd>
+<dt>Replication</dt>
+<dd><ul>
+<li>Async replication with binary logs and GTID from AWS us-east-1 to us-west-2</li>
+</ul>
+</dd>
+<dd><ul>
+<li><em>Exception</em>: 3 AZ &ldquo;cluster&rdquo; uses semi-sync replication with GTID in us-east-1 only</li>
+</ul>
+</dd>
+<dt>Instance class</dt>
+<dd>db.r5.12xlarge (24 CPU; 48 vCPU; 384 GB RAM)</dd>
+<dd>Active/primary/writer in AWS us-east-1</dd>
+<dt>Clients</dt>
+<dd>48 total</dd>
+<dd><ul>
+<li>16 us-east-1a</li>
+</ul>
+</dd>
+<dd><ul>
+<li>16 us-east-1b</li>
+</ul>
+</dd>
+<dd><ul>
+<li>16 us-east-1c</li>
+</ul>
+</dd>
+</dl>
+<h3 id="schema">Schema</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> customers (
+</span></span><span style="display:flex;"><span>  id		bigint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> AUTO_INCREMENT,
+</span></span><span style="display:flex;"><span>  c_token	varbinary(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  country	char(<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  c1 		varchar(<span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  c2 		varchar(<span style="color:#ae81ff">50</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  c3 		varchar(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  b1 		tinyint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  created_at	<span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span>,
+</span></span><span style="display:flex;"><span>  updated_at	<span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span> <span style="color:#66d9ef">ON</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> (id),
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">UNIQUE</span> <span style="color:#66d9ef">KEY</span> (c_token),
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">KEY</span> (country)
+</span></span><span style="display:flex;"><span>) ENGINE<span style="color:#f92672">=</span>InnoDB
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> balances (
+</span></span><span style="display:flex;"><span>  id 		bigint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> AUTO_INCREMENT,
+</span></span><span style="display:flex;"><span>  b_token	varbinary(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  c_token 	varbinary(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">version</span> 	int <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#e6db74">&#39;0&#39;</span>,
+</span></span><span style="display:flex;"><span>  cents 	bigint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  currency	varbinary(<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  c1		varchar(<span style="color:#ae81ff">50</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  c2		varchar(<span style="color:#ae81ff">120</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  b1 		tinyint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  created_at	<span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span>,
+</span></span><span style="display:flex;"><span>  updated_at	<span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span> <span style="color:#66d9ef">ON</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> (id),
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">UNIQUE</span> <span style="color:#66d9ef">KEY</span> (b_token),
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">KEY</span> (c_token)
+</span></span><span style="display:flex;"><span>) ENGINE<span style="color:#f92672">=</span>InnoDB
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> xfers (
+</span></span><span style="display:flex;"><span>  id		bigint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> AUTO_INCREMENT,
+</span></span><span style="display:flex;"><span>  x_token	varchar(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  cents 	bigint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  currency 	varbinary(<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  s_token 	varchar(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  r_token 	varchar(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">version</span>    int unsigned <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#e6db74">&#39;0&#39;</span>,
+</span></span><span style="display:flex;"><span>  c1		varchar(<span style="color:#ae81ff">50</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  c2		varchar(<span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  c3 		varchar(<span style="color:#ae81ff">30</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  t1 		<span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  t2 		<span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  t3 		<span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  b1 		tinyint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  b2 		tinyint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  created_at	<span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span>,
+</span></span><span style="display:flex;"><span>  updated_at	<span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span> <span style="color:#66d9ef">ON</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> (id),
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">UNIQUE</span> <span style="color:#66d9ef">KEY</span> (x_token),
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">KEY</span> (s_token, t1),
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">KEY</span> (r_token, t1),
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">KEY</span> (created_at)
+</span></span><span style="display:flex;"><span>) ENGINE<span style="color:#f92672">=</span>InnoDB
+</span></span></code></pre></div><h3 id="transaction">Transaction</h3>
+<p>This is <em>not</em>—I repeat: <em>not</em>—how money is transferred in real-world systems.
+This is a fake transaction designed to stress MySQL in various ways.</p>
+<pre tabindex="0"><code>BEGIN
+
+-- Select random customer and one of their balances (from cust/bal)
+SELECT c_token, country FROM customers WHERE id=@id
+SELECT b_token FROM balances WHERE c_token=@from_cust LIMIT 1
+
+-- Select another random customer and their balance in the same country (to cust/bal)
+SELECT c_token FROM customers WHERE id BETWEEN @id_1000 AND @PREV AND country=@country LIMIT 1
+SELECT b_token FROM balances WHERE c_token=@to_cust LIMIT 1
+
+-- Start new transfer between customers
+INSERT INTO xfers VALUES (NULL, @x_token, 100, &#39;USD&#39;, @from_bal, @to_bal, 1, @c1, @c2, @c3, NOW(), NULL, NULL, 1, 0, NOW(), NOW()) -- 6
+
+-- Lock then debit from customer balance
+SELECT id, version FROM balances WHERE b_token=@from_bal FOR UPDATE
+UPDATE balances SET cents=cents-100, version=version+1 WHERE id=@from_id
+
+-- Lock then credit to customer balance
+SELECT id, version FROM balances WHERE b_token=@to_bal FOR UPDATE
+UPDATE balances SET cents=cents+100, version=version+1 WHERE id=@to_id
+
+-- Finish transfer
+UPDATE xfers SET t2=NOW(), c3=&#39;DONE&#39; WHERE id=@xfer_id
+
+COMMIT
+</code></pre><h3 id="data-sizes">Data Sizes</h3>
+<table>
+<thead>
+<tr>
+<th> </th>
+<th>customers</th>
+<th>balances</th>
+<th>xfers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rows</strong></td>
+<td>500,000,000</td>
+<td>1.5 billion (3x per cust.)</td>
+<td>~2 billion</td>
+</tr>
+<tr>
+<td><strong>Data Size</strong></td>
+<td>200 GB</td>
+<td>700 GB</td>
+<td>1.0 TB</td>
+</tr>
+</tbody>
+</table>
+<h3 id="data-access">Data Access</h3>
+<p>Uniform random 100M customers between IDs 250,000,000 and 500,000,000.</p>
+<h2 id="thank-you">Thank You</h2>
+<p>In this blog post I focus on only <code>COMMIT</code> latency on four Amazon products, but I did over 20 benchmarks recently on all Amazon products for MySQL.
+Benchmarks like these are not cheap.
+Thank you to my employer for paying the bill:</p>
+<p><a href="https://cash.app" style="color:black; text-decoration: none"><img src="/img/icon-square-cash.svg" width="40px" style="display:inline" alt="Cash App logo">  Cash App</a></p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/blip-v1.0.0-released/" data-toggle="tooltip" data-placement="top" title="Blip: A New Open Source MySQL Metrics Collector">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2023 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

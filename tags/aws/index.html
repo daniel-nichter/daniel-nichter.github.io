@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
   <title>aws</title>
   <meta property="og:title" content="aws" />
   <meta name="author" content="Daniel Nichter"/>
@@ -15,12 +14,10 @@
   <meta property="og:url" content="https://hackmysql.com/tags/aws/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-
-  <meta name="generator" content="Hugo 0.73.0" />
+  <meta name="generator" content="Hugo 0.105.0">
   <link rel="canonical" href="https://hackmysql.com/tags/aws/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap-toc.min.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
@@ -37,13 +34,16 @@
       </button>
       <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
     </div>
-
     <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
       <ul class="nav navbar-nav navbar-left">
 
 
             <li>
-              <a title="About" href="/page/about/">About</a>
+              <a title="About" href="/about/">About</a>
             </li>
 
 
@@ -64,10 +64,16 @@
 
 
             <li class="navlinks-container">
-              <a class="navlinks-parent" href="javascript:void(0)">Design</a>
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
 
-                  <a href="/page/cli-antipatterns/">Command-line Interface Antipatterns</a>
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
 
               </div>
             </li>
@@ -78,22 +84,19 @@
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
 
-                  <a href="/page/golang-antipatterns/">Go Antipatterns</a>
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
 
-                  <a href="/page/idiomatic-go/">Idiomatic Go</a>
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
 
               </div>
             </li>
 
 
 
-            <li class="navlinks-container">
-              <a class="navlinks-parent" href="javascript:void(0)">metrics</a>
-              <div class="navlinks-children">
-
-                  <a href="/page/percentiles/">Percentiles</a>
-
-              </div>
+            <li>
+              <a title="Help" href="/help/">Help</a>
             </li>
 
 
@@ -102,7 +105,11 @@
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
 
-                  <a href="/page/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
 
               </div>
             </li>
@@ -111,7 +118,7 @@
 
 
       </ul>
-    </div>
+	</div>
   </div>
 </nav>
 
@@ -123,22 +130,24 @@
         <div class="posts-list">
 
             <article class="post-preview">
-              <a href="https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/">
-                <h1 class="post-title">MySQL Password Rotation with AWS</h1>
-                <h3 class="post-subtitle">And Terraform</h3>
+              <a href="/post/commit-latency-aurora-vs-rds-mysql-8.0/">
+                <h1 class="post-title">COMMIT Latency: Aurora vs. RDS MySQL 8.0</h1>
+
               </a>
               <div class="post-meta">
 
 
-  <div>Dec 28, 2020</div>
+  <div>Jan 2, 2023</div>
   <div class="blog-tags">
 
 
         <a href="/tags/mysql">#mysql</a>
 
+        <a href="/tags/benchmarks">#benchmarks</a>
+
         <a href="/tags/aws">#aws</a>
 
-        <a href="/tags/terraform">#terraform</a>
+        <a href="/tags/aurora">#aurora</a>
 
 
   </div>
@@ -155,14 +164,14 @@
 
     <footer>
   <p class="copyright text-muted">
-    Copyright 2020 Daniel Nichter
+    Copyright 2023 Daniel Nichter
   </p>
-  <p><a href="https://github.com/daniel-nichter"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
-<script src="https://cdn.usefathom.com/3.js" site="WJIYGVMB"></script>
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 
 
   </body>
