@@ -12,10 +12,10 @@
       <title>COMMIT Latency: Aurora vs. RDS MySQL 8.0</title>
       <link>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</link>
       <pubDate>Mon, 02 Jan 2023 20:18:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</guid>
       <description>&lt;p&gt;Let&amp;rsquo;s examine &lt;code&gt;COMMIT&lt;/code&gt; latency on Aurora v2 (MySQL 5.7) vs. Aurora v3 (MySQL 8.0) vs. RDS MySQL 8.0 2-AZ vs. RDS MySQL 8.0 3-AZ &amp;ldquo;cluster&amp;rdquo;.&lt;/p&gt;</description>
     </item>
-
+    
   </channel>
 </rss>

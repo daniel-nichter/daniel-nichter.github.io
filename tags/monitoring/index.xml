@@ -12,24 +12,24 @@
       <title>Blip: A New Open Source MySQL Metrics Collector</title>
       <link>https://hackmysql.com/post/blip-v1.0.0-released/</link>
       <pubDate>Thu, 22 Dec 2022 12:55:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/blip-v1.0.0-released/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://github.com/cashapp/blip&#34;&gt;Blip&lt;/a&gt; is a new open source MySQL metrics collector, or &amp;ldquo;MySQL monitor&amp;rdquo; for short.
 But isn&amp;rsquo;t collecting MySQL metrics easy?
 And don&amp;rsquo;t we already have some open source MySQL monitors?
 Let&amp;rsquo;s take a trip down &lt;a href=&#34;https://www.merriam-webster.com/dictionary/memory%20lane&#34;&gt;memory lane&lt;/a&gt;&amp;hellip;&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>Path and Dimension Metrics</title>
       <link>https://hackmysql.com/post/path-and-dimension-metrics/</link>
       <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/path-and-dimension-metrics/</guid>
       <description>The two most common strategies for identifying and organizing data points that comprise metric time series are path and dimension. This post is geared towards engineers who have never been introduced to the subject. Implementing metrics from the ground up, or adding new metrics to an existing system, can be overwhelming in nontrivial systems. Understanding these two strategies simplifies one&amp;rsquo;s efforts.
 Path-based Metrics Path-based metrics are the historical norm:
 host.prod1.disk-free.sda host.</description>
     </item>
-
+    
   </channel>
 </rss>
