@@ -35,10 +35,7 @@ Let&amp;rsquo;s take a trip down &lt;a href=&#34;https://www.merriam-webster.com
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/eng/career-advice/</guid>
-      <description>Career Advice 1. Add Value Success follows value.
-Ensure that the work you do adds value to the business and other people.
-2. Write Well Write well every document that&amp;rsquo;s read by other people (even if it&amp;rsquo;s just a README).
-People usually don&amp;rsquo;t tell you when your writing is poor, but they will notice because it&amp;rsquo;s tedious to read—you&amp;rsquo;re making them do extra work to understand you. Being known for poor writing won&amp;rsquo;t hurt your career, but it certainly won&amp;rsquo;t help it either.</description>
+      <description>&amp;lsquo;Career Advice&amp;rsquo; lists advice to help ambitious software engineers become the best in their field.</description>
     </item>
     
     <item>
@@ -47,8 +44,7 @@ People usually don&amp;rsquo;t tell you when your writing is poor, but they will
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/help/</guid>
-      <description>Resources for MySQL This is my personal list of resources for MySQL. It&amp;rsquo;s neither exhaustive nor official—there are more resources for MySQL than listed on this page. But I know and trust these resources due to my professional experience in the MySQL industry.
-You can trust the correctness and accuracy of whatever these resources say or write. However, everyone makes mistakes and MySQL is a vast and complicated subject that continues to evolve.</description>
+      <description>Resources for MySQL: books, blogs, companies, conferences, and more</description>
     </item>
     
     <item>
@@ -57,10 +53,7 @@ You can trust the correctness and accuracy of whatever these resources say or wr
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/eng/write/</guid>
-      <description>How to Write Well I wrote this page before reading On Writing Well by William Zinsser.
-To my surprise and delight, he reinforces everything I wrote below. In fact, he goes further and makes the points stronger. For example, near the end of the book he writes:
-No writing decision is too small to be worth a large expenditure of time.
-Zinsser is (or was: he died in 2015) an authority on writing, and I&amp;rsquo;m just an amateur by comparison.</description>
+      <description>&amp;lsquo;How to Write Well&amp;rsquo; is a short guide for software engineers on how to write well.</description>
     </item>
     
     <item>
@@ -108,7 +101,7 @@ Mining this information is not trivial, but it&amp;rsquo;s fun and this blog pos
       <pubDate>Sun, 28 Aug 2022 13:28:00 -0400</pubDate>
       
       <guid>https://hackmysql.com/mysql-transaction-reporting/</guid>
-      <description>MySQL Transaction Reporting In chapter 8 of Efficient MySQL Performance, I discuss reporting MySQL transactions (among many other related topics). In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&amp;rsquo;t monitor or report them in the world of MySQL. Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.</description>
+      <description>How to inspect and report MySQL transactions using the Performance Schema</description>
     </item>
     
     <item>
@@ -170,8 +163,7 @@ Simply put: you cannot ignore &lt;em&gt;how&lt;/em&gt; the application accesses 
       <pubDate>Fri, 25 Mar 2022 16:55:00 -0400</pubDate>
       
       <guid>https://hackmysql.com/golang/go-single-character-names/</guid>
-      <description>Go Single-character Names Go loves short names. Even the authoritative page Effective Go uses this example:
-f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err != nil { f.Close() return err } codeUsing(f, d) Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is not idiomatic because, above all, Go is optimized for reading, especially by future engineers.</description>
+      <description>&amp;lsquo;Go Single-character Names&amp;rsquo; details the proper, idoimatic usage of single character symbols in Go.</description>
     </item>
     
     <item>
@@ -211,8 +203,7 @@ But I&amp;rsquo;ll cover the topic here because that&amp;rsquo;s what this blog 
       <pubDate>Sat, 08 Jan 2022 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/about/</guid>
-      <description>Hack MySQL Hack MySQL is my personal blog about MySQL, the Go programming language, and software design.
-The content of this site is inspired by two things. First is my work at Block. Working with thousands of databases, hundreds of microservices, and engineers across the company, I&amp;rsquo;m fortunate to always have new challenges and opportunities to both learn and mentor. Many of the posts and pages began as conversations with colleagues.</description>
+      <description>Hack MySQL is the personal website of Daniel Nichter, author of the book Efficient MySQL Performance published by O&amp;rsquo;Reilly. His webiste explores MySQL, Go, and software design.</description>
     </item>
     
     <item>
@@ -232,9 +223,7 @@ The preface explains why this book is unique:&lt;/p&gt;</description>
       <pubDate>Sat, 16 Oct 2021 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/eng/database-operations-manual/</guid>
-      <description>Database Operations Manual Running a database is easy, especially in the cloud, but operating a database is complicated. This page outlines operational aspects (OA) required to operate a database in production, at scale.
-Last updated: October 16, 2021
-1. Security Security is the first priority: nothing else matters if the database is compromised. It is better for a database to be offline than hacked. Security permeates every operational aspects (OA), but these OA address the most critical aspects, like root (super) access and encryption.</description>
+      <description>&amp;lsquo;Database Operations Manual&amp;rsquo; outlines requirements for operating a database server in production.</description>
     </item>
     
     <item>
@@ -264,7 +253,7 @@ Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as o
       <pubDate>Thu, 14 Jan 2021 15:42:00 -0500</pubDate>
       
       <guid>https://hackmysql.com/mysql-select-and-sort/</guid>
-      <description>MySQL Select and Sort Status Variables This page is a reboot of the original written 15 years ago in 2005. Back then, I must have been using MySQL 4.1 or 5.0. Today, I am using MySQL 8.0.22. A lot changed in MySQL from 4.1 to 8.0, but it still has the same Select_% and Sort_% status variables which are equally important today in 2021. Let&amp;rsquo;s examine them in greater detail and with better examples.</description>
+      <description>A deep dive into the MySQL select and sort status variables</description>
     </item>
     
     <item>
@@ -282,7 +271,7 @@ Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as o
       <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
       
       <guid>https://hackmysql.com/mysql-password-rotation-lambda/</guid>
-      <description>MySQL Password Rotation with AWS Secrets Manager and Lambda MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and Terraform for cloud infrastructure.</description>
+      <description>How to set up MySQL password rotation with AWS Secrets Manager, AWS Lambda, and Terraform</description>
     </item>
     
     <item>
@@ -419,7 +408,7 @@ host.prod1.disk-free.sda host.</description>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/eng/percentiles/</guid>
-      <description>Percentiles Percentiles are ubiquitous in application performance monitoring, particularly the 95th (P95), 99th (P99), and 99.9th (P999) percentiles. The basic concept is simple: percentile Pn means n% of all values are &amp;lt;= than the Pn value. If the P95 value = 100ms, then 95% of all values are &amp;lt;= 100ms. In other words: 5% of all values are &amp;gt; 100ms. Percentiles discard the top (100-n)% values as outliers for various reasons which are outside the scope of this page.</description>
+      <description>&amp;lsquo;Percentiles&amp;rsquo; is a deep dive into how percentiles are calculated using nearest rank and linear interpolation.</description>
     </item>
     
     <item>
@@ -584,8 +573,7 @@ Awesome! I want 1 write ack from any secondary in the primary DC so when the pri
       <pubDate>Sat, 03 Jun 2017 18:51:14 -0700</pubDate>
       
       <guid>https://hackmysql.com/golang/go-antipatterns/</guid>
-      <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&amp;rsquo;s a better way that&amp;rsquo;s both functionally equivalent and idiomatic.
-These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</description>
+      <description>&amp;lsquo;Go Antipatterns&amp;rsquo; describes bad Go code and how to make it better.</description>
     </item>
     
     <item>
@@ -594,9 +582,7 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
       <pubDate>Sat, 03 Jun 2017 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/golang/idiomatic-go/</guid>
-      <description>Idiomatic Go Canon can·on /ˈkanən/ noun : a general law, rule, principle, or criterion by which something is judged
-These texts explicitly and implicitly define idiomatic Go code. Read, memorize, and refer to them often. Use them to settle debates.
-Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names Recommended Best practices for a new Go developer Go Code Review Comments Reducing Type Hierarchies </description>
+      <description>&amp;lsquo;Idiomatic Go&amp;rsquo; is a list of resources for learning about idomatic Go.</description>
     </item>
     
   </channel>

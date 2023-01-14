@@ -14,9 +14,7 @@
       <pubDate>Sat, 16 Oct 2021 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/eng/database-operations-manual/</guid>
-      <description>Database Operations Manual Running a database is easy, especially in the cloud, but operating a database is complicated. This page outlines operational aspects (OA) required to operate a database in production, at scale.
-Last updated: October 16, 2021
-1. Security Security is the first priority: nothing else matters if the database is compromised. It is better for a database to be offline than hacked. Security permeates every operational aspects (OA), but these OA address the most critical aspects, like root (super) access and encryption.</description>
+      <description>&amp;lsquo;Database Operations Manual&amp;rsquo; outlines requirements for operating a database server in production.</description>
     </item>
     
   </channel>

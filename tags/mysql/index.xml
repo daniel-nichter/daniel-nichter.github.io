@@ -74,7 +74,7 @@ Mining this information is not trivial, but it&amp;rsquo;s fun and this blog pos
       <pubDate>Sun, 28 Aug 2022 13:28:00 -0400</pubDate>
       
       <guid>https://hackmysql.com/mysql-transaction-reporting/</guid>
-      <description>MySQL Transaction Reporting In chapter 8 of Efficient MySQL Performance, I discuss reporting MySQL transactions (among many other related topics). In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&amp;rsquo;t monitor or report them in the world of MySQL. Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.</description>
+      <description>How to inspect and report MySQL transactions using the Performance Schema</description>
     </item>
     
     <item>
@@ -189,7 +189,7 @@ Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as o
       <pubDate>Thu, 14 Jan 2021 15:42:00 -0500</pubDate>
       
       <guid>https://hackmysql.com/mysql-select-and-sort/</guid>
-      <description>MySQL Select and Sort Status Variables This page is a reboot of the original written 15 years ago in 2005. Back then, I must have been using MySQL 4.1 or 5.0. Today, I am using MySQL 8.0.22. A lot changed in MySQL from 4.1 to 8.0, but it still has the same Select_% and Sort_% status variables which are equally important today in 2021. Let&amp;rsquo;s examine them in greater detail and with better examples.</description>
+      <description>A deep dive into the MySQL select and sort status variables</description>
     </item>
     
     <item>
@@ -207,7 +207,7 @@ Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as o
       <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
       
       <guid>https://hackmysql.com/mysql-password-rotation-lambda/</guid>
-      <description>MySQL Password Rotation with AWS Secrets Manager and Lambda MySQL password rotation using Amazon RDS for MySQL, AWS Secrets Manager, and AWS Lambda is a complex challenge to automate at scale. It appears easy at first—just two services and some IAM resources, right? But actual implementation quickly reveals a significant depth of considerations, choices, trade-offs, and technical problems. This page is a detailed guide to implementing MySQL 5.7 password rotation—fully automated at scale—using AWS RDS, Secrets Manager, and Lambda, and Terraform for cloud infrastructure.</description>
+      <description>How to set up MySQL password rotation with AWS Secrets Manager, AWS Lambda, and Terraform</description>
     </item>
     
     <item>

@@ -23,8 +23,7 @@
       <pubDate>Sat, 03 Jun 2017 18:51:14 -0700</pubDate>
       
       <guid>https://hackmysql.com/golang/go-antipatterns/</guid>
-      <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&amp;rsquo;s a better way that&amp;rsquo;s both functionally equivalent and idiomatic.
-These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</description>
+      <description>&amp;lsquo;Go Antipatterns&amp;rsquo; describes bad Go code and how to make it better.</description>
     </item>
     
   </channel>

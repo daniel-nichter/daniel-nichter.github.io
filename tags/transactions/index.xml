@@ -25,7 +25,7 @@ Mining this information is not trivial, but it&amp;rsquo;s fun and this blog pos
       <pubDate>Sun, 28 Aug 2022 13:28:00 -0400</pubDate>
       
       <guid>https://hackmysql.com/mysql-transaction-reporting/</guid>
-      <description>MySQL Transaction Reporting In chapter 8 of Efficient MySQL Performance, I discuss reporting MySQL transactions (among many other related topics). In the book, I note that the state of the art is practically nonexistent: transactions are important, but we just don&amp;rsquo;t monitor or report them in the world of MySQL. Historically (in older versions of MySQL), there was basically no way to do this because neither the general log nor the slow log printed transaction IDs.</description>
+      <description>How to inspect and report MySQL transactions using the Performance Schema</description>
     </item>
     
   </channel>

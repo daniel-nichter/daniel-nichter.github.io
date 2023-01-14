@@ -14,8 +14,7 @@
       <pubDate>Fri, 25 Mar 2022 16:55:00 -0400</pubDate>
       
       <guid>https://hackmysql.com/golang/go-single-character-names/</guid>
-      <description>Go Single-character Names Go loves short names. Even the authoritative page Effective Go uses this example:
-f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err != nil { f.Close() return err } codeUsing(f, d) Short names are idiomatic Go, but overusing them creates cryptic, difficult-to-read code that is not idiomatic because, above all, Go is optimized for reading, especially by future engineers.</description>
+      <description>&amp;lsquo;Go Single-character Names&amp;rsquo; details the proper, idoimatic usage of single character symbols in Go.</description>
     </item>
     
     <item>
@@ -24,8 +23,7 @@ f, err := os.Open(name) if err != nil { return err } d, err := f.Stat() if err !
       <pubDate>Sat, 03 Jun 2017 18:51:14 -0700</pubDate>
       
       <guid>https://hackmysql.com/golang/go-antipatterns/</guid>
-      <description>Go Antipatterns These Go lang antipatterns are inspired by SQL Antipatterns. Antipattern Go code is syntactically correct, but there&amp;rsquo;s a better way that&amp;rsquo;s both functionally equivalent and idiomatic.
-These are guidelines not absolutes. For example, Generic Package is common in practice and often difficult to avoid. Spending significant time trying to rename a util package can quickly amount to bikeshedding. Therefore, the antipatterns are divided into three classes: critical, important, and stylistic.</description>
+      <description>&amp;lsquo;Go Antipatterns&amp;rsquo; describes bad Go code and how to make it better.</description>
     </item>
     
     <item>
@@ -34,9 +32,7 @@ These are guidelines not absolutes. For example, Generic Package is common in pr
       <pubDate>Sat, 03 Jun 2017 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/golang/idiomatic-go/</guid>
-      <description>Idiomatic Go Canon can·on /ˈkanən/ noun : a general law, rule, principle, or criterion by which something is judged
-These texts explicitly and implicitly define idiomatic Go code. Read, memorize, and refer to them often. Use them to settle debates.
-Effective Go Golang FAQ Go at Google: Language Design in the Service of Software Engineering Go Standard Library Packages Godoc: documenting Go code Go Package Names Recommended Best practices for a new Go developer Go Code Review Comments Reducing Type Hierarchies </description>
+      <description>&amp;lsquo;Idiomatic Go&amp;rsquo; is a list of resources for learning about idomatic Go.</description>
     </item>
     
   </channel>

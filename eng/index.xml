@@ -14,10 +14,7 @@
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/eng/career-advice/</guid>
-      <description>Career Advice 1. Add Value Success follows value.
-Ensure that the work you do adds value to the business and other people.
-2. Write Well Write well every document that&amp;rsquo;s read by other people (even if it&amp;rsquo;s just a README).
-People usually don&amp;rsquo;t tell you when your writing is poor, but they will notice because it&amp;rsquo;s tedious to read—you&amp;rsquo;re making them do extra work to understand you. Being known for poor writing won&amp;rsquo;t hurt your career, but it certainly won&amp;rsquo;t help it either.</description>
+      <description>&amp;lsquo;Career Advice&amp;rsquo; lists advice to help ambitious software engineers become the best in their field.</description>
     </item>
     
     <item>
@@ -26,10 +23,7 @@ People usually don&amp;rsquo;t tell you when your writing is poor, but they will
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/eng/write/</guid>
-      <description>How to Write Well I wrote this page before reading On Writing Well by William Zinsser.
-To my surprise and delight, he reinforces everything I wrote below. In fact, he goes further and makes the points stronger. For example, near the end of the book he writes:
-No writing decision is too small to be worth a large expenditure of time.
-Zinsser is (or was: he died in 2015) an authority on writing, and I&amp;rsquo;m just an amateur by comparison.</description>
+      <description>&amp;lsquo;How to Write Well&amp;rsquo; is a short guide for software engineers on how to write well.</description>
     </item>
     
     <item>
@@ -38,9 +32,7 @@ Zinsser is (or was: he died in 2015) an authority on writing, and I&amp;rsquo;m 
       <pubDate>Sat, 16 Oct 2021 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/eng/database-operations-manual/</guid>
-      <description>Database Operations Manual Running a database is easy, especially in the cloud, but operating a database is complicated. This page outlines operational aspects (OA) required to operate a database in production, at scale.
-Last updated: October 16, 2021
-1. Security Security is the first priority: nothing else matters if the database is compromised. It is better for a database to be offline than hacked. Security permeates every operational aspects (OA), but these OA address the most critical aspects, like root (super) access and encryption.</description>
+      <description>&amp;lsquo;Database Operations Manual&amp;rsquo; outlines requirements for operating a database server in production.</description>
     </item>
     
     <item>
@@ -49,7 +41,7 @@ Last updated: October 16, 2021
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
       
       <guid>https://hackmysql.com/eng/percentiles/</guid>
-      <description>Percentiles Percentiles are ubiquitous in application performance monitoring, particularly the 95th (P95), 99th (P99), and 99.9th (P999) percentiles. The basic concept is simple: percentile Pn means n% of all values are &amp;lt;= than the Pn value. If the P95 value = 100ms, then 95% of all values are &amp;lt;= 100ms. In other words: 5% of all values are &amp;gt; 100ms. Percentiles discard the top (100-n)% values as outliers for various reasons which are outside the scope of this page.</description>
+      <description>&amp;lsquo;Percentiles&amp;rsquo; is a deep dive into how percentiles are calculated using nearest rank and linear interpolation.</description>
     </item>
     
   </channel>
