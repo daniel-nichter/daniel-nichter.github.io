@@ -3,7 +3,7 @@
   <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MySQL Data Locks: Mapping 8.0 to 5.7</title>
   <meta property="og:title" content="MySQL Data Locks: Mapping 8.0 to 5.7" />
   <meta name="description" content="As of MySQL 8.0, performance_schema.data_locks shows InnoDB data locks. Before MySQL 8.0, you must SET GLOBAL innodb_status_output_locks=ON and ruminate on the output of SHOW ENGINE INNODB STATUS. The image below (click to see full size) shows how the former maps to the latter for three record locks and one table lock on table t.
