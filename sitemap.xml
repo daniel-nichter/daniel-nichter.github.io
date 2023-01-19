@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/eng/</loc>
+    <lastmod>2023-01-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2023-01-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/eng/level-up/</loc>
+    <lastmod>2023-01-19T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/tags/aurora/</loc>
     <lastmod>2023-01-02T20:18:00-05:00</lastmod>
   </url><url>
@@ -12,9 +21,6 @@
     <lastmod>2023-01-02T20:18:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</loc>
-    <lastmod>2023-01-02T20:18:00-05:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/</loc>
     <lastmod>2023-01-02T20:18:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/mysql/</loc>
@@ -39,9 +45,6 @@
     <lastmod>2022-12-22T12:55:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/eng/career-advice/</loc>
-    <lastmod>2022-12-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/eng/</loc>
     <lastmod>2022-12-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/help/</loc>

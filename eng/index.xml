@@ -7,42 +7,51 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Sun, 18 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/eng/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 19 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://hackmysql.com/eng/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Level Up</title>
+      <link>https://hackmysql.com/eng/level-up/</link>
+      <pubDate>Thu, 19 Jan 2023 00:00:00 +0000</pubDate>
+
+      <guid>https://hackmysql.com/eng/level-up/</guid>
+      <description>&amp;lsquo;Level Up&amp;rsquo; explains how software engineers can become the best in their field and produce more output than most.</description>
+    </item>
+
     <item>
       <title>Career Advice</title>
       <link>https://hackmysql.com/eng/career-advice/</link>
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/career-advice/</guid>
       <description>&amp;lsquo;Career Advice&amp;rsquo; lists advice to help ambitious software engineers become the best in their field.</description>
     </item>
-    
+
     <item>
       <title>How to Write Well</title>
       <link>https://hackmysql.com/eng/write/</link>
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/write/</guid>
       <description>&amp;lsquo;How to Write Well&amp;rsquo; is a short guide for software engineers on how to write well.</description>
     </item>
-    
+
     <item>
       <title>Database Operations Manual</title>
       <link>https://hackmysql.com/eng/database-operations-manual/</link>
       <pubDate>Sat, 16 Oct 2021 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/database-operations-manual/</guid>
       <description>&amp;lsquo;Database Operations Manual&amp;rsquo; outlines requirements for operating a database server in production.</description>
     </item>
-    
+
     <item>
       <title>Percentiles</title>
       <link>https://hackmysql.com/eng/percentiles/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/percentiles/</guid>
       <description>&amp;lsquo;Percentiles&amp;rsquo; is a deep dive into how percentiles are calculated using nearest rank and linear interpolation.</description>
     </item>
-    
+
   </channel>
 </rss>
