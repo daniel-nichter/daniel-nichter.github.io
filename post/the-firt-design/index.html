@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The First Design</title>
+  <meta property="og:title" content="The First Design" />
+  <meta name="description" content="When I review the code for a new program, I often provide the original authors a lot of feedback.
+And just as often, those authors are a little annoyed by me, the feedback, or both.
+But I keep doing it for two reasons.">
+  <meta property="og:description" content="When I review the code for a new program, I often provide the original authors a lot of feedback.
+And just as often, those authors are a little annoyed by me, the feedback, or both.
+But I keep doing it for two reasons.">
+
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/the-firt-design/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.109.0">
+  <link rel="canonical" href="https://hackmysql.com/post/the-firt-design/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/level-up/">Level Up</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">The First Design</h1>
+
+        <div class="post-meta">
+
+
+  <div>Feb 3, 2023</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/software-design">#software design</a>
+
+        <a href="/tags/formula-1">#Formula 1</a>
+
+
+  </div>
+</div>
+
+
+        <p>When I review the code for a new program, I often provide the original authors <em>a lot</em> of feedback.
+And just as often, those authors are a little annoyed by me, the feedback, or both.
+But I keep doing it for two reasons.</p>
+<h2 id="professionalism">Professionalism</h2>
+<p>Regardless of experience or engineering level, I presume all engineers are professionals who strive to create the best possible code in <em>every</em> aspect.
+My manager uses Formula 1 racing as an analogy: F1 vehicles, drivers, teams, and engineers are the best in the world, and essentially no detail is too small to address.
+The video <a href="https://www.youtube.com/watch?v=aKwSM5NTeaw">$5000 Normal Engine vs $10 Million Formula 1 Engine</a> is a great explanation—watch it.
+(I learned that the tolerances of an F1 engine are so precise, that its parts are seized when cold.)</p>
+<p>That said, I fully realize that different engineers are at different points in their careers.
+To put it bluntly, some engineers are (for example) preoccupied with family matters, and their job is second or third priority.
+That&rsquo;s normal; that&rsquo;s fine.
+But it doesn&rsquo;t change <em>my</em> job.</p>
+<p>My job is what John Ousterhout saw fit to title chapter 3 of his book <a href="https://web.stanford.edu/~ouster/cgi-bin/aposd.php"><em>A Philosophy of Software Design</em></a>:</p>
+<blockquote>
+<p><b>Working Code Isn&rsquo;t Enough</b></p>
+</blockquote>
+<p>Seriously.</p>
+<p>This isn&rsquo;t the 1990s when working was enough and treated like magic that shall not be questioned.</p>
+<p>Today, as I&rsquo;ve said and written many times before, it&rsquo;s no longer special (or sufficient) that a person can code and make a program work—millions of software engineers can do that, just as millions of people can drive a car (to extend the Formula 1 analogy).</p>
+<p>As software engineering <em>professionals</em>, we&rsquo;re hired and expected to do a lot more.
+And it&rsquo;s my job to help teach and reach that Formula 1 level of programming.
+If Formula 1 can record every single bolt in an engine—and when and how and by whom it was turned—then we&rsquo;re going to examine every package, every function, every block, every line, every word, every character of code until we cannot yet imagine how to engineer the program any better.</p>
+<h2 id="the-first-design">The First Design</h2>
+<p>The first design is usually the last design of a program.</p>
+<p>If we&rsquo;re making a program that we want to last for many years—and especially if we want the program to be used by a wide, general audience—then getting the design right the first time is critical for two reasons.</p>
+<p class="note">
+Yes, I know all about "perfect is the enemy of good", "agile" engineering, iterating, over-engineering, premature optimization, YAGNI, and so forth.
+That's why professional software engineering requires learning how and improving on delivering high-quality software really, really fast.
+</p>
+<p>First, once a program is released, it&rsquo;s very difficult to claw back any features or functionality.
+You can release a new major version, but then you&rsquo;re fighting an uphill battle: getting people to do additional work (upgrade) <em>and</em> change how they work (new or changed functionality).
+The same is true for the code itself: future engineers will be under pressure to ship something, so they&rsquo;ll be reluctant to redesign code that works even knowing the above: <em>working code isn&rsquo;t enough</em>.
+Moreover, their reluctance will be supported by the second reason&hellip;</p>
+<p>Second, future engineers will undoubtedly follow the lead of the first design.
+Related to the first reason, this allows future engineers to ignore the design by claiming &ldquo;I didn&rsquo;t design it, so I&rsquo;m not going to spend time fixing or redesigning it. I&rsquo;m just going to work with the existing design and ship the features I&rsquo;ve committed to this sprint.&rdquo;</p>
+<p>Deference to the first design is the origin of software rot and all the common issues with legacy code.</p>
+<p>For example, if a program does not exhibit consistency (a primary element of design) in its arguments, then why should any future engineer care about new arguments?
+They can add anything and claim that it fits with the current design, and they&rsquo;d be correct.
+Let&rsquo;s use an example:</p>
+<table>
+<thead>
+<tr>
+<th>A</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--disable-foo</code></td>
+<td><code>--bar</code> (default: true)</td>
+</tr>
+<tr>
+<td><code>--prefetch</code></td>
+<td><code>--compress</code></td>
+</tr>
+<tr>
+<td><code>--replica-dsn</code></td>
+<td><code>--foo</code> (default: true)</td>
+</tr>
+<tr>
+<td><code>--skip-bar</code></td>
+<td><code>--prefetch</code> (default: true)</td>
+</tr>
+<tr>
+<td><code>--source</code></td>
+<td><code>--replica-dsn</code></td>
+</tr>
+<tr>
+<td><code>--use-compression</code></td>
+<td><code>--source-dsn</code></td>
+</tr>
+</tbody>
+</table>
+<p>Suppose a future engineer wants to add an argument to disable the program&rsquo;s API.
+In column <strong>A</strong> they could call the new argument <code>--turn-off-api</code> and while that&rsquo;s a clunky name, there are no grounds to say it&rsquo;s wrong with respect to the design because <strong>A</strong> has no apparent design or consistency.
+But in column <strong>B</strong> it&rsquo;s clearly wrong; it should be <code>--api</code> (default: true), meaning that the user can turn off the API by specifying <code>--api=false</code> because in this design all things that are on by default have a boolean option like <code>--bar</code> (bar is on by default), and all things <em>off</em> by default have an option like <code>--compress</code> to turn them on.</p>
+<p>The same reasoning holds true for <em>every</em> part of code—right down to the code comments—because of professionalism.</p>
+<p>Even with a spectacular first design, code quality will decrease over time and different engineers.
+(&ldquo;Nothing lasts forever; even the stars die.&rdquo;)
+But the greater the quality and consistency of the first design, the easier it will be to maintain and restore.
+That brings us full circle: if we&rsquo;re making a program that we want to last for many years—and especially if we want the program to be used by a wide, general audience—then getting the design right the first time is critical.</p>
+<br>
+<hr>
+<br>
+<p>When debating such topics with software engineers, some will dismiss the debate with either &ldquo;it doesn&rsquo;t matter&rdquo; or &ldquo;I don&rsquo;t agree&rdquo;.</p>
+<p>The first dismissal is patently wrong: <a href="#professionalism">professionalism</a> is why it matters.
+You don&rsquo;t have to believe me, but as a professional you should believe a professor of computer science at Stanford: John Ousterhout.
+If not, then it&rsquo;s incumbent upon <em>you</em> to prove why you know better than Ousterhout and others.</p>
+<p>The second dismissal is meaningless unless you have (and put forth) better ideas.
+Show me your other code or projects where you did things differently and it worked well.
+Teach me your philosophy of software design.
+Recommend me a book that shows a different approach.
+That&rsquo;s only fair since that&rsquo;s what I have done (in public projects and this blog) and what I continue to do.</p>
+<p>The one dismissal that&rsquo;s valid is that &ldquo;it&rsquo;s good enough for now because it&rsquo;s not user-facing <em>and</em> we can change or improve it later with ease.&rdquo;
+A well-designed abstraction is one design element that makes that possible: the abstraction provides clean interface (or API) behind which we can hide ugly code (and fix it later).</p>
+<p>Since we&rsquo;re making programs not Formula 1 engines, we have a lot more leeway to claim that the effort matters more than the outcome because a terribly designed program can run well and make the company money.
+(That&rsquo;s not true for a terribly designed engine.)
+If you&rsquo;re overwhelmed and out of time, it&rsquo;s okay to knowingly forego better design if your fellow engineers agree.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/" data-toggle="tooltip" data-placement="top" title="COMMIT Latency: Aurora vs. RDS MySQL 8.0">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2023 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>
