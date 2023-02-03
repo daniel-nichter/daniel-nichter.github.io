@@ -7,13 +7,13 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Fri, 03 Feb 2023 14:02:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/software-design/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 03 Feb 2023 16:30:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/software-design/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>The First Design</title>
-      <link>https://hackmysql.com/post/the-firt-design/</link>
-      <pubDate>Fri, 03 Feb 2023 14:02:00 -0500</pubDate>
+      <link>https://hackmysql.com/post/the-first-design/</link>
+      <pubDate>Fri, 03 Feb 2023 16:30:00 -0500</pubDate>
 
-      <guid>https://hackmysql.com/post/the-firt-design/</guid>
+      <guid>https://hackmysql.com/post/the-first-design/</guid>
       <description>&lt;p&gt;When I review the code for a new program, I often provide the original authors &lt;em&gt;a lot&lt;/em&gt; of feedback.
 And just as often, those authors are a little annoyed by me, the feedback, or both.
 But I keep doing it for two reasons.&lt;/p&gt;</description>
