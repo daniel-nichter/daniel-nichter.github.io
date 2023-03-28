@@ -7,603 +7,614 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Fri, 03 Feb 2023 16:30:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 28 Mar 2023 13:40:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Announcing Blip: A New MySQL Monitor</title>
+      <link>https://hackmysql.com/post/announcing-blip-mysql-monitor/</link>
+      <pubDate>Tue, 28 Mar 2023 13:40:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/post/announcing-blip-mysql-monitor/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/cashapp/blip&#34; target=&#34;_blank&#34;&gt;Blip&lt;/a&gt; is a new MySQL monitor that collects and reports server metrics.
+But wasn&amp;rsquo;t this problem solved long ago?
+Not really&amp;hellip;&lt;/p&gt;</description>
+    </item>
+
     <item>
       <title>The First Design</title>
       <link>https://hackmysql.com/post/the-first-design/</link>
       <pubDate>Fri, 03 Feb 2023 16:30:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/the-first-design/</guid>
       <description>&lt;p&gt;When I review the code for a new program, I often provide the original authors &lt;em&gt;a lot&lt;/em&gt; of feedback.
 And just as often, those authors are a little annoyed by me, the feedback, or both.
 But I keep doing it for two reasons.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Level Up</title>
       <link>https://hackmysql.com/eng/level-up/</link>
       <pubDate>Thu, 19 Jan 2023 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/level-up/</guid>
       <description>&amp;lsquo;Level Up&amp;rsquo; explains how software engineers can become the best in their field and produce more output than most.</description>
     </item>
-    
+
     <item>
       <title>COMMIT Latency: Aurora vs. RDS MySQL 8.0</title>
       <link>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</link>
       <pubDate>Mon, 02 Jan 2023 20:18:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</guid>
       <description>&lt;p&gt;Let&amp;rsquo;s examine &lt;code&gt;COMMIT&lt;/code&gt; latency on Aurora v2 (MySQL 5.7) vs. Aurora v3 (MySQL 8.0) vs. RDS MySQL 8.0 2-AZ vs. RDS MySQL 8.0 3-AZ &amp;ldquo;cluster&amp;rdquo;.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Blip: A New Open Source MySQL Metrics Collector</title>
       <link>https://hackmysql.com/post/blip-v1.0.0-released/</link>
       <pubDate>Thu, 22 Dec 2022 12:55:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/blip-v1.0.0-released/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://github.com/cashapp/blip&#34;&gt;Blip&lt;/a&gt; is a new open source MySQL metrics collector, or &amp;ldquo;MySQL monitor&amp;rdquo; for short.
 But isn&amp;rsquo;t collecting MySQL metrics easy?
 And don&amp;rsquo;t we already have some open source MySQL monitors?
 Let&amp;rsquo;s take a trip down &lt;a href=&#34;https://www.merriam-webster.com/dictionary/memory%20lane&#34;&gt;memory lane&lt;/a&gt;&amp;hellip;&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Career Advice</title>
       <link>https://hackmysql.com/eng/career-advice/</link>
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/career-advice/</guid>
       <description>&amp;lsquo;Career Advice&amp;rsquo; lists advice to help ambitious software engineers become the best in their field.</description>
     </item>
-    
+
     <item>
       <title>Help</title>
       <link>https://hackmysql.com/help/</link>
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/help/</guid>
       <description>Resources for MySQL: books, blogs, companies, conferences, and more</description>
     </item>
-    
+
     <item>
       <title>How to Write Well</title>
       <link>https://hackmysql.com/eng/write/</link>
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/write/</guid>
       <description>&amp;lsquo;How to Write Well&amp;rsquo; is a short guide for software engineers on how to write well.</description>
     </item>
-    
+
     <item>
       <title>MySQL IOPS for Reads and Surprsies</title>
       <link>https://hackmysql.com/post/mysql-iops-for-reads-and-surprsies/</link>
       <pubDate>Sun, 20 Nov 2022 13:00:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/mysql-iops-for-reads-and-surprsies/</guid>
       <description>When you think about IOPS, you probably think about writes because MySQL write I/O has a long tradition of optimization, benchmarking, new algorithms, new storage engines, and so forth. There&amp;rsquo;s no shortage of material on MySQL write I/O; just two examples from Percona are Scaling IO-Bound Workloads for MySQL in the Cloud and Tuning MySQL/InnoDB Flushing for a Write-Intensive Workload. But in this short blog post I highlight two other, less common aspects of MySQL I/O: reads and surprises.</description>
     </item>
-    
+
     <item>
       <title>Is MySQL in the Cloud the End of the DBA?</title>
       <link>https://hackmysql.com/post/book-10/</link>
       <pubDate>Sat, 15 Oct 2022 16:31:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-10/</guid>
       <description>&lt;p&gt;No, I don&amp;rsquo;t think so.
 But it is does change our profession and have important implications for software engineers using (not managing) MySQL.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>How Not to Use MySQL</title>
       <link>https://hackmysql.com/post/book-9/</link>
       <pubDate>Fri, 16 Sep 2022 16:01:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-9/</guid>
       <description>&lt;p&gt;Chapter 9 of &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt; changed in development. Originally, it was a chapter titled &amp;ldquo;Not MySQL&amp;rdquo;, as in &amp;ldquo;how not to use MySQL.&amp;rdquo; But we (O&amp;rsquo;Reilly and I) pulled the chapter, and the current chapter 9 in print is &amp;ldquo;Other Challenges&amp;rdquo;: an important laundry list of other challenges engineers using MySQL must be aware of and address. This blog post is a sketch of the unwritten chapter 9: how not to use MySQL.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Mining the MySQL Performance Schema for Transactions</title>
       <link>https://hackmysql.com/post/book-8/</link>
       <pubDate>Sun, 28 Aug 2022 13:29:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-8/</guid>
       <description>&lt;p&gt;The MySQL &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html&#34;&gt;Performance Schema&lt;/a&gt; is a gold mine of valuable data.
 Among the many nuggets you can extract from it is an historical report of transactions: how long a transaction took to execute, what queries were executed in it (with query metrics), and idle time between queries.
 Mining this information is not trivial, but it&amp;rsquo;s fun and this blog post shows how to start.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>MySQL Transaction Reporting</title>
       <link>https://hackmysql.com/mysql-transaction-reporting/</link>
       <pubDate>Sun, 28 Aug 2022 13:28:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/mysql-transaction-reporting/</guid>
       <description>How to inspect and report MySQL transactions using the Performance Schema</description>
     </item>
-    
+
     <item>
       <title>Better Replication Heartbeats</title>
       <link>https://hackmysql.com/post/book-7/</link>
       <pubDate>Thu, 28 Jul 2022 13:57:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-7/</guid>
       <description>&lt;p&gt;We&amp;rsquo;ve been measuring MySQL replication lag with heartbeats for more than a decade.
 It works, but can we do better?
 Let&amp;rsquo;s see.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>InnoDB Page Flushing Diagram</title>
       <link>https://hackmysql.com/post/book-6/</link>
       <pubDate>Sat, 18 Jun 2022 19:09:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-6/</guid>
       <description>&lt;p&gt;Who dares diagram a system and process as complex as InnoDB page flushing?
 I do.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>NewDB: Fate of an Open Source Database</title>
       <link>https://hackmysql.com/post/newdb/</link>
       <pubDate>Sat, 21 May 2022 15:10:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/newdb/</guid>
       <description>Recently, I&amp;rsquo;ve had several discussions with engineers, industry experts, and business people of various titles and functions (from sales to CEO) about the fate of a new open source database. It&amp;rsquo;s not MySQL, and I won&amp;rsquo;t name the real database because it doesn&amp;rsquo;t matter for the purpose of this post. But to make writing and communication more clear, let&amp;rsquo;s call the database &amp;ldquo;NewDB&amp;rdquo; and the business &amp;ldquo;New Corp.&amp;rdquo;
 This blog post is a think piece on how New Corp.</description>
     </item>
-    
+
     <item>
       <title>I Don&#39;t Want to Shard (MySQL)</title>
       <link>https://hackmysql.com/post/book-5/</link>
       <pubDate>Fri, 20 May 2022 19:00:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-5/</guid>
       <description>&lt;p&gt;Chapter 5 of &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt; addresses sharding, and it was difficult to write but not for technical reasons.
 Let me say a little more on the matter.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Access Patterns for MySQL</title>
       <link>https://hackmysql.com/post/book-4/</link>
       <pubDate>Sun, 17 Apr 2022 13:50:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-4/</guid>
       <description>&lt;p&gt;Access patterns intrigue me because it seems that everyone knows what they are and talks about them, but there&amp;rsquo;s also very little written about them—in MySQL literature, at least.
 That&amp;rsquo;s why I set out to enumerate a list of access patterns (specific to MySQL).
 Since there&amp;rsquo;s no apparent standard for access patterns, I cannot say how my list measures up, but after spending most my career with MySQL, I know this: it is necessary to consider these access patterns when evaluating and improving MySQL performance.
 Simply put: you cannot ignore &lt;em&gt;how&lt;/em&gt; the application accesses MySQL.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Go Single-character Names</title>
       <link>https://hackmysql.com/golang/go-single-character-names/</link>
       <pubDate>Fri, 25 Mar 2022 16:55:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/golang/go-single-character-names/</guid>
       <description>&amp;lsquo;Go Single-character Names&amp;rsquo; details the proper, idoimatic usage of single character symbols in Go.</description>
     </item>
-    
+
     <item>
       <title>Performance Is Less</title>
       <link>https://hackmysql.com/post/book-3/</link>
       <pubDate>Sat, 19 Mar 2022 16:04:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-3/</guid>
       <description>&lt;p&gt;Is MySQL performance about &amp;ldquo;more&amp;rdquo; or &amp;ldquo;less&amp;rdquo;? From the title, you can tell that I&amp;rsquo;m going to argue that it&amp;rsquo;s about &amp;ldquo;less&amp;rdquo;. Here&amp;rsquo;s the punchline: zero is maximum performance. Let&amp;rsquo;s see where this philosophical blog post leads us.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>MySQL EXPLAIN ANALYZE</title>
       <link>https://hackmysql.com/post/book-2/</link>
       <pubDate>Sun, 27 Feb 2022 14:28:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-2/</guid>
       <description>&lt;p&gt;As of MySQL 8.0.18, &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/explain.html#explain-analyze&#34;&gt;&lt;code&gt;EXPLAIN ANALYZE&lt;/code&gt;&lt;/a&gt; is an indispensable tool for understanding query execution because it breaks down the query execution stage of response time by measuring each step of the query execution plan.
 The information is illuminating, but the output is not intuitive: it requires practice and some understanding of how MySQL executes queries beyond the table join order shown by traditional &lt;code&gt;EXPLAIN&lt;/code&gt; output.
 This blog post closely examines three different examples of &lt;code&gt;EXPLAIN ANALYZE&lt;/code&gt; output.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Configuring MySQL Query Metrics</title>
       <link>https://hackmysql.com/post/book-1/</link>
       <pubDate>Sun, 16 Jan 2022 15:40:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-1/</guid>
       <description>&lt;p&gt;Editors and technical reviewers suggested that I cover how to configure MySQL query metrics in chapter 1 of &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt;, but I deferred because it was out of scope for the book, which focuses on engineers &lt;em&gt;using&lt;/em&gt; MySQL, not DBAs.
 As such, there&amp;rsquo;s only a note in chapter 1 that says: &amp;ldquo;Ask your DBA or read the MySQL manual.&amp;rdquo;
 But I&amp;rsquo;ll cover the topic here because that&amp;rsquo;s what this blog post series is for: behind the book.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>About</title>
       <link>https://hackmysql.com/about/</link>
       <pubDate>Sat, 08 Jan 2022 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/about/</guid>
       <description>Hack MySQL is the personal website of Daniel Nichter, author of the book Efficient MySQL Performance published by O&amp;rsquo;Reilly. His webiste explores MySQL, Go, and software design.</description>
     </item>
-    
+
     <item>
       <title>Efficient MySQL Performance</title>
       <link>https://hackmysql.com/post/book-0/</link>
       <pubDate>Mon, 27 Dec 2021 09:30:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/book-0/</guid>
       <description>&lt;p&gt;After 17 years with MySQL, I wrote a book: &lt;a href=&#34;https://oreil.ly/efficient-mysql-performance&#34;&gt;&lt;em&gt;Efficient MySQL Performance&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;ll make a bold claim: a MySQL book like this has never been written—not even close.
 The preface explains why this book is unique:&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Database Operations Manual</title>
       <link>https://hackmysql.com/eng/database-operations-manual/</link>
       <pubDate>Sat, 16 Oct 2021 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/database-operations-manual/</guid>
       <description>&amp;lsquo;Database Operations Manual&amp;rsquo; outlines requirements for operating a database server in production.</description>
     </item>
-    
+
     <item>
       <title>MySQL LRU Flushing and I/O Capacity</title>
       <link>https://hackmysql.com/post/mysql-lru-flushing-io-capacity/</link>
       <pubDate>Thu, 02 Sep 2021 18:11:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/mysql-lru-flushing-io-capacity/</guid>
       <description>&lt;p&gt;InnoDB background LRU list flushing is &lt;em&gt;not&lt;/em&gt; limited by &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_io_capacity&#34;&gt;&lt;code&gt;innodb_io_capcity&lt;/code&gt;&lt;/a&gt; or &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_io_capacity_max&#34;&gt;&lt;code&gt;innodb_io_capacity_max&lt;/code&gt;&lt;/a&gt;.
 I&amp;rsquo;ll prove it in this blog post, but since MySQL experts disagree (or don&amp;rsquo;t know for sure), I&amp;rsquo;d like you to prove me wrong.
 This is not an intro; you&amp;rsquo;ll need to know all the InnoDB details wrt page flushing.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>MySQL Data Locks: Mapping 8.0 to 5.7</title>
       <link>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</link>
       <pubDate>Mon, 26 Jul 2021 15:40:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/mysql-data-locks-mapping-80-to-57/</guid>
       <description>As of MySQL 8.0, performance_schema.data_locks shows InnoDB data locks. Before MySQL 8.0, you must SET GLOBAL innodb_status_output_locks=ON and ruminate on the output of SHOW ENGINE INNODB STATUS. The image below (click to see full size) shows how the former maps to the latter for three record locks and one table lock on table t.
 Information Schema tables INNODB_LOCKS and INNODB_LOCK_WAITS are deprecated as of MySQL 5.7 and removed as of MySQL 8.</description>
     </item>
-    
+
     <item>
       <title>MySQL Select and Sort Status Variables</title>
       <link>https://hackmysql.com/mysql-select-and-sort/</link>
       <pubDate>Thu, 14 Jan 2021 15:42:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/mysql-select-and-sort/</guid>
       <description>A deep dive into the MySQL select and sort status variables</description>
     </item>
-    
+
     <item>
       <title>MySQL Password Rotation with AWS</title>
       <link>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</link>
       <pubDate>Mon, 28 Dec 2020 12:09:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/mysql-password-rotation-with-aws-and-terraform/</guid>
       <description>If you run MySQL on Amazon RDS and use passwords, I sure hope you frequently rotate those passwords (among many other security best practices). But if you don&amp;rsquo;t rotate them, I might know why: it&amp;rsquo;s quite difficult to set up when you really get into it. It seems easy at first, but if you&amp;rsquo;ve ever tried you know how quickly it becomes complicated. At least, that was my experience. So to help others overcome the challenges and do frequent password rotation, I wrote up a long read: MySQL Password Rotation with AWS Secrets Manager and Lambda.</description>
     </item>
-    
+
     <item>
       <title>MySQL Password Rotation with AWS Secrets Manager and Lambda</title>
       <link>https://hackmysql.com/mysql-password-rotation-lambda/</link>
       <pubDate>Mon, 28 Dec 2020 09:56:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/mysql-password-rotation-lambda/</guid>
       <description>How to set up MySQL password rotation with AWS Secrets Manager, AWS Lambda, and Terraform</description>
     </item>
-    
+
     <item>
       <title>Query Metrics Requirements for MySQL</title>
       <link>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</link>
       <pubDate>Sun, 01 Nov 2020 20:25:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/query-metrics-requirements-for-mysql/</guid>
       <description>Let&amp;rsquo;s answer a question which, to my knowledge, has never been systematically addressed: What are the requirements for a production-ready query metrics app at scale? I am uniquely qualified to answer that because I have written four query metrics apps, two of which are the open-source standard for MySQL: pt-query-digest and the original (v1) code behind the query metrics/analysis part of Percona Monitoring and Management. I&amp;rsquo;ve also published a couple of packages related to query metrics: go-mysql/slowlog and go-mysql/query.</description>
     </item>
-    
+
     <item>
       <title>What the Flush?</title>
       <link>https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/</link>
       <pubDate>Sun, 05 Jul 2020 18:50:00 -0300</pubDate>
-      
+
       <guid>https://hackmysql.com/post/what-the-flush-mysql-dirty-pages/</guid>
       <description>&lt;p&gt;Yves Trudeau and Francisco Bordenave, MySQL experts at Percona, recently published a three-part post:
 (1) &lt;a href=&#34;https://www.percona.com/blog/2019/12/18/give-love-to-your-ssds-reduce-innodb_io_capacity_max/&#34;&gt;Give Love to Your SSDs – Reduce innodb_io_capacity_max!&lt;/a&gt;;
 (2) &lt;a href=&#34;https://www.percona.com/blog/2020/01/22/innodb-flushing-in-action-for-percona-server-for-mysql/&#34;&gt;InnoDB Flushing in Action for Percona Server for MySQL&lt;/a&gt;;
 (3) &lt;a href=&#34;https://www.percona.com/blog/2020/05/14/tuning-mysql-innodb-flushing-for-a-write-intensive-workload/&#34;&gt;Tuning MySQL/InnoDB Flushing for a Write-Intensive Workload&lt;/a&gt;. It&amp;rsquo;s a fantastic read from start to finish, and it made me realize: dirty pages sound bad, but they are good. I suspect the opposite (&amp;ldquo;dirty pages are &lt;em&gt;not&lt;/em&gt; good&amp;rdquo;) is a misconception due to an incomplete picture. Let&amp;rsquo;s complete the picture.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>21 Parameter Group Values to Change in Amazon RDS for MySQL</title>
       <link>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</link>
       <pubDate>Mon, 29 Jun 2020 11:15:00 -0300</pubDate>
-      
+
       <guid>https://hackmysql.com/post/21-parameter-group-values-to-change-in-amazon-rds-for-mysql/</guid>
       <description>Amazon RDS for MySQL uses many default values for system variables, but it also sets a few &amp;ldquo;sys vars&amp;rdquo; with different values. As with any database, neither product (MySQL) nor provider (AWS) defaults can best suite all use cases. It&amp;rsquo;s our responsibility to carefully review and set every important system variable. This is tedious and difficult, but I&amp;rsquo;ve done it for you.
 Below are are 21 MySQL 5.7 system variables that I recommend changing by creating a new parameter group.</description>
     </item>
-    
+
     <item>
       <title>Missing Writes with MySQL GTID</title>
       <link>https://hackmysql.com/post/mysql-gtid-missing-writes/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/mysql-gtid-missing-writes/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/replication-gtids.html&#34;&gt;GTID-based replication&lt;/a&gt; makes managing replication topology easy: just &lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html&#34;&gt;CHANGE MASTER&lt;/a&gt; to any node and voilà. It &lt;a href=&#34;https://hackmysql.com/post/fixing-ghosted-gtids/&#34;&gt;doesn&amp;rsquo;t always work&lt;/a&gt;, but for the most part it does. That&amp;rsquo;s great, but it can hide a serious problem: missing writes. Even when MySQL GTID-based replication says, &amp;ldquo;OK, sure!&amp;rdquo;, which is most of the time, you should double check it.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>mysqlreport</title>
       <link>https://hackmysql.com/archive/mysqlreport/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/archive/mysqlreport/</guid>
       <description>mysqlreport The mysqlreport script has been archived. It is no longer developed or supported.
 You can download it from https://github.com/daniel-nichter/hackmysql.com/tree/master/mysqlreport.</description>
     </item>
-    
+
     <item>
       <title>mysqlsla</title>
       <link>https://hackmysql.com/archive/mysqlsla/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/archive/mysqlsla/</guid>
       <description>mysqlsla The mysqlsla script has been archived. It is no longer developed or supported.
 You can download it from https://github.com/daniel-nichter/hackmysql.com/tree/master/mysqlsla.</description>
     </item>
-    
+
     <item>
       <title>mysqlsniffer</title>
       <link>https://hackmysql.com/archive/mysqlsniffer/</link>
       <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/archive/mysqlsniffer/</guid>
       <description>mysqlsniffer The mysqlsniffer program has been archived. It is no longer developed or supported.
 You can download it from https://github.com/daniel-nichter/hackmysql.com/tree/master/mysqlsniffer.</description>
     </item>
-    
+
     <item>
       <title>MySQL Threads Running</title>
       <link>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</link>
       <pubDate>Sat, 25 Apr 2020 16:18:00 -0300</pubDate>
-      
+
       <guid>https://hackmysql.com/post/mysql-threads-running-how-hard-is-mysql-working/</guid>
       <description>&lt;p&gt;Queries per second (QPS) measures database throughput, but it does not reflect how hard MySQL is working. The latter is measured by &lt;em&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/8.0/en/server-status-variables.html#statvar_Threads_running&#34;&gt;Threads_running&lt;/a&gt;&lt;/em&gt;, expressed as a gauge (whereas QPS is a rate). Before discussing &lt;em&gt;Threads_running&lt;/em&gt;, let&amp;rsquo;s consider an analogy:&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Queries Effect Performance</title>
       <link>https://hackmysql.com/post/queries-effect-performance/</link>
       <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/queries-effect-performance/</guid>
       <description>Queries effect database performance. That&amp;rsquo;s not a typo: &amp;ldquo;effect&amp;rdquo; not &amp;ldquo;affect&amp;rdquo;. The difference is not a word game but an important way to think about database performance.
 Many things can affect performance. For example, if the system runs out of memory then starts swapping which causes high disk IO latency, that will negatively affect performance. But external factors like that notwithstanding (i.e. when hardware and MySQL are normal and stable), it&amp;rsquo;s important to understand that queries effect performance.</description>
     </item>
-    
+
     <item>
       <title>Fixing Ghosted GTIDs</title>
       <link>https://hackmysql.com/post/fixing-ghosted-gtids/</link>
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/fixing-ghosted-gtids/</guid>
       <description>MySQL auto-positioning is an integral part of replication with GTID, but it&amp;rsquo;s neither required nor guaranteed to work. It&amp;rsquo;s possible to enable GTIDs but disable auto-positioning, and it&amp;rsquo;s possible that one MySQL instance cannot auto-position on another even when GTIDs are used. The former (GTID on but auto-pos off) is an issue for another time. The latter is the topic of this post: when MySQL GTID auto-positioning fails—and how to fix it.</description>
     </item>
-    
+
     <item>
       <title>Response Time SLA</title>
       <link>https://hackmysql.com/post/response-time-sla/</link>
       <pubDate>Sat, 29 Jun 2019 19:00:00 -0300</pubDate>
-      
+
       <guid>https://hackmysql.com/post/response-time-sla/</guid>
       <description>Response time (or latency) percentiles are a ubiquitous measure of system performance. The P999 (99.9th percentile) is a high bar, so it&amp;rsquo;s a good metric to determine an SLA. For example, my team runs a system with an 800 millisecond response time SLA determined by the P999. To meet that SLA, 99.9% of all requests must take &amp;lt;= 800ms. The system meets the SLA, but here&amp;rsquo;s its P999 graph:
 Looks bad, but the system is meeting the SLA.</description>
     </item>
-    
+
     <item>
       <title>Path and Dimension Metrics</title>
       <link>https://hackmysql.com/post/path-and-dimension-metrics/</link>
       <pubDate>Fri, 12 Apr 2019 09:00:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/path-and-dimension-metrics/</guid>
       <description>The two most common strategies for identifying and organizing data points that comprise metric time series are path and dimension. This post is geared towards engineers who have never been introduced to the subject. Implementing metrics from the ground up, or adding new metrics to an existing system, can be overwhelming in nontrivial systems. Understanding these two strategies simplifies one&amp;rsquo;s efforts.
 Path-based Metrics Path-based metrics are the historical norm:
 host.prod1.disk-free.sda host.</description>
     </item>
-    
+
     <item>
       <title>3 Golang Error Types</title>
       <link>https://hackmysql.com/post/three-golang-error-types/</link>
       <pubDate>Mon, 25 Mar 2019 11:00:00 -0400</pubDate>
-      
+
       <guid>https://hackmysql.com/post/three-golang-error-types/</guid>
       <description>This is not a post about Go error handling, it&amp;rsquo;s a post about Go error &amp;ldquo;types&amp;rdquo;: three different ways to construct and use the built-in error interface type. error is deceptively simple. When used in the ways described here, it allows us to design meaningful errors and error handling in large Go programs. Errors should be first-class citizens because when things break (and they always do), errors are the first—and often only—information we have.</description>
     </item>
-    
+
     <item>
       <title>Percentiles</title>
       <link>https://hackmysql.com/eng/percentiles/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/eng/percentiles/</guid>
       <description>&amp;lsquo;Percentiles&amp;rsquo; is a deep dive into how percentiles are calculated using nearest rank and linear interpolation.</description>
     </item>
-    
+
     <item>
       <title>3 Golang Channel Red Flags</title>
       <link>https://hackmysql.com/post/three-golang-channel-red-flags/</link>
       <pubDate>Sun, 16 Dec 2018 13:00:00 -0300</pubDate>
-      
+
       <guid>https://hackmysql.com/post/three-golang-channel-red-flags/</guid>
       <description>Red Flag 1: More Than One close() When reviewing code that uses channels, first thing I do is search for close() on every channel. More than one close() is red flag because, unless all uses of the channel are carefully written and tested, it can lead to a panic on close of closed channel. It can also lead to strange behavior or subtle bugs because the code that didn&amp;rsquo;t close the channel isn&amp;rsquo;t aware the channel is closed, so send and receive on the closed channel don&amp;rsquo;t have the intended effect.</description>
     </item>
-    
+
     <item>
       <title>Component-based Software Design</title>
       <link>https://hackmysql.com/post/component-based-software-design/</link>
       <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/component-based-software-design/</guid>
       <description>Software systems are difficult to design because code does not delineate and organize itself. Even experienced engineers can struggle to design a system because there are many solutions but it&amp;rsquo;s not clear which is the best. Compounding the difficulty: engineers know that code can work fine even if, internally, it&amp;rsquo;s an unorganized highly-entangled mess. We want code to be well-organized, but we don&amp;rsquo;t know how to make it so. Component-based design is the solution.</description>
     </item>
-    
+
     <item>
       <title>When MySQL Goes Away</title>
       <link>https://hackmysql.com/post/when-mysql-goes-away/</link>
       <pubDate>Sun, 22 Jul 2018 18:00:00 -0300</pubDate>
-      
+
       <guid>https://hackmysql.com/post/when-mysql-goes-away/</guid>
       <description>Handling MySQL errors in Go is not easy. There are a lot of MySQL server error codes, and the Go MySQL driver as its own errors, and Go database/sql has its own errors, and errors can bubble up from other packages, like net.OpError. Consequently, Go programs tend not to handle errors. Instead, they simply report errors:
 err := db.Query(...).Scan(&amp;amp;v) if err != nil { return err } And then the error is logged or reported somewhere.</description>
     </item>
-    
+
     <item>
       <title>Thinking in Go</title>
       <link>https://hackmysql.com/post/thinking-in-go/</link>
       <pubDate>Sun, 13 May 2018 09:00:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/thinking-in-go/</guid>
       <description>After learning Go, it is necessary to think in Go in order to design and implement well-written, idiomatic Go. This blog post outlines aspects that I think are important for thinking in Go. A full exploration of these aspects could fill a book, but this only an orientation for experienced programmers new to Go.
 Programming languages have aspects which affect how we think, design, and implement software with the language: syntax, documentation, features/capabilities, language type (object-oriented, functional, compiled, etc.</description>
     </item>
-    
+
     <item>
       <title>Bootloader Design Pattern</title>
       <link>https://hackmysql.com/post/bootloader-design-pattern/</link>
       <pubDate>Sun, 04 Feb 2018 19:30:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/bootloader-design-pattern/</guid>
       <description>Extensibility is a lofty goal for software design, and difficult to achieve. The Wikipedia article notes:
 Extensible design in software engineering is to accept that not everything can be designed in advance.
 That&amp;rsquo;s a paradox because it entails that extensible design does not accept that extensibility can be designed in advance! Fortunately, there&amp;rsquo;s at least one solution that can be intentionally designed and implemented in advance. I call it the &amp;ldquo;Bootloader&amp;rdquo; design pattern.</description>
     </item>
-    
+
     <item>
       <title>Database Scalability: Contention and Crosstalk</title>
       <link>https://hackmysql.com/post/database-scalability-contention-and-crosstalk/</link>
       <pubDate>Sun, 28 Jan 2018 11:20:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/database-scalability-contention-and-crosstalk/</guid>
       <description>New engineers might not know and experienced engineers might not believe that database systems do not and cannot scale gracefully to 100% system capacity but, rather and counterintutively, exhibit retrograde performance at some point less than 100% system capacity. The reasonable presumption is:
 We presume that a database can scale to almost 100% of system capacity, and max performance is a small fraction at the very top (right, orange slice) because, after all, the system itself needs some resources to run itself.</description>
     </item>
-    
+
     <item>
       <title>Crash-safe MySQL Replication</title>
       <link>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</link>
       <pubDate>Tue, 23 Jan 2018 18:40:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/crash-safe-mysql-replication-a-visual-guide/</guid>
       <description>MySQL crash-safe replication is an old feature (~4 years as of MySQL 5.6), but it&amp;rsquo;s not consistently understood or applied. The MySQL manual on the topic, 16.3.2 Handling an Unexpected Halt of a Replication Slave, is correct and authoritative, but unless you grok MySQL replication that page doesn&amp;rsquo;t make it obvious why crash-safe replication works. Other blog posts explain why, but sometimes add other considerations, making it unclear which settings are necessary and sufficient.</description>
     </item>
-    
+
     <item>
       <title>Tech Workers Are Good People</title>
       <link>https://hackmysql.com/post/tech-workers-are-good-people/</link>
       <pubDate>Sun, 31 Dec 2017 09:50:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/tech-workers-are-good-people/</guid>
       <description>The Other Tech Bubble is a provocative and interesting read. The author clearly has a lot of experience with Silicon Valley and has done their homework. There are many good insights, like &amp;ldquo;They&amp;rsquo;re still asking if it&amp;rsquo;s possible to do something, and not whether they should.&amp;rdquo; But there are two claims and one ambiguity that need to be addressed.
 Villains The first claim is:
 In 2008, it was Wall Street bankers.</description>
     </item>
-    
+
     <item>
       <title>Approaching a New Software Project</title>
       <link>https://hackmysql.com/post/approaching-a-new-software-project/</link>
       <pubDate>Sun, 10 Dec 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/approaching-a-new-software-project/</guid>
       <description>Approaching a new software project is difficult for two reasons. First, there&amp;rsquo;s no &amp;ldquo;guiding star&amp;rdquo;, no objective starting point. The developer can begin from and proceed in many directions, which makes choosing difficult. They want to proceed in a good direction from the start, not wasting time or effort, but how can they make a good choice without a guide or the benefit of experience? Being forced to choose and move ahead, the choice is often made randomly rather than methodically.</description>
     </item>
-    
+
     <item>
       <title>Ideas, Leaders, and Engineers</title>
       <link>https://hackmysql.com/post/ideas-leaders-and-engineers/</link>
       <pubDate>Sun, 12 Nov 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/ideas-leaders-and-engineers/</guid>
       <description>The Senior Engineer&amp;rsquo;s Guide to Helping Others Make Decisions is a good read and good advice. I would summarize the advice as:
 &amp;ldquo;Seek first to understand, then to be understood&amp;rdquo; (Dr. Stephen Covey) Lead and guide, don&amp;rsquo;t micromanage Embrace change, which entails embracing other people&amp;rsquo;s thinking and way of doing things In the first dialog, the senior engineer fails those three points.
 Av&amp;rsquo;s blog post made me think&amp;hellip;
 Good Ideas Let me jump right to the punch line: levels of seniority should not apply to ideas.</description>
     </item>
-    
+
     <item>
       <title>Five-Point Checklist for Excellent Software</title>
       <link>https://hackmysql.com/post/five-point-checklist-for-excellent-software/</link>
       <pubDate>Sun, 17 Sep 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/five-point-checklist-for-excellent-software/</guid>
       <description>I&amp;rsquo;ve never met a developer who hasn&amp;rsquo;t read or reviewed a lot of code written by other developers. If there&amp;rsquo;s one truism in the field of software of engineering it&amp;rsquo;s that the process is collaborative. Unless you write and never release software, other people will read the code, and they&amp;rsquo;re most likely reading it not for a fun bedtime story but because they need to understand and probably fix or modify it.</description>
     </item>
-    
+
     <item>
       <title>Designing Tools for Integration</title>
       <link>https://hackmysql.com/post/designing-tools-for-integration/</link>
       <pubDate>Tue, 05 Sep 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/designing-tools-for-integration/</guid>
       <description>When we write a new tool to do X, it&amp;rsquo;s common to program the tool to do X in one way. When X is trivial or very narrow in scope, this makes sense, and programming any more would fall prey to over-engineering. However, when the tool does many things (all logically related, else it falls prey to bloat and/or feature-creep), there quickly becomes many ways to accomplish those many things. No problem, we program all those things, too, but during my tool-making career I&amp;rsquo;ve learned two things:</description>
     </item>
-    
+
     <item>
       <title>How To Test the Database</title>
       <link>https://hackmysql.com/post/how-to-test-the-database/</link>
       <pubDate>Sun, 20 Aug 2017 11:20:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/how-to-test-the-database/</guid>
       <description>&amp;ldquo;How do I test the database?&amp;rdquo; is a question I&amp;rsquo;ve been asked by colleagues many times. There&amp;rsquo;s a good, clean solution, but let&amp;rsquo;s first step back from what seems to be the problem to unpack why &amp;ldquo;testing the database&amp;rdquo; is not special (but nonetheless important). In other words: colleagues don&amp;rsquo;t ask, &amp;ldquo;How do I test such-and-such package?&amp;rdquo;, because that&amp;rsquo;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</description>
     </item>
-    
+
     <item>
       <title>Design Before Implementation</title>
       <link>https://hackmysql.com/post/design-before-implementation/</link>
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/design-before-implementation/</guid>
       <description>Like most software engineers, I review my colleagues&amp;rsquo; code. I rarely provide feedback on implementation details because developers rarely choose obviously bad implementations. I focus my attention on design rather than implementation for one simple reason: implementation details are easy to change when software is well designed. Or, from the business perspective, design is the most costly aspect of software to change, so I review for great and therefore cost-effective design.</description>
     </item>
-    
+
     <item>
       <title>Reading os/exec.Cmd Output Without Race Conditions</title>
       <link>https://hackmysql.com/post/reading-os-exec-cmd-output-without-race-conditions/</link>
       <pubDate>Sat, 17 Jun 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/reading-os-exec-cmd-output-without-race-conditions/</guid>
       <description>Golang Weekly issue 164 features a nice article, Advanced command execution in Go with os/exec, which details several ways of working with os/exec, especially how to read STDOUT and STDERR while the command is running. This common task is commonly done wrong, where &amp;ldquo;wrong&amp;rdquo; means &amp;ldquo;the code has a race condition&amp;rdquo;. This blog post shows how to read STDOUT and STDERR from an os/exec.Cmd while it&amp;rsquo;s running and without race conditions.</description>
     </item>
-    
+
     <item>
       <title>Custom MongoDB Replica Set Write Concern</title>
       <link>https://hackmysql.com/post/custom-mongodb-replica-set-write-concern/</link>
       <pubDate>Sun, 11 Jun 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/custom-mongodb-replica-set-write-concern/</guid>
       <description>One of the great things about MongoDB is write concern:
 Write concern describes the level of acknowledgement requested from MongoDB for write operations to a standalone mongod or to replica sets or to sharded clusters.
 Awesome! I want 1 write ack from any secondary in the primary DC so when the primary crashes we&amp;rsquo;re guaranteed to have an up-to-date secondary in the primary DC ready to be elected primary. Here&amp;rsquo;s my production MongoDB replica set:</description>
     </item>
-    
+
     <item>
       <title>Go Antipatterns</title>
       <link>https://hackmysql.com/golang/go-antipatterns/</link>
       <pubDate>Sat, 03 Jun 2017 18:51:14 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/golang/go-antipatterns/</guid>
       <description>&amp;lsquo;Go Antipatterns&amp;rsquo; describes bad Go code and how to make it better.</description>
     </item>
-    
+
     <item>
       <title>Idiomatic Go</title>
       <link>https://hackmysql.com/golang/idiomatic-go/</link>
       <pubDate>Sat, 03 Jun 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/golang/idiomatic-go/</guid>
       <description>&amp;lsquo;Idiomatic Go&amp;rsquo; is a list of resources for learning about idomatic Go.</description>
     </item>
-    
+
   </channel>
 </rss>
