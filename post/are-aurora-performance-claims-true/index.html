@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Are Aurora Performance Claims True?</title>
+  <meta property="og:title" content="Are Aurora Performance Claims True?" />
+  <meta name="description" content="Amazon claims that Aurora has &ldquo;Up to 5X the throughput of MySQL&rdquo;.
+Is it true?
+It wasn&rsquo;t easy to find the truth, but I kept digging until I found it.
+This is a long read; let&rsquo;s chase the rabbit all the way down the hole.">
+  <meta property="og:description" content="Amazon claims that Aurora has &ldquo;Up to 5X the throughput of MySQL&rdquo;.
+Is it true?
+It wasn&rsquo;t easy to find the truth, but I kept digging until I found it.
+This is a long read; let&rsquo;s chase the rabbit all the way down the hole.">
+
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/are-aurora-performance-claims-true/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.111.3">
+  <link rel="canonical" href="https://hackmysql.com/post/are-aurora-performance-claims-true/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/level-up/">Level Up</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Are Aurora Performance Claims True?</h1>
+
+        <div class="post-meta">
+
+
+  <div>May 12, 2023</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/aws">#aws</a>
+
+        <a href="/tags/aurora">#aurora</a>
+
+        <a href="/tags/benchmarks">#benchmarks</a>
+
+
+  </div>
+</div>
+
+
+        <p>Amazon claims that Aurora has &ldquo;Up to 5X the throughput of MySQL&rdquo;.
+Is it true?
+It wasn&rsquo;t easy to find the truth, but I kept digging until I found it.
+This is a long read; let&rsquo;s chase the rabbit all the way down the hole.</p>
+<br>
+<h2 id="part-b01">Part b'01'</h2>
+<hr>
+<h3 id="a-database-is-not-a-truck">A Database Is Not a Truck</h3>
+<p>When Ford says the new F-150 is more fuel efficient, it&rsquo;s logical to believe the claim because it&rsquo;s relatively simple and measurable.
+It&rsquo;s also federally regulated and tested.
+And although there is some fine print about driving conditions, ambient temperature, etc., the claim is going to prove true <em>for you</em> (unless your driving habits are really bizarre).
+There&rsquo;s an expression for this: <em>Your mileage may vary.</em></p>
+<p>Whereas your truck is the same as what Ford &ldquo;benchmarks&rdquo;, your database is not the same as what AWS benchmarks.
+Consequently, with database benchmarks your mileage won&rsquo;t simply vary, it won&rsquo;t make any sense.
+And the differences can be huge.</p>
+<p>The results of any database benchmark are true only for the conditions of the benchmark:</p>
+<ul>
+<li>MySQL version</li>
+<li>MySQL configuration</li>
+<li>Hardware specs
+<ul>
+<li>CPUs</li>
+<li>Storage</li>
+<li>RAM</li>
+<li>Network</li>
+</ul>
+</li>
+<li>OS/kernel and configuration</li>
+<li>Benchmark workload:
+<ul>
+<li>Schemas</li>
+<li>Data</li>
+<li>Queries</li>
+<li>Access patterns</li>
+</ul>
+</li>
+<li>Unrelated workloads</li>
+<li>Runtime</li>
+</ul>
+<p>When AWS claims &ldquo;Up to 5X the throughput of MySQL&rdquo;, that&rsquo;s true only for the conditions of the benchmark.
+When the conditions aren&rsquo;t true the claim is not false, it&rsquo;s simply meaningless—like telling someone they can get a million dollars but not telling them <em>how</em>.</p>
+<p>Moreover, certain conditions are complex on their own, which makes them difficult to match.
+Like MySQL configuration: people have been &ldquo;fine tuning&rdquo; it for more than 20 years.
+And queries: many books have been written about query optimization.</p>
+<p class="note">
+If you're a software engineer, read <a href="https://www.amazon.com/Efficient-MySQL-Performance-Practices-Techniques/dp/1098105095/" target="_new"><i>Efficient MySQL Performance</i></a>.
+It's one of the best books on MySQL performance ever published.
+</p>
+<p>To make matters more complex, database performance is more sensitive to some conditions than others.
+For example, it&rsquo;s common knowledge that database performance is sensitive to RAM: more RAM, better performance.
+But even these caveats have caveats: more RAM doesn&rsquo;t always yield better performance; there are cases when it doesn&rsquo;t matter.</p>
+<p>Whenever you hear or read about a database benchmark, your first thought and question should be: &ldquo;Under which conditions?&rdquo;
+If the conditions are similar to your database and application, then the results might be applicable to you.
+If not, then don&rsquo;t get excited: like a deranged AI chat bot, benchmarks can be made to say anything.
+<em>Be skeptical</em>.</p>
+<h3 id="marketing-the-mind">Marketing the Mind</h3>
+<p>Good marketing is quick and impactful.
+How, then, can meticulous benchmarks be used for marketing?
+Craft a benchmark that yields an impressive number, market that, and bury the details.
+Since humans are rife with <a href="https://yourlogicalfallacyis.com/">logical fallacies</a>, they will believe the impressive number.</p>
+<p>But surely engineers aren&rsquo;t that naïve or gullible to believe marketing claims at face value?
+Yes and no.
+Good marketing doesn&rsquo;t have to make us believe every detail (it rarely provides details); it merely needs to make us receptive to an idea.
+As fallible humans, our brains will fill in the details, and we&rsquo;ll convince ourselves to believe whatever we want.
+This is why car commercials often focus on beautiful, happy people: they have nothing to do with the car, but the marketing isn&rsquo;t selling a car, it&rsquo;s selling the idea that car = beautiful and happy, and these two are universal best sellers.</p>
+<p>If AWS says Aurora is up to 5X faster than MySQL, then it doesn&rsquo;t matter if you believe the &ldquo;5X&rdquo; part.
+We know that AWS doesn&rsquo;t lie (somehow the claim is true, else they&rsquo;re in legal trouble), and now we&rsquo;re receptive to the idea that Aurora is faster than MySQL.
+And what&rsquo;s more: now there&rsquo;s an open question—a mystery—and humans love to solve those: <em>is it true that Aurora has up to 5X the throughput of MySQL?</em></p>
+<p>As a long-time MySQL DBA, I must solve this mystery.</p>
+<h3 id="origin-story">Origin Story</h3>
+<p>AWS isn&rsquo;t shy about the Aurora performance claim:</p>
+<img src="/img/aurora-claim-1.png" class="withshadow" alt="Aurora performance claim">
+<p><small>(Source <a href="https://aws.amazon.com/rds/aurora/features/">https://aws.amazon.com/rds/aurora/features/</a>)</small></p>
+<p>But where are the details?
+The conditions?
+You have to keep digging.</p>
+<p>The FAQ explains the 5X claim in a little more detail:</p>
+<img src="/img/aurora-claim-2.png" class="withshadow" alt="Aurora performance explanation">
+<p><small>(Source: <a href="https://aws.amazon.com/rds/aurora/faqs/">https://aws.amazon.com/rds/aurora/faqs/</a>)</small></p>
+<blockquote>
+<p>100,000 UPDATEs/sec, five times higher than MySQL running the same benchmark on the same hardware</p>
+</blockquote>
+<p>That, specifically, is the claim that I intend to verify: write throughput.
+Even though 500k SELECT/s is impressive, I don&rsquo;t care about read throughput because reads are easy to scale compared to writes.</p>
+<p>The link at the bottom of that FAQ paragraph leads to a PDF titled <a href="https://d1.awsstatic.com/product-marketing/Aurora/RDS_Aurora_Performance_Assessment_Benchmarking_v1-2.pdf" target="_new">Amazon Aurora Performance Assessment: Technical Guide (June 2019)</a>.</p>
+<p><mark>But let me save you a lot of wasted time and effort: <b>that technical guide is wrong.</b></mark></p>
+<p>It wouldn&rsquo;t be a good mystery if there weren&rsquo;t twists and turns.
+So while it&rsquo;s a bit annoying for a technical guide to be wrong, I am appreciative for the opportunity to solve and write about an old mystery.</p>
+<br>
+<br>
+<h2 id="part-b10">Part b'10'</h2>
+<hr>
+<h3 id="dead-herrings--red-ends">Dead Herrings &amp; Red Ends</h3>
+<p>Figure 1 on page 2 (PDF page 6) of the technical guide is shown below: a single c5.18xlarge EC2 instances and an r4.16xlarge Amazon Aurora instance.</p>
+<img src="/img/aurora-technical-guide-figure-1.png" class="withshadow" alt="Aurora 2019 technical guide figure 1">
+<p>There are two issues here:</p>
+<ol>
+<li>The FAQ (see above) says &ldquo;SysBench on <em>r3.8xlarge instances</em>&rdquo; (emphasis mine)</li>
+<li>The FAQ does not say the size of the Aurora instance</li>
+</ol>
+<p>Changing from an unspecified number of r3.8xlarge instances to a single c5.18xlarge is a nontrivial change of conditions.
+Not knowing the original Aurora instance size and presuming an r4.16xlarge is also a nontrivial change of conditions.</p>
+<p>If we give AWS the benefit of the doubt and simply run the CloudFormation template in the technical guide, we run into another issue: it doesn&rsquo;t work.
+At the time of this writing, AWS provides the template at <a href="https://s3.amazonaws.com/aurorabenchmark/labstack.yml">https://s3.amazonaws.com/aurorabenchmark/labstack.yml</a>, but the links change over time.</p>
+<p>Let me save you more wasted time and effort by showing you the problem:</p>
+<pre tabindex="0"><code class="language-none" data-lang="none">EngineVersion: !If [Is57, 5.7.mysql_aurora.2.04.1, 5.6.mysql_aurora.1.19.0 ]
+</code></pre><p>Although this template is supposed to fully automate the benchmark, it&rsquo;s amusing (or frustrating) that you still need to know a bit about Aurora to make it work even when the problem is pointed out.
+The template runs either Aurora v1 or v2: the former based on MySQL 5.6, and the latter based on MySQL 5.7.
+<a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.MySQL56.EOL.html">Aurora v1 recently reached its EOL</a>, and I suspect provisioning a new <code>5.6.mysql_aurora.1.19.0</code> hasn&rsquo;t worked for awhile.
+Likewise, you can&rsquo;t provision a new <code>5.7.mysql_aurora.2.04.1</code> either.
+AWS is generous with support for old versions, but it does occasionally remove old versions (usually for security reasons).</p>
+<p>No problem, just change the Aurora v2 version wherever it appears (multiple lines), like:</p>
+<pre tabindex="0"><code class="language-none" data-lang="none">EngineVersion: !If [Is57, 5.7.mysql_aurora.2.11.1, 5.6.mysql_aurora.1.19.0 ]
+</code></pre><p>Then the template will work, for awhile at least.</p>
+<p>Although we&rsquo;re ignoring Aurora v1 because it&rsquo;s EOL, it&rsquo;s important to point out that this is a huge change of conditions: the original Aurora benchmark, on which the 5X performance claim depends to this day, was run on a different version of Aurora.
+Changing the database version would disqualify most benchmark results, but let&rsquo;s continue because mysteries remain, and we haven&rsquo;t even begun to dig into the pertinent details yet.</p>
+<h3 id="sysbungled">Sysbungled</h3>
+<p>You fix the AWS-provided CloudFormation template, create all the resources (don&rsquo;t peek behind the curtain yet), then run the sysbench write workload and wait&hellip;</p>
+<p>Lucky for you, in the AWS-provided script I changed <code>--time=86400</code> (1 day) to <code>--time=3600</code> (1 hour).
+Although runtime is one condition of a database benchmark, in this case I know that this change doesn&rsquo;t affect the results.</p>
+<p>One hour later, you check the CloudWatch charts created by the template:</p>
+<p><img src="/img/aurora-benchmark-1h-queries.png" alt="Aurora benchmark 1h queries"></p>
+<p>More than 200,000 QPS!?
+Wow!
+Success, right?</p>
+<p>Hold on there, cowboys and cowgirls.
+Scroll back up to the Amazon FAQ: it says 100,000 <em>UPDATEs</em>/sec.
+So let&rsquo;s check that chart:</p>
+<p><img src="/img/aurora-benchmark-1h-updates.png" alt="Aurora benchmark 1h updates"></p>
+<p>That&rsquo;s what nobody calls &ldquo;pancake performance&rdquo;, and it&rsquo;s no joke: not one, single UPDATE.</p>
+<pre tabindex="0"><code>MySQL [sbtest]&gt; SHOW GLOBAL STATUS LIKE &#39;Com_update&#39;;
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| Com_update    | 0     |
++---------------+-------+
+</code></pre><p>But the INSERT throughput chart looks suspicious:</p>
+<p><img src="/img/aurora-benchmark-1h-insert.png" alt="Aurora benchmark 1h inserts"></p>
+<p>Yes, that chart is identical to the QPS chart: the benchmark is supposed to be a write workload, but instead it&rsquo;s an INSERT-only workload.
+The command from the CloudFormation template to run the write workload proves it (in the yellow circle):</p>
+<img src="/img/aurora-benchmark-write-workload-command.png" class="withshadow">
+<p><code>oltp_insert.lua</code> is an INSERT-only workload:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>sysbench.cmdline.commands.<span style="color:#66d9ef">prepare</span> <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">{</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">function</span> ()
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">not</span> sysbench.opt.auto_inc) <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#75715e">-- Create empty tables on prepare when --auto-inc is off, since IDs
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>         <span style="color:#75715e">-- generated on prepare may collide later with values generated by
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>         <span style="color:#75715e">-- sysbench.rand.unique()
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>         sysbench.opt.table_size<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      cmd_prepare()
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">end</span>,
+</span></span><span style="display:flex;"><span>   sysbench.cmdline.PARALLEL_COMMAND
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> prepare_statements()
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">-- We do not use prepared statements here, but oltp_common.sh expects this
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#75715e">-- function to be defined
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> event()
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">local</span> <span style="color:#66d9ef">table_name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;sbtest&#34;</span> .. sysbench.rand.uniform(<span style="color:#ae81ff">1</span>, sysbench.opt.tables)
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">local</span> k_val <span style="color:#f92672">=</span> sysbench.rand.<span style="color:#66d9ef">default</span>(<span style="color:#ae81ff">1</span>, sysbench.opt.table_size)
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">local</span> c_val <span style="color:#f92672">=</span> get_c_value()
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">local</span> pad_val <span style="color:#f92672">=</span> get_pad_value()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">if</span> (drv:name() <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;pgsql&#34;</span> <span style="color:#66d9ef">and</span> sysbench.opt.auto_inc) <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>      con:query(string.format(<span style="color:#e6db74">&#34;INSERT INTO %s (k, c, pad) VALUES &#34;</span> ..
+</span></span><span style="display:flex;"><span>                                 <span style="color:#e6db74">&#34;(%d, &#39;%s&#39;, &#39;%s&#39;)&#34;</span>,
+</span></span><span style="display:flex;"><span>                              <span style="color:#66d9ef">table_name</span>, k_val, c_val, pad_val))
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (sysbench.opt.auto_inc) <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>         i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#75715e">-- Convert a uint32_t value to SQL INT
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>         i <span style="color:#f92672">=</span> sysbench.rand.<span style="color:#66d9ef">unique</span>() <span style="color:#f92672">-</span> <span style="color:#ae81ff">2147483648</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      con:query(string.format(<span style="color:#e6db74">&#34;INSERT INTO %s (id, k, c, pad) VALUES &#34;</span> ..
+</span></span><span style="display:flex;"><span>                                 <span style="color:#e6db74">&#34;(%d, %d, &#39;%s&#39;, &#39;%s&#39;)&#34;</span>,
+</span></span><span style="display:flex;"><span>                              <span style="color:#66d9ef">table_name</span>, i, k_val, c_val, pad_val))
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>INSERT is a write, but for reasons I&rsquo;ll clarify later, I&rsquo;m certain that running this workload is mistake.</p>
+<p>This makes me suspicious of the AWS-provided script to run sysbench.
+So let&rsquo;s examine the relevant code that prepares and runs the write workload:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>  <span style="color:#75715e"># Prepare for write-only test</span>
+</span></span><span style="display:flex;"><span>  /home/ec2-user/sysbench/src/sysbench ./$2 --tables<span style="color:#f92672">=</span><span style="color:#ae81ff">250</span> --table-size<span style="color:#f92672">=</span><span style="color:#ae81ff">25000</span> --threads<span style="color:#f92672">=</span><span style="color:#ae81ff">250</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --auto-inc<span style="color:#f92672">=</span>off prepare
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Launch 250 sysbench clients (16,000 connections)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> i in <span style="color:#f92672">{</span>1..800<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Execute read-only test</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>/home/ec2-user/sysbench/src/sysbench ./$2 --tables<span style="color:#f92672">=</span><span style="color:#ae81ff">250</span> --table-size<span style="color:#f92672">=</span><span style="color:#ae81ff">25000</span> --threads<span style="color:#f92672">=</span><span style="color:#ae81ff">20</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>      --time<span style="color:#f92672">=</span><span style="color:#ae81ff">86400</span> --range_selects<span style="color:#f92672">=</span>off --db-ps-mode<span style="color:#f92672">=</span>disable --skip_trx<span style="color:#f92672">=</span>off --auto-inc<span style="color:#f92672">=</span>off <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>      --mysql-ignore-errors<span style="color:#f92672">=</span>all run<span style="color:#f92672">)</span>&amp;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Sleep one second</span>
+</span></span><span style="display:flex;"><span>    sleep <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">done</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>If you look closely at that script, you&rsquo;ll find more discrepancies and questions, but we still have a long road ahead of us, so I will point out only one: <code>--auto-inc=off</code>.
+The default is auto-inc <em>on</em>.
+Turning it off changes a condition of the benchmark: it avoids the auto-inc lock, and locks affect performance.</p>
+<p>But that&rsquo;s not even the weird part: look up at <code>oltp_insert.lua</code> lines 1–7:  <code>--auto-inc=off</code> causes sysbench <em>not</em> to insert rows on prepare, which means all the tables are empty despite <code>--table-size=25000</code>.
+This is another significant change of condition because, if you read <a href="https://www.amazon.com/Efficient-MySQL-Performance-Practices-Techniques/dp/1098105095/" target="_new">my book</a>, you know that data is dead weight to MySQL (like a boulder it has to push uphill).
+With zero data, query response time can be virtually zero—maximum performance!</p>
+<div class="note">
+<code>oltp_insert.lua</code> line 35 might be a bug. With <code>--table-size=25000</code>, my understanding is that there are supposed to be 25,000 rows, but this is not the case:
+<pre>
+MySQL [sbtest]> select count(*) from sbtest1;
++----------+
+| count(*) |
++----------+
+|  1112785 |
++----------+
+</pre>
+And that line generates positive and negative values between, roughly, [-2^32, 2^32]:
+<pre>
+MySQL [sbtest]> select min(id), max(id) from sbtest1;
++-------------+------------+
+| min(id)     | max(id)    |
++-------------+------------+
+| -2147466742 | 2147478066 |
++-------------+------------+
+</pre>
+Very different conditions: 25k rows/25k cardinality vs. 1.1M rows/1.0M cardinality.
+</div>
+<p>All these errors and inconsistency make me certain that the current Aurora benchmark, as written in the 2019 technical guide and implemented in the accompanying code, is wrong.
+But I&rsquo;m also certain this is a simple mistake and oversight by AWS, not an intentional attempt to game the numbers in their favor.
+AWS documents are usually precise and reliable, so this an exception in my experience.</p>
+<p>We&rsquo;re a little more than half way there.
+Before moving on, let&rsquo;s peek behind the curtain of the AWS-provided CloudFormation template.</p>
+<h3 id="behind-the-curtain">Behind the Curtain</h3>
+<p>The AWS CloudFormation template creates a new cluster parameter group, which reconfigures MySQL:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">innodb_flush_log_at_trx_commit</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">innodb_sync_array_size</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1024</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">max_connections</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">16000</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">max_user_connections</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">16000</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">table_definition_cache</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">524288</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">table_open_cache</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">524288</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">table_open_cache_instances</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">64</span>
+</span></span></code></pre></div><p>The first sysvar jumps out and bites MySQL experts and anyone with basic knowledge of ACID-compliant MySQL configuration: <code>innodb_flush_log_at_trx_commit = 0</code> disables durability on standard (open source) MySQL.</p>
+<p>But Aurora is not MySQL.
+Whether or not Aurora needs <code>innodb_flush_log_at_trx_commit = 1</code> for ACID-compliant durability is, to my knowledge, not documented.
+(Someday I&rsquo;ll find out, but I don&rsquo;t know right now.)
+Given what Aurora has revealed about its storage system, my <em>guess</em> is that <code>innodb_flush_log_at_trx_commit</code> is not applicable to Aurora in the same way as standard MySQL.</p>
+<p>Regardless, <code>innodb_flush_log_at_trx_commit</code> is one of the most important MySQL settings, so any benchmark that changes its default value (which is 1 for full ACID-complaint durability) should explicitly note and make clear how and why the change doesn&rsquo;t fundamentally change the game.</p>
+<p><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_sync_array_size"><code>innodb_sync_array_size</code></a> is an interesting change, too.
+But I&rsquo;m not familiar with this sysvar or its impact on performance.
+The default is 1 and the maximum is 1024.
+If you search for it, two of the top results are post from AWS, but I can&rsquo;t find independent expert advice on this sysvar (from <a href="https://www.percona.com/">Percona</a> for example).</p>
+<p><code>max_connections = 16000</code> is an interesting choice and nontrivial change, too.
+16,000 is the maximum for any Aurora instance.
+The benchmark creates 16,000 client connections, but I don&rsquo;t think it&rsquo;s reasonable or realistic.
+It&rsquo;s a rather common performance misconception that high throughput needs a lot of clients.</p>
+<p>The other sysvars relate to open table caching, and all three are set to their maximum values.
+With only 250 tables in the benchmark, I don&rsquo;t know why these maximum values are used.
+But that&rsquo;s what you get when you peek behind the curtain: mysteries.</p>
+<h3 id="looking-for-answers-in-the-past">Looking for Answers in the Past</h3>
+<p>Upon writing this, I realize that it is perhaps weird that I look to the <em>past</em> for answers to this technical mystery.
+How could material from many years ago explain the errors and confusion of today?
+After all, technology changes, so past technology might be completely irrelevant to the problems of today.</p>
+<p><img src="/img/thepast-1.png" alt=""></p>
+<p>But the present is only the tip of what we know.
+It doesn&rsquo;t reveal the whole picture.</p>
+<p><img src="/img/thepast-2.png" alt=""></p>
+<p>The more you understand the past&hellip;</p>
+<p><img src="/img/thepast-3.png" alt=""></p>
+<p>the better you understand the present.</p>
+<p>But where do we go from here?
+The Aurora white paper, <a href="https://www.amazon.science/publications/amazon-aurora-design-considerations-for-high-throughput-cloud-native-relational-databases">&ldquo;Amazon Aurora: Design considerations for high throughput cloud-native relational databases&rdquo;</a>, is a logical starting point because it was published in 2017.
+In that paper, section &ldquo;6. PERFORMANCE RESULTS&rdquo; begins to make more sense.
+For one thing, it&rsquo;s written that r3.8xlarge EC2 instances are used, which matches the current Amazon FAQ statement: &ldquo;Our tests with SysBench on r3.8xlarge instances&hellip;&rdquo;
+The numbers are also inline with expectations: around 100,000 writes/second, not the red herring 200,000 QPS (INSERT/second) created by the 2019 technical guide.</p>
+<p>We&rsquo;re beginning to see the full picture.
+But the white paper doesn&rsquo;t mention any details about the benchmark setup apart from instance class sizes and sysbench.
+We need those details&hellip;</p>
+<p>Lucky for us, someone had the good idea to record revisions of the technical guide.
+On the last page of the 2019 technical guide we see &ldquo;July 2015 First publication&rdquo;.
+It stands to reason that the real and correct benchmark setup was published in 2015, then used for the 2017 white paper.</p>
+<h3 id="the-original-2015-aurora-benchmark">The Original 2015 Aurora Benchmark</h3>
+<p>It was remarkably difficult to unearth, but I found a copy: <a href="/amazon-aurora-performance-assessment-2015.pdf">Amazon Aurora Performance Assessment (2015)</a>.
+And I&rsquo;ve included it here so we can finally get to the bottom of the Aurora performance claims.
+I encourage you to read it because the benchmark setup is completely different than the 2019 revision:</p>
+<ul>
+<li>Aurora v1 vs. MySQL 5.6</li>
+<li>Database instance size: <strong>r3.8xlarge</strong></li>
+<li>30,000 provisioned IOPS io1 (RDS/MySQL)</li>
+<li>Default configuration (parameter group)</li>
+<li>sysbench v0.5</li>
+<li>1 database</li>
+<li>250 tables</li>
+<li>25,000 rows per table</li>
+<li>Uniform random distribution</li>
+<li>4 r3.8xlarge EC2 instances</li>
+<li>4,000 connections (1k/EC2)</li>
+<li>MySQL and EC2 in same availability zone (AZ)</li>
+<li>600 second (10 min.) runtime</li>
+</ul>
+<p>This is a lot better!
+The database instance size is much <em>smaller</em> yet delivers the same performance: r3.8xlarge in 2015, not r4.16xlarge in 2019.
+And the sysbench setup and write-heavy workload are correct: 250 tables, each with 25,000 rows, and a mix of INSERT, UPDATE, and DELETE statements wrapped in a transaction.
+Whoever created and documented the 2015 Aurora benchmark: good work, and thank you.</p>
+<br>
+<br>
+<h2 id="part-b11">Part b'11'</h2>
+<hr>
+<h3 id="catching-the-rabbit">Catching the Rabbit</h3>
+<p>Recreating the original 2015 Aurora benchmark outline above (with a few modifications detailed below), I can confirm that the claim &ldquo;100,000 UPDATEs/sec, five times higher than MySQL running the same benchmark on the same hardware&rdquo; is <mark>true only with two points of clarification: it&rsquo;s 100,000 writes/second (not updates/second), and MySQL is not tuned for the workload.</mark></p>
+<p>I know the first point of clarification is true and accurate for two reasons.
+First, AWS wrote it in the 2015 technical guide (link above): &ldquo;We ran this test for 600 seconds and observed a write performance of 101,386 write requests per second&rdquo;.
+Second, the sysbench OLTP write workload is 2 UPDATE, 1 DELETE, and 1 INSERT.
+Update statements are only half the workload (slightly less counting <code>BEGIN</code> and <code>COMMIT</code> statements), so it cannot be 100k UPDATE/s if the total writes observed were 101,386 writes/s.</p>
+<p>I&rsquo;ll prove the second point of clarification is true in following sections.</p>
+<br>
+<p><img src="/img/aurora-real-results.png" alt=""></p>
+<p>That chart above shows  140k writes/s on Aurora v2 for this benchmark:</p>
+<ul>
+<li>70k UPDATE/s</li>
+<li>35k DELETE/s</li>
+<li>35k INSERT/s (hidden behind red line for DELETE/s)</li>
+</ul>
+<p>Here are the numbers from each of my 4 EC2 instances that I&rsquo;ll explain after.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span> <span style="color:#a6e22e">runtime</span>| <span style="color:#a6e22e">clients</span>|     <span style="color:#a6e22e">QPS</span>| <span style="color:#a6e22e">min</span>|    <span style="color:#a6e22e">P95</span>|       <span style="color:#a6e22e">max</span>| <span style="color:#a6e22e">r_QPS</span>| <span style="color:#a6e22e">r_min</span>| <span style="color:#a6e22e">r_P95</span>| <span style="color:#a6e22e">r_max</span>|   <span style="color:#a6e22e">w_QPS</span>| <span style="color:#a6e22e">w_min</span>|  <span style="color:#a6e22e">w_P95</span>|   <span style="color:#a6e22e">w_max</span>|    <span style="color:#a6e22e">TPS</span>| <span style="color:#a6e22e">c_min</span>|  <span style="color:#a6e22e">c_P95</span>|     <span style="color:#a6e22e">c_max</span>| <span style="color:#a6e22e">errors</span>|<span style="color:#a6e22e">compute</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">53</span>,<span style="color:#ae81ff">142</span>|  <span style="color:#ae81ff">16</span>| <span style="color:#ae81ff">72</span>,<span style="color:#ae81ff">443</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">085</span>,<span style="color:#ae81ff">187</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">35</span>,<span style="color:#ae81ff">428</span>|    <span style="color:#ae81ff">16</span>| <span style="color:#ae81ff">23</span>,<span style="color:#ae81ff">988</span>| <span style="color:#ae81ff">502</span>,<span style="color:#ae81ff">978</span>|  <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">856</span>|   <span style="color:#ae81ff">162</span>| <span style="color:#ae81ff">93</span>,<span style="color:#ae81ff">350</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">085</span>,<span style="color:#ae81ff">187</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">52</span>,<span style="color:#ae81ff">688</span>|  <span style="color:#ae81ff">14</span>| <span style="color:#ae81ff">72</span>,<span style="color:#ae81ff">443</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">080</span>,<span style="color:#ae81ff">313</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">35</span>,<span style="color:#ae81ff">125</span>|    <span style="color:#ae81ff">14</span>| <span style="color:#ae81ff">23</span>,<span style="color:#ae81ff">988</span>| <span style="color:#ae81ff">967</span>,<span style="color:#ae81ff">351</span>|  <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">781</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">109</span>| <span style="color:#ae81ff">95</span>,<span style="color:#ae81ff">499</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">080</span>,<span style="color:#ae81ff">313</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">52</span>,<span style="color:#ae81ff">127</span>|  <span style="color:#ae81ff">30</span>| <span style="color:#ae81ff">72</span>,<span style="color:#ae81ff">443</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">07</span><span style="color:#ae81ff">9</span>,<span style="color:#ae81ff">020</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">34</span>,<span style="color:#ae81ff">751</span>|    <span style="color:#ae81ff">46</span>| <span style="color:#ae81ff">23</span>,<span style="color:#ae81ff">988</span>| <span style="color:#ae81ff">810</span>,<span style="color:#ae81ff">917</span>|  <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">687</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">960</span>| <span style="color:#ae81ff">95</span>,<span style="color:#ae81ff">499</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">07</span><span style="color:#ae81ff">9</span>,<span style="color:#ae81ff">020</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">52</span>,<span style="color:#ae81ff">249</span>|  <span style="color:#ae81ff">24</span>| <span style="color:#ae81ff">72</span>,<span style="color:#ae81ff">443</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">07</span><span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">195</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">34</span>,<span style="color:#ae81ff">833</span>|    <span style="color:#ae81ff">24</span>| <span style="color:#ae81ff">23</span>,<span style="color:#ae81ff">988</span>| <span style="color:#ae81ff">621</span>,<span style="color:#ae81ff">627</span>|  <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">708</span>| <span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">346</span>| <span style="color:#ae81ff">95</span>,<span style="color:#ae81ff">499</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">07</span><span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">195</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">local</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">4000</span>| <span style="color:#ae81ff">210</span>,<span style="color:#ae81ff">207</span>|  <span style="color:#ae81ff">14</span>| <span style="color:#ae81ff">72</span>,<span style="color:#ae81ff">443</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">085</span>,<span style="color:#ae81ff">187</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>| <span style="color:#ae81ff">140</span>,<span style="color:#ae81ff">138</span>|    <span style="color:#ae81ff">14</span>| <span style="color:#ae81ff">23</span>,<span style="color:#ae81ff">988</span>| <span style="color:#ae81ff">967</span>,<span style="color:#ae81ff">351</span>| <span style="color:#ae81ff">35</span>,<span style="color:#ae81ff">034</span>|   <span style="color:#ae81ff">162</span>| <span style="color:#ae81ff">95</span>,<span style="color:#ae81ff">499</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">085</span>,<span style="color:#ae81ff">187</span>|      <span style="color:#ae81ff">0</span>|(<span style="color:#ae81ff">4</span> <span style="color:#a6e22e">combined</span>)
+</span></span></code></pre></div><p>Each line of the output is stats from a single compute (EC2) instance and its clients (MySQL connections).
+The last line is the combined stats of all compute, done correctly: min of all the min, max of all the max, histogram buckets combined for percentiles, etc.
+All time values are in microseconds (μs): 16=16μs, 72,443=72.4ms, 1,085,187 = 1.1s, etc.
+The columns, left to right, are:</p>
+<ul>
+<li><code>runtime</code>: Runtime in second</li>
+<li><code>clients</code>: Number of MySQL clients (connections)</li>
+<li><code>QPS</code>: Total queries per second</li>
+<li><code>min</code>: Minimum query response time</li>
+<li><code>P95</code>: 95th percentile query response time</li>
+<li><code>max</code>: Maximum query response time</li>
+<li><code>r_*</code>: Same as previous four columns but only reads (SELECT)</li>
+<li><code>w_*</code>: Same as <code>r_*</code> but only writes (<em>not</em> COMMIT)</li>
+<li><code>TPS</code>: Same as <code>r_*</code> but only COMMIT</li>
+<li><code>errors</code>: Error count</li>
+<li><code>compute</code>: Compute hostname or &ldquo;(N combined)&rdquo; for all compute stats combined</li>
+</ul>
+<p>We&rsquo;re looking at <code>w_QPS</code>: writes per second (not including COMMIT).</p>
+<p>The second part of the Aurora claim is &ldquo;5X greater than standard open source MySQL on similar hardware.&rdquo;
+Is that true?
+Yes it is, but again: MySQL is not tuned for the workload.
+Since AWS does not provide the same metrics/charts for RDS as Aurora, I don&rsquo;t have a similar chart, just the raw numbers for this benchmark on MySQL 5.7:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span> <span style="color:#a6e22e">runtime</span>| <span style="color:#a6e22e">clients</span>|    <span style="color:#a6e22e">QPS</span>| <span style="color:#a6e22e">min</span>|     <span style="color:#a6e22e">P95</span>|        <span style="color:#a6e22e">max</span>| <span style="color:#a6e22e">r_QPS</span>| <span style="color:#a6e22e">r_min</span>| <span style="color:#a6e22e">r_P95</span>| <span style="color:#a6e22e">r_max</span>|  <span style="color:#a6e22e">w_QPS</span>| <span style="color:#a6e22e">w_min</span>|   <span style="color:#a6e22e">w_P95</span>|      <span style="color:#a6e22e">w_max</span>|   <span style="color:#a6e22e">TPS</span>| <span style="color:#a6e22e">c_min</span>|  <span style="color:#a6e22e">c_P95</span>|   <span style="color:#a6e22e">c_max</span>| <span style="color:#a6e22e">errors</span>|<span style="color:#a6e22e">compute</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">122</span>| <span style="color:#ae81ff">405</span>| <span style="color:#ae81ff">120</span>,<span style="color:#ae81ff">226</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">229</span>,<span style="color:#ae81ff">160</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">748</span>|   <span style="color:#ae81ff">457</span>| <span style="color:#ae81ff">229</span>,<span style="color:#ae81ff">086</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">229</span>,<span style="color:#ae81ff">160</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">186</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">996</span>| <span style="color:#ae81ff">52</span>,<span style="color:#ae81ff">480</span>| <span style="color:#ae81ff">841</span>,<span style="color:#ae81ff">176</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">175</span>| <span style="color:#ae81ff">347</span>| <span style="color:#ae81ff">120</span>,<span style="color:#ae81ff">226</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">445</span>,<span style="color:#ae81ff">907</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">784</span>|   <span style="color:#ae81ff">402</span>| <span style="color:#ae81ff">229</span>,<span style="color:#ae81ff">086</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">445</span>,<span style="color:#ae81ff">907</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">194</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">982</span>| <span style="color:#ae81ff">52</span>,<span style="color:#ae81ff">480</span>| <span style="color:#ae81ff">852</span>,<span style="color:#ae81ff">829</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">200</span>| <span style="color:#ae81ff">341</span>| <span style="color:#ae81ff">120</span>,<span style="color:#ae81ff">226</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">405</span>,<span style="color:#ae81ff">843</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">800</span>|   <span style="color:#ae81ff">394</span>| <span style="color:#ae81ff">218</span>,<span style="color:#ae81ff">776</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">405</span>,<span style="color:#ae81ff">843</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">198</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">812</span>| <span style="color:#ae81ff">52</span>,<span style="color:#ae81ff">480</span>| <span style="color:#ae81ff">941</span>,<span style="color:#ae81ff">664</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">157</span>| <span style="color:#ae81ff">402</span>| <span style="color:#ae81ff">120</span>,<span style="color:#ae81ff">226</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">254</span>,<span style="color:#ae81ff">657</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">772</span>|   <span style="color:#ae81ff">460</span>| <span style="color:#ae81ff">229</span>,<span style="color:#ae81ff">086</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">254</span>,<span style="color:#ae81ff">657</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">191</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">895</span>| <span style="color:#ae81ff">52</span>,<span style="color:#ae81ff">480</span>| <span style="color:#ae81ff">984</span>,<span style="color:#ae81ff">411</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">local</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">4000</span>| <span style="color:#ae81ff">28</span>,<span style="color:#ae81ff">656</span>| <span style="color:#ae81ff">341</span>| <span style="color:#ae81ff">120</span>,<span style="color:#ae81ff">226</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">445</span>,<span style="color:#ae81ff">907</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>| <span style="color:#ae81ff">19</span>,<span style="color:#ae81ff">105</span>|   <span style="color:#ae81ff">394</span>| <span style="color:#ae81ff">229</span>,<span style="color:#ae81ff">086</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">445</span>,<span style="color:#ae81ff">907</span>| <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">771</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">812</span>| <span style="color:#ae81ff">52</span>,<span style="color:#ae81ff">480</span>| <span style="color:#ae81ff">984</span>,<span style="color:#ae81ff">411</span>|      <span style="color:#ae81ff">0</span>|(<span style="color:#ae81ff">4</span> <span style="color:#a6e22e">combined</span>)
+</span></span></code></pre></div><p>Aurora v2 <code>140,138</code> writes/s versus MySQL 5.7 <code>19,105</code> writes/s: Aurora is 7.3X faster in this case—under these specific conditions.
+Speaking of which, a lot has change from 2015 to 2023, so I had to update three conditions of the benchmark:</p>
+<table>
+<thead>
+<tr>
+<th>2015</th>
+<th>2023</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aurora v1 vs. MysQL 5.6</td>
+<td>Aurora v2.11.2 vs. MySQL 5.7.41</td>
+</tr>
+<tr>
+<td>r3.8xlarge</td>
+<td>r5.8xlarge</td>
+</tr>
+<tr>
+<td>sysbench v0.5</td>
+<td>New benchmark tool</td>
+</tr>
+<tr>
+<td>No binlogs?</td>
+<td>No binlogs</td>
+</tr>
+<tr>
+<td>Multi-AZ?</td>
+<td>Multi-AZ</td>
+</tr>
+<tr>
+<td>Encrypted?</td>
+<td>Encrypted†</td>
+</tr>
+</tbody>
+</table>
+<p><small>† <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.Encryption.html">Encryption at rest</a></small></p>
+<p>None of these changes are material to the outcome; we&rsquo;re still comparing the same benchmark on the same hardware, just Aurora vs. MySQL.
+If anything, the changes show that MySQL 5.7 is faster than 5.6,
+as is AWS r5 vs. r3—both of which we&rsquo;d expect.</p>
+<p>I&rsquo;ll release my new benchmark tool soon.
+For now, just trust me that it&rsquo;s an accurate reproduction of the sysbench OLTP write workload.</p>
+<h3 id="bigger-faster-hardware">Bigger! Faster! Hardware!</h3>
+<p>There are several ideas and themes threaded throughout <a href="https://www.amazon.com/Efficient-MySQL-Performance-Practices-Techniques/dp/1098105095/" target="_new"><i>Efficient MySQL Performance</i></a>.
+One is the fallacy of assuming that bigger, faster hardware will fix slow performance.
+I use the word &ldquo;assume&rdquo; (not &ldquo;presume&rdquo;) because it&rsquo;s accurate: engineers assume, without good reasons, that bigger faster hardware is a solution.
+This fallacy is difficult to demonstrate, but we have the opportunity here, so let&rsquo;s take it.</p>
+<p>Does <em>doubling</em> the MySQL instance size from r5.8xlarge to r5.16xlarge boost its performance?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span> <span style="color:#a6e22e">runtime</span>| <span style="color:#a6e22e">clients</span>|    <span style="color:#a6e22e">QPS</span>| <span style="color:#a6e22e">min</span>|     <span style="color:#a6e22e">P95</span>|        <span style="color:#a6e22e">max</span>| <span style="color:#a6e22e">r_QPS</span>| <span style="color:#a6e22e">r_min</span>| <span style="color:#a6e22e">r_P95</span>| <span style="color:#a6e22e">r_max</span>|  <span style="color:#a6e22e">w_QPS</span>| <span style="color:#a6e22e">w_min</span>|   <span style="color:#a6e22e">w_P95</span>|      <span style="color:#a6e22e">w_max</span>|   <span style="color:#a6e22e">TPS</span>| <span style="color:#a6e22e">c_min</span>|   <span style="color:#a6e22e">c_P95</span>|     <span style="color:#a6e22e">c_max</span>| <span style="color:#a6e22e">errors</span>|<span style="color:#a6e22e">compute</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">521</span>|  <span style="color:#ae81ff">91</span>| <span style="color:#ae81ff">263</span>,<span style="color:#ae81ff">026</span>| <span style="color:#ae81ff">22</span>,<span style="color:#ae81ff">287</span>,<span style="color:#ae81ff">183</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">681</span>|   <span style="color:#ae81ff">139</span>| <span style="color:#ae81ff">501</span>,<span style="color:#ae81ff">187</span>| <span style="color:#ae81ff">22</span>,<span style="color:#ae81ff">287</span>,<span style="color:#ae81ff">183</span>|   <span style="color:#ae81ff">919</span>| <span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">340</span>| <span style="color:#ae81ff">114</span>,<span style="color:#ae81ff">815</span>| <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">090</span>,<span style="color:#ae81ff">852</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">493</span>| <span style="color:#ae81ff">105</span>| <span style="color:#ae81ff">263</span>,<span style="color:#ae81ff">026</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">684</span>,<span style="color:#ae81ff">267</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">662</span>|   <span style="color:#ae81ff">147</span>| <span style="color:#ae81ff">501</span>,<span style="color:#ae81ff">187</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">684</span>,<span style="color:#ae81ff">267</span>|   <span style="color:#ae81ff">914</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">946</span>| <span style="color:#ae81ff">114</span>,<span style="color:#ae81ff">815</span>| <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">036</span>,<span style="color:#ae81ff">877</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">505</span>| <span style="color:#ae81ff">109</span>| <span style="color:#ae81ff">263</span>,<span style="color:#ae81ff">026</span>| <span style="color:#ae81ff">23</span>,<span style="color:#ae81ff">415</span>,<span style="color:#ae81ff">984</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">670</span>|   <span style="color:#ae81ff">142</span>| <span style="color:#ae81ff">501</span>,<span style="color:#ae81ff">187</span>| <span style="color:#ae81ff">23</span>,<span style="color:#ae81ff">415</span>,<span style="color:#ae81ff">984</span>|   <span style="color:#ae81ff">916</span>| <span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">07</span><span style="color:#ae81ff">9</span>| <span style="color:#ae81ff">114</span>,<span style="color:#ae81ff">815</span>| <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">081</span>,<span style="color:#ae81ff">525</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">497</span>| <span style="color:#ae81ff">104</span>| <span style="color:#ae81ff">263</span>,<span style="color:#ae81ff">026</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">697</span>,<span style="color:#ae81ff">550</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|  <span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">665</span>|   <span style="color:#ae81ff">142</span>| <span style="color:#ae81ff">501</span>,<span style="color:#ae81ff">187</span>| <span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">697</span>,<span style="color:#ae81ff">550</span>|   <span style="color:#ae81ff">915</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">915</span>| <span style="color:#ae81ff">114</span>,<span style="color:#ae81ff">815</span>| <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">076</span>,<span style="color:#ae81ff">611</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">local</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">4000</span>| <span style="color:#ae81ff">22</span>,<span style="color:#ae81ff">017</span>|  <span style="color:#ae81ff">91</span>| <span style="color:#ae81ff">263</span>,<span style="color:#ae81ff">026</span>| <span style="color:#ae81ff">23</span>,<span style="color:#ae81ff">415</span>,<span style="color:#ae81ff">984</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>| <span style="color:#ae81ff">14</span>,<span style="color:#ae81ff">679</span>|   <span style="color:#ae81ff">139</span>| <span style="color:#ae81ff">501</span>,<span style="color:#ae81ff">187</span>| <span style="color:#ae81ff">23</span>,<span style="color:#ae81ff">415</span>,<span style="color:#ae81ff">984</span>| <span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">666</span>| <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">915</span>| <span style="color:#ae81ff">114</span>,<span style="color:#ae81ff">815</span>| <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">090</span>,<span style="color:#ae81ff">852</span>|      <span style="color:#ae81ff">0</span>|(<span style="color:#ae81ff">4</span> <span style="color:#a6e22e">combined</span>)
+</span></span></code></pre></div><p><em>Worse</em> performance!?
+But we doubled the hardware!</p>
+<p>I know it&rsquo;s difficult for some engineers to believe, but the numbers don&rsquo;t lie (and I didn&rsquo;t mess up the benchmark; I show results once, but I ran every benchmark several times).
+With twice the hardware, write throughput <em>decreased</em> by 23%: 19,105 → 14,679.</p>
+<p>First of all, RDS for MySQL stores data on EBS volumes in multiple AZs.
+EBS latency is highly variable; see <a href="/post/commit-latency-aurora-vs-rds-mysql-8.0/">COMMIT Latency: Aurora vs. RDS MySQL 8.0</a>.
+Over many days and countless benchmark runs, RDS write performance (throughput and latency) varied highly.
+Sometimes it would push 19k writes/s, then 14k writes/s immediately after, then back to 18k writes/s later or the next day.
+This seems to be normal for EBS.</p>
+<p>Second of all, what does doubling the database instance size give us?</p>
+<table>
+<thead>
+<tr>
+<th>Instance</th>
+<th>CPU</th>
+<th>RAM</th>
+<th>EBS</th>
+<th>Network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8xlarge</td>
+<td>32</td>
+<td>256</td>
+<td>6,800 Mbps</td>
+<td>10 Gbps</td>
+</tr>
+<tr>
+<td>16xlarge</td>
+<td>64</td>
+<td>512</td>
+<td>13,600 Mbps</td>
+<td>20 Gbps</td>
+</tr>
+</tbody>
+</table>
+<p>But are any of those a bottleneck?
+Unlikely because Aurora has the same 8xlarge limits.
+Sometimes extra &ldquo;horsepower&rdquo; hurts more than it helps because it overloads an already overloaded system.</p>
+<p>There it is: proof positive that bigger faster hardware does not solve all performance issues.</p>
+<h3 id="deep">Deep</h3>
+<p>The bottleneck is EBS: network-backed storage has millisecond latency.
+That&rsquo;s equivalent to spinning disks, even though the storage uses SSD.
+And those 30,000 provisioned IOPS?
+Worthless—wasted money—in this case because write I/O for MySQL is ultimately serialized into the redo logs—and binary logs, if they&rsquo;re enabled, which they&rsquo;re not for this benchmark.
+Check out <a href="/post/book-6/">InnoDB Page Flushing Diagram</a> for the high-level (but incomplete) flow of write I/O in MySQL from transaction commit.</p>
+<p class="note">
+Since reads are supposed to be served from the buffer pool and the buffer pool is kept in memory, it's common to associate IOPS with writes, but checkout <a href="/post/mysql-iops-for-reads-and-surprsies/">MySQL IOPS for Reads and Surprsies</a>.
+IOPS are used for reads, too, which might justify a high number of IOPS for RDS.
+</p>
+<p class="note">
+If you're thinking "Increase <code>innodb_io_capacity</code> and <code>innodb_io_capacity_max</code> to match the provisioned IOPS," that's a good idea but it doesn't help. Storage latency is the issue; read <a href="https://louwrentius.com/understanding-storage-performance-iops-and-latency.html" target="_new">Understanding Storage Performance - IOPS and Latency</a> to learn more.
+</p>
+<p>Aurora I/O is totally different.
+In addition to the Aurora white paper linked earlier, check out these videos:</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=0IeLKyBl3CM">AWS re:Invent 2020: Amazon Aurora storage demystified</a></li>
+<li><a href="https://www.youtube.com/watch?v=SEXbvl2oQGs&amp;t=188s">AWS re:Invent 2021 - Deep dive on Amazon Aurora</a></li>
+</ul>
+<p>Aurora doesn&rsquo;t have a redo log like MySQL.
+So when we&rsquo;re hammering it with writes, we don&rsquo;t need to think much about the write path: how the data changes will sync and flush to disk through a redo log on network-backed storage.</p>
+<p>But when we&rsquo;re hammering MySQL with writes, we do need to think about the write path and probably tune its configuration.
+That&rsquo;s not always easy, but here&rsquo;s why it&rsquo;s worth it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span> <span style="color:#a6e22e">runtime</span>| <span style="color:#a6e22e">clients</span>|     <span style="color:#a6e22e">QPS</span>| <span style="color:#a6e22e">min</span>|    <span style="color:#a6e22e">P95</span>|       <span style="color:#a6e22e">max</span>| <span style="color:#a6e22e">r_QPS</span>| <span style="color:#a6e22e">r_min</span>| <span style="color:#a6e22e">r_P95</span>| <span style="color:#a6e22e">r_max</span>|  <span style="color:#a6e22e">w_QPS</span>| <span style="color:#a6e22e">w_min</span>|  <span style="color:#a6e22e">w_P95</span>|     <span style="color:#a6e22e">w_max</span>|    <span style="color:#a6e22e">TPS</span>| <span style="color:#a6e22e">c_min</span>|  <span style="color:#a6e22e">c_P95</span>|   <span style="color:#a6e22e">c_max</span>| <span style="color:#a6e22e">errors</span>|<span style="color:#a6e22e">compute</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">31</span>,<span style="color:#ae81ff">201</span>|  <span style="color:#ae81ff">28</span>| <span style="color:#ae81ff">83</span>,<span style="color:#ae81ff">176</span>| <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">04</span><span style="color:#ae81ff">9</span>,<span style="color:#ae81ff">759</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>| <span style="color:#ae81ff">20</span>,<span style="color:#ae81ff">801</span>|    <span style="color:#ae81ff">37</span>| <span style="color:#ae81ff">95</span>,<span style="color:#ae81ff">499</span>| <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">04</span><span style="color:#ae81ff">9</span>,<span style="color:#ae81ff">759</span>|  <span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">199</span>|    <span style="color:#ae81ff">28</span>| <span style="color:#ae81ff">43</span>,<span style="color:#ae81ff">651</span>| <span style="color:#ae81ff">920</span>,<span style="color:#ae81ff">814</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">30</span>,<span style="color:#ae81ff">995</span>|  <span style="color:#ae81ff">31</span>| <span style="color:#ae81ff">83</span>,<span style="color:#ae81ff">176</span>| <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">193</span>,<span style="color:#ae81ff">389</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>| <span style="color:#ae81ff">20</span>,<span style="color:#ae81ff">664</span>|    <span style="color:#ae81ff">44</span>| <span style="color:#ae81ff">95</span>,<span style="color:#ae81ff">499</span>| <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">193</span>,<span style="color:#ae81ff">389</span>|  <span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">165</span>|    <span style="color:#ae81ff">31</span>| <span style="color:#ae81ff">43</span>,<span style="color:#ae81ff">651</span>| <span style="color:#ae81ff">907</span>,<span style="color:#ae81ff">150</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">31</span>,<span style="color:#ae81ff">201</span>|  <span style="color:#ae81ff">29</span>| <span style="color:#ae81ff">83</span>,<span style="color:#ae81ff">176</span>| <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">379</span>,<span style="color:#ae81ff">938</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>| <span style="color:#ae81ff">20</span>,<span style="color:#ae81ff">801</span>|    <span style="color:#ae81ff">29</span>| <span style="color:#ae81ff">95</span>,<span style="color:#ae81ff">499</span>| <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">379</span>,<span style="color:#ae81ff">938</span>|  <span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">199</span>|   <span style="color:#ae81ff">758</span>| <span style="color:#ae81ff">43</span>,<span style="color:#ae81ff">651</span>| <span style="color:#ae81ff">878</span>,<span style="color:#ae81ff">295</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">ip</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0000000000000.</span><span style="color:#a6e22e">ec2</span>.<span style="color:#a6e22e">internal</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">1000</span>|  <span style="color:#ae81ff">31</span>,<span style="color:#ae81ff">127</span>|  <span style="color:#ae81ff">33</span>| <span style="color:#ae81ff">83</span>,<span style="color:#ae81ff">176</span>| <span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">836</span>,<span style="color:#ae81ff">409</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>| <span style="color:#ae81ff">20</span>,<span style="color:#ae81ff">751</span>|    <span style="color:#ae81ff">33</span>| <span style="color:#ae81ff">95</span>,<span style="color:#ae81ff">499</span>| <span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">836</span>,<span style="color:#ae81ff">409</span>|  <span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">186</span>|   <span style="color:#ae81ff">312</span>| <span style="color:#ae81ff">43</span>,<span style="color:#ae81ff">651</span>| <span style="color:#ae81ff">862</span>,<span style="color:#ae81ff">860</span>|      <span style="color:#ae81ff">0</span>|<span style="color:#a6e22e">local</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">600</span>|    <span style="color:#ae81ff">4000</span>| <span style="color:#ae81ff">124</span>,<span style="color:#ae81ff">526</span>|  <span style="color:#ae81ff">28</span>| <span style="color:#ae81ff">83</span>,<span style="color:#ae81ff">176</span>| <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">379</span>,<span style="color:#ae81ff">938</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>|     <span style="color:#ae81ff">0</span>| <span style="color:#ae81ff">83</span>,<span style="color:#ae81ff">01</span><span style="color:#ae81ff">8</span>|    <span style="color:#ae81ff">29</span>| <span style="color:#ae81ff">95</span>,<span style="color:#ae81ff">499</span>| <span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">379</span>,<span style="color:#ae81ff">938</span>| <span style="color:#ae81ff">20</span>,<span style="color:#ae81ff">750</span>|    <span style="color:#ae81ff">28</span>| <span style="color:#ae81ff">43</span>,<span style="color:#ae81ff">651</span>| <span style="color:#ae81ff">920</span>,<span style="color:#ae81ff">814</span>|      <span style="color:#ae81ff">0</span>|(<span style="color:#ae81ff">4</span> <span style="color:#a6e22e">combined</span>)
+</span></span></code></pre></div><p><mark>MySQL write throughput increased <strong>334%</strong></mark>: 19,105 → 83,018 writes/s.</p>
+<p>Now Aurora is only 1.7x faster than MySQL on the same hardware and benchmark.</p>
+<p>The configuration change was simple: I increased <a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_log_file_size"><code>innodb_log_file_size</code></a> from the RDS default of 128 MB to 1 GB.
+(There two log files by default, so the total log size is double this value.)
+A write-only benchmark puts pressure on the redo log, so a larger log helps reduce &ldquo;furious flushing&rdquo; by giving MySQL more space to buffer data changes between checkpoints.
+And if you watched the two videos linked above, you know that Aurora checkpointing is also completely different than MySQL.</p>
+<p>MySQL might not sustain this level of performance for a longer run (this benchmark is only 10 minutes), and EBS latency varies significantly.
+For example, I ran the benchmark again (immediately after the run shown above) and it yielded only a 276% increase: 71,911 writes/s.
+And then again for a 331% increase (82,517 writes/s).
+Despite variations, these results prove that Aurora is not 5X faster than MySQL when MySQL is properly configured for the benchmark.</p>
+<p>IOPS, storage latency, redo logs, checkpoints, flushing&hellip; these deep technical considerations (and many more) explain why &ldquo;the truth&rdquo; in database performance is usually not a simple matter that can be fairly or accurately captured by marketing.</p>
+<h3 id="the-truth">The Truth</h3>
+<p>Not all truths are useful.
+The true fact that I&rsquo;m sitting in a chair while I write this&hellip; so what?
+<em>Prima facie</em>, the Aurora 5X performance claim is no more useful than that.
+You must—I repeat: you must—determine if your database conditions are similar to the conditions on which the claim is made.
+Only then can you gauge its usefulness.</p>
+<p>For non-engineers reading this who can&rsquo;t determine and test those conditions, I can tell you that in <em>my</em> experience and benchmarks, Aurora is usually—but not always—faster than MySQL.
+I&rsquo;ve spent a lot of time trying to make MySQL beat Aurora, but I don&rsquo;t think it&rsquo;s possible because it&rsquo;s not a fair fight: MySQL comes from the era of single servers and spinning disks; Aurora was purpose-built for where it runs: the cloud.
+If you&rsquo;re born and raised in the desert, you might learn to surf pretty well, but you&rsquo;re probably not going to beat your friends from Santa Cruz.</p>
+<p>And just when you think you&rsquo;ve got a handle on all this performance stuff, <a href="https://aws.amazon.com/about-aws/whats-new/2022/11/amazon-rds-optimized-writes-2x-higher-write-throughput-no-cost/">Amazon RDS Optimized Writes enables up to 2x higher write throughput at no additional cost</a>: the rabbit hole goes deeper.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/announcing-blip-mysql-monitor/" data-toggle="tooltip" data-placement="top" title="Announcing Blip: A New MySQL Monitor">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2023 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

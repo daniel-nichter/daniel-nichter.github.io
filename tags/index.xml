@@ -7,7 +7,43 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Tue, 28 Mar 2023 13:40:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 12 May 2023 09:38:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>aurora</title>
+      <link>https://hackmysql.com/tags/aurora/</link>
+      <pubDate>Fri, 12 May 2023 09:38:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/aurora/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>aws</title>
+      <link>https://hackmysql.com/tags/aws/</link>
+      <pubDate>Fri, 12 May 2023 09:38:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/aws/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>benchmarks</title>
+      <link>https://hackmysql.com/tags/benchmarks/</link>
+      <pubDate>Fri, 12 May 2023 09:38:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/benchmarks/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>mysql</title>
+      <link>https://hackmysql.com/tags/mysql/</link>
+      <pubDate>Fri, 12 May 2023 09:38:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/mysql/</guid>
+      <description></description>
+    </item>
+
     <item>
       <title>blip</title>
       <link>https://hackmysql.com/tags/blip/</link>
@@ -27,15 +63,6 @@
     </item>
 
     <item>
-      <title>mysql</title>
-      <link>https://hackmysql.com/tags/mysql/</link>
-      <pubDate>Tue, 28 Mar 2023 13:40:00 -0400</pubDate>
-
-      <guid>https://hackmysql.com/tags/mysql/</guid>
-      <description></description>
-    </item>
-
-    <item>
       <title>Formula 1</title>
       <link>https://hackmysql.com/tags/formula-1/</link>
       <pubDate>Fri, 03 Feb 2023 16:30:00 -0500</pubDate>
@@ -50,33 +77,6 @@
       <pubDate>Fri, 03 Feb 2023 16:30:00 -0500</pubDate>
 
       <guid>https://hackmysql.com/tags/software-design/</guid>
-      <description></description>
-    </item>
-
-    <item>
-      <title>aurora</title>
-      <link>https://hackmysql.com/tags/aurora/</link>
-      <pubDate>Mon, 02 Jan 2023 20:18:00 -0500</pubDate>
-
-      <guid>https://hackmysql.com/tags/aurora/</guid>
-      <description></description>
-    </item>
-
-    <item>
-      <title>aws</title>
-      <link>https://hackmysql.com/tags/aws/</link>
-      <pubDate>Mon, 02 Jan 2023 20:18:00 -0500</pubDate>
-
-      <guid>https://hackmysql.com/tags/aws/</guid>
-      <description></description>
-    </item>
-
-    <item>
-      <title>benchmarks</title>
-      <link>https://hackmysql.com/tags/benchmarks/</link>
-      <pubDate>Mon, 02 Jan 2023 20:18:00 -0500</pubDate>
-
-      <guid>https://hackmysql.com/tags/benchmarks/</guid>
       <description></description>
     </item>
 

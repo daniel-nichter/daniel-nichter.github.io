@@ -428,7 +428,7 @@ td.gutter {
   font-style:italic;
 }
 
-p.note {
+.note {
   background-color: #f0f7fb;
   border-left: solid 4px #3498db;
   padding: 15px 60px;
@@ -608,4 +608,26 @@ div.book-covers p {
 div.book-covers img {
   height: 100px;
   margin-left: 20px;
+}
+
+div.great-read img {
+  box-shadow: 0 0 75px 0 rgb(0 0 255 / 30%);
+}
+
+.tag {
+  border-radius: 25px;
+  border: 1px solid black;
+  padding: 0 5px 0 5px;
+  margin-right: 10px;
+}
+
+img.withshadow {
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+}
+
+p.figure {
+  padding: 0px;
+  margin-top: -8px;
+  font-size: 0.9em;
+  font-style: italic;
 }
