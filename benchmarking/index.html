@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benchmarking</title>
+  <meta property="og:title" content="Benchmarking" />
+  <meta name="description" content="A primer on the fundamentals of database benchmarking: results, workload, benchmark types, cheats, challenges, and reporting">
+  <meta property="og:description" content="A primer on the fundamentals of database benchmarking: results, workload, benchmark types, cheats, challenges, and reporting">
+
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/benchmarking/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.111.3">
+  <link rel="canonical" href="https://hackmysql.com/benchmarking/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/benchmarking/">Benchmarking</a>
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/level-up/">Level Up</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<main class="page">
+	<div id="art">
+		<article role="main" class="blog-post"><h1 id="benchmarking">Benchmarking</h1>
+<p>This page is a primer on database benchmarking fundamentals: useful results, workload fidelity and complexity, benchmark types, cheats (how to avoid being cheated), challenges, and reporting.
+The focus is fundamentals, not practice, for two reasons.
+First, there seems to be little written on the fundamentals and, consequently, I see engineers misapply the practice, misunderstand the results, or both.
+Second, the practice is database- and benchmark tool-specific, so you can consult the specific documentation of your database and benchmark tool.</p>
+<p>Database benchmarking fundamentals aren&rsquo;t profound or difficult, they&rsquo;re just often glossed over in favor of the results.
+If you&rsquo;re running benchmarks, you need a solid understanding of the fundamentals to produce reliable, high-quality results.
+If you&rsquo;re evaluating results, you need a solid understanding of the fundamentals to interpret and determine if they are useful.</p>
+<h2 id="useful-results">Useful Results</h2>
+<p>Benchmark results are useful when they help you make your database faster or cheaper.
+Here&rsquo;s why.</p>
+<p>A database only needs to be fast enough and affordable enough for the business (security, availability, and other considerations notwithstanding).
+And most engineers work on database performance only when it&rsquo;s too slow or too expensive.
+Even then, &ldquo;slow&rdquo; and &ldquo;expensive&rdquo; are usually determined by complaint: it&rsquo;s slow if users are complaining (else it&rsquo;s fast enough); and it&rsquo;s expensive if managers are complaining (else it&rsquo;s affordable enough).
+Although this situation isn&rsquo;t efficient for the database, it persists because it&rsquo;s efficient for the business.</p>
+<p>It&rsquo;s important to know when (and why) benchmark results are useful because they have many uses, but not all of them are useful to you.
+For example, vendors often tout their products with alluring benchmark results.
+But most times, those results aren&rsquo;t useful to you because they&rsquo;re based on unrealistic workload.
+It&rsquo;s like a car company touting amazing fuel economy by rolling the car down a mountain.</p>
+<p>Benchmarks are fun and interesting, but they&rsquo;re only <em>useful</em> when they help you make your database faster or cheaper.</p>
+<h2 id="workload">Workload</h2>
+<p>Every database benchmark executes a <em>workload</em>: a combination of data, queries, and access patterns.
+Your application (or whatever uses the database) executes a real workload, but a benchmark executes a workload that ranges from synthetic to realistic.</p>
+<p><img src="/img/benchmark_workload.svg" alt="Benchmark Fidelity Spectrum from Synthetic to Realistic"></p>
+<dl>
+<dt>Synthetic workload</dt>
+<dd>A synthetic workload uses schemas, data, and queries that are nothing like any real (or reasonable) workload.
+Nevertheless, synthetic workloads are common and useful (some are even necessary) for reasons explained in the following sections.</dd>
+<dt>Realistic workload</dt>
+<dd>A realistic workload tries to mimic the real workload as closely as possible.
+The key word is &ldquo;tries&rdquo;: there are always differences between real workloads and benchmark workloads.
+But with effort, a benchmark workload can be made so realistic that the differences become negligible.</dd>
+</dl>
+<p>In my experience, most database benchmarks tend towards synthetic.
+That&rsquo;s not surprising because useful results can be gleaned from synthetic workloads, and crafting realistic workloads is very difficult.</p>
+<p>The difference matters most when doing an <a href="#application-specific">application-specific benchmark</a> since, as the name implies, the intent is to benchmark a specific application.
+If the workload isn&rsquo;t realistic with respect to the application, then the results will not tell you something about real application performance.</p>
+<p>Otherwise, most types of database benchmarks can yield useful results with a synthetic workload, and the important factor to consider and control is benchmark complexity.</p>
+<p><img src="/img/benchmark_complexity.svg" alt="Benchmark Complexity Spectrum from Trivial to Difficult"></p>
+<dl>
+<dt>Trivial workload</dt>
+<dd>A trivial workload does not stress the database.
+Trivial is less than easy.
+(&ldquo;Easy&rdquo; would be to the right of &ldquo;Trivial&rdquo; in the diagram.)
+For example, <code>SELECT 1</code> is trivial because it&rsquo;s a virtual no-op (no table or data access).
+Not stressing the database is useful for <a href="#system">system benchmarks</a>.
+For example, to see if MySQL can stress the storage system, a trivial workload executes non-contentious writes just to generate a lot of data on disk.</dd>
+<dt>Difficult workload</dt>
+<dd>A difficult workload stresses many parts of the database.
+For example, a write-only workload is difficult for most relational databases.
+This extreme is useful for <a href="#feature">feature benchmarks</a> when you&rsquo;re trying to stress a particular part of the database.</dd>
+</dl>
+<p>Benchmark tools have options to vary the workload complexity.
+For example, a read-only workload with 10 clients and a 1,000 QPS throttle is easy.
+But increase to 10,000 clients without a throttle and the workload becomes much more difficult for the database.</p>
+<p>Benchmarks and workloads are two sides of the same coin.
+Given a particular type of benchmark, you need a reasonable workload for the benchmark results to be meaningful.
+&ldquo;Reasonable&rdquo;, instead of &ldquo;right&rdquo;, means you can use any type of workload as long as you know why you&rsquo;re combining the two—and document it so future engineers will know why, too.
+As the following six types of benchmarks will show, there are use cases for every type of workload.</p>
+<h2 id="types">Types</h2>
+<p class="note">
+For each type of benchmark, the diagram shows the expected workload.
+</p>
+<h3 id="database">Database</h3>
+<p>Does a database benchmark say something about the database, or the workload?
+The former is the default, and usually implicit, presumption: if you just &ldquo;benchmark MySQL&rdquo;, the results say something about <em>MySQL</em> (the database), not the workload.
+It&rsquo;s not uncommon to hear or read about database benchmarks with no details about the workload.
+But there is a meaningful difference in the distinction, which is why there are two sub-types of database benchmarks: general and application-specific.</p>
+<h4 id="general">General</h4>
+<p><img src="/img/bench_db1.svg" alt="General database benchmark fidelity and complexity"></p>
+<p>A <em>general database benchmark</em> answers the question &ldquo;What kind of performance is possible with this database?&rdquo;
+The expected workload is balanced in an attempt to be general.</p>
+<p>Engineers want (and need) to know what kind of performance a database can deliver.
+Putting aside the fact that performance is complex and multifaceted, it&rsquo;s fair to ask if it&rsquo;s possible for a database to achieve 500,000 reads/second?
+Or 100,000 writes/second?
+Or single-digit millisecond commit latency?
+General database benchmarks answer these kinds of general, high-level questions.</p>
+<p>Since the benchmark is general, the results are also general, which raises the question: can general results be <a href="#useful-results">useful</a>?
+In my experience, general results are usually not useful and, rather, they <a href="/post/are-aurora-performance-claims-true/">raise more questions and issues</a> than they answer.
+For example, Amazon Aurora advertises 100,000 UPDATE/s (or sometimes &ldquo;writes/&rdquo;), which sounds impressive, but that doesn&rsquo;t mean <em>you</em> will see that kind of performance in your application.
+At the very least, general database results give us some idea of what the database can do.
+Amazon doesn&rsquo;t advertise 10,000 or 1 million UPDATE/s—the vague performance potential is around 100,000 UPDATE/s.</p>
+<p>To make a general database benchmark more meaningful, you need to ask a more specific question, like: &ldquo;Can the database achieve 500,000 reads/second with 100 GB of hot data, 16 cores, 64 GB of RAM, 2000 clients, and a P999 response time of 50 milliseconds with the following schema&hellip;&rdquo;
+But, not ironically, the more specific the question, the less general the benchmark, which leads us to the second sub-type of database benchmark: application-specific.</p>
+<h4 id="application-specific">Application-specific</h4>
+<p><img src="/img/bench_db2.svg" alt="Application-specific database benchmark fidelity and complexity"></p>
+<p>An <em>application-specific database benchmark</em> answers the question &ldquo;What kind of performance is possible with my application on this database?&rdquo;
+The expected workload is as realistic as possible, and the more difficult the better (without overloading the database).</p>
+<p>Application-specific benchmark results are the most useful because they mimic your real application workload.
+Unfortunately, though, this type of benchmark is rare because it&rsquo;s not easy to recreate an application workload.
+But that&rsquo;s why I created Finch: to make writing application-specific benchmarks as easy as possible.</p>
+<p>The only caveat to application-specific benchmarks is that they&rsquo;re not useful to other people.
+For example, Amazon wrote in the Aurora white paper, <a href="https://www.amazon.science/publications/amazon-aurora-design-considerations-for-high-throughput-cloud-native-relational-databases">“Amazon Aurora: Design considerations for high throughput cloud-native relational databases”</a>, that it has many customers with many databases and tables, and that&rsquo;s what Aurora excels at handling.
+But that&rsquo;s application-specific, and it&rsquo;s the opposite of many small databases with only one database, as typically found in microservice environments.
+That difference explains why, for example, you probably won&rsquo;t get 100,000 UPDATE/s (its performance claim) out of a single table.
+(Actually, you can if you do it just right, but now we&rsquo;re talking about a third and different application-specific setup.)</p>
+<h3 id="comparison">Comparison</h3>
+<p><img src="/img/bench_comparison.svg" alt="Comparison database benchmark fidelity and complexity"></p>
+<p>A <em>comparison benchmark</em> answers the question &ldquo;How does A compare to B?&rdquo;, or &ldquo;Which is faster: A or B?&rdquo;
+The expected workload is general but difficult to make the comparison interesting.</p>
+<p>Comparison benchmarks are like general database benchmarks but with a purpose: to compare databases.
+As such, the workload should be more difficult, else the comparison might not yield any interesting differences.
+For example, all databases (that I know of) can handle 100 writes/second—that&rsquo;s trivial—but what about 100,000 writes/second?
+That why Amazon Aurora markets that result: it&rsquo;s nontrivial write throughput.
+(But read my long blog post, <a href="/post/are-aurora-performance-claims-true/">Are Aurora Performance Claims True?</a>.)</p>
+<p>Since comparison benchmark are the go-to for marketing, they&rsquo;re the most susceptible to <a href="#cheats">cheating</a>.
+When reading about comparison benchmark results, be <em>extra</em> skeptical and pay extra attention to the details.</p>
+<p>Although typically used to prove &ldquo;who&rsquo;s faster?&rdquo;, not all comparison benchmarks are competitive.
+Some are positive in the sense of demonstrating progress, like the countless MySQL major version comparisons over the decades.
+We like to know if (and expect that) 8.0 is faster than 5.7.</p>
+<p>Comparison benchmarks might highlight particular results or differences, like <a href="/post/commit-latency-aurora-vs-rds-mysql-8.0/">commit latency</a>, but they&rsquo;re not meant to be feature-specific.
+That would be a <a href="#feature">feature benchmark</a>, or possibly a regression benchmark in a specific part of the databases.</p>
+<h3 id="regression">Regression</h3>
+<p><img src="/img/bench_regression.svg" alt="Regression database benchmark fidelity and complexity"></p>
+<p>A <em>regression benchmark</em> answers the question &ldquo;Have changes made the database slower?&rdquo;
+The expected workload is somewhat realistic (so the results are meaningful) but easy (to automate and run the benchmark easily).</p>
+<p>Regression benchmarks tend to be simpler and automated, and the results are only useful when they&rsquo;re worse (slower) than some baseline.
+The results are only useful to you and, perhaps, only one application or codebase.
+That&rsquo;s why you almost never seen benchmark results published: they&rsquo;re just an internal development detail.</p>
+<h3 id="system">System</h3>
+<p><img src="/img/bench_system.svg" alt="System database benchmark fidelity and complexity"></p>
+<p>A <em>system benchmark</em> answers the question &ldquo;How well is the database utilizing the system?&rdquo;, or &ldquo;How well is the system performing for the database?&rdquo;
+The expected workload is synthetic and trivial for the database because the focus is system.</p>
+<p>Most database benchmarks focus on the database server and presume the system (hardware and OS/kernel) is either optimal or a nonissue.
+That&rsquo;s a safe presumption for most systems, but database developers and experts need to reverse that: focus on the system and presume the database is either optimal or a nonissue.
+For example, you upgrade the storage bus from SATA to NVMe: is the database utilizing the new storage system capacity?
+Or, you change the memory allocator library used by the databases: does this affect memory usage?
+Or, you fiddle with NUMA settings: how does this affect database performance?</p>
+<p><a href="https://www.percona.com/blog/testing-intel-ssd-910/">Testing Intel® SSD 910</a> by Vadim at Percona is a good example.</p>
+<p>The database is complex, but the system is even more complex, which is why system benchmarks are typically done by database developers or experts.
+There is also interaction between the two: if the database isn&rsquo;t fully utilizing the system, is the problem the database or the system?
+That question can be exceedingly difficult to answer.</p>
+<h3 id="feature">Feature</h3>
+<p><img src="/img/bench_feature.svg" alt="Feature database benchmark fidelity and complexity"></p>
+<p>A <em>feature benchmark</em> answers the question &ldquo;How does this feature affect performance?&rdquo;
+The expected workload is completely synthetic (to isolate the feature) and very difficult (to stress the feature).</p>
+<p>A feature benchmark is like a <a href="#comparison">comparison benchmark</a> but with a singular focus: one feature of the database.
+&ldquo;Feature&rdquo; is used in a broad sense.
+It can mean an optional feature that the database doesn&rsquo;t need, or it can be a core subsystem that database cannot work without.
+With MySQL, for example, the adaptive hash index (AHI) is an optional feature: turning it on or off doesn&rsquo;t matter.
+But the InnoDB redo log is a core subsystem that MySQL cannot work without.
+More examples of MySQL features are:</p>
+<ul>
+<li>Doublewrite buffer</li>
+<li>Binary logging</li>
+<li>Query cache</li>
+<li>Log file size</li>
+<li>LRU scan depth</li>
+</ul>
+<p>And many more.
+A feature benchmark examines the affects of such features on performance, and they&rsquo;re more difficult to create and run than they seem.
+For example, it&rsquo;s often debated whether the AHI helps or hurts performance.
+How do you benchmark this?
+The first idea is to run benchmarks with AHI on and compare the results to the same benchmark with AHI off.
+But how do you know if the workload made heavy use of the AHI or not?</p>
+<p>Other features are even trickier to isolate and benchmark, like LRU scan depth: see <a href="/post/mysql-lru-flushing-io-capacity/">MySQL LRU Flushing and I/O Capacity</a> to get a sense of the craziness involved.
+Consequently, like system benchmarks, feature benchmarks are typically done by database developers or experts.</p>
+<h3 id="limit">Limit</h3>
+<p><img src="/img/bench_limit.svg" alt="Limit database benchmark fidelity and complexity"></p>
+<p>A <em>limit benchmark</em> answers the question &ldquo;Is it possible for the database to&hellip;&rdquo;
+The expected workload is synthetic and beyond difficult to test the limits.</p>
+<p>Limit benchmarks are exceptionally rare because they&rsquo;re exceptionally difficult to produce.
+Reaching a limit does not mean hammering the database until performance stops increasing (or decreases).
+That&rsquo;s just overloading the database.
+A limit benchmark is focused liked a feature benchmark; it&rsquo;s testing <em>a limit</em>, not &ldquo;the limits&rdquo;.
+<a href="https://www.percona.com/blog/mysql-challenge-100k-connections/">MySQL Challenge: 100k Connections</a> is a good example: focused and way beyond the limit for most databases.
+Another example would be provisioning maximum IOPS in the cloud and attempting to achieve that limit.
+I&rsquo;ve done that, but failed to reach the limit, only to be told by the company that the database can&rsquo;t utilize maximum provisioned IOPS.
+(Why allow users to provision IOPS the database can&rsquo;t use?)</p>
+<p>Limit benchmarks are special because the results are more about the limit than the database.
+As such, the results tend to be useful only to database developers and researchers—not even DBAs.</p>
+<h2 id="cheats">Cheats</h2>
+<p>Benchmarks can be crafted to yield almost any results.
+This allows unscrupulous characters to cheat and make almost any performance claim.
+But fortunately for the rest of us, computers are finite deterministic machines, so the cheats are nearly impossible to hide when you know what to look for:</p>
+<ul>
+<li>Using a trivial workload</li>
+<li>Over-provisioning the hardware</li>
+<li>Disabling durability (for ACID-complaint data stores)</li>
+<li>Not configuring the databases (using out of the box defaults)</li>
+<li>Using specialized hardware/OS not for sale (or <em>extremely</em> expensive)</li>
+<li>Running the benchmark for a matter of seconds (or less than 5 minutes)</li>
+<li>Not providing all details of the benchmark: tool, workload, database configuration, etc.</li>
+<li>Enabling nonstandard caching (e.g. enabling query cache in MySQL 5.7 that is off by default)</li>
+</ul>
+<p>There&rsquo;s another &ldquo;pseudo-cheat&rdquo; to guard against: hype, claiming revolutionary breakthroughs, advancements, sliver bullets, etc.
+That&rsquo;s not a technical cheat like the others; it&rsquo;s more like a psychological cheat because people are inclined to believe what they want (despite evidence to the contrary), and we want amazing performance.
+This is common in the database industry; there&rsquo;s always some vendor making grandiose claims.
+The reality, however, is that databases improve slowly—on the order of years and decades.
+And the reason is that <em>true</em> durability at scale is very difficult, and a distributed database is even more difficult.</p>
+<p class="warning">
+Benchmarks can be made to report almost any results.<br>
+Don't believe any results until you have verified all the details.
+</p>
+<p>In the MySQL industry, I&rsquo;ve seen a lot of hype come and go over the last 20 years.
+What endures are companies and products that craft honest benchmarks (no cheats, no hype) and let the results speak for themselves.</p>
+<h2 id="challenges">Challenges</h2>
+<p>Benchmarking is difficult and time-consuming.
+It&rsquo;s scientific experimentation (laboratory work), and as any experimental scientist will tell you: controlling the variables and getting good, reproducible results is painstaking work.
+If you&rsquo;re new to benchmarking, expect to invest significant time and effort—and make mistakes.
+If you find the work difficult, then you&rsquo;re probably doing it right.</p>
+<p>At a high level, the primary challenge of benchmarking is <em>providing answers</em>.
+(It&rsquo;s no coincidence that each <a href="#types">benchmark type</a> starts with &ldquo;A &hellip; benchmark answers the question&hellip;&rdquo;)
+It&rsquo;s a field of work where others can say, &ldquo;I don&rsquo;t know, you tell me.&rdquo;
+For example, when I say &ldquo;configure the database properly and reasonably&rdquo;, I don&rsquo;t know what that means; you tell me—it&rsquo;s your experiment, your benchmark.
+But a starting point to the question is probably the type of benchmark and what you&rsquo;re trying to show or prove with it.</p>
+<p>To get philosophical for a moment, with benchmarking you&rsquo;re attempting to establish  <em>truth</em>, justified true knowledge.
+That is difficult because databases, computers, and performance are complicated; and any claims are easily undercut by poor methodology.
+This isn&rsquo;t overly dramatic when you realize that businesses make decisions based on what they believe to be true, and those decisions influence &ldquo;big money&rdquo;.
+Why do you think Amazon Aurora repeats its 5X performance claim every where, every time it can?</p>
+<p>Philosophy aside, the following is a non-complete list of technical challenges that make database benchmarking difficult.</p>
+<dl>
+<dt>Database configuration</dt>
+<dd>Did you properly and reasonably configure the database?
+Did that configuration hold or revert after restart the database?
+Did you set a session variable instead of a global variable?
+The wrong configuration can ruin a benchmark, so you must ensure that the database is properly and reasonably configured every time, all the time.
+(Humans are forgetful and databases are complex, so this is easier said than done.)</dd>
+<dt>System configuration</dt>
+<dd>Make sure the whole system (hardware, OS, kernel) is properly and reasonably configured.
+This is the same challenge as database configuration but more challenging because system configuration is vast and nuanced.
+If you&rsquo;re unsure, at least document the makes, models, and versions of the system: CPUs, RAM, storage bus and devices, OS, kernel, and any relevant cloud resources (like instance class types and sizes).</dd>
+<dt>Fake data</dt>
+<dd>If you can load real data (from a production database backup, for example), that&rsquo;s ideal.
+But most likely you need to load tables with fake data, and that poses a challenge: generating fake data for indexed columns that produces reasonable cardinality and selectivity.
+For example, don&rsquo;t fill an indexed column with the same value (cardinality = 1), or unique values if the index is nonunique (cardinality too high).
+This is easier said than done because benchmark tools might not have ways to control fake data generation.
+If nothing else, at least be aware of (and possibly document) how the benchmark tool generates data, and what the resulting index statics are like.</dd>
+<dt>Data access</dt>
+<dd>When accessing data, use a reasonable data distribution.
+<a href="https://www.percona.com/blog/sysbench-and-the-random-distribution-effect/">Sysbench and the Random Distribution Effect</a> is a great example.
+In the natural sciences, a Gaussian distribution is so common that it&rsquo;s called the normal distribution.
+But a database is artificial, so it might not be a reasonable method of data access.
+This challenge goes hand in hand with fake data generation and cardinality.
+Ideally, the data and its access make sense <em>together</em>.
+That doesn&rsquo;t happen automatically; it&rsquo;s something you have to consciously and carefully create.</dd>
+<dt>Noisy neighbors</dt>
+<dd>Ensure the server isn&rsquo;t busy doing other work that makes your benchmark artificially slow.
+(Or, make sure you didn&rsquo;t forget to stop previous benchmarks! It happens to all of us.)
+Ideally, you benchmark on dedicated bare metal, but that&rsquo;s increasingly rare and expensive.
+In the cloud, shared tenancy is the norm, so you never know if your benchmark is running on an idle server, or a busy server.
+(After all, you&rsquo;re doing the same to others: running benchmarks makes <em>you</em> the noisy neighbor.)</dd>
+<dt>Power and temperature</dt>
+<dd>Make sure the hardware isn&rsquo;t adjusting CPU frequency for power saving or thermal regulation.
+In case you didn&rsquo;t know: modern CPUs tend <em>not</em> to run at full speed; they vary to save power and reduce heat.
+This even true for enterprise-grade rack servers because data center power and temperature control are critical.
+(I used to work in a data center.)
+If you&rsquo;re running your own bare metal hardware, check the BIOS settings (or, many systems can report and control this through the OS).</dd>
+<dt>Runtime</dt>
+<dd>Run the benchmark for long enough to account for warm up, filling (and recycling) logs, resource credits and burst limits, and so forth.
+These things explain why performance over 10 minutes can be quite different than performance over 1 hour or 1 day.
+It&rsquo;s generally not necessary to run a benchmark for more than a matter of hours unless your focus is less about the database and more about fluctuations in the environment where the database is running.</dd>
+<dt>Credits and burst limits</dt>
+<dd>In the cloud, CPU and I/O usage can have credits and burst limits.
+The tricky part is how they&rsquo;re consumed or replenished over time.
+Avoid short runs that don&rsquo;t exhaust credits or exceed burst limits.
+Some people can run fast for 10 minutes, but nobody can sustain that pace for 1 day.
+The same is often true for databases.</dd>
+<dt>Errors</dt>
+<dd>Benchmarks shouldn&rsquo;t spew errors, and they certainly shouldn&rsquo;t ignore them.
+A tiny number of errors probably doesn&rsquo;t matter, but any noticeable amount casts down on the workload because errors can artificially increase or decrease query response time.
+For example, if an error occurs immediately but is ignored, it can look like the query was very fast, which isn&rsquo;t true because it didn&rsquo;t really execute.
+As always there are exceptions, like when you&rsquo;re intentionally causing or injecting errors to measure the affects on performance.</dd>
+</dl>
+<p>Another special type of challenge is what I call &ldquo;apples to apples with oranges and bananas&rdquo;.
+This refers specifically to <a href="#comparison">comparison benchmarks</a> between two different products.
+The different products are the oranges and bananas, but the benchmark is supposed to be a fair &ldquo;apples to apples&rdquo; comparison.
+But how do you do that with different products?
+The simple, unscientific answer: you do the best you can and document the important differences.
+For example, if one product has a built-in cache that&rsquo;s core to its design, but the other product does not, that&rsquo;s a significant difference.
+Or, if one product uses clustered indexes (MySQL) and the other uses heap tables (PostgreSQL), that&rsquo;s a significant difference.</p>
+<h2 id="reporting">Reporting</h2>
+<p>A good benchmark needs great reporting.
+But reporting benchmark results is a fair amount of work, too.
+So again: if you&rsquo;re new to benchmarking, expect to invest significant time and effort—and make mistakes.</p>
+<p>I won&rsquo;t belabor this topic with paragraphs.
+It&rsquo;s sufficient to list the main points because they&rsquo;re not difficult, they just need to be made clear and applied.</p>
+<p><em><strong>Report</strong></em></p>
+<ul>
+<li>Provide a summary of all key results.
+Not everyone will read or study your benchmark report, especially when it&rsquo;s long and detailed.
+<a href="http://dimitrik.free.fr/blog/posts/mysql-80-innodb-checkpointing.html">MySQL Performance : Understanding InnoDB IO Internals &amp; &ldquo;Checkpointing&rdquo;</a> is an example: long, detailed, summary provided.
+It also helps to keep in mind that &ldquo;a picture is worth a thousand words&rdquo;: a single graph/chart can take a long time to &ldquo;read&rdquo; and understand.</li>
+<li>Explain charts that aren&rsquo;t completely obvious; explain what the chart is &ldquo;saying&rdquo;.</li>
+<li>Provide the database configuration, or enough details about key configuration settings/changes.</li>
+<li>If possible, provide the raw data on GitHub (or somewhere public and stable) in CSV or some very common format; don&rsquo;t use custom or binary formats.</li>
+<li>Provide enough information and detail for other engineers (especially <em>future</em> engineers many years later) to accurately reproduce the benchmark.
+Reproducibility is the goal for both you and other engineers: a truly great, high-quality, professional benchmark can reproduce the same results for different engineers at different times.</li>
+</ul>
+<p><em><strong>Stats</strong></em></p>
+<p>Sometimes it&rsquo;s sufficient to provide only charts/graphs, but if you need to provide numbers, include these statistics:</p>
+<ul>
+<li>Meta:
+<ul>
+<li>Runtime (seconds)</li>
+<li>Interval number (if periodic stats)</li>
+<li>MySQL clients/connections (count)</li>
+<li>Errors (rate or count)</li>
+</ul>
+</li>
+<li>For all queries, reads, writes, and commit:
+<ul>
+<li>QPS (all, read, write) / TPS (COMMIT)</li>
+<li>minimum</li>
+<li>P95, P99, or P999 (or user configurable)</li>
+<li>maximum</li>
+</ul>
+</li>
+</ul>
+<p>There might be more (like event count or events/s), but are the minimum.</p>
+<p>Don&rsquo;t mix units: use microseconds or milliseconds.</p>
+<p>Average, mean, and median are not included because they&rsquo;re not useful.
+Although average, in particular, is commonly reported, it&rsquo;s not useful because no one experiences the average.
+Percentiles are better; P95 at minimum.
+If possible, a histogram is even better because it visualizes the whole distribution of response time.</p>
+<p><em><strong>Graphs</strong></em></p>
+<ul>
+<li>Keep graphs simple, focused.</li>
+<li>Use multiple graphs; don&rsquo;t overcrowd a graph.</li>
+<li>Make graphs big enough to read easily; link to full-size image.</li>
+<li>Use same graph size if possible (so X axes line up).</li>
+<li>Label axes, series, and units.</li>
+<li>Start Y-axis at zero.</li>
+</ul>
+<hr>
+<p>I&rsquo;ll say it a third and final time: if you&rsquo;re new to benchmarking, expect to invest significant time and effort—and make mistakes.
+But it&rsquo;s worth the time and effort because a good benchmark and its results are like a mystery told and revealed, and people love a good mystery.
+For inspiration, browse the <a href="https://www.percona.com/blog/category/benchmarks/">vault of Percona benchmarks</a>.</p>
+</article>
+	</div>
+	<nav id="toc">
+		<em><a href="#">Benchmarking</a></em>
+		<hr>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#useful-results">Useful Results</a></li>
+    <li><a href="#workload">Workload</a></li>
+    <li><a href="#types">Types</a>
+      <ul>
+        <li><a href="#database">Database</a></li>
+        <li><a href="#comparison">Comparison</a></li>
+        <li><a href="#regression">Regression</a></li>
+        <li><a href="#system">System</a></li>
+        <li><a href="#feature">Feature</a></li>
+        <li><a href="#limit">Limit</a></li>
+      </ul>
+    </li>
+    <li><a href="#cheats">Cheats</a></li>
+    <li><a href="#challenges">Challenges</a></li>
+    <li><a href="#reporting">Reporting</a></li>
+  </ul>
+</nav>
+	</nav>
+</main>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2023 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

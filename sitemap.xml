@@ -2,6 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/benchmarking/</loc>
+    <lastmod>2023-05-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/benchmarks/</loc>
+    <lastmod>2023-05-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2023-05-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2023-05-28T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/post/are-aurora-performance-claims-true/</loc>
     <lastmod>2023-05-12T09:38:00-04:00</lastmod>
   </url><url>
@@ -11,19 +23,10 @@
     <loc>https://hackmysql.com/tags/aws/</loc>
     <lastmod>2023-05-12T09:38:00-04:00</lastmod>
   </url><url>
-    <loc>https://hackmysql.com/tags/benchmarks/</loc>
-    <lastmod>2023-05-12T09:38:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2023-05-12T09:38:00-04:00</lastmod>
-  </url><url>
     <loc>https://hackmysql.com/tags/mysql/</loc>
     <lastmod>2023-05-12T09:38:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2023-05-12T09:38:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2023-05-12T09:38:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/announcing-blip-mysql-monitor/</loc>
