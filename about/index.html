@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://hackmysql.com/about/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.111.3">
+  <meta name="generator" content="Hugo 0.115.0">
   <link rel="canonical" href="https://hackmysql.com/about/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -43,93 +43,93 @@
 <img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
 </div>
       <ul class="nav navbar-nav navbar-left">
-
-
+        
+          
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-
+                
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-
+                
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-
+                
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-
+                
                   <a href="/benchmarking/">Benchmarking</a>
-
+                
                   <a href="/eng/career-advice/">Career Advice</a>
-
+                
                   <a href="/eng/database-operations-manual/">Database Operations Manual</a>
-
+                
                   <a href="/eng/write/">How to Write Well</a>
-
+                
                   <a href="/eng/level-up/">Level Up</a>
-
+                
                   <a href="/eng/percentiles/">Percentiles</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-
+                
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-
+                
                   <a href="/golang/go-single-character-names/">Go Single-character Names</a>
-
+                
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li>
               <a title="Help" href="/help/">Help</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-
+                
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-
+                
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-
+                
                   <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
-
+                
               </div>
             </li>
+          
+        
 
-
-
-
+        
       </ul>
 	</div>
   </div>
 </nav>
 
-
+    
 <main class="page">
 	<div id="art">
 		<article role="main" class="blog-post"><h2 id="hack-mysql">Hack MySQL</h2>
@@ -189,8 +189,15 @@ Amazingly, this site still gets hits for these tools, which is why stub pages li
 The current version of this site has only the last 6 years of content, but I&rsquo;ve been writing here for almost 20 years (since 2005).
 This is a niche site, but it has a few thousand visitors every month.
 More importantly for me, many of the posts and pages here allow me to &ldquo;write once, teach many&rdquo; since I spend a good portion of my time training new engineers.</p>
+<h3 id="check-finch">✓ Finch</h3>
+<p><a href="https://github.com/square/finch">Finch</a> is my latest open source contribution: a modern MySQL benchmarking tool.
+Like most long-time MySQL users, I&rsquo;ve used sysbench for almost 20 years, but I needed (and wanted) a much easier and more flexible benchmark tool.
+At work, I need to evaluate (benchmark) many different types of databases and workloads.
+<a href="/post/commit-latency-aurora-vs-rds-mysql-8.0/">COMMIT Latency: Aurora vs. RDS MySQL 8.0</a> is a good example.
+I made Finch to make this work exceptionally easy so I could fiddle less with the tool and focus more on the business results.
+Since I had the time, I spent 8 months polishing Finch into an incredibly powerful yet easy and flexible tool.</p>
 <h3 id="check-blip">✓ Blip</h3>
-<p><a href="https://github.com/cashapp/blip">Blip</a> is my latest open source contribution: the most advanced MySQL monitor ever written.
+<p><a href="https://github.com/cashapp/blip">Blip</a> is my second to latest open source contribution: the most advanced MySQL monitor ever written.
 Check out the <a href="https://cashapp.github.io/blip/">Blip docs</a>.
 I hope Blip will become the MySQL monitor that everyone uses.
 That&rsquo;ll take a long time, so let&rsquo;s check back in a few years.</p>
@@ -209,7 +216,7 @@ Spin Cycle is a powerful, reliable, and reusable workhorse that coordinates most
 <p><a href="https://github.com/square/rce-agent">rce-agent</a> is a highly secure remote command execution (RCE) client-server developed by me and my colleagues at Square.
 At a fintech company, even <code>ssh</code> isn&rsquo;t secure enough, so this little but important service takes RCE security to the extreme.</p>
 <h3 id="check-go-testdeep">✓ go-test/deep</h3>
-<p>Used by over 17,000 other projects, <a href="https://github.com/go-test/deep">go-test/deep</a> is a surprisingly popular little package, probably because it makes Go testing so much easier, which is why I developed it.
+<p>Used by over 20,000 (!) other projects, <a href="https://github.com/go-test/deep">go-test/deep</a> is a surprisingly popular little package, probably because it makes Go testing so much easier, which is why I developed it.
 It&rsquo;s a tiny, single function package, but the internal complexity is 🤯 because it requires plumbing nearly the full depth of Go reflection.</p>
 <h3 id="check-go-mysql">✓ go-mysql</h3>
 <p>With <a href="https://github.com/go-mysql/">go-mysql</a> I had hoped to create <em>the</em> go-to project for MySQL-related Go modules.
@@ -275,6 +282,7 @@ But since isn&rsquo;t computer-related, I won&rsquo;t digress on this web site.<
         <li><a href="#check-percona-monitoring-and-management">✓ Percona Monitoring and Management</a></li>
         <li><a href="#check-hackmysql-tools">✓ HackMySQL Tools</a></li>
         <li><a href="#check-hackmysql-content">✓ HackMySQL Content</a></li>
+        <li><a href="#check-finch">✓ Finch</a></li>
         <li><a href="#check-blip">✓ Blip</a></li>
         <li><a href="#check-etre">✓ Etre</a></li>
         <li><a href="#check-spin-cycle">✓ Spin Cycle</a></li>

@@ -12,31 +12,31 @@
       <title>Benchmarking</title>
       <link>https://hackmysql.com/benchmarking/</link>
       <pubDate>Sun, 28 May 2023 00:00:00 +0000</pubDate>
-
+      
       <guid>https://hackmysql.com/benchmarking/</guid>
       <description>A primer on the fundamentals of database benchmarking: results, workload, benchmark types, cheats, challenges, and reporting</description>
     </item>
-
+    
     <item>
       <title>Are Aurora Performance Claims True?</title>
       <link>https://hackmysql.com/post/are-aurora-performance-claims-true/</link>
       <pubDate>Fri, 12 May 2023 09:38:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/are-aurora-performance-claims-true/</guid>
       <description>&lt;p&gt;Amazon claims that Aurora has &amp;ldquo;Up to 5X the throughput of MySQL&amp;rdquo;.
 Is it true?
 It wasn&amp;rsquo;t easy to find the truth, but I kept digging until I found it.
 This is a long read; let&amp;rsquo;s chase the rabbit all the way down the hole.&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>COMMIT Latency: Aurora vs. RDS MySQL 8.0</title>
       <link>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</link>
       <pubDate>Mon, 02 Jan 2023 20:18:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/commit-latency-aurora-vs-rds-mysql-8.0/</guid>
       <description>&lt;p&gt;Let&amp;rsquo;s examine &lt;code&gt;COMMIT&lt;/code&gt; latency on Aurora v2 (MySQL 5.7) vs. Aurora v3 (MySQL 8.0) vs. RDS MySQL 8.0 2-AZ vs. RDS MySQL 8.0 3-AZ &amp;ldquo;cluster&amp;rdquo;.&lt;/p&gt;</description>
     </item>
-
+    
   </channel>
 </rss>

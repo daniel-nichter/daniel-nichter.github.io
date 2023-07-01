@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://hackmysql.com/benchmarking/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.111.3">
+  <meta name="generator" content="Hugo 0.115.0">
   <link rel="canonical" href="https://hackmysql.com/benchmarking/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -43,93 +43,93 @@
 <img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
 </div>
       <ul class="nav navbar-nav navbar-left">
-
-
+        
+          
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-
+                
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-
+                
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-
+                
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-
+                
                   <a href="/benchmarking/">Benchmarking</a>
-
+                
                   <a href="/eng/career-advice/">Career Advice</a>
-
+                
                   <a href="/eng/database-operations-manual/">Database Operations Manual</a>
-
+                
                   <a href="/eng/write/">How to Write Well</a>
-
+                
                   <a href="/eng/level-up/">Level Up</a>
-
+                
                   <a href="/eng/percentiles/">Percentiles</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-
+                
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-
+                
                   <a href="/golang/go-single-character-names/">Go Single-character Names</a>
-
+                
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li>
               <a title="Help" href="/help/">Help</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-
+                
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-
+                
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-
+                
                   <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
-
+                
               </div>
             </li>
+          
+        
 
-
-
-
+        
       </ul>
 	</div>
   </div>
 </nav>
 
-
+    
 <main class="page">
 	<div id="art">
 		<article role="main" class="blog-post"><h1 id="benchmarking">Benchmarking</h1>
@@ -222,7 +222,7 @@ But, not ironically, the more specific the question, the less general the benchm
 The expected workload is as realistic as possible, and the more difficult the better (without overloading the database).</p>
 <p>Application-specific benchmark results are the most useful because they mimic your real application workload.
 Unfortunately, though, this type of benchmark is rare because it&rsquo;s not easy to recreate an application workload.
-But that&rsquo;s why I created Finch: to make writing application-specific benchmarks as easy as possible.</p>
+But that&rsquo;s why I created <a href="https://github.com/square/finch">Finch</a>: to make writing application-specific benchmarks as easy as possible.</p>
 <p>The only caveat to application-specific benchmarks is that they&rsquo;re not useful to other people.
 For example, Amazon wrote in the Aurora white paper, <a href="https://www.amazon.science/publications/amazon-aurora-design-considerations-for-high-throughput-cloud-native-relational-databases">“Amazon Aurora: Design considerations for high throughput cloud-native relational databases”</a>, that it has many customers with many databases and tables, and that&rsquo;s what Aurora excels at handling.
 But that&rsquo;s application-specific, and it&rsquo;s the opposite of many small databases with only one database, as typically found in microservice environments.

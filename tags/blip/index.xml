@@ -12,24 +12,24 @@
       <title>Announcing Blip: A New MySQL Monitor</title>
       <link>https://hackmysql.com/post/announcing-blip-mysql-monitor/</link>
       <pubDate>Tue, 28 Mar 2023 13:40:00 -0400</pubDate>
-
+      
       <guid>https://hackmysql.com/post/announcing-blip-mysql-monitor/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://github.com/cashapp/blip&#34; target=&#34;_blank&#34;&gt;Blip&lt;/a&gt; is a new MySQL monitor that collects and reports server metrics.
 But wasn&amp;rsquo;t this problem solved long ago?
 Not really&amp;hellip;&lt;/p&gt;</description>
     </item>
-
+    
     <item>
       <title>Blip: A New Open Source MySQL Metrics Collector</title>
       <link>https://hackmysql.com/post/blip-v1.0.0-released/</link>
       <pubDate>Thu, 22 Dec 2022 12:55:00 -0500</pubDate>
-
+      
       <guid>https://hackmysql.com/post/blip-v1.0.0-released/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://github.com/cashapp/blip&#34;&gt;Blip&lt;/a&gt; is a new open source MySQL metrics collector, or &amp;ldquo;MySQL monitor&amp;rdquo; for short.
 But isn&amp;rsquo;t collecting MySQL metrics easy?
 And don&amp;rsquo;t we already have some open source MySQL monitors?
 Let&amp;rsquo;s take a trip down &lt;a href=&#34;https://www.merriam-webster.com/dictionary/memory%20lane&#34;&gt;memory lane&lt;/a&gt;&amp;hellip;&lt;/p&gt;</description>
     </item>
-
+    
   </channel>
 </rss>

@@ -632,3 +632,7 @@ p.figure {
   font-style: italic;
   color: gray;
 }
+
+div.highlight {
+  overflow: scroll;
+}

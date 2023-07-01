@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://hackmysql.com/post/designing-tools-for-integration/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
-  <meta name="generator" content="Hugo 0.111.3">
+  <meta name="generator" content="Hugo 0.115.0">
   <link rel="canonical" href="https://hackmysql.com/post/designing-tools-for-integration/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
@@ -43,93 +43,93 @@
 <img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
 </div>
       <ul class="nav navbar-nav navbar-left">
-
-
+        
+          
             <li>
               <a title="About" href="/about/">About</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
               <div class="navlinks-children">
-
+                
                   <a href="/archive/mysqlreport/">mysqlreport</a>
-
+                
                   <a href="/archive/mysqlsla/">mysqlsla</a>
-
+                
                   <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
               <div class="navlinks-children">
-
+                
                   <a href="/benchmarking/">Benchmarking</a>
-
+                
                   <a href="/eng/career-advice/">Career Advice</a>
-
+                
                   <a href="/eng/database-operations-manual/">Database Operations Manual</a>
-
+                
                   <a href="/eng/write/">How to Write Well</a>
-
+                
                   <a href="/eng/level-up/">Level Up</a>
-
+                
                   <a href="/eng/percentiles/">Percentiles</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">go</a>
               <div class="navlinks-children">
-
+                
                   <a href="/golang/go-antipatterns/">Go Antipatterns</a>
-
+                
                   <a href="/golang/go-single-character-names/">Go Single-character Names</a>
-
+                
                   <a href="/golang/idiomatic-go/">Idiomatic Go</a>
-
+                
               </div>
             </li>
-
-
-
+          
+        
+          
             <li>
               <a title="Help" href="/help/">Help</a>
             </li>
-
-
-
+          
+        
+          
             <li class="navlinks-container">
               <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
               <div class="navlinks-children">
-
+                
                   <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
-
+                
                   <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
-
+                
                   <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
-
+                
               </div>
             </li>
+          
+        
 
-
-
-
+        
       </ul>
 	</div>
   </div>
 </nav>
 
-
+    
 <div class="container">
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -137,19 +137,19 @@
         <h1 class="post-title">Designing Tools for Integration</h1>
         <h3 class="post-subtitle">Using factories, hooks, and context to make tools extensible and customizable</h2>
         <div class="post-meta">
-
-
+  
+  
   <div>Sep 5, 2017</div>
   <div class="blog-tags">
-
-
+    
+      
         <a href="/tags/software-design">#software design</a>
-
+      
         <a href="/tags/tools">#tools</a>
-
+      
         <a href="/tags/integration">#integration</a>
-
-
+      
+    
   </div>
 </div>
 
@@ -212,12 +212,12 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Out</span>       <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Writer</span> <span style="color:#75715e">// where to print output (default: stdout)
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Hooks</span>     <span style="color:#a6e22e">Hooks</span>     <span style="color:#75715e">// for integration with other code
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Factories</span> <span style="color:#a6e22e">Factories</span> <span style="color:#75715e">// for integration with other code
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Set automatically in spinc.Run()
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Options</span>  <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Options</span> <span style="color:#75715e">// command line options (--addr, etc.)
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">Command</span>  <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Command</span> <span style="color:#75715e">// command and args, if any (&#34;start &lt;request&gt;&#34;, etc.)
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">RMClient</span> <span style="color:#a6e22e">rm</span>.<span style="color:#a6e22e">Client</span>      <span style="color:#75715e">// Request Manager client
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}   
 </span></span></code></pre></div><p>Our tool&rsquo;s context currently has those seven things. We can ignore <code>RMClient</code> and <code>Command</code> for now, and we&rsquo;ve already discussed <code>Options</code>, <code>Factories</code>, and <code>Hooks</code>, so let&rsquo;s consider <code>In</code> and <code>Out</code>. As the helpful code comments say, these define STDIN and STDOUT. Why? By default, the tool prompts on STDIN and prints on STDOUT, and the user probably doesn&rsquo;t want to change this, but tests do. To test interactive input on STDIN, use an <code>io.Reader</code> controlled by the test. And same with STDOUT: tests have their own STDOUT, so to test the output of the tool, use an <code>io.Writer</code> controlled by the test.</p>
 <p>These seven things define how and where to run the app: read from <code>In</code>, print to <code>Out</code>, calls <code>Hooks</code> if set, use the <code>Factories</code> to make objects/services, all the command-line options are represented by <code>Options</code>, <code>Command</code> is whatever command the tool is supposed to do, and use <code>RMClient</code> to talk with that API. With different combinations of these things, i.e. with different contexts, the tool works in differnet ways while still doing whatever it&rsquo;s supposed to do. With one context, it&rsquo;s a full default run: command line, terminal, network calls to the API, etc. With another context, it&rsquo;s running inside a test. And with a user-provided context, who knows what it&rsquo;s doing. Maybe <code>Out</code> is writing to a dot matrix printer, and <code>In</code> is channeling the spirit of W. Richard Stevens.</p>
 <p><mark>Use a single app context object/struct that defines how and where to run the app. Pass the context to factories, hooks, and other code.</mark></p>
@@ -338,27 +338,27 @@
       </article>
       <hr>
       <ul class="pager blog-pager">
-
+        
           <li class="previous">
             <a href="https://hackmysql.com/post/how-to-test-the-database/" data-toggle="tooltip" data-placement="top" title="How To Test the Database">&larr; </a>
           </li>
-
-
+        
+        
           <li class="next">
             <a href="https://hackmysql.com/post/five-point-checklist-for-excellent-software/" data-toggle="tooltip" data-placement="top" title="Five-Point Checklist for Excellent Software"> &rarr;</a>
           </li>
-
+        
       </ul>
 
-
-
+      
+        
           <div class="disqus-comments">
             <div id="disqus_thread"></div>
 <script type="application/javascript">
     window.disqus_config = function () {
-
-
-
+    
+    
+    
     };
     (function() {
         if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
@@ -374,8 +374,8 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
           </div>
-
-
+        
+      
     </div>
   </div>
 </div>
