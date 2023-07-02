@@ -551,11 +551,16 @@ a.book-button {
   }
 }
 
+div.scroller {
+  overflow-y:scroll;
+  height: 98vh;
+  padding-top:2rem;
+}
+
 @media (min-width: 768px) {
   div#Ukraine {
     float: right;
   }
-
   main.page {
     display: grid;
     grid-template-columns: 70% 30%;
@@ -563,11 +568,6 @@ a.book-button {
       "art toc";
     grid-column-gap: 2rem;
     margin: 0px;
-  }
-  main.page > nav#toc {
-    position: sticky;
-    top: 2rem;
-    align-self: start;
   }
   div#art {
     grid-area: art;
@@ -577,6 +577,9 @@ a.book-button {
     grid-area: toc;
     line-height: 1.7em;
     font-size: 13px;
+    position: sticky;
+    top:0;
+    align-self: start;
   }
 
   /* -- */
