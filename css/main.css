@@ -545,16 +545,10 @@ a.book-button {
   div#book-desc {
     text-align: justify;
   }
-
   div#Ukraine {
     text-align: right;
   }
-}
-
-div.scroller {
-  overflow-y:scroll;
-  height: 98vh;
-  padding-top:2rem;
+  div.scroller {}
 }
 
 @media (min-width: 768px) {
@@ -602,6 +596,11 @@ div.scroller {
   div#book-desc {
     margin-right: 35px;
     text-align: justify;
+  }
+  div.scroller {
+    overflow-y:scroll;
+    height:98vh;
+    padding-top:2rem;
   }
 }
 
