@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Announcing Finch: A New MySQL Benchmarking Tool</title>
+  <meta property="og:title" content="Announcing Finch: A New MySQL Benchmarking Tool" />
+  <meta name="description" content="I&rsquo;m happy to announce Finch: a new MySQL benchmarking tool for experts, developers, and modern infrastructure.
+TL;DR: https://square.github.io/finch/">
+  <meta property="og:description" content="I&rsquo;m happy to announce Finch: a new MySQL benchmarking tool for experts, developers, and modern infrastructure.
+TL;DR: https://square.github.io/finch/">
+
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/announcing-finch-mysql-benchmarking/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.115.1">
+  <link rel="canonical" href="https://hackmysql.com/post/announcing-finch-mysql-benchmarking/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/benchmarking/">Benchmarking</a>
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/level-up/">Level Up</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Announcing Finch: A New MySQL Benchmarking Tool</h1>
+
+        <div class="post-meta">
+
+
+  <div>Aug 1, 2023</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/benchmarks">#benchmarks</a>
+
+        <a href="/tags/finch">#finch</a>
+
+
+  </div>
+</div>
+
+
+        <p>I&rsquo;m happy to announce <a href="https://github.com/square/finch">Finch</a>: a new MySQL benchmarking tool for experts, developers, and modern infrastructure.
+TL;DR: <a href="https://square.github.io/finch/">https://square.github.io/finch/</a></p>
+<p>Yes of course I know about <a href="https://github.com/akopytov/sysbench">sysbench</a>—who doesn&rsquo;t?
+But awhile ago I needed a benchmarking tool to do things that sysbench cannot do (or do easily).
+Here are the four things that I couldn&rsquo;t do with sysbench but <a href="https://github.com/square/finch">Finch</a> makes easy.</p>
+<h2 id="1-stats-to-csv">1. Stats to CSV</h2>
+<p>I need stats written to a CSV file so I can produce charts like the ones in <a href="/post/commit-latency-aurora-vs-rds-mysql-8.0/">COMMIT Latency: Aurora vs. RDS MySQL 8.0
+</a>.
+You can make sysbench do this, but good luck figuring out how.
+With Finch, it&rsquo;s a built-in first-class feature: <a href="https://square.github.io/finch/benchmark/statistics/#csv">Statistics / CSV</a>.</p>
+<p>Moreover, Finch statistics reporting is a plugin interface, so you can implement your own stats reporter to send, dump, or output the values anywhere you want—without modifying any core code, just implement one Go interface.</p>
+<h2 id="2-multi-node-benchmarking">2. Multi-node Benchmarking</h2>
+<p>How many Kubernetes nodes does your app run on?
+Probably more than one.
+And if you&rsquo;re running in the cloud, they might even be in different availability zones (data centers).</p>
+<p>Likewise, I need to run a benchmarking tool on many compute nodes to accurately simulate how the app blasts MySQL.
+You can do this with sysbench, but there are two problems.
+First, you&rsquo;ll need to manually set up each instance with the same command line options (not too difficult).
+Second, you&rsquo;ll need to manually combine the stats from each instance (very difficult).</p>
+<p>By contrast, Finch can run in client/server (leader/follower) mode, basically forming a benchmarking bot network.
+Even better: the clients (followers) don&rsquo;t need any configuration: they download all the benchmarking details from the server (leader).
+It looks like this:</p>
+<p><img src="/img/finch_compute.svg" alt="Finch distributed compute"></p>
+<p>Since compute instances are plentiful and cheap in the cloud, Finch allows me to easily generate massive load on a MySQL server.
+And Finch automatically aggregates the distributed stats, including properly implemented distributed histograms (for accurately estimating percentiles).</p>
+<h2 id="3-your-workload">3. Your Workload</h2>
+<p>Do you really know what sysbench executes?
+Its schema and queries?
+Its workload?</p>
+<p>Maybe this was common knowledge 20 years ago, but most MySQL experts I ask today do not know off hand.
+They have a general idea, which is fine sometimes, but given how important benchmarks are, you&rsquo;d think MySQL experts would know every detail.</p>
+<p>Does it matter?
+Yes, a lot.
+Sometimes companies <a href="/post/are-aurora-performance-claims-true/">make big claims</a> based on the sysbench workload.
+If you don&rsquo;t know what the workload is, how can know if the claims are true?</p>
+<p>The sysbench workload is good enough, even if you don&rsquo;t know what it is, but I needed better.
+I needed a more realistic and more complex workload on much larger data: several million of rows over three tables, not the tens or hundreds of thousands of rows people tend to create in one sysbench table.
+Finch ships with this workload: <a href="https://square.github.io/finch/benchmark/examples/#xfer">xfer</a>.
+But the important point is: with Finch, you can easily create <em>your</em> workload.</p>
+<h2 id="4-data-access-distribution">4. Data Access Distribution</h2>
+<p>In addition to not knowing the sysbench workload, I don&rsquo;t think most MySQL experts know how sysbench accesses data.
+(I hope I&rsquo;m wrong about that, though.)
+Most people correctly guess that access is random, but there are different types (or distributions) of random access.</p>
+<p>Sysbench has <a href="https://github.com/akopytov/sysbench#random-numbers-options">random number options</a>, but what does <code>--rand-type special</code> mean?
+Thankfully, Marco Tusa explained in <a href="https://www.percona.com/blog/sysbench-and-the-random-distribution-effect/">Sysbench and the Random Distribution Effect
+</a>.
+But did you know <a href="https://github.com/akopytov/sysbench/issues/329">the default for <code>--rand-type</code> changed</a>?</p>
+<p>Figuring out a reasonable distribution for random data access is difficult.
+But it&rsquo;s important because it affects MySQL performance.
+Moreover, random access isn&rsquo;t always needed; sometimes sequential access is useful.
+Finch documents the data access distribution for its <a href="https://square.github.io/finch/data/generators/">built-in data generators</a>.
+And if those don&rsquo;t work for you, data generators are a plugin so it&rsquo;s easy to generate whatever kind of data access you need.</p>
+<h2 id="write-sql">Write SQL</h2>
+<p>In addition to the four reasons above, I wrote Finch for another reason: I wanted to write benchmarks in SQL—real and direct SQL.</p>
+<p>For example, here&rsquo;s part of the <em>sysbench</em> read-only benchmark:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">event</span>()
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> sysbench.opt.skip_trx <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>      begin()
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   execute_point_selects()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">if</span> sysbench.opt.range_selects <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>      execute_simple_ranges()
+</span></span><span style="display:flex;"><span>      execute_sum_ranges()
+</span></span><span style="display:flex;"><span>      execute_order_ranges()
+</span></span><span style="display:flex;"><span>      execute_distinct_ranges()
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> sysbench.opt.skip_trx <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>      commit()
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   check_reconnect()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>Let&rsquo;s follow <code>execute_point_selects()</code>, which is defined in another another file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">execute_point_selects</span>()
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">local</span> tnum <span style="color:#f92672">=</span> get_table_num()
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">local</span> i
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">for</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>, sysbench.opt.point_selects <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>      param[tnum].point_selects[<span style="color:#ae81ff">1</span>]:set(get_id())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      stmt[tnum].point_selects:execute()
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>The rabbit hole goes deep before you find and figure out the SQL that the benchmark executes.</p>
+<p>In my opinion, it&rsquo;s very difficult to write custom benchmarks with sysbench.
+It&rsquo;s not enough to learn Lua; you must also learn sysbench internals and APIs.
+Crafting good benchmarks is already difficult, and programming at the intersection of sysbench, Lua, and the SQL you want to execute as a benchmark is a nonstarter for most people—myself included.</p>
+<p>Matthew Boehm wrote <a href="https://www.percona.com/blog/creating-custom-sysbench-scripts/">Creating Custom Sysbench Scripts</a>, and Amol Deshmukh wrote <a href="https://medium.com/@amol.deshmukh_97340/running-custom-workloads-with-sysbench-c6d5338a503b">Running Custom Workloads with Sysbench</a>, but that&rsquo;s about all you&rsquo;ll find on the topic.</p>
+<p>Here&rsquo;s exact same sysbench read-only benchmark in Finch:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">BEGIN</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- prepare
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- copies: 10
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">c</span> <span style="color:#66d9ef">FROM</span> sbtest1 <span style="color:#66d9ef">WHERE</span> id<span style="color:#f92672">=@</span>id
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- prepare
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">c</span> <span style="color:#66d9ef">FROM</span> sbtest1 <span style="color:#66d9ef">WHERE</span> id <span style="color:#66d9ef">BETWEEN</span> <span style="color:#f92672">@</span>id_100 <span style="color:#66d9ef">AND</span> <span style="color:#f92672">@</span>PREV
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- prepare
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">SUM</span>(k) <span style="color:#66d9ef">FROM</span> sbtest1 <span style="color:#66d9ef">WHERE</span> id <span style="color:#66d9ef">BETWEEN</span> <span style="color:#f92672">@</span>id_100 <span style="color:#66d9ef">AND</span> <span style="color:#f92672">@</span>PREV
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- prepare
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">c</span> <span style="color:#66d9ef">FROM</span> sbtest1 <span style="color:#66d9ef">WHERE</span> id <span style="color:#66d9ef">BETWEEN</span> <span style="color:#f92672">@</span>id_100 <span style="color:#66d9ef">AND</span> <span style="color:#f92672">@</span>PREV <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">c</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- prepare
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">DISTINCT</span> <span style="color:#66d9ef">c</span> <span style="color:#66d9ef">FROM</span> sbtest1 <span style="color:#66d9ef">WHERE</span> id <span style="color:#66d9ef">BETWEEN</span> <span style="color:#f92672">@</span>id_100 <span style="color:#66d9ef">AND</span> <span style="color:#f92672">@</span>PREV <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">c</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">COMMIT</span>
+</span></span></code></pre></div><p>Or course, we trading one tool- and domain-specific set of information for another.
+With sysbench, you have its command line options and Lua APIs.
+With Finch you have its <a href="https://square.github.io/finch/syntax/trx-file/#statement-modifiers">statement modifiers</a> like <code>--prepare</code> and <a href="https://square.github.io/finch/data/keys/">data keys</a> like <code>@id</code>.
+But with Finch you write benchmarks in real SQL as shown above.
+Then you configure Finch (in YAML files) to tell it how to execute those SQL statements.
+And it&rsquo;s all extensively documented: <a href="https://square.github.io/finch/">https://square.github.io/finch/</a></p>
+<h2 id="benchmarking-for-developers">Benchmarking for Developers</h2>
+<p>Benchmarking is difficult, even for experts.
+But ideally it&rsquo;s something software developers can do and actually do.
+To help make that reality is another reason why I wrote Finch—and the page <a href="/benchmarking/">Benchmarking</a>.</p>
+<p>I&rsquo;ve already seen it in action once: where I work, a team of software engineers used Finch to recreate the critical part of their app&rsquo;s workload.
+They benchmarked one database environment versus another and found the other had latency the app couldn&rsquo;t handle.
+Their benchmark results allowed the team to avoid problems, which means our customers didn&rsquo;t experience problems.</p>
+<h2 id="the-future-of-mysql-benchmarking">The Future of MySQL Benchmarking</h2>
+<p>Did you see <a href="https://blogs.oracle.com/mysql/post/introducing-mysql-innovation-and-longterm-support-lts-versions"><em>Introducing MySQL Innovation and Long-Term Support (LTS) versions</em></a> ?
+MySQL 8.0.34 will be the first LTS release (until 8.0 EOL scheduled for April 2026).
+This is great news, and I hope it will usher in another 20-year era of MySQL productivity.</p>
+<p>I hope that <a href="https://github.com/square/finch">Finch</a> helps MySQL benchmarking become more mainstream and frequent.
+With MySQL Innovation and LTS releases, and various MySQL-related cloud products, there are more reasons than ever to benchmark.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/are-aurora-performance-claims-true/" data-toggle="tooltip" data-placement="top" title="Are Aurora Performance Claims True?">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2023 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

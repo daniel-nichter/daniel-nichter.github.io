@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>finch on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/finch/</link>
+    <description>Recent content in finch on Hack MySQL</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2022 Daniel Nichter</copyright>
+    <lastBuildDate>Tue, 01 Aug 2023 13:41:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/finch/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Announcing Finch: A New MySQL Benchmarking Tool</title>
+      <link>https://hackmysql.com/post/announcing-finch-mysql-benchmarking/</link>
+      <pubDate>Tue, 01 Aug 2023 13:41:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/post/announcing-finch-mysql-benchmarking/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;m happy to announce &lt;a href=&#34;https://github.com/square/finch&#34;&gt;Finch&lt;/a&gt;: a new MySQL benchmarking tool for experts, developers, and modern infrastructure.
+TL;DR: &lt;a href=&#34;https://square.github.io/finch/&#34;&gt;https://square.github.io/finch/&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+
+  </channel>
+</rss>
