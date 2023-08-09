@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deferred Join: A Deep Dive</title>
+  <meta property="og:title" content="Deferred Join: A Deep Dive" />
+  <meta name="description" content="Deferred join is powerful.
+Deferred join is simple.
+Deferred join is misunderstood.">
+  <meta property="og:description" content="Deferred join is powerful.
+Deferred join is simple.
+Deferred join is misunderstood.">
+
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/deferred-join-deep-dive/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.115.1">
+  <link rel="canonical" href="https://hackmysql.com/post/deferred-join-deep-dive/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/benchmarking/">Benchmarking</a>
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/level-up/">Level Up</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">Deferred Join: A Deep Dive</h1>
+
+        <div class="post-meta">
+
+
+  <div>Aug 9, 2023</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/deferred-join">#deferred-join</a>
+
+        <a href="/tags/query-optimizaiton">#query-optimizaiton</a>
+
+        <a href="/tags/finch">#finch</a>
+
+
+  </div>
+</div>
+
+
+        <p>Deferred join is powerful.
+Deferred join is simple.
+Deferred join is misunderstood.</p>
+<p>With a simple SQL rewrite, deferred join can make a query 2x faster or more.
+It&rsquo;s true!
+Now that I have your attention&hellip;</p>
+<p>&ldquo;Misunderstood&rdquo; is too strong because I think the people who&rsquo;ve written about it understand it correctly.
+It would be more accurate to say &ldquo;Deferred join is not explained well or thoroughly&rdquo;, but that&rsquo;s too wordy—it doesn&rsquo;t catch your attention like the pithy parallelism in the lead.</p>
+<p>You might reap the benefits of a deferred join with a poor explanation.
+But let me provide you a &ldquo;rich&rdquo; explanation of deferred join so that you can truly deepen your understanding of, and skill with, MySQL query optimization.
+After all, it&rsquo;s not every day we get to examine the magic of an advanced yet simple query optimization.</p>
+<h2 id="origin">Origin</h2>
+<p>In April 2007, Peter Zaitsev first blogged about this query optimization by another name: <a href="https://www.percona.com/blog/using-delayed-join-to-optimize-count-and-limit-queries/">Using delayed JOIN to optimize count(*) and LIMIT queries</a>.
+But don&rsquo;t bother reading that 16 year old blog post because he doesn&rsquo;t explain why the join is &ldquo;delayed&rdquo;, and he doesn&rsquo;t even use the word &ldquo;delayed&rdquo; in the body.
+In fact, he doesn&rsquo;t really explain it at all.
+But go easy on him: Percona was founded in 2006, so in 2007 Peter (and Vadim) were crazy-busy.</p>
+<p>But Peter&rsquo;s 2007 blog post was <em>not</em> the origin of the term &ldquo;deferred join&rdquo;.
+The origin of &ldquo;deferred join&rdquo; is <a href="https://www.oreilly.com/library/view/high-performance-mysql/9781449332471/"><em>High Performance MySQL, 3rd Edition</em></a> by Peter, Vadim, and Baron—published in 2012.</p>
+<h3 id="2012-hpm-3e">2012: HPM 3e</h3>
+<p>In HPM 3e chapter 5 (&ldquo;Indexing for High Performance&rdquo;) section &ldquo;Covering Indexes&rdquo;, Peter, et al. wrote:</p>
+<pre tabindex="0"><code class="language-none" data-lang="none">mysql&gt; EXPLAIN SELECT *
+    -&gt; FROM products
+    -&gt;    JOIN (
+    -&gt;       SELECT prod_id
+    -&gt;       FROM products
+    -&gt;       WHERE actor=&#39;SEAN CARREY&#39; AND title LIKE &#39;%APOLLO%&#39;
+    -&gt;    ) AS t1 ON (t1.prod_id=products.prod_id)\G
+</code></pre><blockquote>
+<p>We call this a &ldquo;deferred join&rdquo; because <strong>it defers access to the columns.</strong> MySQL uses the covering index in the first stage of the query, when it finds matching rows in the subquery in the FROM clause. It doesn&rsquo;t use the index to cover the whole query, but it’s better than nothing.</p>
+</blockquote>
+<p>(Emphasis mine.)</p>
+<p>The covering index is <code>(actor, title, prod_id)</code>.
+(If you want to read more, I encourage you to buy an <a href="https://www.oreilly.com/online-learning/">O&rsquo;Reilly online learning subscription</a> to access HPM 3e because it&rsquo;s probably out of print since HPM 4e was published in 2021.)</p>
+<p>The second mention of deferred join occurs later in chapter 5 section &ldquo;Optimizing Sorts&rdquo;.
+Peter, et al. are discussing <code>SELECT &lt;cols&gt; FROM profiles WHERE ... ORDER BY rating LIMIT 100000, 10</code>.
+Despite the section title, the query is matter of pagination rather than pure sorting, but the two are closely related because <code>ORDER BY col LIMIT offset, n</code> is a common pagination technique.
+Likewise, the authors note the problem with large offsets: &ldquo;Such queries can be a serious problem no matter how they’re indexed, because the high offset requires them to spend most of their time scanning a lot of data that they will then throw away.&rdquo;</p>
+<blockquote>
+<p>Another good strategy for optimizing such queries is to use a deferred join, which again is our term for <strong>using a covering indexing to retrieve just the primary key columns of the rows you&rsquo;ll eventually retrieve</strong>.</p>
+</blockquote>
+<p>(Emphasis mine.)</p>
+<p>The query is written with a deferred join:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">&lt;</span>cols<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">FROM</span> profiles <span style="color:#66d9ef">INNER</span> <span style="color:#66d9ef">JOIN</span> (
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">primary</span> <span style="color:#66d9ef">key</span> cols<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">FROM</span> profiles
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">WHERE</span> ... <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> rating <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">100000</span>, <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>) <span style="color:#66d9ef">AS</span> x <span style="color:#66d9ef">USING</span>(<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">primary</span> <span style="color:#66d9ef">key</span> columns<span style="color:#f92672">&gt;</span>);
+</span></span></code></pre></div><p>The third and last mention of deferred join occurs in chapter 6 (&ldquo;Query Performance Optimization&rdquo;) section &ldquo;Optimizing LIMIT and OFFSET&rdquo;.
+The authors write that &ldquo;One simple technique to improve efficiency is to do the offset on a covering index, rather than the full rows. You can then join the result to the full row and retrieve the additional columns you need.&rdquo;</p>
+<p>That&rsquo;s cryptic because how does one &ldquo;do the offset on a covering index&rdquo;?
+The limit and offset are numbers not columns, but indexes cover columns?
+The authors don&rsquo;t explain, but I will later in this blog post because—spoiler—it&rsquo;s the magic that makes a deferred join powerful.</p>
+<p>The example SQL given here is functionally equivalent the previous example SQL, but here the context is explicitly optimizing LIMIT and OFFSET.</p>
+<blockquote>
+<p>This &ldquo;deferred join&rdquo; works because <strong>it lets the server examine as little data as possible in an index without accessing rows</strong>, and then, once the desired rows are found, join them against the full table to retrieve the other columns from the row. A similar technique applies to joins with LIMIT clauses.</p>
+</blockquote>
+<p>(Emphasis mine.)</p>
+<p>That&rsquo;s all Peter, et al. wrote about deferred join in <em>High Performance MySQL, 3rd Edition</em>.</p>
+<h2 id="applicability">Applicability</h2>
+<p>According to HPM 3d, a deferred join uses a <em>covering index</em> for the inner (sub) query.
+Mention of covering index is common to all three examples.
+However, a covering index is not the sole reason that makes a differed join so powerful.
+If that were the case, then you could just use a covering index.</p>
+<p>Moreover, every resource on the internet I can find about deferred join (except Peter&rsquo;s 2007 blog post) associates it with <code>LIMIT offset, n</code> pagination.
+For example, <a href="https://aaronfrancis.com/2022/efficient-pagination-using-deferred-joins" target="top">Efficient Pagination Using Deferred Joins</a> by Aaron Francis associates the two: &ldquo;A deferred join is a technique that defers access to requested columns until after the offset and limit have been applied.&rdquo;
+While it is an optimization for that pagination technique, it applies more widely, as evidenced by Peter&rsquo;s 2007 blog post (no <code>ORDER BY</code>) and the first example in HPM 3e where it&rsquo;s defined (no <code>LIMIT</code>).</p>
+<p>As is customary on the internet, not all resources about deferred join are clear or accurate.
+For example, one resource uses <code>ORDER BY name</code> but doesn&rsquo;t give the schema.
+Presumably, &ldquo;name&rdquo; is not unique, which means the sort order is non-deterministic.
+An excellent write-up on this gotcha is <a href="https://blog.kalvad.com/sql-paging-requires-a-deterministic-sort-order-a-classic-example-of-s-e-p-somebody-elses-problem/">SQL - Is Your Sort Order Deterministic? A classic example of S.E.P. (Somebody Else’s Problem)</a> by Gina Seto.
+Remember this when you&rsquo;re paginating.</p>
+<p>So what is deferred join, <em>really</em>?</p>
+<h2 id="deferred-join">Deferred Join</h2>
+<p><mark><em>Deferred join</em> is a query optimization that minimizes data access by pre-filtering rows in a <a href="https://dev.mysql.com/doc/refman/en/derived-tables.html">derived table</a>.</mark></p>
+<p>Good definitions are difficult when the subject is complex, subtle, and manifest in different ways.
+I think that definition captures what&rsquo;s necessary and sufficient for a deferred join.</p>
+<p>Before I break down that definition, let me introduce a concept that will anchor the two parts of the definition: ideal data access.</p>
+<p><em>Ideal data access</em> is reading only the full rows in the final result set.</p>
+<p>Let&rsquo;s say you have 10 rows numbered 1 through 10.
+And let&rsquo;s say that, whatever else a query is doing, the final result set is rows 9 and 10.
+Ideal data access is reading only full rows 9 and 10 and <em>nothing</em> else—not even a secondary index read.</p>
+<p>Ideal data access is possible for very simple primary key lookups without other conditions.
+<code>SELECT ... FROM t WHERE &lt;primary key col&gt; IN (9, 10)</code> is one such example: MySQL will read rows 9 and 10, and nothing else.</p>
+<p>But ideal data access is not the norm.
+Queries typically have many conditions that cause MySQL to read rows that don&rsquo;t make into the final result set.
+This is why query metrics have, for a long time, included &ldquo;rows examined&rdquo; and &ldquo;rows sent&rdquo;: the ratio is a gauge of ideal data access.
+1-to-1 rows examined to rows sent is ideal data access.</p>
+<p>Note, however, that this applies only to MySQL.
+If the application receiving the rows doesn&rsquo;t need or use some of the rows, then the application isn&rsquo;t ideal.
+But that&rsquo;s outside MySQL, so outside the current scope.</p>
+<p>Certain optimizations figuratively move the query closer to ideal data access.
+Deferred join does this by minimizing data access.</p>
+<h4 id="minimize-data-access">Minimize data access</h4>
+<p>It might seem obvious that minimizing data access is necessary for a query optimization.
+But not all optimization minimize data access: some make data access more <em>efficient</em>.
+For example, optimizations that yield sequential access rather than random access.</p>
+<p>For simplicity, let&rsquo;s focus on the canonical example for a deferred join optimization:  <code>LIMIT offset, n</code> pagination.
+Later in <a href="#analyses">Analyses</a>, I&rsquo;ll use different queries to further prove that deferred join applies more widely, as defined above.</p>
+<p class="note">
+<code>LIMIT offset, n</code> pagination is short for <code>ORDER BY col LIMIT offset, n</code>: the ORDER BY is presumed (pagination doesn't make much sense without it) but omitted for brevity.
+</p>
+<p>It&rsquo;s important to remember that, normally, MySQL reads full rows.
+For example, <code>LIMIT 500, 10</code> reads and throws away 500 full rows.
+This is why <code>LIMIT offset, n</code> pagination is the canonical example for a deferred join optimization: high offsets waste a lot of data access.
+Far from ideal data access.</p>
+<p>For <code>LIMIT offset, n</code> that means just the <code>n</code> rows.
+But there&rsquo;s a problem that neither HPM 3e nor current resources on the internet state: <code>LIMIT</code> is applied to the final result set.
+In other words, LIMIT happens last.
+(Not always, but generally speaking.)
+This is another reason that &ldquo;do the offset on a covering index&rdquo; from above is cryptic: since LIMIT happens last, there&rsquo;s no time to &ldquo;do the offset&rdquo; to avoid wasting <code>offset</code> number of full row reads.</p>
+<p>But now we know what we need: <u><code>LIMIT</code> to apply early and not to full rows</u>.</p>
+<p>That&rsquo;s not possible with a single query, but with two queries&hellip;</p>
+<h4 id="pre-filter-rows-in-a-derived-table">Pre-filter rows in a derived table</h4>
+<blockquote>
+<p>A derived table is an expression that generates a table within the scope of a query FROM clause. For example, a subquery in a SELECT statement FROM clause is a derived table:</p>
+<p>   <code>SELECT ... FROM (subquery) [AS] tbl_name ...</code></p>
+</blockquote>
+<p><a href="https://dev.mysql.com/doc/refman/en/derived-tables.html">https://dev.mysql.com/doc/refman/en/derived-tables.html</a></p>
+<p>The real magic behind a deferred join is using a derived table to pre-filter rows so that the outer query can achieve ideal data access.
+As originally defined (in HPM 3e and quoted above), the subquery should use a covering index to avoid reading full rows.
+I don&rsquo;t think this is strictly necessary as long as the subquery minimizes data access for the outer query.
+It&rsquo;s difficult to imagine doing that without a covering index, but I bet someone will find a way.</p>
+<p>Before using real queries and EXPLAIN plans, let&rsquo;s finish the breakdown of my definition for deferred join.
+For simplicity, I&rsquo;ll use fake queries:</p>
+<div class="sidebyside">
+<div>
+<i>Simple Query</i>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> t <span style="color:#66d9ef">order</span> <span style="color:#66d9ef">by</span> x <span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">500</span>, <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></div>
+<div class="right">
+<i>Optimized Query</i>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> t <span style="color:#66d9ef">join</span> (
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">select</span> pk <span style="color:#66d9ef">from</span> t <span style="color:#66d9ef">order</span> <span style="color:#66d9ef">by</span> x <span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">500</span>, <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>) dt <span style="color:#66d9ef">using</span>(pk)
+</span></span></code></pre></td></tr></table>
+</div>
+</div></div>
+</div>
+<p>Presume <code>pk</code> is the primary key column, and there&rsquo;s a unique index on column <code>x</code>, and the table has several other columns.</p>
+<p>For the simple query, even with a unique index on <code>x</code>, MySQL has to read 500 + 20 full rows (and discard the first 500) because the index covers only columns <code>x</code> and (hidden on the end) <code>pk</code>.
+The query planner might not even use the index because secondary index lookups require a corresponding primary key lookup, so it might be faster to do a full table scan and sort.
+And to make matters worse: the query planner might be wrong about that; you have to do your own benchmarks to know for sure.
+In any case, the larger the offset becomes, the farther the simple query is from ideal data access because MySQL reads full rows and applies LIMIT last.</p>
+<p>But the subquery in the optimized query (line 2) executes first and it uses a covering index (on <code>x, (pk)</code>) to avoid reading full rows.
+<em>This is very fast</em>.
+And it&rsquo;s exactly what we need: <u><code>LIMIT</code> to apply early and not to full rows</u>.
+Granted, the subquery must also throw away 500 <em>values</em> that it read from the covering index, but that&rsquo;s an in-memory operation at least one order of magnitude faster than reading full rows.</p>
+<p>The subquery &ldquo;tells&rdquo; the outer query which rows to read by primary key value, which is also very fast.
+(More technically, the subquery creates an in-memory derived table that&rsquo;s joined to the primary table using the primary key column, in this example.)
+And that&rsquo;s how the outer query minimizes data access— in this case, it even achieves ideal data access.</p>
+<p class="note">
+The term "pre-filter" is not standard.
+I chose it for my definition of "deferred join" because I think it accurately describes the intent and requirement of a deferred join.
+If the subquery doesn't help reduce row access in the outer query, then it probably hurts more than it helps.
+Moreover, in HPM 3e, Peter, et al. benchmark the results of the inner query returning a various number of rows (Table 5-2).
+TL;DR: the subquery shouldn't return too many <em>or too few</em> rows to the outer query.
+</p>
+<br>
+<h2 id="analyses">Analyses</h2>
+<p>Since you can easily find examples of deferred join optimizing <code>LIMIT OFFSET</code> pagination, let&rsquo;s analyze two different examples to prove that it has wider applicability.</p>
+<h3 id="pz">PZ</h3>
+<p>It&rsquo;s been 16 years since Peter wrote <a href="https://www.percona.com/blog/using-delayed-join-to-optimize-count-and-limit-queries/">Using delayed JOIN to optimize count(*) and LIMIT queries</a>; I think it&rsquo;s time to finally explain his example more clearly.
+Plus, we have two things today that Peter didn&rsquo;t have back then: <a href="/post/book-2/"><code>EXPLAIN ANALYZE</code></a> and <a href="https://github.com/square/finch">Finch</a>.</p>
+<div class="sidebyside">
+<div>
+<i>Simple Query</i>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span>
+</span></span><span style="display:flex;"><span>  i, <span style="color:#66d9ef">pad</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">from</span>
+</span></span><span style="display:flex;"><span>  fact
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">left</span> <span style="color:#66d9ef">join</span> dim <span style="color:#66d9ef">on</span> val<span style="color:#f92672">=</span>id
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">where</span>
+</span></span><span style="display:flex;"><span>  i<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">100000</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">500000</span>,<span style="color:#ae81ff">10</span>;
+</span></span></code></pre></td></tr></table>
+</div>
+</div></div>
+<div class="right">
+<i>Optimized Query</i>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span>
+</span></span><span style="display:flex;"><span>  i, <span style="color:#66d9ef">pad</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">from</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">select</span> i, val <span style="color:#66d9ef">from</span> fact <span style="color:#66d9ef">where</span> i<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">100000</span> <span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">500000</span>,<span style="color:#ae81ff">10</span>) res
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">left</span> <span style="color:#66d9ef">join</span> dim <span style="color:#66d9ef">on</span> val<span style="color:#f92672">=</span>id;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></div>
+</div>
+<p>Those are the queries in Peter&rsquo;s 2007 blog post.
+This is not a matter of pagination; it&rsquo;s a matter of facts and dimensions—data warehouse stuff that&rsquo;s not important right now.
+What&rsquo;s important is that we&rsquo;re joining two tables: <code>fact</code> and <code>dim</code>.</p>
+<p>Here are the table definitions and abridged EXPLAIN plans for each query:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#f92672">`</span>fact<span style="color:#f92672">`</span> (
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>i<span style="color:#f92672">`</span> int(<span style="color:#ae81ff">10</span>) unsigned <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>val<span style="color:#f92672">`</span> int(<span style="color:#ae81ff">10</span>) unsigned <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">KEY</span> <span style="color:#f92672">`</span>i<span style="color:#f92672">`</span> (<span style="color:#f92672">`</span>i<span style="color:#f92672">`</span>,<span style="color:#f92672">`</span>val<span style="color:#f92672">`</span>)
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#f92672">`</span>dim<span style="color:#f92672">`</span> (
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>id<span style="color:#f92672">`</span> int(<span style="color:#ae81ff">10</span>) unsigned <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> auto_increment,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span><span style="color:#66d9ef">pad</span><span style="color:#f92672">`</span> varchar(<span style="color:#ae81ff">100</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>  (<span style="color:#f92672">`</span>id<span style="color:#f92672">`</span>)
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><pre tabindex="0"><code class="language-none" data-lang="none">/* Simple */
++----+-------------+-------+--------+---------------+---------+----------+---------+--------------------------+
+| id | select_type | table | type   | possible_keys | key     | ref      | rows    | Extra                    |
++----+-------------+-------+--------+---------------+---------+----------+---------+--------------------------+
+|  1 | SIMPLE      | fact  | range  | i             | i       | NULL     | 1681002 | Using where; Using index |
+|  1 | SIMPLE      | dim   | eq_ref | PRIMARY       | PRIMARY | fact.val |       1 | NULL                     |
++----+-------------+-------+--------+---------------+---------+----------+---------+--------------------------+
+
+/* Optimized */
++----+-------------+------------+--------+---------------+---------+---------+---------+--------------------------+
+| id | select_type | table      | type   | possible_keys | key     | ref     | rows    | Extra                    |
++----+-------------+------------+--------+---------------+---------+---------+---------+--------------------------+
+|  1 | PRIMARY     | &lt;derived2&gt; | ALL    | NULL          | NULL    | NULL    |  500010 | NULL                     |
+|  1 | PRIMARY     | dim        | eq_ref | PRIMARY       | PRIMARY | res.val |       1 | NULL                     |
+|  2 | DERIVED     | fact       | range  | i             | i       | NULL    | 1681002 | Using where; Using index |
++----+-------------+------------+--------+---------------+---------+---------+---------+--------------------------+
+</code></pre><p>The first EXPLAIN plan for the simple query demonstrates why this in-depth study of deferred join is a useful lesson for MySQL query optimization: it&rsquo;s a good execution plan, the query is very simple, and there are no obvious challenges like <code>ORDER BY foo DESC, bar ASC</code> (practically impossible to optimize an ascending and descending sort).
+The 1,681,002 row estimate is a little concerning (it&rsquo;s really only 701,871 rows; EXPLAIN uses estimates/table statistics), but with a covering index (&ldquo;Using index&rdquo;) we might disregard this query as &ldquo;good enough&rdquo;&hellip; until we learn that it takes over 1 second to execute.</p>
+<p>And now for an &ldquo;I told you so&rdquo; moment:</p>
+<blockquote>
+<p>Ironically, you can expect the majority of slow queries to use an index lookup. That’s ironic for two reasons. First, indexes are the key to performance, but a query can be slow even with a good index. Second, after learning about indexes and indexing (Chapter 2), engineers become so good at avoiding index scans and table scans that only index lookups remain, which is a good problem but ironic nonetheless.</p>
+</blockquote>
+<p>That&rsquo;s from chapter 3 of my book, <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a> section &ldquo;Index May Not Help&rdquo;.
+That chapter is titled &ldquo;Data&rdquo; and it&rsquo;s relevant to everything discussed here, so please go read it (and the rest of the book).</p>
+<p>The second EXPLAIN plan for the deferred join is an interesting example of MySQL not revealing what&rsquo;s really going on under the hood.
+For decades, MySQL DBAs had only this output.
+But as of MySQL 8.0.18, EXPLAIN ANALYZE really reveals what&rsquo;s going on, so let&rsquo;s do the EXPLAIN again, same order (top: simple; bottom: optimized with deferred join):</p>
+<pre tabindex="0"><code>/* Simple */
+-&gt; Limit/Offset: 10/500000 row(s)  (cost=925269 rows=10) (actual time=1283..1283 rows=10 loops=1)
+    -&gt; Nested loop left join  (cost=925269 rows=1.68e+6) (actual time=0.652..1253 rows=500010 loops=1)
+        -&gt; Filter: (fact.i &lt; 100000)  (cost=336918 rows=1.68e+6) (actual time=0.0426..467 rows=500010 loops=1)
+            -&gt; Covering index range scan on fact using i over (i &lt; 100000)  (cost=336918 rows=1.68e+6) (actual time=0.0386..401 rows=500010 loops=1)
+        -&gt; Single-row index lookup on dim using PRIMARY (id=fact.val)  (cost=0.25 rows=1) (actual time=0.00126..0.00131 rows=1 loops=500010)
+
+/* Optimized */
+-&gt; Nested loop left join  (cost=461925 rows=10) (actual time=419..419 rows=10 loops=1)
+    -&gt; Table scan on res  (cost=336919..336921 rows=10) (actual time=419..419 rows=10 loops=1)
+        -&gt; Materialize  (cost=336919..336919 rows=10) (actual time=419..419 rows=10 loops=1)
+            -&gt; Limit/Offset: 10/500000 row(s)  (cost=336918 rows=10) (actual time=419..419 rows=10 loops=1)
+                -&gt; Filter: (fact.i &lt; 100000)  (cost=336918 rows=1.68e+6) (actual time=0.015..392 rows=500010 loops=1)
+                    -&gt; Covering index range scan on fact using i over (i &lt; 100000)  (cost=336918 rows=1.68e+6) (actual time=0.0137..330 rows=500010 loops=1)
+    -&gt; Single-row index lookup on dim using PRIMARY (id=res.val)  (cost=0.25 rows=1) (actual time=0.00274..0.00279 rows=1 loops=10)
+</code></pre><p class="note">
+If you're new to reading this output, read <a href="/post/book-2/">my post about EXPLAIN ANALYZE</a>.
+</p>
+<p>Starting with the simple query again, the important points are:</p>
+<ul>
+<li>The LIMIT happens last (1st node), just as discussed earlier in <a href="#minimize-data-access">Minimize data access</a>.</li>
+<li>The JOIN reads 500,010 row reads in <code>dim</code> (last node: loops=500010), but 500k are discarded later by the LIMIT.</li>
+<li>Even though the JOIN uses a &ldquo;Single-row index lookup&rdquo; (very fast <code>eq_ref</code>), it&rsquo;s slow because it&rsquo;s still 500,010 rows read: 0.00131 × 500010 loops = 655ms. This adds up correctly: 655 + 467 (&ldquo;Filter:&rdquo; node) = 1,122ms: close enough to the &ldquo;Nest loop left join&rdquo; parent node: 1253ms.</li>
+</ul>
+<p>Now the optimized query with a deferred join:</p>
+<ul>
+<li>Different execution plan with the same stages as before plus two new ones: &ldquo;Table scan on res&rdquo; and &ldquo;Materialize&rdquo;.</li>
+<li>The LIMIT happens early (4th node) and only to values (<em>not rows</em>) from <code>fact</code>. Remember the cryptic advice &ldquo;do the offset on a covering index&rdquo; from <a href="#2012-hpm-3e">2012: HPM 3e</a>? This is what it means; the covering index is 6th node. It&rsquo;s only possible when this part of query execution is &ldquo;factored out&rdquo; (to use a programming term) into a subquery that executes before the rest of the (outer) query (nodes 1, 2, and 7 [last]).</li>
+<li>&ldquo;Materialize&rdquo; is part of the magic that the normal EXPLAIN output doesn&rsquo;t reveal in this case. See <a href="https://dev.mysql.com/doc/refman/en/subquery-materialization.html">Optimizing Subqueries with Materialization</a> and <a href="https://dev.mysql.com/doc/refman/en/derived-table-optimization.html">Optimizing Derived Tables, View References, and Common Table Expressions with Merging or Materialization</a> in the MySQL manual.</li>
+<li>The JOIN (1st node) takes virtually zero time because it joins the materialized derived table that has only 10 primary key values (since the LIMIT has already been applied), as evidenced by &ldquo;loops=10&rdquo; in the last node.</li>
+</ul>
+<p>To reproduce this example, use <a href="https://github.com/square/finch">Finch</a> to run <a href="https://github.com/hackmysql/benchmarks/tree/main/deferred-join/pz">hackmysql/benchmarks/deferred-join/pz/</a>.</p>
+<h3 id="negative-balances">Negative Balances</h3>
+<p>To test my <a href="#deferred-join">definition of deferred join</a>, I needed a query unlike anything written about before.
+So I decided to use the Finch example benchmark called <a href="https://github.com/square/finch/tree/main/benchmarks/xfer">xfer</a>, specifically the <a href="https://github.com/square/finch/blob/main/benchmarks/xfer/trx/schema.sql"><code>balances</code> table</a> with an added nonunique index on the <code>cents</code> column.
+The simple query and its EXPLAIN are:</p>
+<pre tabindex="0"><code class="language-none" data-lang="none">EXPLAIN SELECT * FROM balances WHERE cents &lt; 0 LIMIT 10;
++----+-------------+----------+-------+---------------+-------+------+-------+----------------------------------+
+| id | select_type | table    | type  | possible_keys | key   | ref  | rows  | Extra                            |
++----+-------------+----------+-------+---------------+-------+------+-------+----------------------------------+
+|  1 | SIMPLE      | balances | range | cents         | cents | NULL | 55058 | Using index condition; Using MRR |
++----+-------------+----------+-------+---------------+-------+------+-------+----------------------------------+
+</code></pre><p>That query returns any 10 negative balances.
+On my laptop, it&rsquo;s max execution time is 23 milliseconds (slow log snippet):</p>
+<pre>
+# Query_time: <mark><b>0.023139</b></mark>  Lock_time: 0.000003 Rows_sent: 10  Rows_examined: 10
+select * from balances where cents<0 limit 10;
+</pre>
+<p>This query is even faster and simpler than Peter&rsquo;s two-table JOIN in the previous section.
+Moreover, MySQL automatically applies two query optimizations: <a href="https://dev.mysql.com/doc/refman/en/index-condition-pushdown-optimization.html">index condition pushdown (ICP)</a> and <a href="https://dev.mysql.com/doc/refman/en/mrr-optimization.html">multi-range read (MRR)</a>.
+Especially with ICP, it&rsquo;s difficult to imagine how rewriting this as a deferred join would make it faster.
+Let&rsquo;s see a slow log snippet for the deferred join version:</p>
+<pre>
+# Query_time: <mark><b>0.000776</b></mark>  Lock_time: 0.000006 Rows_sent: 10  Rows_examined: 20
+select * from balances join (select id from balances where cents<0 limit 10) dt using (id);
+</pre>
+<p>776 <em>microseconds</em>!
+Well there you have it: deferred join is amazing and can&rsquo;t be beat.</p>
+<h3 id="not-so-fast-literally">Not So Fast (Literally)</h3>
+<p>Does 23 <em>milliseconds</em> for an index range scan with ICP on 55,000 rows seem right?
+Not to me.
+Let&rsquo;s look at EXPLAIN ANALYZE for both queries:</p>
+<pre tabindex="0"><code>/* Simple */
+-&gt; Limit: 10 row(s)  (cost=53611 rows=10) (actual time=20.1..20.1 rows=10 loops=1)
+    -&gt; Index range scan on balances using cents over (cents &lt; 0), with index condition: (balances.cents &lt; 0)  (cost=53611 rows=55058) (actual time=20.1..20.1 rows=10 loops=1)
+
+/* Optimized */
+-&gt; Nested loop inner join  (cost=11133 rows=10) (actual time=0.0787..0.127 rows=10 loops=1)
+    -&gt; Table scan on dt  (cost=11121..11124 rows=10) (actual time=0.0618..0.0659 rows=10 loops=1)
+        -&gt; Materialize  (cost=11121..11121 rows=10) (actual time=0.0601..0.0601 rows=10 loops=1)
+            -&gt; Limit: 10 row(s)  (cost=11120 rows=10) (actual time=0.0256..0.0431 rows=10 loops=1)
+                -&gt; Filter: (balances.cents &lt; 0)  (cost=11120 rows=55058) (actual time=0.0247..0.0404 rows=10 loops=1)
+                    -&gt; Covering index range scan on balances using cents over (cents &lt; 0)  (cost=11120 rows=55058) (actual time=0.0226..0.0359 rows=10 loops=1)
+    -&gt; Single-row index lookup on balances using PRIMARY (id=dt.id)  (cost=0.844 rows=1) (actual time=0.00535..0.00545 rows=1 loops=10)
+</code></pre><p>Granted, the optimized query (deferred join) uses a covering index, but ICP in the simple query is essentially the same optimization <em>in this case</em> (not generally speaking) because it allows InnoDB to fetch only 10 rows as evidenced by &ldquo;rows=10&rdquo; in the 2nd node.
+That&rsquo;s ideal data access, and we know the LIMIT is now slow (it doesn&rsquo;t fetch rows; it just discards them), so how can reading 10 rows with ICP be <em>so slow</em>?</p>
+<p>This is a case where experience is necessary to know what MySQL isn&rsquo;t telling you.
+I don&rsquo;t know why basic EXPLAIN shows MRR but the more verbose EXPLAIN ANALYZE does not, but I know from experience that MRR can be a problem: MRR can increase response time rather than decreasing it.</p>
+<p>It&rsquo;s funny because MRR sounds like a great optimization:</p>
+<blockquote>
+<p>MRR enables data rows to be accessed sequentially rather than in random order&hellip;</p>
+</blockquote>
+<p>Remember earlier when I said some optimizations yield sequential access rather than random access?
+MRR is one such optimization.
+And yet we can prove that it&rsquo;s seriously hurting performance: <code>SET GLOBAL optimizer_switch=&quot;mrr=off&quot;</code> and re-run the benchmarks:</p>
+<pre>
+# Query_time: <mark><b>0.000317</b></mark>  Lock_time: 0.000003 Rows_sent: 10  Rows_examined: 10
+select * from balances where cents<0 limit 10;
+</pre>
+<p>317 microseconds! 🤯</p>
+<p>I&rsquo;ve observed this simple query as fast as 184 µs, but don&rsquo;t take my word for it: use <a href="https://github.com/square/finch">Finch</a> to run <a href="https://github.com/hackmysql/benchmarks/tree/main/deferred-join/balance">hackmysql/benchmarks/deferred-join/balance</a>.</p>
+<hr>
+<p>I suspect there are more ways to use a deferred join to optimize a query because, at base, deferred join uses SQL to overcome a MySQL limit: one query, one plan.
+(Subqueries notwithstanding.)
+In that one plan, MySQL has to figure out how to do everything the query requires: find rows, filter rows, sort rows, limit rows, join rows—and <em>a lot</em> more.
+I call it a &ldquo;limit&rdquo; but that&rsquo;s not a criticism: one plan is tremendously difficult and MySQL does a really great job; more than one plan would be a problem probably few humans could solve reliably in code.
+The cleverness of deferred join is that it uses a derived table join to hack in a second plan: same query, but executed in two steps instead of one.
+Usually &ldquo;less is more&rdquo;, but in this case more is more.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/announcing-finch-mysql-benchmarking/" data-toggle="tooltip" data-placement="top" title="Announcing Finch: A New MySQL Benchmarking Tool">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2023 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

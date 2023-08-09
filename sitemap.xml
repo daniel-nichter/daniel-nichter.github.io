@@ -2,25 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hackmysql.com/post/deferred-join-deep-dive/</loc>
+    <lastmod>2023-08-09T13:27:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/deferred-join/</loc>
+    <lastmod>2023-08-09T13:27:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/finch/</loc>
+    <lastmod>2023-08-09T13:27:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/</loc>
+    <lastmod>2023-08-09T13:27:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/mysql/</loc>
+    <lastmod>2023-08-09T13:27:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2023-08-09T13:27:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/query-optimizaiton/</loc>
+    <lastmod>2023-08-09T13:27:00-04:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2023-08-09T13:27:00-04:00</lastmod>
+  </url><url>
     <loc>https://hackmysql.com/post/announcing-finch-mysql-benchmarking/</loc>
     <lastmod>2023-08-01T13:41:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/benchmarks/</loc>
-    <lastmod>2023-08-01T13:41:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/finch/</loc>
-    <lastmod>2023-08-01T13:41:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/</loc>
-    <lastmod>2023-08-01T13:41:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2023-08-01T13:41:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/post/</loc>
-    <lastmod>2023-08-01T13:41:00-04:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2023-08-01T13:41:00-04:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/benchmarking/</loc>

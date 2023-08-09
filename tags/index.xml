@@ -7,20 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Tue, 01 Aug 2023 13:41:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 09 Aug 2023 13:27:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>benchmarks</title>
-      <link>https://hackmysql.com/tags/benchmarks/</link>
-      <pubDate>Tue, 01 Aug 2023 13:41:00 -0400</pubDate>
+      <title>deferred-join</title>
+      <link>https://hackmysql.com/tags/deferred-join/</link>
+      <pubDate>Wed, 09 Aug 2023 13:27:00 -0400</pubDate>
 
-      <guid>https://hackmysql.com/tags/benchmarks/</guid>
+      <guid>https://hackmysql.com/tags/deferred-join/</guid>
       <description></description>
     </item>
 
     <item>
       <title>finch</title>
       <link>https://hackmysql.com/tags/finch/</link>
-      <pubDate>Tue, 01 Aug 2023 13:41:00 -0400</pubDate>
+      <pubDate>Wed, 09 Aug 2023 13:27:00 -0400</pubDate>
 
       <guid>https://hackmysql.com/tags/finch/</guid>
       <description></description>
@@ -29,9 +29,27 @@
     <item>
       <title>mysql</title>
       <link>https://hackmysql.com/tags/mysql/</link>
-      <pubDate>Tue, 01 Aug 2023 13:41:00 -0400</pubDate>
+      <pubDate>Wed, 09 Aug 2023 13:27:00 -0400</pubDate>
 
       <guid>https://hackmysql.com/tags/mysql/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>query-optimizaiton</title>
+      <link>https://hackmysql.com/tags/query-optimizaiton/</link>
+      <pubDate>Wed, 09 Aug 2023 13:27:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/query-optimizaiton/</guid>
+      <description></description>
+    </item>
+
+    <item>
+      <title>benchmarks</title>
+      <link>https://hackmysql.com/tags/benchmarks/</link>
+      <pubDate>Tue, 01 Aug 2023 13:41:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/tags/benchmarks/</guid>
       <description></description>
     </item>
 

@@ -602,6 +602,14 @@ a.book-button {
     height:98vh;
     padding-top:2rem;
   }
+
+  div.sidebyside {
+    display: flex;
+  }
+  div.right {
+    float: right;
+    overflow: scroll;
+  }
 }
 
 div.book-covers p {
