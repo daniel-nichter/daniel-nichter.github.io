@@ -429,7 +429,7 @@ The 1,681,002 row estimate is a little concerning (it&rsquo;s really only 701,87
 <blockquote>
 <p>Ironically, you can expect the majority of slow queries to use an index lookup. That’s ironic for two reasons. First, indexes are the key to performance, but a query can be slow even with a good index. Second, after learning about indexes and indexing (Chapter 2), engineers become so good at avoiding index scans and table scans that only index lookups remain, which is a good problem but ironic nonetheless.</p>
 </blockquote>
-<p>That&rsquo;s from chapter 3 of my book, <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a> section &ldquo;Index May Not Help&rdquo;.
+<p>That&rsquo;s from chapter 3 of my book, <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a> section &ldquo;Indexes May Not Help&rdquo;.
 That chapter is titled &ldquo;Data&rdquo; and it&rsquo;s relevant to everything discussed here, so please go read it (and the rest of the book).</p>
 <p>The second EXPLAIN plan for the deferred join is an interesting example of MySQL not revealing what&rsquo;s really going on under the hood.
 For decades, MySQL DBAs had only this output.
@@ -456,7 +456,7 @@ If you're new to reading this output, read <a href="/post/book-2/">my post about
 <ul>
 <li>The LIMIT happens last (1st node), just as discussed earlier in <a href="#minimize-data-access">Minimize data access</a>.</li>
 <li>The JOIN reads 500,010 row reads in <code>dim</code> (last node: loops=500010), but 500k are discarded later by the LIMIT.</li>
-<li>Even though the JOIN uses a &ldquo;Single-row index lookup&rdquo; (very fast <code>eq_ref</code>), it&rsquo;s slow because it&rsquo;s still 500,010 rows read: 0.00131 × 500010 loops = 655ms. This adds up correctly: 655 + 467 (&ldquo;Filter:&rdquo; node) = 1,122ms: close enough to the &ldquo;Nest loop left join&rdquo; parent node: 1253ms.</li>
+<li>Even though the JOIN uses a &ldquo;Single-row index lookup&rdquo; (very fast <code>eq_ref</code>), it&rsquo;s slow because it&rsquo;s still 500,010 rows read: 0.00131 × 500010 loops = 655ms. This adds up correctly: 655 + 467 (&ldquo;Filter:&rdquo; node) = 1,122ms: close enough to the &ldquo;Nested loop left join&rdquo; parent node: 1253ms.</li>
 </ul>
 <p>Now the optimized query with a deferred join:</p>
 <ul>
@@ -509,7 +509,7 @@ Let&rsquo;s look at EXPLAIN ANALYZE for both queries:</p>
                     -&gt; Covering index range scan on balances using cents over (cents &lt; 0)  (cost=11120 rows=55058) (actual time=0.0226..0.0359 rows=10 loops=1)
     -&gt; Single-row index lookup on balances using PRIMARY (id=dt.id)  (cost=0.844 rows=1) (actual time=0.00535..0.00545 rows=1 loops=10)
 </code></pre><p>Granted, the optimized query (deferred join) uses a covering index, but ICP in the simple query is essentially the same optimization <em>in this case</em> (not generally speaking) because it allows InnoDB to fetch only 10 rows as evidenced by &ldquo;rows=10&rdquo; in the 2nd node.
-That&rsquo;s ideal data access, and we know the LIMIT is now slow (it doesn&rsquo;t fetch rows; it just discards them), so how can reading 10 rows with ICP be <em>so slow</em>?</p>
+That&rsquo;s ideal data access, and we know the LIMIT is not slow (it doesn&rsquo;t fetch rows; it just discards them), so how can reading 10 rows with ICP be <em>so slow</em>?</p>
 <p>This is a case where experience is necessary to know what MySQL isn&rsquo;t telling you.
 I don&rsquo;t know why basic EXPLAIN shows MRR but the more verbose EXPLAIN ANALYZE does not, but I know from experience that MRR can be a problem: MRR can increase response time rather than decreasing it.</p>
 <p>It&rsquo;s funny because MRR sounds like a great optimization:</p>
