@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Future of MySQL Schema Change: Spirit</title>
+  <meta property="og:title" content="The Future of MySQL Schema Change: Spirit" />
+  <meta name="description" content="Using pt-online-schema or gh-ost?
+Of course you are; everyone in the MySQL industry does.
+But now there&rsquo;s a new online schema change tool that will obsolete these two: Spirit by renowned MySQL expert Morgan Tocker.">
+  <meta property="og:description" content="Using pt-online-schema or gh-ost?
+Of course you are; everyone in the MySQL industry does.
+But now there&rsquo;s a new online schema change tool that will obsolete these two: Spirit by renowned MySQL expert Morgan Tocker.">
+
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/future-of-mysql-schema-change-spirit/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.119.0">
+  <link rel="canonical" href="https://hackmysql.com/post/future-of-mysql-schema-change-spirit/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/benchmarking/">Benchmarking</a>
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/level-up/">Level Up</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">The Future of MySQL Schema Change: Spirit</h1>
+
+        <div class="post-meta">
+
+
+  <div>Nov 6, 2023</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/pt-osc">#pt-osc</a>
+
+        <a href="/tags/gh-ost">#gh-ost</a>
+
+        <a href="/tags/spirit">#Spirit</a>
+
+
+  </div>
+</div>
+
+
+        <p>Using pt-online-schema or gh-ost?
+Of course you are; everyone in the MySQL industry does.
+But now there&rsquo;s a new online schema change tool that will obsolete these two: <a href="https://github.com/cashapp/spirit">Spirit</a> by renowned MySQL expert Morgan Tocker.</p>
+<p>But first, why Spirit? Why a new online schema change (OSC) tool?
+Size and speed: pt-online-schema (pt-osc) and gh-ost can alter a 1 TB table in reasonable time: maybe a week or so depending on the server.
+But a 2 TB table?
+You could be waiting quite awhile.</p>
+<p>In 2023 and beyond, that&rsquo;s no longer reasonable.
+The MySQL industry needs an OSC tool capable of far greater size and speed.
+I want an OSC tool that can handle <strong>10 TB in 5 days</strong>.</p>
+<p>Neither pt-osc nor gh-ost can do that—not even close!
+Here&rsquo;s what the difference looks like (drawn to scale):</p>
+<p><img src="/img/spirit_runway.svg" alt="Spirit runway: 15TB"></p>
+<p>I want <em>significantly</em> more runway from an OSC tool.
+Although 10 TB was my challenge, we engineer conservatively so that 15 TB is feasible, too.</p>
+<p>Spirit meets and exceeds the challenge: we&rsquo;ve seen it alter 10 TB in 3.75 days (90 hours).</p>
+<p>Morgan Tocker wrote and <a href="https://code.cash.app/more-resilient-schema-changes-at-scale">released Spirit on October 23, 2023</a> as free open source software built for the MySQL industry.
+Read his two-part release announcement for more details.</p>
+<p><a href="https://github.com/cashapp/spirit">Spirit</a> is a new online schema change tool that, I expect, will serve the MySQL industry for the next 10 years.
+As the original author of pt-online-schema-change (which has served the industry for the last 12 years), I encourage you to put pt-osc to rest and use (and contribute to) Spirit instead.</p>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/deferred-join-deep-dive/" data-toggle="tooltip" data-placement="top" title="Deferred Join: A Deep Dive">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2023 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

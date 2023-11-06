@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gh-ost on Hack MySQL</title>
+    <link>https://hackmysql.com/tags/gh-ost/</link>
+    <description>Recent content in gh-ost on Hack MySQL</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2022 Daniel Nichter</copyright>
+    <lastBuildDate>Mon, 06 Nov 2023 09:00:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/gh-ost/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Future of MySQL Schema Change: Spirit</title>
+      <link>https://hackmysql.com/post/future-of-mysql-schema-change-spirit/</link>
+      <pubDate>Mon, 06 Nov 2023 09:00:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/post/future-of-mysql-schema-change-spirit/</guid>
+      <description>&lt;p&gt;Using pt-online-schema or gh-ost?
+Of course you are; everyone in the MySQL industry does.
+But now there&amp;rsquo;s a new online schema change tool that will obsolete these two: &lt;a href=&#34;https://github.com/cashapp/spirit&#34;&gt;Spirit&lt;/a&gt; by renowned MySQL expert Morgan Tocker.&lt;/p&gt;</description>
+    </item>
+
+  </channel>
+</rss>
