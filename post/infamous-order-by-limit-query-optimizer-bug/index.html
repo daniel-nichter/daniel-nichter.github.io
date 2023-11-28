@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Infamous ORDER BY LIMIT Query Optimizer Bug</title>
+  <meta property="og:title" content="The Infamous ORDER BY LIMIT Query Optimizer Bug" />
+  <meta name="description" content="16 Years of Fun">
+  <meta property="og:description" content="16 Years of Fun">
+
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.119.0">
+  <link rel="canonical" href="https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/benchmarking/">Benchmarking</a>
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/level-up/">Level Up</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">The Infamous ORDER BY LIMIT Query Optimizer Bug</h1>
+        <h3 class="post-subtitle">16 Years of Fun</h2>
+        <div class="post-meta">
+
+
+  <div>Nov 28, 2023</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/mysql">#mysql</a>
+
+        <a href="/tags/query-optimization">#query-optimization</a>
+
+        <a href="/tags/bug">#bug</a>
+
+
+  </div>
+</div>
+
+
+        <p>Which is faster: <code>LIMIT 1</code> or <code>LIMIT 20</code>?
+Presumably, fetching less rows is faster than fetching more rows.
+But for 16 years (<a href="https://github.com/mysql/mysql-server/commit/cf3942929584#diff-f3db433ca1b69c2c77575643263bf78d">since 2007</a>) the MySQL query optimizer has had a &ldquo;bug&rdquo;† that not only makes <code>LIMIT 1</code> <em>slower</em> than <code>LIMIT 20</code> but can also makes the former a table scan, which tends to cause problems.
+This happened last week where I work, and although MySQL DBAs are familiar with this bug, I&rsquo;m writing this blog post for developers to more clearly illustrate and explain what&rsquo;s going on and why because it&rsquo;s really counterintuitive.</p>
+<p class="note">
+&dagger; It's technically not a bug because the result isn't wrong, it's just slower.
+But I'll call it a bug because that's easier to type than "query optimization that sometimes makes the query slower."
+</p>
+<h2 id="fundamentals">Fundamentals</h2>
+<p>Before we look at a test case with 1,000,000 rows, let&rsquo;s nail down some fundamentals with only 6 rows depicted in two diagrams below.</p>
+<p>The top diagram is a primary key (PK) on column <code>id</code> depicted as rows because with InnoDB the primary key is the table.
+It&rsquo;s a B-tree index, so it&rsquo;s ordered from least to greatest value (ascending): <code>id = 1</code> at the start (head) to <code>id = 6</code> at the end (tail).
+When the index is scanned, it can only be scanned in this order (ascending), or reverse (descending), but the default is ascending.</p>
+<p><img src="/img/order_by_limit_bug_1.svg" alt="PK and secondary index"></p>
+<p>To bottom diagram is a secondary index (SI) on columns <code>&lt;col2, co1&gt;</code> depicted as index records, so each &ldquo;column&rdquo; (reading left to right) is an index record, <code>&lt;a, x&gt;</code>, <code>&lt;a, y&gt;</code>, and so on.
+It&rsquo;s also a B-tree index, so it&rsquo;s ordered ascending and can only be scanned ascending or descending.</p>
+<p>If you&rsquo;ve read my book, <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, you already know why the secondary index has PK values (copies, not pointers) appended to it: they tell MySQL where to find the corresponding rows.
+For example, when MySQL uses the SI to match <code>&lt;b, r&gt;</code>, it uses the appended PK value <code>3</code> to read that row from the primary key.</p>
+<p>Now here&rsquo;s the query in question:</p>
+<p><code>SELECT * FROM t WHERE col2 = 'c' ORDER BY id LIMIT 1</code></p>
+<p>How should MySQL execute that query?
+Developers tend to say &ldquo;Use the secondary index for the WHERE condition <code>col2 = 'c'</code>.&rdquo;
+That&rsquo;s reasonable; it makes sense.
+(If not, then you really must <a href="https://oreil.ly/efficient-mysql-performance">read my book</a>.)</p>
+<p>The secondary index has 2 matching records: <code>&lt;c, n&gt;</code> and <code>&lt;c, o&gt;</code>.
+That will cause 4 lookups total: 2 secondary index reads + 2 corresponding primary key reads.
+Furthermore, the query needs to order by <code>id</code>, which is not the order of the secondary index, so MySQL will also sort the results after those 4 lookups.
+That means EXPLAIN will say &ldquo;Using filesort&rdquo;.</p>
+<p>Let&rsquo;s walk through the secondary index access step by step:</p>
+<ol>
+<li>Match SI <code>&lt;c, n&gt;</code></li>
+<li>Read corresponding PK row <code>6</code> into sort buffer</li>
+<li>Match SI <code>&lt;c, o&gt;</code></li>
+<li>Read corresponding PK row <code>5</code> into sort buffer</li>
+<li>Sort the buffer for <code>ORDER BY</code>: <code>[6, 5]</code> → <code>[5, 6]</code></li>
+<li>Apply <code>LIMIT 1</code> to return PK row <code>&lt;5, r, b&gt;</code></li>
+</ol>
+<p>That&rsquo;s not a bad execution plan, but the query optimizer can choose a completely different plan: an index scan on the <code>ORDER BY</code> column which happens to be the primary key: <code>id</code>.
+(Remember: an index scan on the primary is the same as a table scan because the primary key is the table.)
+Why?
+In the source code, <code>sql_select.cc</code> method <code>test_if_cheaper_ordering()</code>, a code comment explains:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>        <span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">          Switch to index that gives order if its scan time is smaller than
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">          read_time of current chosen access method.
+</span></span></span></code></pre></div><p><mark>Reading rows <em>in order</em> might be faster than unordered secondary index lookups plus sorting.</mark>
+With this optimization, the new query execution plan would be:</p>
+<ol>
+<li>Read PK row <code>1</code> and discard (<code>col2</code> value doesn&rsquo;t match)</li>
+<li>Read PK row <code>2</code> and discard (<code>col2</code> value doesn&rsquo;t match)</li>
+<li>Read PK row <code>3</code> (<code>col2</code> value matches)</li>
+</ol>
+<p>Looks like MySQL is correct: by scanning the primary key in order, it reads 1 less row and avoids the filesort.
+This is <em>might</em> be faster, but I&rsquo;m omitting various details to explain the fundamentals more simply.
+For now, the point is that this query optimization works this way and might be faster.</p>
+<p>What&rsquo;s weird is that MySQL does not overtly indicate when it automatically changes the execution plan to enable this query optimization.
+For example, <em>before</em> the change you would see an <a href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html">EXPLAIN plan</a> like:</p>
+<pre tabindex="0"><code class="language-none" data-lang="none">-- BEFORE: Secondary index lookup
++-------+------+------------------+------------------+-------+------+----------------+
+| table | type | possible_keys    | key              | ref   | rows | Extra          |
++-------+------+--------------------+----------------+-------+------+----------------+
+| t     | ref  | idx_on_col2_col1 | idx_on_col2_col1 | const | 1000 | Using filesort |
++-------+------+------------------+------------------+-------+------+----------------+
+</code></pre><p>But <em>after</em> the change you would see an EXPLAIN plan like:</p>
+<pre tabindex="0"><code class="language-none" data-lang="none">-- AFTER: Primary key scan (query optimization)
++-------+-------+------------------+---------+------+------+-------------+
+| table | type  | possible_keys    | key     | ref  | rows | Extra       |
++-------+-------+------------------+---------+------+------+-------------+
+| t     | index | idx_on_col2_col1 | PRIMARY | NULL |  996 | Using where |
++-------+-------+------------------+---------+------+------+-------------+
+</code></pre><p>Notice that fields <code>type</code>, <code>key</code>, <code>ref</code>, and <code>Extra</code> all change.
+Also, <code>PRIMARY</code> is not listed for <code>possible_keys</code> before, but after (when MySQL changes the execution plan) it appears as the chosen <code>key</code>.
+That&rsquo;s one telltale sign that MySQL changed the execution plan to enable this optimization, but the indisputable sign is only seen in an optimizer trace (line 10 of this snippet):</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;reconsidering_access_paths_for_index_ordering&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;clause&#34;</span>: <span style="color:#e6db74">&#34;ORDER BY&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;steps&#34;</span>: [
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;index_order_summary&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;table&#34;</span>: <span style="color:#e6db74">&#34;`t`&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;index_provides_order&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;order_direction&#34;</span>: <span style="color:#e6db74">&#34;asc&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;index&#34;</span>: <span style="color:#e6db74">&#34;PRIMARY&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;plan_changed&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;access_type&#34;</span>: <span style="color:#e6db74">&#34;index&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="note" style="margin-top:15px">
+Trace the optimizer:
+<pre>
+SET optimizer_trace="enabled=on";
+-- Execute query or EXPLAIN
+SELECT * FROM INFORMATION_SCHEMA.OPTIMIZER_TRACE\G
+</pre>
+</div>
+<p>Unfortunately, the optimizer trace information does not specify <em>why</em> the index scan is faster.
+Neither does the MySQL manual at the end of <a href="https://dev.mysql.com/doc/refman/8.0/en/limit-optimization.html">8.2.1.19 LIMIT Query Optimization</a>:</p>
+<blockquote>
+<p>For a query with an ORDER BY or GROUP BY and a LIMIT clause, the optimizer tries to choose an ordered index by default when it appears doing so would speed up query execution. Prior to MySQL 8.0.21, there was no way to override this behavior, even in cases where using some other optimization might be faster. Beginning with MySQL 8.0.21, it is possible to turn off this optimization by setting the optimizer_switch system variable&rsquo;s prefer_ordering_index flag to off.</p>
+</blockquote>
+<p>(The phrase &ldquo;even in cases where using some other optimization might be faster&rdquo; is a polite way of referring to this bug.)</p>
+<p>Is sorting rows really so slow that it justifies this query optimization?
+There&rsquo;s more to it than that, but we need a lot more rows to understand why.</p>
+<h2 id="jeremys-test-case">Jeremy&rsquo;s Test Case</h2>
+<p>This bug has existed for a long time, and many MySQL experts have blogged about it over the years.
+One such expert is Jeremy Cole and his blog post
+<a href="https://blog.jcole.us/2019/09/30/reconsidering-access-paths-for-index-ordering-a-dangerous-optimization-and-a-fix/">Reconsidering access paths for index ordering… a dangerous optimization… and a fix!</a>
+He provides a test case with 1,000,000 rows that reproduces the bug, but first let&rsquo;s demonstrate again that sometimes MySQL is right to change the execution plan.</p>
+<p>The data dump is <a href="/jcole-1M.sql.gz">jcole-1M.sql.gz</a>, table <code>t</code> so be careful not to overwrite any existing table <code>t</code> you might have.
+It contains 1M rows with values for column <code>other_id</code> repeating every 1,000 rows—this will become important later.
+There&rsquo;s a secondary index on columns <code>&lt;other_id, covered_column&gt;</code>.</p>
+<p>After you load the table, <code>ANALYZE TABLE t</code> to ensure the index statistics are correct.
+Then run <code>EXPLAIN ANALYZE SELECT non_covered_column FROM t WHERE other_id=555 ORDER BY id LIMIT 1</code>:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>-&gt; Limit: <span style="color:#ae81ff">1</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span>  <span style="color:#f92672">(</span>cost<span style="color:#f92672">=</span>0.999 rows<span style="color:#f92672">=</span>0.999<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>actual time<span style="color:#f92672">=</span>1..1 rows<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> loops<span style="color:#f92672">=</span>1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   -&gt; Filter: <span style="color:#f92672">(</span>t.other_id <span style="color:#f92672">=</span> 555<span style="color:#f92672">)</span>  <span style="color:#f92672">(</span>cost<span style="color:#f92672">=</span>0.999 rows<span style="color:#f92672">=</span>0.999<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>actual time<span style="color:#f92672">=</span>1..1 rows<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> loops<span style="color:#f92672">=</span>1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      -&gt; Index scan on t using PRIMARY  <span style="color:#f92672">(</span>cost<span style="color:#f92672">=</span>0.999 rows<span style="color:#f92672">=</span>996<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>actual time<span style="color:#f92672">=</span>0.116..0.345 rows<span style="color:#f92672">=</span><span style="color:#ae81ff">555</span> loops<span style="color:#f92672">=</span>1<span style="color:#f92672">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Read my in-depth guide to <a href="/post/book-2/">EXPLAIN ANALYZE</a> if you&rsquo;re not familiar with the output—it&rsquo;s something all developers need to know.</p>
+<p>Apart from different column names and 1M rows rather than 6, everything is the same as you&rsquo;ve learned so far.
+The EXPLAIN ANALYZE output shows it in another way: on line 3, &ldquo;rows=996&rdquo; means MySQL estimated it would have to scan through 996 rows to find the first matching one, but &ldquo;rows=555&rdquo; means it scanned through only 555 rows—the optimization worked: it dramatically reduced row access.
+Line 2 is filtering for <code>WHERE other_id=555</code>.
+Line 3 is the <code>LIMIT 1</code>.
+For lines 2 and 3 we see &ldquo;rows=1&rdquo; which is further evidence of the optimization at work: only 1 row was filtered and limited—and a filesort avoided.</p>
+<p>Why did MySQL estimate 996 rows?
+Because there are 1,000 rows matching <code>other_id=555</code>.
+(It&rsquo;s a row <em>estimate</em> so 996 is close enough to 1,000.)
+This detail will be important later.</p>
+<p>For the third time now, have you <a href="https://oreil.ly/efficient-mysql-performance">read my book</a>?
+If so, then you probably recall the very first sentence: <em>Performance is query response time</em>.
+All this theory and EXPLAIN stuff is cool, but is the query actually faster with this optimization?
+Yes, from the slow log:</p>
+<pre>
+<mark># Query_time: 0.000737</mark>  Lock_time: 0.000003 Rows_sent: 1  Rows_examined: 555 Thread_id: 225 Errno: 0 Killed: 0 Bytes_received: 92 Bytes_sent: 92 Read_first: 1 Read_last: 0 Read_key: 1 Read_next: 554 Read_prev: 0 Read_rnd: 0 Read_rnd_next: 0 Sort_merge_passes: 0 Sort_range_count: 0 Sort_rows: 0 Sort_scan_count: 0 Created_tmp_disk_tables: 0 Created_tmp_tables: 0
+SELECT non_covered_column FROM t WHERE other_id=555 ORDER BY id ASC LIMIT 1;
+
+<mark># Query_time: 0.005518</mark>  Lock_time: 0.000002 Rows_sent: 1  Rows_examined: 1001 Thread_id: 225 Errno: 0 Killed: 0 Bytes_received: 136 Bytes_sent: 92 Read_first: 0 Read_last: 0 Read_key: 1 Read_next: 1000 Read_prev: 0 Read_rnd: 0 Read_rnd_next: 0 Sort_merge_passes: 0 Sort_range_count: 0 Sort_rows: 1 Sort_scan_count: 1 Created_tmp_disk_tables: 0 Created_tmp_tables: 0
+SELECT non_covered_column FROM t FORCE INDEX (index_other_id_covered_column) WHERE other_id=555 ORDER BY id ASC LIMIT 1;
+</pre>
+<p>Top result is with the optimization (scanning the primary key): 0.74 ms.
+Bottom result is forcing the secondary index lookup plus sort: 5.52 ms.
+The primary key scan is about 5x faster in <em>this</em> case, but not all cases.</p>
+<h2 id="the-bug-in-action">The Bug in Action</h2>
+<p>After loading the data dump in the previous section, execute<br><code>UPDATE t SET id=id+1000000 WHERE other_id=555;</code><br>
+That moves 1,000 rows matching <code>other_id=555</code> to the end of the table.
+Then execute these queries:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> non_covered_column <span style="color:#66d9ef">FROM</span> t <span style="color:#66d9ef">WHERE</span> other_id<span style="color:#f92672">=</span><span style="color:#ae81ff">555</span> <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> id <span style="color:#66d9ef">ASC</span> <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> non_covered_column <span style="color:#66d9ef">FROM</span> t <span style="color:#66d9ef">WHERE</span> other_id<span style="color:#f92672">=</span><span style="color:#ae81ff">555</span> <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> id <span style="color:#66d9ef">ASC</span> <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">20</span>;
+</span></span></code></pre></div><p>With MySQL 5.7, 8.0, and even 8.1 you should get wildly different response times:</p>
+<pre>
+<mark># Query_time: 0.416951</mark>  Lock_time: 0.000004 Rows_sent: 1  Rows_examined: 999001 Thread_id: 226 Errno: 0 Killed: 0 Bytes_received: 82 Bytes_sent: 92 Read_first: 1 Read_last: 0 Read_key: 1 Read_next: 999000 Read_prev: 0 Read_rnd: 0 Read_rnd_next: 0 Sort_merge_passes: 0 Sort_range_count: 0 Sort_rows: 0 Sort_scan_count: 0 Created_tmp_disk_tables: 0 Created_tmp_tables: 0
+SELECT non_covered_column FROM t WHERE other_id=555 ORDER BY id ASC LIMIT 1;
+
+<mark># Query_time: 0.002672</mark>  Lock_time: 0.000004 Rows_sent: 20  Rows_examined: 1020 Thread_id: 226 Errno: 0 Killed: 0 Bytes_received: 83 Bytes_sent: 273 Read_first: 0 Read_last: 0 Read_key: 1 Read_next: 1000 Read_prev: 0 Read_rnd: 0 Read_rnd_next: 0 Sort_merge_passes: 0 Sort_range_count: 0 Sort_rows: 20 Sort_scan_count: 1 Created_tmp_disk_tables: 0 Created_tmp_tables: 0
+SELECT non_covered_column FROM t WHERE other_id=555 ORDER BY id ASC LIMIT 20;
+</pre>
+<p><code>LIMIT 1</code>: 471 ms<br>
+<code>LIMIT 20</code>: 3 ms</p>
+<p>20x more rows but 157x faster&hellip;<p style="font-size:22pt">🤯</p></p>
+<p><code>EXPLAIN ANALYZE</code> for the <code>LIMIT 1</code> query shows the problem even better:</p>
+<pre tabindex="0"><code class="language-none" data-lang="none">   -&gt; Index scan on t using PRIMARY  (cost=0.25 rows=999) (actual time=0.847..7856 rows=999001 loops=1)
+</code></pre><p>&ldquo;rows=999&rdquo; is the row estimate, but &ldquo;actual &hellip; rows=999001&rdquo; is the problem: MySQL assumed that the first matching row would be about 1k rows from the start of the table, but it was actually near the end of the table (999001 rows from the start) because of the <code>UPDATE</code> statement.</p>
+<p>A crude ASCII depiction of what MySQL assumed versus reality created by the <code>UPDATE</code>:</p>
+<pre tabindex="0"><code class="language-none" data-lang="none">Assumed: ...555...555...555...
+Reality: .....................555 555 555
+</code></pre><p>MySQL uses this optimization for <code>LIMIT 1</code>, but the assumption proves false (the first matching row is not about ~1k rows from the start), and that causes the query to be slow.
+But MySQL does not use this optimization for <code>LIMIT 20</code>, so neither the assumption nor the reality matter, and that causes the query to be a lot faster than <code>LIMIT 1</code>.</p>
+<p>Now we have two related issues: MySQL assumes uniformly distributed data, and how/why the <code>LIMIT</code> value does or does not trigger MySQL to use this query optimization.</p>
+<h2 id="data-distribution">Data Distribution</h2>
+<p>The MySQL query optimizer assumes that data is uniformly distributed.
+For example, in the table depicted at the start of this blog post (<a href="#fundamentals">Fundamentals</a>), the <code>a</code>, <code>b</code>, and <code>c</code> values are uniformly distributed: there&rsquo;s a <code>c</code> value every 3rd row (in the primary key).
+The same is true for Jeremy&rsquo;s test case <em>before</em> the <code>UPDATE</code>: rows matching <code>other_id=555</code> are uniformly distributed from the beginning to the end of the table, one occurrence every 1,000 rows.</p>
+<p>When this assumption is true (when data is uniformly distributed), this query optimization works: it can increase performance (reduce response time).
+But the calculation that makes MySQL use the optimization (or not) involves several factors:</p>
+<ul>
+<li><code>select limit</code>: The <code>n</code> in <code>LIMIT n</code></li>
+<li><code>refkey rows</code>: How many rows the originally chosen index matches</li>
+<li>The read cost of using the originally chosen index</li>
+<li><code>table rows</code>: Total number of rows in the table</li>
+<li>Records per key‡</li>
+<li>Various access costs</li>
+</ul>
+<p>Using these factors, the query optimizer calculates the <em>index scan cost</em>.
+If the index scan cost is less than the read cost (of using the originally chosen index), then the index scan is used.</p>
+<p class="note">
+&Dagger; I cannot figure out "records per key" even with a debugger.
+The value seems to always be 1, which makes it unused in this case.
+I'm not familiar enough with this internal server detail, but for this example it doesn't make a difference.
+</p>
+<p>The index scan cost calculation is roughly:</p>
+<ul>
+<li><code>x = table rows / refkey rows * select limit</code></li>
+<li><code>index scan cost = x / records per key * access cost</code></li>
+</ul>
+<p>What&rsquo;s important is <code>x</code>: if we assume rows are uniformly distributed, and <code>other_id=555</code> matches 1,000 rows (<code>refkey rows</code>), then the first matching row for <code>LIMIT 1</code> should be <code>x = 1,000,000 / 1,000 * 1 = 1,000</code> rows from the beginning of the table (primary key).
+Likewise, for <code>LIMIT 2</code> that increases to 2,000 rows, and <code>LIMIT 3</code> that increases to 3,000 rows, and so on.</p>
+<p class="note">
+Don't be fooled by the easy, round numbers used here: 1M total rows / 1k matching rows = 1,000 again.
+It's just a test case.
+In the real world, the numbers can be anything.
+For example, it happened to some developers where I work with LIMIT 21 and a table with 1.2 billion rows.
+</p>
+<p>But of course, every row access has some cost, so <code>x</code> is divided by a value I don&rsquo;t understand (see ‡ above) and multiplied by an access cost that takes into account several other factors beyond the scope of this blog post.
+For example, MySQL knows if a page is in memory (lost cost memory access) or not (high cost storage I/O).</p>
+<p>The end result is an index scan cost that can be compared to the original read cost, and (apart from several other conditionals) that&rsquo;s exactly what the code does: <code>index_scan_time &lt; read_time</code>.
+(The variables are called &ldquo;time&rdquo; but they&rsquo;re not really time, they&rsquo;re unit-less costs.)
+If you&rsquo;re curious, here&rsquo;s what MySQL 8.0.35 calculates for <code>LIMIT 1</code> with <a href="#jeremys-test-case">Jeremy&rsquo;s test case</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Access</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Read (ref)</td>
+<td>310.59415278214396</td>
+</tr>
+<tr>
+<td>Index scan</td>
+<td>310.28355862936183</td>
+</tr>
+</tbody>
+</table>
+<p>Yes, the index scan is only slightly cheaper.
+<code>LIMIT 2</code> doubles the index scan cost to 620, which is why MySQL doesn&rsquo;t use the optimization.</p>
+<p>For developers the main point is: <mark>this bug may or may not happened based <code>n</code> in <code>LIMIT n</code>, the estimated number of matching rows for the reference key (originally chosen index), and the total number of rows in the table.</mark></p>
+<h2 id="everything-changes">Everything Changes</h2>
+<p>This bug can appear or disappear over time because everything changes:</p>
+<ul>
+<li>The table is probably growing, or maybe shrinking</li>
+<li>The number of matching rows (for the reference key) can change</li>
+<li>The <code>LIMIT n</code> might be variable (pagination?)</li>
+<li>When MySQL is upgraded</li>
+</ul>
+<p>These changes mean that you probably can&rsquo;t look once and be done unless you globally disable this optimization—see <a href="#optimizer-flag">Optimizer Flag</a> below.</p>
+<p>The last point is especially poignant because MySQL 5.7 became EOL last month (October 2023), so the world is hopefully upgrading to 8.0 (which became LTS as of 8.0.34).
+Whereas 5.7 still had the query cache (QC), it&rsquo;s gone in 8.0.
+It&rsquo;s been standard practice to disable the QC for a long time, but for example it&rsquo;s on by default in Amazon Aurora v2 for MySQL.
+When you upgrade from 5.7 to 8.0, check any queries with <code>ORDER BY ... LIMIT</code> that might be affected by this bug and exacerbated by the loss of the QC.</p>
+<p>The first point is also interesting because the problem is usually &ldquo;this optimization decreases performance when MySQL uses it&rdquo;, but the opposite can happen too: your workload could rely on this optimization, but then MySQL stops using it, which causes a decrease in performance.
+Imagine you&rsquo;ve got a table and query for which MySQL is choosing this optimization <em>and it works</em>—it&rsquo;s faster than the unordered secondary index read.
+But over time new rows are appended to the table without affecting the number of matching rows.
+At some point, the larger table will change the cost calculations and MySQL will stop choosing this query optimization, which can make the query slower.
+You can see this in action, too:</p>
+<ul>
+<li>Reload <a href="/jcole-1M.sql.gz">jcole-1M.sql.gz</a></li>
+<li>Insert +1M more rows but none with <code>other_id=555</code></li>
+<li>Observe EXPLAIN plans and query times for <code>LIMIT 1</code> vs. <code>LIMIT 20</code></li>
+</ul>
+<p>With 2M rows instead of 1M, you&rsquo;ll see that MySQL no longer chooses this query optimization for <code>LIMIT 1</code> even though it&rsquo;s faster.
+In this case, the only way to force the query optimization to happen again is <code>FORCE INDEX (PRIMARY)</code>.</p>
+<h2 id="optimizer-flag">Optimizer Flag</h2>
+<p>Jeremy Cole created the <a href="https://dev.mysql.com/doc/refman/8.0/en/switchable-optimizations.html#optflag_prefer-ordering-index"><code>prefer_ordering_index</code></a> optimizer flag to disable this optimization<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>:</p>
+<p><code>SET optimizer_switch = &quot;prefer_ordering_index=off&quot;;</code></p>
+<p>When this optimizer flag is off, the function that does the cost calculations described in <a href="#data-distribution">Data Distribution</a> is not called, so this query optimization does not happen.</p>
+<p>Then everyone asks: &ldquo;Should I disable this optimization (globally)?&rdquo;</p>
+<dl>
+<dt>Yes</dt>
+<dd>But only for <em>new development</em>.
+Experts usually agree that assuming uniform data distribution is faulty logic because there are no <em>a priori</em> reasons to presume that data will be uniformly distributed.
+The long list of bug reports about this query optimization are proof to the contrary: data is often not uniformly distributed.
+(Likewise, data <em>access</em> can range from uniform [across the whole table] to extreme hot spots [a few rows].)
+So if you have the luxury of knowing all this at the start of a new development, then yes: globally disable this optimization because you can still force it (with <code>FORCE INDEX</code>) if you ever find a slow query that would be faster using it.</dd>
+<dt>No</dt>
+<dd>Despite all the bug reports over nearly two decades, it is logical to presume that there are many workloads around the world that are benefiting from this optimization, so turning it off might cause more harm than good on a global scale.
+Oracle knows this, which is why it&rsquo;s still on by default.
+If it&rsquo;s not affecting you yet, then just leave it be.
+Sometimes pragmatism is the best technical choice.</dd>
+<dt>Maybe</dt>
+<dd>Now that you deeply understand this query optimization, if you can convince your fellow developers, DBAa, and managers to take a gamble, then sure: disable it globally for an existing database.
+If you win, nothing will happen; performance will stay the same.
+If you lose, you can quickly re-enable it, or quickly fix the slow query by increasing the <code>LIMIT</code> or using <code>FORCE INDEX</code> to force the secondary index (use <code>EXPLAIN</code> to see what it is before MySQL changes the plan).</dd>
+</dl>
+<p>Bottom line: you may never be bitten by the infamous ORDER BY LIMIT query optimizer bug, but if you are, you can disable the optimizer flag, or workaround by increasing the <code>LIMIT</code> value to change the cost calculations, or use <code>FORCE INDEX</code> to force the original secondary index.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://dev.mysql.com/worklog/task/?id=13929">WL#13929: Introduce new optimizer switch to disable limit optimization</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/future-of-mysql-schema-change-spirit/" data-toggle="tooltip" data-placement="top" title="The Future of MySQL Schema Change: Spirit">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <p class="copyright text-muted">
+    Copyright 2023 Daniel Nichter
+  </p>
+  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

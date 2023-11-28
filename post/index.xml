@@ -7,7 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Mon, 06 Nov 2023 09:00:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 28 Nov 2023 17:39:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Infamous ORDER BY LIMIT Query Optimizer Bug</title>
+      <link>https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/</link>
+      <pubDate>Tue, 28 Nov 2023 17:39:00 -0500</pubDate>
+
+      <guid>https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/</guid>
+      <description>&lt;p&gt;Which is faster: &lt;code&gt;LIMIT 1&lt;/code&gt; or &lt;code&gt;LIMIT 20&lt;/code&gt;?
+Presumably, fetching less rows is faster than fetching more rows.
+But for 16 years (&lt;a href=&#34;https://github.com/mysql/mysql-server/commit/cf3942929584#diff-f3db433ca1b69c2c77575643263bf78d&#34;&gt;since 2007&lt;/a&gt;) the MySQL query optimizer has had a &amp;ldquo;bug&amp;rdquo;† that not only makes &lt;code&gt;LIMIT 1&lt;/code&gt; &lt;em&gt;slower&lt;/em&gt; than &lt;code&gt;LIMIT 20&lt;/code&gt; but can also makes the former a table scan, which tends to cause problems.
+This happened last week where I work, and although MySQL DBAs are familiar with this bug, I&amp;rsquo;m writing this blog post for developers to more clearly illustrate and explain what&amp;rsquo;s going on and why because it&amp;rsquo;s really counterintuitive.&lt;/p&gt;</description>
+    </item>
+
     <item>
       <title>The Future of MySQL Schema Change: Spirit</title>
       <link>https://hackmysql.com/post/future-of-mysql-schema-change-spirit/</link>

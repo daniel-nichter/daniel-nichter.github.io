@@ -149,32 +149,33 @@ Follow it and you will understand MySQL performance like an expert.
 	<div id="posts">
 
 			<article class="post-preview">
-				<a href="https://hackmysql.com/post/future-of-mysql-schema-change-spirit/">
-					<h1 class="post-title">The Future of MySQL Schema Change: Spirit</h1>
+				<a href="https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/">
+					<h1 class="post-title">The Infamous ORDER BY LIMIT Query Optimizer Bug</h1>
+
+						<h3 class="post-subtitle">16 Years of Fun</h3>
 
 				</a>
 				<div class="post-entry">
 
-						<p>Using pt-online-schema or gh-ost?
-Of course you are; everyone in the MySQL industry does.
-But now there&rsquo;s a new online schema change tool that will obsolete these two: <a href="https://github.com/cashapp/spirit">Spirit</a> by renowned MySQL expert Morgan Tocker.</p>
-						<a href="https://hackmysql.com/post/future-of-mysql-schema-change-spirit/" class="post-read-more">Read more...</a>
+						<p>Which is faster: <code>LIMIT 1</code> or <code>LIMIT 20</code>?
+Presumably, fetching less rows is faster than fetching more rows.
+But for 16 years (<a href="https://github.com/mysql/mysql-server/commit/cf3942929584#diff-f3db433ca1b69c2c77575643263bf78d">since 2007</a>) the MySQL query optimizer has had a &ldquo;bug&rdquo;† that not only makes <code>LIMIT 1</code> <em>slower</em> than <code>LIMIT 20</code> but can also makes the former a table scan, which tends to cause problems.
+This happened last week where I work, and although MySQL DBAs are familiar with this bug, I&rsquo;m writing this blog post for developers to more clearly illustrate and explain what&rsquo;s going on and why because it&rsquo;s really counterintuitive.</p>
+						<a href="https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/" class="post-read-more">Read more...</a>
 
 				</div>
 				<div class="post-meta">
 
 
-  <div>Nov 6, 2023</div>
+  <div>Nov 28, 2023</div>
   <div class="blog-tags">
 
 
         <a href="/tags/mysql">#mysql</a>
 
-        <a href="/tags/pt-osc">#pt-osc</a>
+        <a href="/tags/query-optimization">#query-optimization</a>
 
-        <a href="/tags/gh-ost">#gh-ost</a>
-
-        <a href="/tags/spirit">#Spirit</a>
+        <a href="/tags/bug">#bug</a>
 
 
   </div>
@@ -185,6 +186,8 @@ But now there&rsquo;s a new online schema change tool that will obsolete these t
 
 		<div>
 			<ul>
+
+				<li><time>2023-11-06</time>&nbsp;<a href="https://hackmysql.com/post/future-of-mysql-schema-change-spirit/">The Future of MySQL Schema Change: Spirit</a></li>
 
 				<li><time>2023-08-09</time>&nbsp;<a href="https://hackmysql.com/post/deferred-join-deep-dive/">Deferred Join: A Deep Dive</a></li>
 

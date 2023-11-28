@@ -2,25 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://hackmysql.com/tags/gh-ost/</loc>
-    <lastmod>2023-11-06T09:00:00-05:00</lastmod>
+    <loc>https://hackmysql.com/tags/bug/</loc>
+    <lastmod>2023-11-28T17:39:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/</loc>
-    <lastmod>2023-11-06T09:00:00-05:00</lastmod>
+    <lastmod>2023-11-28T17:39:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/mysql/</loc>
-    <lastmod>2023-11-06T09:00:00-05:00</lastmod>
+    <lastmod>2023-11-28T17:39:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/</loc>
+    <lastmod>2023-11-28T17:39:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/query-optimization/</loc>
+    <lastmod>2023-11-28T17:39:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/</loc>
+    <lastmod>2023-11-28T17:39:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/</loc>
+    <lastmod>2023-11-28T17:39:00-05:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/help/</loc>
+    <lastmod>2023-11-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://hackmysql.com/tags/gh-ost/</loc>
     <lastmod>2023-11-06T09:00:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/pt-osc/</loc>
     <lastmod>2023-11-06T09:00:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/tags/spirit/</loc>
-    <lastmod>2023-11-06T09:00:00-05:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/tags/</loc>
     <lastmod>2023-11-06T09:00:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/post/future-of-mysql-schema-change-spirit/</loc>
@@ -93,9 +105,6 @@
     <lastmod>2022-12-22T12:55:00-05:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/eng/career-advice/</loc>
-    <lastmod>2022-12-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://hackmysql.com/help/</loc>
     <lastmod>2022-12-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://hackmysql.com/eng/write/</loc>
