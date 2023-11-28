@@ -406,7 +406,7 @@ If you&rsquo;re curious, here&rsquo;s what MySQL 8.0.35 calculates for <code>LIM
 </table>
 <p>Yes, the index scan is only slightly cheaper.
 <code>LIMIT 2</code> doubles the index scan cost to 620, which is why MySQL doesn&rsquo;t use the optimization.</p>
-<p>For developers the main point is: <mark>this bug may or may not happened based <code>n</code> in <code>LIMIT n</code>, the estimated number of matching rows for the reference key (originally chosen index), and the total number of rows in the table.</mark></p>
+<p>For developers the main point is: <mark>this bug may or may not happen based on <code>n</code> in <code>LIMIT n</code>, the estimated number of matching rows for the reference key (originally chosen index), and the total number of rows in the table.</mark></p>
 <h2 id="everything-changes">Everything Changes</h2>
 <p>This bug can appear or disappear over time because everything changes:</p>
 <ul>
