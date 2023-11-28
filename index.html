@@ -159,7 +159,7 @@ Follow it and you will understand MySQL performance like an expert.
 
 						<p>Which is faster: <code>LIMIT 1</code> or <code>LIMIT 20</code>?
 Presumably, fetching less rows is faster than fetching more rows.
-But for 16 years (<a href="https://github.com/mysql/mysql-server/commit/cf3942929584#diff-f3db433ca1b69c2c77575643263bf78d">since 2007</a>) the MySQL query optimizer has had a &ldquo;bug&rdquo;† that not only makes <code>LIMIT 1</code> <em>slower</em> than <code>LIMIT 20</code> but can also makes the former a table scan, which tends to cause problems.
+But for 16 years (<a href="https://github.com/mysql/mysql-server/commit/cf3942929584#diff-f3db433ca1b69c2c77575643263bf78d">since 2007</a>) the MySQL query optimizer has had a &ldquo;bug&rdquo;† that not only makes <code>LIMIT 1</code> <em>slower</em> than <code>LIMIT 20</code> but can also make the former a table scan, which tends to cause problems.
 This happened last week where I work, and although MySQL DBAs are familiar with this bug, I&rsquo;m writing this blog post for developers to more clearly illustrate and explain what&rsquo;s going on and why because it&rsquo;s really counterintuitive.</p>
 						<a href="https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/" class="post-read-more">Read more...</a>
 
