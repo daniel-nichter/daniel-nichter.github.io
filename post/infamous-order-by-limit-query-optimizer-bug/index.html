@@ -171,7 +171,7 @@ When the index is scanned, it can only be scanned in this order (ascending), or 
 <p>To bottom diagram is a secondary index (SI) on columns <code>&lt;col2, co1&gt;</code> depicted as index records, so each &ldquo;column&rdquo; (reading left to right) is an index record, <code>&lt;a, x&gt;</code>, <code>&lt;a, y&gt;</code>, and so on.
 It&rsquo;s also a B-tree index, so it&rsquo;s ordered ascending and can only be scanned ascending or descending.</p>
 <p>If you&rsquo;ve read my book, <a href="https://oreil.ly/efficient-mysql-performance"><em>Efficient MySQL Performance</em></a>, you already know why the secondary index has PK values (copies, not pointers) appended to it: they tell MySQL where to find the corresponding rows.
-For example, when MySQL uses the SI to match <code>&lt;b, r&gt;</code>, it uses the appended PK value <code>3</code> to read that row from the primary key.</p>
+For example, when MySQL uses the SI to match <code>&lt;b, r&gt;</code>, it uses the appended PK value <code>5</code> to read that row from the primary key.</p>
 <p>Now here&rsquo;s the query in question:</p>
 <p><code>SELECT * FROM t WHERE col2 = 'c' ORDER BY id LIMIT 1</code></p>
 <p>How should MySQL execute that query?
@@ -187,9 +187,9 @@ That means EXPLAIN will say &ldquo;Using filesort&rdquo;.</p>
 <li>Match SI <code>&lt;c, n&gt;</code></li>
 <li>Read corresponding PK row <code>6</code> into sort buffer</li>
 <li>Match SI <code>&lt;c, o&gt;</code></li>
-<li>Read corresponding PK row <code>5</code> into sort buffer</li>
-<li>Sort the buffer for <code>ORDER BY</code>: <code>[6, 5]</code> → <code>[5, 6]</code></li>
-<li>Apply <code>LIMIT 1</code> to return PK row <code>&lt;5, r, b&gt;</code></li>
+<li>Read corresponding PK row <code>3</code> into sort buffer</li>
+<li>Sort the buffer for <code>ORDER BY</code>: <code>[6, 3]</code> → <code>[3, 6]</code></li>
+<li>Apply <code>LIMIT 1</code> to return PK row <code>&lt;3, o, c&gt;</code></li>
 </ol>
 <p>That&rsquo;s not a bad execution plan, but the query optimizer can choose a completely different plan: an index scan on the <code>ORDER BY</code> column which happens to be the primary key: <code>id</code>.
 (Remember: an index scan on the primary is the same as a table scan because the primary key is the table.)
