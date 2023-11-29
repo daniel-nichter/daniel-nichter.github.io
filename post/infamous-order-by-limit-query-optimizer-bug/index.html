@@ -139,7 +139,7 @@
         <div class="post-meta">
 
 
-  <div>Nov 28, 2023</div>
+  <div>Nov 28, 2023&nbsp;&nbsp;&nbsp;(Updated Nov 29, 2023)</div>
   <div class="blog-tags">
 
 
@@ -452,8 +452,15 @@ Sometimes pragmatism is the best technical choice.</dd>
 <dt>Maybe</dt>
 <dd>Now that you deeply understand this query optimization, if you can convince your fellow developers, DBAa, and managers to take a gamble, then sure: disable it globally for an existing database.
 If you win, nothing will happen; performance will stay the same.
-If you lose, you can quickly re-enable it, or quickly fix the slow query by increasing the <code>LIMIT</code> or using <code>FORCE INDEX</code> to force the secondary index (use <code>EXPLAIN</code> to see what it is before MySQL changes the plan).</dd>
+If you lose, you can quickly re-enable it, or use <code>FORCE INDEX</code> to force the secondary index (use <code>EXPLAIN</code> to see what it is before MySQL changes the plan).</dd>
 </dl>
+<p class="warning">
+Disabling <code>prefer_ordering_index</code> causes another bug: MySQL does not scan the primary key for <code>SELECT ... FROM t ORDER BY pk_col LIMIT n</code>.
+Instead, it does a <em><b>full</b> table scan</em> plus sort, which is unnecessary and very likely to cause problems.
+Unlike the main subject of this blog post, I would call this a real bug.
+Thank you to Jay Janssen and Morgan Tocker for brining this to my attention.
+When I have time, I'll debug the source code for this and write another blog post.
+</p>
 <p>Bottom line: you may never be bitten by the infamous ORDER BY LIMIT query optimizer bug, but if you are, you can disable the optimizer flag, or workaround by increasing the <code>LIMIT</code> value to change the cost calculations, or use <code>FORCE INDEX</code> to force the original secondary index.</p>
 <div class="footnotes" role="doc-endnotes">
 <hr>
