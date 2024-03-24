@@ -7,92 +7,103 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Fri, 03 Feb 2023 16:30:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/tags/software-design/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 24 Mar 2024 17:00:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/tags/software-design/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Fallacy of Small Functions</title>
+      <link>https://hackmysql.com/post/fallacy-of-small-functions/</link>
+      <pubDate>Sun, 24 Mar 2024 17:00:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/post/fallacy-of-small-functions/</guid>
+      <description>Decades of computer programming advice, best practices, and books have taught that small functions are good. That&amp;rsquo;s misleading at best and counterproductive at worst: increasing complexity rather than reducing it.
+For brevity, I&amp;rsquo;m going to say things are false or wrong without explaining because you already have a fantastic explanation: A Philosophy of Software Design by John Ousterhout. Everything I&amp;rsquo;m arguing here is explained in that book.
+Here&amp;rsquo;s an example of bad design:</description>
+    </item>
+
     <item>
       <title>The First Design</title>
       <link>https://hackmysql.com/post/the-first-design/</link>
       <pubDate>Fri, 03 Feb 2023 16:30:00 -0500</pubDate>
-      
+
       <guid>https://hackmysql.com/post/the-first-design/</guid>
       <description>&lt;p&gt;When I review the code for a new program, I often provide the original authors &lt;em&gt;a lot&lt;/em&gt; of feedback.
 And just as often, those authors are a little annoyed by me, the feedback, or both.
 But I keep doing it for two reasons.&lt;/p&gt;</description>
     </item>
-    
+
     <item>
       <title>Component-based Software Design</title>
       <link>https://hackmysql.com/post/component-based-software-design/</link>
       <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/component-based-software-design/</guid>
       <description>Software systems are difficult to design because code does not delineate and organize itself. Even experienced engineers can struggle to design a system because there are many solutions but it&amp;rsquo;s not clear which is the best. Compounding the difficulty: engineers know that code can work fine even if, internally, it&amp;rsquo;s an unorganized highly-entangled mess. We want code to be well-organized, but we don&amp;rsquo;t know how to make it so. Component-based design is the solution.</description>
     </item>
-    
+
     <item>
       <title>Thinking in Go</title>
       <link>https://hackmysql.com/post/thinking-in-go/</link>
       <pubDate>Sun, 13 May 2018 09:00:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/thinking-in-go/</guid>
       <description>After learning Go, it is necessary to think in Go in order to design and implement well-written, idiomatic Go. This blog post outlines aspects that I think are important for thinking in Go. A full exploration of these aspects could fill a book, but this only an orientation for experienced programmers new to Go.
 Programming languages have aspects which affect how we think, design, and implement software with the language: syntax, documentation, features/capabilities, language type (object-oriented, functional, compiled, etc.</description>
     </item>
-    
+
     <item>
       <title>Bootloader Design Pattern</title>
       <link>https://hackmysql.com/post/bootloader-design-pattern/</link>
       <pubDate>Sun, 04 Feb 2018 19:30:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/bootloader-design-pattern/</guid>
       <description>Extensibility is a lofty goal for software design, and difficult to achieve. The Wikipedia article notes:
 Extensible design in software engineering is to accept that not everything can be designed in advance.
 That&amp;rsquo;s a paradox because it entails that extensible design does not accept that extensibility can be designed in advance! Fortunately, there&amp;rsquo;s at least one solution that can be intentionally designed and implemented in advance. I call it the &amp;ldquo;Bootloader&amp;rdquo; design pattern.</description>
     </item>
-    
+
     <item>
       <title>Approaching a New Software Project</title>
       <link>https://hackmysql.com/post/approaching-a-new-software-project/</link>
       <pubDate>Sun, 10 Dec 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/approaching-a-new-software-project/</guid>
       <description>Approaching a new software project is difficult for two reasons. First, there&amp;rsquo;s no &amp;ldquo;guiding star&amp;rdquo;, no objective starting point. The developer can begin from and proceed in many directions, which makes choosing difficult. They want to proceed in a good direction from the start, not wasting time or effort, but how can they make a good choice without a guide or the benefit of experience? Being forced to choose and move ahead, the choice is often made randomly rather than methodically.</description>
     </item>
-    
+
     <item>
       <title>Five-Point Checklist for Excellent Software</title>
       <link>https://hackmysql.com/post/five-point-checklist-for-excellent-software/</link>
       <pubDate>Sun, 17 Sep 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/five-point-checklist-for-excellent-software/</guid>
       <description>I&amp;rsquo;ve never met a developer who hasn&amp;rsquo;t read or reviewed a lot of code written by other developers. If there&amp;rsquo;s one truism in the field of software of engineering it&amp;rsquo;s that the process is collaborative. Unless you write and never release software, other people will read the code, and they&amp;rsquo;re most likely reading it not for a fun bedtime story but because they need to understand and probably fix or modify it.</description>
     </item>
-    
+
     <item>
       <title>Designing Tools for Integration</title>
       <link>https://hackmysql.com/post/designing-tools-for-integration/</link>
       <pubDate>Tue, 05 Sep 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/designing-tools-for-integration/</guid>
       <description>When we write a new tool to do X, it&amp;rsquo;s common to program the tool to do X in one way. When X is trivial or very narrow in scope, this makes sense, and programming any more would fall prey to over-engineering. However, when the tool does many things (all logically related, else it falls prey to bloat and/or feature-creep), there quickly becomes many ways to accomplish those many things. No problem, we program all those things, too, but during my tool-making career I&amp;rsquo;ve learned two things:</description>
     </item>
-    
+
     <item>
       <title>How To Test the Database</title>
       <link>https://hackmysql.com/post/how-to-test-the-database/</link>
       <pubDate>Sun, 20 Aug 2017 11:20:00 -0700</pubDate>
-      
+
       <guid>https://hackmysql.com/post/how-to-test-the-database/</guid>
       <description>&amp;ldquo;How do I test the database?&amp;rdquo; is a question I&amp;rsquo;ve been asked by colleagues many times. There&amp;rsquo;s a good, clean solution, but let&amp;rsquo;s first step back from what seems to be the problem to unpack why &amp;ldquo;testing the database&amp;rdquo; is not special (but nonetheless important). In other words: colleagues don&amp;rsquo;t ask, &amp;ldquo;How do I test such-and-such package?&amp;rdquo;, because that&amp;rsquo;s common and well understood. The question about testing the database implies that the database is a special beast that, if not treated properly, will devour the developer in their sleep.</description>
     </item>
-    
+
     <item>
       <title>Design Before Implementation</title>
       <link>https://hackmysql.com/post/design-before-implementation/</link>
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
-      
+
       <guid>https://hackmysql.com/post/design-before-implementation/</guid>
       <description>Like most software engineers, I review my colleagues&amp;rsquo; code. I rarely provide feedback on implementation details because developers rarely choose obviously bad implementations. I focus my attention on design rather than implementation for one simple reason: implementation details are easy to change when software is well designed. Or, from the business perspective, design is the most costly aspect of software to change, so I review for great and therefore cost-effective design.</description>
     </item>
-    
+
   </channel>
 </rss>

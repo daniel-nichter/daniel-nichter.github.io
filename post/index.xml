@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2022 Daniel Nichter</copyright>
-    <lastBuildDate>Tue, 28 Nov 2023 17:39:00 -0500</lastBuildDate><atom:link href="https://hackmysql.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 24 Mar 2024 17:00:00 -0400</lastBuildDate><atom:link href="https://hackmysql.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Fallacy of Small Functions</title>
+      <link>https://hackmysql.com/post/fallacy-of-small-functions/</link>
+      <pubDate>Sun, 24 Mar 2024 17:00:00 -0400</pubDate>
+
+      <guid>https://hackmysql.com/post/fallacy-of-small-functions/</guid>
+      <description>Decades of computer programming advice, best practices, and books have taught that small functions are good. That&amp;rsquo;s misleading at best and counterproductive at worst: increasing complexity rather than reducing it.
+For brevity, I&amp;rsquo;m going to say things are false or wrong without explaining because you already have a fantastic explanation: A Philosophy of Software Design by John Ousterhout. Everything I&amp;rsquo;m arguing here is explained in that book.
+Here&amp;rsquo;s an example of bad design:</description>
+    </item>
+
     <item>
       <title>The Infamous ORDER BY LIMIT Query Optimizer Bug</title>
       <link>https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/</link>

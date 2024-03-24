@@ -10,10 +10,10 @@
   <meta property="og:description" content="&lsquo;Go Antipatterns&rsquo; describes bad Go code and how to make it better.">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/golang/go-antipatterns/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -21,7 +21,6 @@
   <link rel="canonical" href="https://hackmysql.com/golang/go-antipatterns/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -138,97 +137,97 @@
 <h2 id="critical">Critical</h2>
 <p>Critical antipatterns affect fundamental, difficult-to-change aspects of software design, functionality, or testing. As such, they are difficult to change later, so they should be fixed immediately.</p>
 <h3 id="writable-read-only-value">Writable Read-only Value</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Load</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">config</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Load</span>(<span style="color:#a6e22e">config</span>)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Load</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">config</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Load</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
 </span></span></code></pre></div><p>If an argument should not be modified, then don&rsquo;t allow it to be modified by passing a pointer; instead, by the argument by value. This prevents accidental modification and signals to developers that the function doesn&rsquo;t modify the argument. But when a function is intended to modify the argument, pass a pointer to signal this to developers.</p>
 <p>Another way to think about this: if Load() should not modify the caller&rsquo;s config, then preclude even the possibility by passing config by value. Otherwise, subtle and difficult bugs are possible when Load() mutates the config in wrong or unexpected ways causing the app to break or, worse, run like it&rsquo;s ok for awhile then crash later.</p>
 <h3 id="promiscuous-interface">Promiscuous Interface</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ObjectFinder</span> <span style="color:#66d9ef">interface</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Query</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ObjectFinder</span> <span style="color:#66d9ef">interface</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Databases</span>(<span style="color:#a6e22e">app</span> <span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Servers</span>(<span style="color:#a6e22e">dc</span> <span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">ObjectFinder</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">Query</span><span class="p">(</span><span class="nx">query</span> <span class="kt">string</span><span class="p">)</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">ObjectFinder</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">Databases</span><span class="p">(</span><span class="nx">app</span> <span class="kt">string</span><span class="p">)</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">Servers</span><span class="p">(</span><span class="nx">dc</span> <span class="kt">string</span><span class="p">)</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>Interfaces provide <em>discrete</em> functionality; they &ldquo;specify the behavior of an object: if something can do this, then it can be used here.&rdquo; (<a href="https://golang.org/doc/effective_go.html">Effective Go</a>) Methods like Query() allow the interface to do anything, making it difficult to test and mock. It also tends to leak logic: for the antipattern, the caller must know how to query for specific objects, but this logic (query syntax and semantics) is most likely not within the purview of the caller. It&rsquo;s better to encapsulate this logic in the implementation of the interface. This makes the caller simpler (it doesn&rsquo;t have to know query logic), and it decouples the caller from query logic which allow the logic to change without without breaking the caller.</p>
 <h3 id="labyrinthine-structure">Labyrinthine Structure</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Module</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">*</span><span style="color:#a6e22e">ConfigModule</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ConfigModule</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Config</span>              <span style="color:#a6e22e">ServerConfig</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Base</span>                <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">BaseModule</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ServiceConfigModule</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Module</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ServerConfig</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">SSL</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ServiceSSLConfig</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ServiceSSLConfig</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">KeyFile</span> <span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Module</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="nx">ConfigModule</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">ConfigModule</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Config</span>              <span class="nx">ServerConfig</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Base</span>                <span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">BaseModule</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ServiceConfigModule</span> <span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Module</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">ServerConfig</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">SSL</span> <span class="o">*</span><span class="nx">ServiceSSLConfig</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">ServiceSSLConfig</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">KeyFile</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>Structures should be shallow, preferably no more than three levels deep, especially when embedding is used. Structure and field names should be unique and descriptive. No proper example is given for the example above because it&rsquo;s too conflated for clarification, probably resulting from an inherently flawed data model. To be done properly, we would need first to clarify the data model.</p>
 <p>To highlight the antipattern, think about how KeyFile would be accessed from a Module object. It requires a nontrivial and unnecessary amount of attention to detail because of embedding and repeated use of &ldquo;Config&rdquo;.</p>
 <h3 id="hidden-goroutine">Hidden Goroutine</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Cleanup</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ...
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }()
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Cleanup</span>()
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Cleanup</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">Cleanup</span>()
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Cleanup</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">Cleanup</span><span class="p">()</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Cleanup</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">go</span> <span class="nf">Cleanup</span><span class="p">()</span>
 </span></span></code></pre></div><p>All code should be necessary and sufficient. The Cleanup() function in the antipattern is not necessary. The better implementation is sufficient (and still necessary). Additionally, the antipattern breaks developer expectation by hiding the goroutine because, in general, function calls are expected to be synchronous. When a function does nothing but launch a goroutine, it is asynchronous. Functions can and should launch goroutines, but not only this. The better solution is unambiguous, explicit. It also allows Cleanup() to be called synchronously if needed, whereas the antipattern precludes this possibility (as well as testing).</p>
 <h3 id="new-and-do">New and Do</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewFoo</span>() (<span style="color:#f92672">*</span><span style="color:#a6e22e">Foo</span>, <span style="color:#66d9ef">error</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">connect</span>(); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Foo</span>{}
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewFoo</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">Foo</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Foo</span>{}
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">f</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Foo</span>) <span style="color:#a6e22e">Connect</span>() <span style="color:#66d9ef">error</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">connect</span>(); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewFoo</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Foo</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">connect</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Foo</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewFoo</span><span class="p">()</span> <span class="o">*</span><span class="nx">Foo</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Foo</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">Foo</span><span class="p">)</span> <span class="nf">Connect</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nf">connect</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>NewFoo() in the antipattern does two things: it creates a new Foo object <em>and</em> it connects (to whatever; a database, for example). That functions should do one thing is a widely accepted principle (related: <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">Single Responsibility Principle</a>).</p>
 <p>The antipattern also creates a tight coupling between object creation and connection, meaning the caller cannot create a Foo object and connect later, which is common when objects are not created by the caller but, for example, by a <a href="https://en.wikipedia.org/wiki/Factory_method_pattern">factory method</a>. In this case, the factory should only create Foo and let the caller connect Foo when and where necessary.</p>
 <p>The antipattern also makes it difficult to test connect() separately, and it makes the return error more difficult to handle because it could be a transient or retryable connect() error, or a fatal object creation error.</p>
@@ -236,181 +235,181 @@
 <p>There is, however, a valid reason for NewFoo() to call other functions: when the functions are necessary and sufficient to the <em>creation</em> of the new object. By contrast, connect() is neither necessary nor sufficient to create a Foo; it&rsquo;s necessary (but perhaps not sufficient) to <em>use</em> a Foo. If, for example, a Foo cannot be created without the return value from bar(), then call bar() in NewFoo().</p>
 <p>Notice also that the better example doesn&rsquo;t return an error. Unless an object is complex (and if too complex, perhaps it&rsquo;s doing too much and should be multiple, simpler objects), creation should be guaranteed, hence no return error. This means creation should be little more than initializing and assigning variables.</p>
 <h3 id="guarded-channel">Guarded Channel</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mux</span>.<span style="color:#a6e22e">Lock</span>()
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">v</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">theChan</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">mux</span>.<span style="color:#a6e22e">Unlock</span>()
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better?
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">select</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">stopChan</span>: <span style="color:#75715e">// terminate
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#a6e22e">v</span> = <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">theChan</span>:
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">mux</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nx">v</span> <span class="o">&lt;-</span> <span class="nx">theChan</span>
+</span></span><span class="line"><span class="cl"><span class="nx">mux</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better?
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">case</span> <span class="o">&lt;-</span><span class="nx">stopChan</span><span class="p">:</span> <span class="c1">// terminate
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span>
+</span></span><span class="line"><span class="cl"><span class="k">case</span> <span class="nx">v</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">theChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>Channels do not need concurrency control because channels <em>are</em> concurrency control (among other uses). Guarding a channel is an antipattern because channels do not need to be guarded when used properly. Moreover, channels have an internal mutex, so the result is a mutex on a mutex.</p>
 <p>A better example depends on why the channel is being guarded. One possibility: the channel is overloaded, i.e. used for communicating and concurrency control. Communicating means that <code>v</code> is used by the code. Concurrency control means that closing <code>theChan</code> is used to signal that the receiver (probably a goroutine) should terminate. In this case, the solution is two channels: <code>theChan</code> to communicate, and <code>stopChan</code> to signal.</p>
 <p>To avoid this antipattern for communicating channels, it helps to think of a channel as pipe which, magically, does not spill its contents. Thanks to that magic, you can change either end of the pipe (sender or receiver) without guarding the pipe itself. (You might need to guard the sender or receiver to change them safely.)</p>
 <h3 id="opaque-error">Opaque Error</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;replication not running on db.localhost&#34;</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;replication not running on db.localhost: Replica_IO_Running = No, expected Yes (check SHOW REPLICA STATUS)&#34;</span>)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;replication not running on db.localhost&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;replication not running on db.localhost: Replica_IO_Running = No, expected Yes (check SHOW REPLICA STATUS)&#34;</span><span class="p">)</span>
 </span></span></code></pre></div><p>Opaque errors hide the &ldquo;why&rdquo; from the user: <em>why</em> is the code returning this error? There is always a &ldquo;why&rdquo;: what the code expects but fails to obtain. Not including the &ldquo;why&rdquo; in the error message is a critical antipattern because it leaves the user without insight when they need it the most, i.e. when things are not working. The antipattern example narrows the problem to replication, which is a start, but it does not state why replication is not running according to its checks; there could be many reasons why. The better example states which check failed and gives the user a hint what to do next.</p>
 <p>In this simple example the different is not huge, but in complex, distributed systems great error messages are invaluable. Especially in dynamic environments where the system might auto-correct, the user can investigate but see nothing wrong—a <a href="https://en.wikipedia.org/wiki/Heisenbug">heisenbug</a>. If the error is fleeting or sporadic, the &ldquo;why&rdquo; of a great error message gives us the clues we need to isolate the cause.</p>
 <h2 id="important">Important</h2>
 <p>Important antipatterns affect overall software design and on-going maintenance. They do not need to be fixed immediately, but they should be prioritized and regularly improved to keep the code flexible.</p>
 <h3 id="superfluous-function">Superfluous Function</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">run</span>(<span style="color:#a6e22e">cmd</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">runRemote</span>(<span style="color:#a6e22e">cmd</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">other</span>() <span style="color:#66d9ef">error</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">run</span>(<span style="color:#a6e22e">cmd</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ...
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">other</span>() <span style="color:#66d9ef">error</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">runRemote</span>(<span style="color:#a6e22e">cmd</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ...
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nf">run</span><span class="p">(</span><span class="nx">cmd</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">t</span><span class="p">.</span><span class="nf">runRemote</span><span class="p">(</span><span class="nx">cmd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nf">other</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="nx">cmd</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nf">other</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">runRemote</span><span class="p">(</span><span class="nx">cmd</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ...
 </span></span></span></code></pre></div><p>All code should be necessary and sufficient. Function run() in the antipattern is not necessary; other() can and should call runRemote(). Wrapper functions like run() are only necessary when they perform common/shared logic for callers (plural), like handling the error. This antipattern is stronger if there is only one caller, in which case runRemote() should definitely be called the one place where it is needed.</p>
 <h3 id="superfluous-structure">Superfluous Structure</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RedisInfo</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RawMetrics</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Info</span> <span style="color:#a6e22e">RedisInfo</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Redis</span>) <span style="color:#a6e22e">Info</span>() <span style="color:#a6e22e">RawMetrics</span>
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Redis</span>) <span style="color:#a6e22e">Info</span>() <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">RedisInfo</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">RawMetrics</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Info</span> <span class="nx">RedisInfo</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Redis</span><span class="p">)</span> <span class="nf">Info</span><span class="p">()</span> <span class="nx">RawMetrics</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Redis</span><span class="p">)</span> <span class="nf">Info</span><span class="p">()</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>
 </span></span></code></pre></div><p>The simplest and most direct use of data types and structures yields code that&rsquo;s easier to follow and test because there are no superfluous parts. RawMetrics, with no other fields, serves no purpose. If other fields are planned/expected (and <a href="https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it">YAGNI</a> isn&rsquo;t a stronger argument), a code comment should note it. Otherwise, it&rsquo;s better to keep it simple and return the native data type: map[string]string.</p>
 <h3 id="transient-argument">Transient Argument</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GetNodes</span>(<span style="color:#a6e22e">er</span> <span style="color:#a6e22e">Ranger</span>, <span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">string</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">nodes</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">er</span>.<span style="color:#a6e22e">Query</span>(<span style="color:#a6e22e">query</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// logic to transform nodes
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">nodesByName</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GetNodes</span>(<span style="color:#a6e22e">er</span> <span style="color:#a6e22e">Ranger</span>) []<span style="color:#66d9ef">string</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">nodes</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">er</span>.<span style="color:#a6e22e">GetNodes</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// logic to transform nodes
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">nodesByName</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">GetNodes</span><span class="p">(</span><span class="nx">er</span> <span class="nx">Ranger</span><span class="p">,</span> <span class="nx">query</span> <span class="kt">string</span><span class="p">)</span> <span class="p">[]</span><span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">nodes</span> <span class="o">:=</span> <span class="nx">er</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// logic to transform nodes
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="nx">nodesByName</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">GetNodes</span><span class="p">(</span><span class="nx">er</span> <span class="nx">Ranger</span><span class="p">)</span> <span class="p">[]</span><span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">nodes</span> <span class="o">:=</span> <span class="nx">er</span><span class="p">.</span><span class="nf">GetNodes</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// logic to transform nodes
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="nx">nodesByName</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>An argument is transient if not directly used by the function; the function only passes it to other function calls. The argument is literally only passing through the function, hence it is &ldquo;transient&rdquo;. The antipattern also exhibits the &ldquo;Promiscuous Interface&rdquo; antipattern, and the better solution uses a well-defined interface to avoid the transient argument by encapsulating the query logic in the Ranger implementation.</p>
 <h3 id="runaway-arguments">Runaway Arguments</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewFoo</span>(
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span> <span style="color:#66d9ef">string</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">alias</span> <span style="color:#66d9ef">string</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">userId</span> <span style="color:#66d9ef">uint</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">apiKey</span> <span style="color:#66d9ef">string</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">loc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Location</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">size</span> <span style="color:#66d9ef">int64</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">active</span> <span style="color:#66d9ef">bool</span>,
-</span></span><span style="display:flex;"><span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">Foo</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// FooConfig represents required and optional values for creating a new Foo.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FooConfig</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>     <span style="color:#66d9ef">string</span>    <span style="color:#75715e">// ID of the foo
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">name</span>   <span style="color:#66d9ef">string</span>    <span style="color:#75715e">// Human-friendly name of the foo
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">alias</span>  <span style="color:#66d9ef">string</span>    <span style="color:#75715e">// Alias of the foo (optional)
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">userId</span> <span style="color:#66d9ef">uint</span>      <span style="color:#75715e">// User ID who created this foo
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">apiKey</span> <span style="color:#66d9ef">string</span>    <span style="color:#75715e">// API key
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">loc</span>    <span style="color:#f92672">*</span><span style="color:#a6e22e">Location</span> <span style="color:#75715e">// Location of this foo
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">size</span>   <span style="color:#66d9ef">int64</span>     <span style="color:#75715e">// Size of this foo
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">active</span> <span style="color:#66d9ef">bool</span>      <span style="color:#75715e">// True if this foo is active
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewFoo</span>(<span style="color:#a6e22e">cfg</span> <span style="color:#a6e22e">FooConfig</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">Foo</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewFoo</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">id</span> <span class="kt">string</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">name</span> <span class="kt">string</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">alias</span> <span class="kt">string</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">userId</span> <span class="kt">uint</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">apiKey</span> <span class="kt">string</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">loc</span> <span class="o">*</span><span class="nx">Location</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">size</span> <span class="kt">int64</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">active</span> <span class="kt">bool</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span> <span class="o">*</span><span class="nx">Foo</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// FooConfig represents required and optional values for creating a new Foo.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">FooConfig</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">id</span>     <span class="kt">string</span>    <span class="c1">// ID of the foo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">name</span>   <span class="kt">string</span>    <span class="c1">// Human-friendly name of the foo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">alias</span>  <span class="kt">string</span>    <span class="c1">// Alias of the foo (optional)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">userId</span> <span class="kt">uint</span>      <span class="c1">// User ID who created this foo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">apiKey</span> <span class="kt">string</span>    <span class="c1">// API key
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">loc</span>    <span class="o">*</span><span class="nx">Location</span> <span class="c1">// Location of this foo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">size</span>   <span class="kt">int64</span>     <span class="c1">// Size of this foo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">active</span> <span class="kt">bool</span>      <span class="c1">// True if this foo is active
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewFoo</span><span class="p">(</span><span class="nx">cfg</span> <span class="nx">FooConfig</span><span class="p">)</span> <span class="o">*</span><span class="nx">Foo</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
 </span></span></code></pre></div><p>Functions should have at most four positional arguments. Having more is difficult for humans to remember and, if data type are the same, humans might confuse the order of arguments and cause subtle bugs (e.g. passing <code>firstName, middleName, lastName</code> instead of <code>lastName, firstName, middleName</code>). Use a struct to represent more than four arguments. This has two important benefits: the arguments can and should be documented, and it&rsquo;s &ldquo;future-proof&rdquo;: adding new arguments is backward-compatible. The arguments struct should be immutable.</p>
 <h3 id="type-hiding">Type Hiding</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Job</span> <span style="color:#66d9ef">struct</span> { <span style="color:#f92672">...</span> }
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Jobs</span> []<span style="color:#a6e22e">Job</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">List</span>(<span style="color:#a6e22e">Jobs</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Job</span> <span style="color:#66d9ef">struct</span> { <span style="color:#f92672">...</span> }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">List</span>([]<span style="color:#a6e22e">Job</span>)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Job</span> <span class="kd">struct</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Jobs</span> <span class="p">[]</span><span class="nx">Job</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">List</span><span class="p">(</span><span class="nx">Jobs</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Job</span> <span class="kd">struct</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">List</span><span class="p">([]</span><span class="nx">Job</span><span class="p">)</span>
 </span></span></code></pre></div><p>Unless a custom <a href="https://golang.org/pkg/sort/">sort</a> on Jobs is required, Jobs should not be used because it hides the underlying data type (Job) and requires one to remember that Jobs is just []Job. Better to keep it simple and explicit: use []Job directly.</p>
 <h2 id="stylistic">Stylistic</h2>
 <p>Stylistic antipatterns are low priority, easy to change later without having to rewrite much, or any, code.</p>
 <h3 id="c-style-pointer">C-style Pointer</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">fileName</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">files</span> <span style="color:#f92672">*</span>[]<span style="color:#a6e22e">FileInfo</span>
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">fileName</span> <span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">files</span> []<span style="color:#a6e22e">FileInfo</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">fileName</span> <span class="o">*</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">files</span> <span class="o">*</span><span class="p">[]</span><span class="nx">FileInfo</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">fileName</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">files</span> <span class="p">[]</span><span class="nx">FileInfo</span>
 </span></span></code></pre></div><p>It&rsquo;s not typical and usually not necessary to use pointers to scalars, slices, or maps in Go. There are exceptions (see <a href="https://dhdersch.github.io/golang/2016/01/23/golang-when-to-use-string-pointers.html">GoLang: When to use string pointers</a>), but excessive use of pointers indicates Go being written like C (or C++ or Java) where pointers are more commonplace. In Go, the ubiquitous (and correct) use of pointers is to structures (<code>func(t *T)</code>, <code>return &amp;T{}</code>, <code>var t = &amp;T{}</code>, etc.) and pointer methods (<code>func (t *T) Foo()</code>).</p>
 <h3 id="generic-package">Generic Package</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">import</span> (
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;app/tools&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;app/util&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;app/misc&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;app/db&#34;</span>
-</span></span><span style="display:flex;"><span>)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;app/tools&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;app/util&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;app/misc&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;app/db&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span></code></pre></div><p>A package provides functionality around a logical and isolated part of the system. &ldquo;What can pkg X do?&rdquo; is the question we ask of that part. &ldquo;How we do X&rdquo; is an implementation detail that&rsquo;s leaked by generic package names. Of course, naming things is difficult, and generic packages are common, but we should nonetheless attempt to clarify their purpose and place in the app with a more domain-specific package name.</p>
 <h3 id="un-nom-court">Un Nom Court</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> (
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">m</span> <span style="color:#a6e22e">Metrics</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">s</span> <span style="color:#a6e22e">Stats</span>
-</span></span><span style="display:flex;"><span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> (
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">metrics</span> <span style="color:#a6e22e">Metrics</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">stats</span>   <span style="color:#a6e22e">Stats</span>
-</span></span><span style="display:flex;"><span>)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">m</span> <span class="nx">Metrics</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">s</span> <span class="nx">Stats</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">metrics</span> <span class="nx">Metrics</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">stats</span>   <span class="nx">Stats</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span></code></pre></div><p>Short names are idiomatic Go, but don&rsquo;t take this style too far: Go still favors readability above all else.
 Names aren&rsquo;t required to be short; it&rsquo;s just nice (and idiomatic) when there happens to be a short yet clear name.
 In the antipattern, variable names <code>m</code> and <code>s</code> are too short, which makes them cryptic (not intention-revealing) and nearly impossible to search for (not all programmers use IDEs that follow variable references).
@@ -429,68 +428,68 @@ In Go, <code>camelCase</code> is standard and idiomatic.
 A common exception is constant variables: <code>const ALL_CAPS_SNAKE_CASE = 1</code>.
 </p>
 <h3 id="narrative-naming">Narrative Naming</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">clearFlagIfTableDoesNotExist</span>(<span style="color:#a6e22e">tblstat</span> <span style="color:#a6e22e">TableStatus</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... Table check logic ...
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">exists</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">flag</span> = <span style="color:#e6db74">&#34;&#34;</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">clearFlagIfTableDoesNotExist</span>(<span style="color:#a6e22e">tblstat</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">tableExists</span>(<span style="color:#a6e22e">tblstat</span> <span style="color:#a6e22e">TableStatus</span>) <span style="color:#66d9ef">bool</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exists</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">false</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... Table check logic ...
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">exists</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Some good comment about why we clear the flag when the table
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// does not exist.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">tableExists</span>(<span style="color:#a6e22e">tblstat</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">flag</span> = <span style="color:#e6db74">&#34;&#34;</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Alternative
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// clearFlag sets flag to an empty string if the table does not exist,
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// else the flag value is not changed.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">clearFlag</span>(<span style="color:#a6e22e">tblstat</span> <span style="color:#a6e22e">TableStatus</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... Table check logic ...
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">exists</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">flag</span> = <span style="color:#e6db74">&#34;&#34;</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Some good comment about why we clear the flag when the table
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// does not exist.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">clearFlag</span>(<span style="color:#a6e22e">tblstat</span>)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nf">clearFlagIfTableDoesNotExist</span><span class="p">(</span><span class="nx">tblstat</span> <span class="nx">TableStatus</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... Table check logic ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">!</span><span class="nx">exists</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">t</span><span class="p">.</span><span class="nx">flag</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">t</span><span class="p">.</span><span class="nf">clearFlagIfTableDoesNotExist</span><span class="p">(</span><span class="nx">tblstat</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nf">tableExists</span><span class="p">(</span><span class="nx">tblstat</span> <span class="nx">TableStatus</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">exists</span> <span class="o">:=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... Table check logic ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="nx">exists</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Some good comment about why we clear the flag when the table
+</span></span></span><span class="line"><span class="cl"><span class="c1">// does not exist.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">if</span> <span class="p">!</span><span class="nx">t</span><span class="p">.</span><span class="nf">tableExists</span><span class="p">(</span><span class="nx">tblstat</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">t</span><span class="p">.</span><span class="nx">flag</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Alternative
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// clearFlag sets flag to an empty string if the table does not exist,
+</span></span></span><span class="line"><span class="cl"><span class="c1">// else the flag value is not changed.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nf">clearFlag</span><span class="p">(</span><span class="nx">tblstat</span> <span class="nx">TableStatus</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... Table check logic ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">!</span><span class="nx">exists</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">t</span><span class="p">.</span><span class="nx">flag</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Some good comment about why we clear the flag when the table
+</span></span></span><span class="line"><span class="cl"><span class="c1">// does not exist.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">t</span><span class="p">.</span><span class="nf">clearFlag</span><span class="p">(</span><span class="nx">tblstat</span><span class="p">)</span>
 </span></span></code></pre></div><p>Narrative naming is the opposite of <em>un nom court</em>: names that are not just long but narrate what the object is or does.
 While this naming style is acceptable in other languages, it is an antipattern in Go; don&rsquo;t use it in Go.
 Short names in Go are a challenge: it&rsquo;s not easy finding a short name for everything.
 Avoid narrative naming, and use the shortest yet clearest, most intention-reveal name you can think of.</p>
 <h3 id="non-variable-variable">Non-variable Variable</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Antipattern
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">CollectMetric</span>(<span style="color:#a6e22e">db</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">DB</span>) (<span style="color:#66d9ef">float64</span>, <span style="color:#66d9ef">error</span>) {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">query</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">`SELECT timer_wait FROM events_statements_current ORDER BY timer_wait DESC LIMIT 1`</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// ...
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Better
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">max_timer_wait_query</span> = <span style="color:#e6db74">`SELECT timer_wait FROM events_statements_current ORDER BY timer_wait DESC LIMIT 1`</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">CollectMetric</span>(<span style="color:#a6e22e">db</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">DB</span>) (<span style="color:#66d9ef">float64</span>, <span style="color:#66d9ef">error</span>) {
-</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// ...
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Antipattern
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">CollectMetric</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">sql</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="p">(</span><span class="kt">float64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">query</span> <span class="o">:=</span> <span class="s">`SELECT timer_wait FROM events_statements_current ORDER BY timer_wait DESC LIMIT 1`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Better
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">const</span> <span class="nx">max_timer_wait_query</span> <span class="p">=</span> <span class="s">`SELECT timer_wait FROM events_statements_current ORDER BY timer_wait DESC LIMIT 1`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">CollectMetric</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">sql</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="p">(</span><span class="kt">float64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
 </span></span></code></pre></div><p>If the value of a variable cannot or does not vary, then it&rsquo;s a constant, not a variable.
 The variable <code>query</code> in the antipattern is not really a variable: it&rsquo;s a constant string.
 Not only is its allocation in the function a waste (which a package <code>const</code> avoids), it leads the reader to wonder: could the query change?
@@ -540,13 +539,11 @@ In this case, the query is intended to be constant, so it is better to declare i
 </main>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 

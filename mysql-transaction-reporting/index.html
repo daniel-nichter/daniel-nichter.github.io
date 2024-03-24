@@ -10,10 +10,10 @@
   <meta property="og:description" content="How to inspect and report MySQL transactions using the Performance Schema">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/mysql-transaction-reporting/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -21,7 +21,6 @@
   <link rel="canonical" href="https://hackmysql.com/mysql-transaction-reporting/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -141,92 +140,92 @@ With vast improvements to the <a href="https://dev.mysql.com/doc/refman/8.0/en/p
 When time allows me, I&rsquo;ll dig into the state of this art deeper, talk with more MySQL DBAs, and see if we can&rsquo;t create better solutions.</p>
 <p>See also <a href="/post/book-8/">Mining the MySQL Performance Schema for Transactions</a>.</p>
 <h3 id="report-latest-query-for-transactions-active-longer-than-1-second">Report latest query for transactions active longer than 1 second</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">--
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Example 8-2. Report latest query for transactions active longer than 1 second
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">--
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
-</span></span><span style="display:flex;"><span>  ROUND(trx.timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span>,<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">AS</span> trx_runtime,
-</span></span><span style="display:flex;"><span>  trx.thread_id <span style="color:#66d9ef">AS</span> thread_id,
-</span></span><span style="display:flex;"><span>  trx.event_id <span style="color:#66d9ef">AS</span> trx_event_id,
-</span></span><span style="display:flex;"><span>  trx.isolation_level,
-</span></span><span style="display:flex;"><span>  trx.autocommit,
-</span></span><span style="display:flex;"><span>  stm.current_schema <span style="color:#66d9ef">AS</span> db,
-</span></span><span style="display:flex;"><span>  stm.sql_text <span style="color:#66d9ef">AS</span> query,
-</span></span><span style="display:flex;"><span>  stm.rows_examined <span style="color:#66d9ef">AS</span> rows_examined,
-</span></span><span style="display:flex;"><span>  stm.rows_affected <span style="color:#66d9ef">AS</span> rows_affected,
-</span></span><span style="display:flex;"><span>  stm.rows_sent <span style="color:#66d9ef">AS</span> rows_sent,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">IF</span>(stm.end_event_id <span style="color:#66d9ef">IS</span> <span style="color:#66d9ef">NULL</span>, <span style="color:#e6db74">&#39;running&#39;</span>, <span style="color:#e6db74">&#39;done&#39;</span>) <span style="color:#66d9ef">AS</span> exec_state,
-</span></span><span style="display:flex;"><span>  ROUND(stm.timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span>,<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">AS</span> exec_time
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
-</span></span><span style="display:flex;"><span>       performance_schema.events_transactions_current trx
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">JOIN</span> performance_schema.events_statements_current   stm <span style="color:#66d9ef">USING</span> (thread_id)
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
-</span></span><span style="display:flex;"><span>      trx.<span style="color:#66d9ef">state</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ACTIVE&#39;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> trx.timer_wait <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1000000000000</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
-</span></span></code></pre></div><h3 id="report-transaction-summary">Report transaction summary</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">--
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Example 8-3. Report transaction summary
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">--
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
-</span></span><span style="display:flex;"><span>  trx.thread_id <span style="color:#66d9ef">AS</span> thread_id,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">MAX</span>(trx.event_id) <span style="color:#66d9ef">AS</span> trx_event_id,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">MAX</span>(ROUND(trx.timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span>,<span style="color:#ae81ff">3</span>)) <span style="color:#66d9ef">AS</span> trx_runtime,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(ROUND(stm.timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span>,<span style="color:#ae81ff">3</span>)) <span style="color:#66d9ef">AS</span> exec_time,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_examined) <span style="color:#66d9ef">AS</span> rows_examined,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_affected) <span style="color:#66d9ef">AS</span> rows_affected,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_sent) <span style="color:#66d9ef">AS</span> rows_sent
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
-</span></span><span style="display:flex;"><span>       performance_schema.events_transactions_current trx
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">JOIN</span> performance_schema.events_statements_history   stm
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">ON</span> stm.thread_id <span style="color:#f92672">=</span> trx.thread_id <span style="color:#66d9ef">AND</span> stm.nesting_event_id <span style="color:#f92672">=</span> trx.event_id
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
-</span></span><span style="display:flex;"><span>      stm.event_name <span style="color:#66d9ef">LIKE</span> <span style="color:#e6db74">&#39;statement/sql/%&#39;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> trx.<span style="color:#66d9ef">state</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ACTIVE&#39;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> trx.timer_wait <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1000000000000</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> trx.thread_id<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
-</span></span></code></pre></div><h3 id="report-transaction-history">Report transaction history</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">--
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Example 8-4. Report transaction history
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">--
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
-</span></span><span style="display:flex;"><span>  stm.rows_examined <span style="color:#66d9ef">AS</span> rows_examined,
-</span></span><span style="display:flex;"><span>  stm.rows_affected <span style="color:#66d9ef">AS</span> rows_affected,
-</span></span><span style="display:flex;"><span>  stm.rows_sent <span style="color:#66d9ef">AS</span> rows_sent,
-</span></span><span style="display:flex;"><span>  ROUND(stm.timer_wait<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000000</span>,<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">AS</span> exec_time,
-</span></span><span style="display:flex;"><span>  stm.sql_text <span style="color:#66d9ef">AS</span> query
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
-</span></span><span style="display:flex;"><span>  performance_schema.events_statements_history stm
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
-</span></span><span style="display:flex;"><span>       stm.thread_id <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span>  stm.nesting_event_id <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> stm.event_id;
-</span></span></code></pre></div><h3 id="report-basic-metrics-for-committed-transactions">Report basic metrics for committed transactions</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">--
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">-- Example 8-5. Report basic metrics for committed transactions
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">--
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span>
-</span></span><span style="display:flex;"><span>  ROUND(<span style="color:#66d9ef">MAX</span>(trx.timer_wait)<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000</span>,<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">AS</span> trx_time,
-</span></span><span style="display:flex;"><span>  ROUND(<span style="color:#66d9ef">SUM</span>(stm.timer_end<span style="color:#f92672">-</span>stm.timer_start)<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000</span>,<span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">AS</span> query_time,
-</span></span><span style="display:flex;"><span>  ROUND((<span style="color:#66d9ef">MAX</span>(trx.timer_wait)<span style="color:#f92672">-</span><span style="color:#66d9ef">SUM</span>(stm.timer_end<span style="color:#f92672">-</span>stm.timer_start))<span style="color:#f92672">/</span><span style="color:#ae81ff">1000000000</span>, <span style="color:#ae81ff">3</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">AS</span> idle_time,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">COUNT</span>(stm.event_id)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">AS</span> query_count,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_examined) <span style="color:#66d9ef">AS</span> rows_examined,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_affected) <span style="color:#66d9ef">AS</span> rows_affected,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">SUM</span>(stm.rows_sent) <span style="color:#66d9ef">AS</span> rows_sent
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span>
-</span></span><span style="display:flex;"><span>      performance_schema.events_transactions_history trx
-</span></span><span style="display:flex;"><span> <span style="color:#66d9ef">JOIN</span> performance_schema.events_statements_history   stm
-</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">ON</span> stm.nesting_event_id <span style="color:#f92672">=</span> trx.event_id
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span>
-</span></span><span style="display:flex;"><span>      trx.<span style="color:#66d9ef">state</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;COMMITTED&#39;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> trx.nesting_event_id <span style="color:#66d9ef">IS</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span>
-</span></span><span style="display:flex;"><span>  trx.thread_id, trx.event_id;
-</span></span></code></pre></div></article>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">--
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- Example 8-2. Report latest query for transactions active longer than 1 second
+</span></span></span><span class="line"><span class="cl"><span class="c1">--
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">ROUND</span><span class="p">(</span><span class="n">trx</span><span class="p">.</span><span class="n">timer_wait</span><span class="o">/</span><span class="mi">1000000000000</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">trx_runtime</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">trx</span><span class="p">.</span><span class="n">thread_id</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">thread_id</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">trx</span><span class="p">.</span><span class="n">event_id</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">trx_event_id</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">trx</span><span class="p">.</span><span class="n">isolation_level</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">trx</span><span class="p">.</span><span class="n">autocommit</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">stm</span><span class="p">.</span><span class="n">current_schema</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">db</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">stm</span><span class="p">.</span><span class="n">sql_text</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">stm</span><span class="p">.</span><span class="n">rows_examined</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_examined</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">stm</span><span class="p">.</span><span class="n">rows_affected</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_affected</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">stm</span><span class="p">.</span><span class="n">rows_sent</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_sent</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">IF</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">end_event_id</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;running&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;done&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">exec_state</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">ROUND</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">timer_wait</span><span class="o">/</span><span class="mi">1000000000000</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">exec_time</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">events_transactions_current</span><span class="w"> </span><span class="n">trx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">JOIN</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">events_statements_current</span><span class="w">   </span><span class="n">stm</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="p">(</span><span class="n">thread_id</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">trx</span><span class="p">.</span><span class="k">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ACTIVE&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">trx</span><span class="p">.</span><span class="n">timer_wait</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1000000000000</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1</span><span class="err">\</span><span class="k">G</span><span class="w">
+</span></span></span></code></pre></div><h3 id="report-transaction-summary">Report transaction summary</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">--
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- Example 8-3. Report transaction summary
+</span></span></span><span class="line"><span class="cl"><span class="c1">--
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">trx</span><span class="p">.</span><span class="n">thread_id</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">thread_id</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">MAX</span><span class="p">(</span><span class="n">trx</span><span class="p">.</span><span class="n">event_id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">trx_event_id</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">MAX</span><span class="p">(</span><span class="n">ROUND</span><span class="p">(</span><span class="n">trx</span><span class="p">.</span><span class="n">timer_wait</span><span class="o">/</span><span class="mi">1000000000000</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">trx_runtime</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="n">ROUND</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">timer_wait</span><span class="o">/</span><span class="mi">1000000000000</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">exec_time</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">rows_examined</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_examined</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">rows_affected</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_affected</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">rows_sent</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_sent</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">events_transactions_current</span><span class="w"> </span><span class="n">trx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">JOIN</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">events_statements_history</span><span class="w">   </span><span class="n">stm</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">ON</span><span class="w"> </span><span class="n">stm</span><span class="p">.</span><span class="n">thread_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trx</span><span class="p">.</span><span class="n">thread_id</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">stm</span><span class="p">.</span><span class="n">nesting_event_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trx</span><span class="p">.</span><span class="n">event_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">stm</span><span class="p">.</span><span class="n">event_name</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;statement/sql/%&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">trx</span><span class="p">.</span><span class="k">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ACTIVE&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">trx</span><span class="p">.</span><span class="n">timer_wait</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1000000000000</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">trx</span><span class="p">.</span><span class="n">thread_id</span><span class="err">\</span><span class="k">G</span><span class="w">
+</span></span></span></code></pre></div><h3 id="report-transaction-history">Report transaction history</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">--
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- Example 8-4. Report transaction history
+</span></span></span><span class="line"><span class="cl"><span class="c1">--
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">stm</span><span class="p">.</span><span class="n">rows_examined</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_examined</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">stm</span><span class="p">.</span><span class="n">rows_affected</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_affected</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">stm</span><span class="p">.</span><span class="n">rows_sent</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_sent</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">ROUND</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">timer_wait</span><span class="o">/</span><span class="mi">1000000000000</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">exec_time</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">stm</span><span class="p">.</span><span class="n">sql_text</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">query</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">events_statements_history</span><span class="w"> </span><span class="n">stm</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="n">stm</span><span class="p">.</span><span class="n">thread_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">AND</span><span class="w">  </span><span class="n">stm</span><span class="p">.</span><span class="n">nesting_event_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">stm</span><span class="p">.</span><span class="n">event_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><h3 id="report-basic-metrics-for-committed-transactions">Report basic metrics for committed transactions</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">--
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- Example 8-5. Report basic metrics for committed transactions
+</span></span></span><span class="line"><span class="cl"><span class="c1">--
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">ROUND</span><span class="p">(</span><span class="k">MAX</span><span class="p">(</span><span class="n">trx</span><span class="p">.</span><span class="n">timer_wait</span><span class="p">)</span><span class="o">/</span><span class="mi">1000000000</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">trx_time</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">ROUND</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">timer_end</span><span class="o">-</span><span class="n">stm</span><span class="p">.</span><span class="n">timer_start</span><span class="p">)</span><span class="o">/</span><span class="mi">1000000000</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">query_time</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">ROUND</span><span class="p">((</span><span class="k">MAX</span><span class="p">(</span><span class="n">trx</span><span class="p">.</span><span class="n">timer_wait</span><span class="p">)</span><span class="o">-</span><span class="k">SUM</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">timer_end</span><span class="o">-</span><span class="n">stm</span><span class="p">.</span><span class="n">timer_start</span><span class="p">))</span><span class="o">/</span><span class="mi">1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">AS</span><span class="w"> </span><span class="n">idle_time</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">COUNT</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">event_id</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">query_count</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">rows_examined</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_examined</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">rows_affected</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_affected</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">SUM</span><span class="p">(</span><span class="n">stm</span><span class="p">.</span><span class="n">rows_sent</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">rows_sent</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">events_transactions_history</span><span class="w"> </span><span class="n">trx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">events_statements_history</span><span class="w">   </span><span class="n">stm</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="k">ON</span><span class="w"> </span><span class="n">stm</span><span class="p">.</span><span class="n">nesting_event_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trx</span><span class="p">.</span><span class="n">event_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">trx</span><span class="p">.</span><span class="k">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;COMMITTED&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">trx</span><span class="p">.</span><span class="n">nesting_event_id</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">trx</span><span class="p">.</span><span class="n">thread_id</span><span class="p">,</span><span class="w"> </span><span class="n">trx</span><span class="p">.</span><span class="n">event_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div></article>
 	</div>
 	<nav id="toc">
 		<div class="scroller">
@@ -249,13 +248,11 @@ When time allows me, I&rsquo;ll dig into the state of this art deeper, talk with
 </main>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 

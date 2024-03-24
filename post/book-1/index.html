@@ -10,10 +10,10 @@
   <meta property="og:description" content="Chapter 1">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/post/book-1/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -21,7 +21,6 @@
   <link rel="canonical" href="https://hackmysql.com/post/book-1/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -429,42 +428,42 @@ If you want the longer and more generic explanation, then read the rest of this 
 <b>NOTE</b>: The Performance Schema is vast and complex, so I'm only going to address what's necessary and relevant to query metrics&mdash;I'm not going to explain instruments, consumers, and the myriad details of the PFS.
 </p>
 <p>At a minimum, query metrics from the Performance Schema require three consumers that are enabled by default:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> performance_schema.setup_consumers <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> name;
-</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----------------------------------+---------+
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> NAME                             <span style="color:#f92672">|</span> ENABLED <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----------------------------------+---------+
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> events_stages_current            <span style="color:#f92672">|</span> <span style="color:#66d9ef">NO</span>      <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> events_stages_history            <span style="color:#f92672">|</span> <span style="color:#66d9ef">NO</span>      <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> events_stages_history_long       <span style="color:#f92672">|</span> <span style="color:#66d9ef">NO</span>      <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> events_statements_current        <span style="color:#f92672">|</span> YES     <span style="color:#f92672">|</span> <span style="color:#75715e">-- 1. query metrics
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> events_statements_history        <span style="color:#f92672">|</span> YES     <span style="color:#f92672">|</span> <span style="color:#75715e">-- 2. query metrics
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> events_statements_history_long   <span style="color:#f92672">|</span> <span style="color:#66d9ef">NO</span>      <span style="color:#f92672">|</span> <span style="color:#75715e">-- 3. query metrics
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> events_transactions_current      <span style="color:#f92672">|</span> YES     <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> events_transactions_history      <span style="color:#f92672">|</span> YES     <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> events_transactions_history_long <span style="color:#f92672">|</span> <span style="color:#66d9ef">NO</span>      <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> events_waits_current             <span style="color:#f92672">|</span> <span style="color:#66d9ef">NO</span>      <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> events_waits_history             <span style="color:#f92672">|</span> <span style="color:#66d9ef">NO</span>      <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> events_waits_history_long        <span style="color:#f92672">|</span> <span style="color:#66d9ef">NO</span>      <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> global_instrumentation           <span style="color:#f92672">|</span> YES     <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> statements_digest                <span style="color:#f92672">|</span> YES     <span style="color:#f92672">|</span> <span style="color:#75715e">-- 4. query metrics
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> thread_instrumentation           <span style="color:#f92672">|</span> YES     <span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----------------------------------+---------+
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">setup_consumers</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+</span><span class="c1">----------------------------------+---------+
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">|</span><span class="w"> </span><span class="n">NAME</span><span class="w">                             </span><span class="o">|</span><span class="w"> </span><span class="n">ENABLED</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+</span><span class="c1">----------------------------------+---------+
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">|</span><span class="w"> </span><span class="n">events_stages_current</span><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">      </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">events_stages_history</span><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">      </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">events_stages_history_long</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">      </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">events_statements_current</span><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="c1">-- 1. query metrics
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">|</span><span class="w"> </span><span class="n">events_statements_history</span><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="c1">-- 2. query metrics
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">|</span><span class="w"> </span><span class="n">events_statements_history_long</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="c1">-- 3. query metrics
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">|</span><span class="w"> </span><span class="n">events_transactions_current</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">events_transactions_history</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">events_transactions_history_long</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">      </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">events_waits_current</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">      </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">events_waits_history</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">      </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">events_waits_history_long</span><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">      </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">global_instrumentation</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">statements_digest</span><span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="c1">-- 4. query metrics
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">|</span><span class="w"> </span><span class="n">thread_instrumentation</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+</span><span class="c1">----------------------------------+---------+
 </span></span></span></code></pre></div><p>The list above is all consumers, but I annotated the four consumers related to query metrics.
 Notice that only consumer 3, <code>events_statements_history_long</code>, is <em>disabled</em> by default.
 Without going into a full explanation of what this consumer does, the short version is: it provides real SQL statements (query samples).
 But as you&rsquo;ll read in chapter 1 of the book, many query metric tools do not use query samples by default for security.</p>
 <p>For tools that require <code>events_statements_history_long</code>, you enable it in the <code>my.cnf</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[mysqld]</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">performance_schema_consumer_events_statements_history_long</span><span style="color:#f92672">=</span><span style="color:#e6db74">ON # query metrics</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ini" data-lang="ini"><span class="line"><span class="cl"><span class="k">[mysqld]</span>
+</span></span><span class="line"><span class="cl"><span class="na">performance_schema_consumer_events_statements_history_long</span><span class="o">=</span><span class="s">ON # query metrics</span>
 </span></span></code></pre></div><p>Set <code>performance_schema_consumer_events_statements_history_long=ON</code> in <code>my.cnf</code> under the <code>[mysqld]</code> section as shown.
 That enables the consumer when MySQL starts, but the variable is dynamic so you can enable it the first time without restarting MySQL:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">UPDATE</span> performance_schema.setup_consumers <span style="color:#66d9ef">SET</span> enabled<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;YES&#39;</span> <span style="color:#66d9ef">WHERE</span> name<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;events_statements_history_long&#39;</span>;
-</span></span></code></pre></div><p>Then execute <code>SELECT * FROM performance_schema.setup_consumers ORDER BY name</code> to check that all query metric-related consumers are enabled.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">setup_consumers</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">enabled</span><span class="o">=</span><span class="s1">&#39;YES&#39;</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;events_statements_history_long&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>Then execute <code>SELECT * FROM performance_schema.setup_consumers ORDER BY name</code> to check that all query metric-related consumers are enabled.</p>
 <p>In other guides about enabling PFS for query metrics, you might see a configuration like:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[mysqld]</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">performance_schema</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">performance_schema_consumer_statements_digest</span><span style="color:#f92672">=</span><span style="color:#e6db74">ON</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">performance_schema_consumer_events_statements_history_long</span><span style="color:#f92672">=</span><span style="color:#e6db74">ON</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ini" data-lang="ini"><span class="line"><span class="cl"><span class="k">[mysqld]</span>
+</span></span><span class="line"><span class="cl"><span class="na">performance_schema</span>
+</span></span><span class="line"><span class="cl"><span class="na">performance_schema_consumer_statements_digest</span><span class="o">=</span><span class="s">ON</span>
+</span></span><span class="line"><span class="cl"><span class="na">performance_schema_consumer_events_statements_history_long</span><span class="o">=</span><span class="s">ON</span>
 </span></span></code></pre></div><p>Usually, these guides are being explicit: having you explicitly enable PFS consumers (and other parts) even though many are enabled by default.
 This is not a bad practice (because MySQL defaults might change), just be aware that there are many different ways to express the same configuration.</p>
 <p class="warning"><b>EXCEPTION</b>: Amazon RDS for MySQL disables the Performance Schema by default.
@@ -473,44 +472,44 @@ To enable PFS on Amazon RDS for MySQL, set <code>performance_schema = 1</code> a
 Apply the parameter group changes, which requires restarting MySQL.
 </p>
 <p>To check that PFS query metrics are working, run:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>mysql<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> performance_schema.events_statements_summary_by_digest <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">G</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">***************************</span> <span style="color:#ae81ff">1</span>. <span style="color:#66d9ef">row</span> <span style="color:#f92672">***************************</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">SCHEMA_NAME</span>: <span style="color:#66d9ef">NULL</span>
-</span></span><span style="display:flex;"><span>                     DIGEST: <span style="color:#ae81ff">80</span>c944deffba0a309d8246bc7f71a69dfaf62386ef0409a63d4fe1fb66a4d0b7
-</span></span><span style="display:flex;"><span>                DIGEST_TEXT: <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> <span style="color:#f92672">`</span>performance_schema<span style="color:#f92672">`</span> . <span style="color:#f92672">`</span>setup_consumers<span style="color:#f92672">`</span> <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> NAME
-</span></span><span style="display:flex;"><span>                 COUNT_STAR: <span style="color:#ae81ff">3</span>
-</span></span><span style="display:flex;"><span>             SUM_TIMER_WAIT: <span style="color:#ae81ff">6475000000</span>
-</span></span><span style="display:flex;"><span>             MIN_TIMER_WAIT: <span style="color:#ae81ff">168000000</span>
-</span></span><span style="display:flex;"><span>             AVG_TIMER_WAIT: <span style="color:#ae81ff">2158333000</span>
-</span></span><span style="display:flex;"><span>             MAX_TIMER_WAIT: <span style="color:#ae81ff">6016000000</span>
-</span></span><span style="display:flex;"><span>              SUM_LOCK_TIME: <span style="color:#ae81ff">3629000000</span>
-</span></span><span style="display:flex;"><span>                 SUM_ERRORS: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>               SUM_WARNINGS: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>          SUM_ROWS_AFFECTED: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>              SUM_ROWS_SENT: <span style="color:#ae81ff">45</span>
-</span></span><span style="display:flex;"><span>          SUM_ROWS_EXAMINED: <span style="color:#ae81ff">90</span>
-</span></span><span style="display:flex;"><span>SUM_CREATED_TMP_DISK_TABLES: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>     SUM_CREATED_TMP_TABLES: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>       SUM_SELECT_FULL_JOIN: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span> SUM_SELECT_FULL_RANGE_JOIN: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>           SUM_SELECT_RANGE: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>     SUM_SELECT_RANGE_CHECK: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>            SUM_SELECT_SCAN: <span style="color:#ae81ff">3</span>
-</span></span><span style="display:flex;"><span>      SUM_SORT_MERGE_PASSES: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>             SUM_SORT_RANGE: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>              SUM_SORT_ROWS: <span style="color:#ae81ff">45</span>
-</span></span><span style="display:flex;"><span>              SUM_SORT_SCAN: <span style="color:#ae81ff">3</span>
-</span></span><span style="display:flex;"><span>          SUM_NO_INDEX_USED: <span style="color:#ae81ff">3</span>
-</span></span><span style="display:flex;"><span>     SUM_NO_GOOD_INDEX_USED: <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>                 FIRST_SEEN: <span style="color:#ae81ff">2022</span><span style="color:#f92672">-</span><span style="color:#ae81ff">01</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">16</span>:<span style="color:#ae81ff">17</span>:<span style="color:#ae81ff">53</span>.<span style="color:#ae81ff">349231</span>
-</span></span><span style="display:flex;"><span>                  LAST_SEEN: <span style="color:#ae81ff">2022</span><span style="color:#f92672">-</span><span style="color:#ae81ff">01</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">16</span>:<span style="color:#ae81ff">51</span>:<span style="color:#ae81ff">57</span>.<span style="color:#ae81ff">777186</span>
-</span></span><span style="display:flex;"><span>                QUANTILE_95: <span style="color:#ae81ff">6025595860</span>
-</span></span><span style="display:flex;"><span>                QUANTILE_99: <span style="color:#ae81ff">6025595860</span>
-</span></span><span style="display:flex;"><span>               QUANTILE_999: <span style="color:#ae81ff">6025595860</span>
-</span></span><span style="display:flex;"><span>          QUERY_SAMPLE_TEXT: <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> performance_schema.setup_consumers <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> name
-</span></span><span style="display:flex;"><span>          QUERY_SAMPLE_SEEN: <span style="color:#ae81ff">2022</span><span style="color:#f92672">-</span><span style="color:#ae81ff">01</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">16</span>:<span style="color:#ae81ff">51</span>:<span style="color:#ae81ff">57</span>.<span style="color:#ae81ff">777186</span>
-</span></span><span style="display:flex;"><span>    QUERY_SAMPLE_TIMER_WAIT: <span style="color:#ae81ff">291000000</span>
-</span></span></code></pre></div><p>Query metric tools primarily use table <a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema-statement-summary-tables.html">events_statements_summary_by_digest</a> to generate query profiles and reports.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">events_statements_summary_by_digest</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">1</span><span class="err">\</span><span class="k">G</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">***************************</span><span class="w"> </span><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="k">row</span><span class="w"> </span><span class="o">***************************</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">SCHEMA_NAME</span><span class="p">:</span><span class="w"> </span><span class="k">NULL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                     </span><span class="n">DIGEST</span><span class="p">:</span><span class="w"> </span><span class="mi">80</span><span class="n">c944deffba0a309d8246bc7f71a69dfaf62386ef0409a63d4fe1fb66a4d0b7</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">DIGEST_TEXT</span><span class="p">:</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="o">`</span><span class="n">performance_schema</span><span class="o">`</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="o">`</span><span class="n">setup_consumers</span><span class="o">`</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">NAME</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                 </span><span class="n">COUNT_STAR</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">             </span><span class="n">SUM_TIMER_WAIT</span><span class="p">:</span><span class="w"> </span><span class="mi">6475000000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">             </span><span class="n">MIN_TIMER_WAIT</span><span class="p">:</span><span class="w"> </span><span class="mi">168000000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">             </span><span class="n">AVG_TIMER_WAIT</span><span class="p">:</span><span class="w"> </span><span class="mi">2158333000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">             </span><span class="n">MAX_TIMER_WAIT</span><span class="p">:</span><span class="w"> </span><span class="mi">6016000000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="n">SUM_LOCK_TIME</span><span class="p">:</span><span class="w"> </span><span class="mi">3629000000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                 </span><span class="n">SUM_ERRORS</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">               </span><span class="n">SUM_WARNINGS</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="n">SUM_ROWS_AFFECTED</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="n">SUM_ROWS_SENT</span><span class="p">:</span><span class="w"> </span><span class="mi">45</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="n">SUM_ROWS_EXAMINED</span><span class="p">:</span><span class="w"> </span><span class="mi">90</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SUM_CREATED_TMP_DISK_TABLES</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="n">SUM_CREATED_TMP_TABLES</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="n">SUM_SELECT_FULL_JOIN</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">SUM_SELECT_FULL_RANGE_JOIN</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">           </span><span class="n">SUM_SELECT_RANGE</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="n">SUM_SELECT_RANGE_CHECK</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">SUM_SELECT_SCAN</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">SUM_SORT_MERGE_PASSES</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">             </span><span class="n">SUM_SORT_RANGE</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="n">SUM_SORT_ROWS</span><span class="p">:</span><span class="w"> </span><span class="mi">45</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="n">SUM_SORT_SCAN</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="n">SUM_NO_INDEX_USED</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="n">SUM_NO_GOOD_INDEX_USED</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                 </span><span class="n">FIRST_SEEN</span><span class="p">:</span><span class="w"> </span><span class="mi">2022</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">15</span><span class="w"> </span><span class="mi">16</span><span class="p">:</span><span class="mi">17</span><span class="p">:</span><span class="mi">53</span><span class="p">.</span><span class="mi">349231</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                  </span><span class="n">LAST_SEEN</span><span class="p">:</span><span class="w"> </span><span class="mi">2022</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">15</span><span class="w"> </span><span class="mi">16</span><span class="p">:</span><span class="mi">51</span><span class="p">:</span><span class="mi">57</span><span class="p">.</span><span class="mi">777186</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">QUANTILE_95</span><span class="p">:</span><span class="w"> </span><span class="mi">6025595860</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">QUANTILE_99</span><span class="p">:</span><span class="w"> </span><span class="mi">6025595860</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">               </span><span class="n">QUANTILE_999</span><span class="p">:</span><span class="w"> </span><span class="mi">6025595860</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="n">QUERY_SAMPLE_TEXT</span><span class="p">:</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">setup_consumers</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="n">QUERY_SAMPLE_SEEN</span><span class="p">:</span><span class="w"> </span><span class="mi">2022</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">15</span><span class="w"> </span><span class="mi">16</span><span class="p">:</span><span class="mi">51</span><span class="p">:</span><span class="mi">57</span><span class="p">.</span><span class="mi">777186</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">QUERY_SAMPLE_TIMER_WAIT</span><span class="p">:</span><span class="w"> </span><span class="mi">291000000</span><span class="w">
+</span></span></span></code></pre></div><p>Query metric tools primarily use table <a href="https://dev.mysql.com/doc/refman/8.0/en/performance-schema-statement-summary-tables.html">events_statements_summary_by_digest</a> to generate query profiles and reports.
 In the example above, you can spot the nine essential query metrics that chapter 1 explains in detail:</p>
 <ul>
 <li><code>SUM_TIMER_WAIT</code> (query response time)</li>
@@ -551,15 +550,15 @@ You can still analyze queries with only these four metrics, but the analysis is 
 Consequently, avoid the slow query log before MySQL 8.0.14 and instead use the Performance Schema.</p>
 </blockquote>
 <p>Here&rsquo;s a starting point configuration for <code>my.cnf</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[mysqld]</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slow_query_log</span>                <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">long_query_time</span>               <span style="color:#f92672">=</span> <span style="color:#e6db74">0.001  # 1 millisecond</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">log_queries_not_using_indexes</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slow_query_log_file</span>           <span style="color:#f92672">=</span> <span style="color:#e6db74">slow-query.log</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># As of MySQL 8.0.14:</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">log_slow_extra</span>                <span style="color:#f92672">=</span> <span style="color:#e6db74">1 </span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ini" data-lang="ini"><span class="line"><span class="cl"><span class="k">[mysqld]</span>
+</span></span><span class="line"><span class="cl"><span class="na">slow_query_log</span>                <span class="o">=</span> <span class="s">1</span>
+</span></span><span class="line"><span class="cl"><span class="na">long_query_time</span>               <span class="o">=</span> <span class="s">0.001  # 1 millisecond</span>
+</span></span><span class="line"><span class="cl"><span class="na">log_queries_not_using_indexes</span> <span class="o">=</span> <span class="s">1</span>
+</span></span><span class="line"><span class="cl"><span class="na">slow_query_log_file</span>           <span class="o">=</span> <span class="s">slow-query.log</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># As of MySQL 8.0.14:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="na">log_slow_extra</span>                <span class="o">=</span> <span class="s">1 </span>
 </span></span></code></pre></div><p class="warning">
 <b>WARNING</b>: If you're not using MySQL 8.014 or newer, comment out the last line (<code>`log_slow_extra`</code>), else MySQL will error on startup.
 </p>
@@ -574,18 +573,18 @@ Certain query metric tools, like <a href="#percona-monitoring-and-management-pmm
 <h3 id="percona-server">Percona Server</h3>
 <p>The Percona Server <a href="https://www.percona.com/doc/percona-server/5.7/diagnostics/slow_extended.html">extended slow query log</a> has two important features: query sampling and extra query metrics.</p>
 <p>Here&rsquo;s another starting point configuration for <code>my.cnf</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[mysqld]</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slow_query_log</span>                <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">long_query_time</span>               <span style="color:#f92672">=</span> <span style="color:#e6db74">0  # throttled by log_slow_rate_limit</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">log_queries_not_using_indexes</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slow_query_log_file</span>           <span style="color:#f92672">=</span> <span style="color:#e6db74">slow-query.log</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># Percona Server</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">log_slow_rate_type</span>  <span style="color:#f92672">=</span> <span style="color:#e6db74">query              # query sampling</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">log_slow_rate_limit</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">10                 # 1/10 = 10% queries logged</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">slow_query_log_always_write_time</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2     # always log really slow queries</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">log_slow_verbosity</span>  <span style="color:#f92672">=</span> <span style="color:#e6db74">innodb,query_plan  # extra query metrics</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ini" data-lang="ini"><span class="line"><span class="cl"><span class="k">[mysqld]</span>
+</span></span><span class="line"><span class="cl"><span class="na">slow_query_log</span>                <span class="o">=</span> <span class="s">1</span>
+</span></span><span class="line"><span class="cl"><span class="na">long_query_time</span>               <span class="o">=</span> <span class="s">0  # throttled by log_slow_rate_limit</span>
+</span></span><span class="line"><span class="cl"><span class="na">log_queries_not_using_indexes</span> <span class="o">=</span> <span class="s">1</span>
+</span></span><span class="line"><span class="cl"><span class="na">slow_query_log_file</span>           <span class="o">=</span> <span class="s">slow-query.log</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Percona Server</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="na">log_slow_rate_type</span>  <span class="o">=</span> <span class="s">query              # query sampling</span>
+</span></span><span class="line"><span class="cl"><span class="na">log_slow_rate_limit</span> <span class="o">=</span> <span class="s">10                 # 1/10 = 10% queries logged</span>
+</span></span><span class="line"><span class="cl"><span class="na">slow_query_log_always_write_time</span> <span class="o">=</span> <span class="s">2     # always log really slow queries</span>
+</span></span><span class="line"><span class="cl"><span class="na">log_slow_verbosity</span>  <span class="o">=</span> <span class="s">innodb,query_plan  # extra query metrics</span>
 </span></span></code></pre></div><p>With <code>log_slow_rate_type = query</code> and <code>log_slow_rate_limit = N</code>, you can set MySQL <code>long_query_time = 0</code> and get the best of both worlds: log virtually all queries with minimal overhead.
 This is query sampling: logging every Nth query, which yields a percentage of all queries.
 In this example, I chose <code>log_slow_rate_limit = 10</code>, which just happens to also equal 10% of queries logged.
@@ -667,13 +666,11 @@ The authors, Cary Millsap and Jeff Holt, where right about database performance 
 </div>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 

@@ -10,10 +10,10 @@
   <meta property="og:description" content="A deep dive into the MySQL select and sort status variables">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/mysql-select-and-sort/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -21,7 +21,6 @@
   <link rel="canonical" href="https://hackmysql.com/mysql-select-and-sort/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -381,12 +380,12 @@ mysql&gt; SHOW SESSION STATUS LIKE &#39;Select_%&#39;;
 <p>The value of <code>Sort_scan</code> is usually very high because sorting rows is common. Monitor the rate of this metric (sort ops/second) and watch for unexpected changes.</p>
 <h3 id="sort_range">Sort_range</h3>
 <p>As of MySQL 8.0, <code>Sort_range</code> means nothing. The status variable remains, but the code that incremented it was removed. In MySQL 5.7 the code was in <code>sql/filesort.cc</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> (tab<span style="color:#f92672">-&gt;</span>quick())
-</span></span><span style="display:flex;"><span>    thd<span style="color:#f92672">-&gt;</span>inc_status_sort_range();
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">else</span>
-</span></span><span style="display:flex;"><span>    thd<span style="color:#f92672">-&gt;</span>inc_status_sort_scan();
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">tab</span><span class="o">-&gt;</span><span class="n">quick</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="n">thd</span><span class="o">-&gt;</span><span class="n">inc_status_sort_range</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">else</span>
+</span></span><span class="line"><span class="cl">    <span class="n">thd</span><span class="o">-&gt;</span><span class="n">inc_status_sort_scan</span><span class="p">();</span>
 </span></span></code></pre></div><p>But in MySQL 8.0 that if-else block was replaced with a single line:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>  thd<span style="color:#f92672">-&gt;</span>inc_status_sort_scan();
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl">  <span class="n">thd</span><span class="o">-&gt;</span><span class="n">inc_status_sort_scan</span><span class="p">();</span>
 </span></span></code></pre></div><p>In MySQL 5.7 and older, <code>Sort_range</code> and <code>Sort_scan</code> were mutually exclusive, as shown in the code snippet above. <code>Sort_range</code> was incremented instead of <code>Sort_scan</code> for queries using a range scan.</p>
 <pre tabindex="0"><code>`Select_scan`  + filesort = `Sort_scan`++
 `Select_range` + filesort = `Sort_range`++
@@ -477,18 +476,18 @@ mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 | Sort_rows         | 999900 |
 | Sort_scan         | 1      |
 +-------------------+--------+
-</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;filesort_summary&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;memory_available&#34;</span>: <span style="color:#ae81ff">32768</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;key_size&#34;</span>: <span style="color:#ae81ff">240</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;row_size&#34;</span>: <span style="color:#ae81ff">610</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;max_rows_per_buffer&#34;</span>: <span style="color:#ae81ff">53</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_estimate&#34;</span>: <span style="color:#ae81ff">493200</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_found&#34;</span>: <span style="color:#ae81ff">999900</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_initial_chunks_spilled_to_disk&#34;</span>: <span style="color:#ae81ff">11494</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;peak_memory_used&#34;</span>: <span style="color:#ae81ff">33368</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_algorithm&#34;</span>: <span style="color:#e6db74">&#34;std::sort&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_mode&#34;</span>: <span style="color:#e6db74">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
-</span></span><span style="display:flex;"><span>}
+</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="s2">&#34;filesort_summary&#34;</span><span class="err">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;memory_available&#34;</span><span class="p">:</span> <span class="mi">32768</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;key_size&#34;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;row_size&#34;</span><span class="p">:</span> <span class="mi">610</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;max_rows_per_buffer&#34;</span><span class="p">:</span> <span class="mi">53</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_rows_estimate&#34;</span><span class="p">:</span> <span class="mi">493200</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_rows_found&#34;</span><span class="p">:</span> <span class="mi">999900</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_initial_chunks_spilled_to_disk&#34;</span><span class="p">:</span> <span class="mi">11494</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;peak_memory_used&#34;</span><span class="p">:</span> <span class="mi">33368</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;sort_algorithm&#34;</span><span class="p">:</span> <span class="s2">&#34;std::sort&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;sort_mode&#34;</span><span class="p">:</span> <span class="s2">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>With only 32 KB, MySQL must use 11,494 merge buffers as indicated by <code>num_initial_chunks_spilled_to_disk</code> in the <a href="https://dev.mysql.com/doc/internals/en/optimizer-tracing.html">optimizer trace</a> output at bottom. (This value was fixed as of <a href="https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-2.html">MySQL 8.0.2</a>: &ldquo;In optimizer trace output, num_tmp_files did not actually indicate number of files. It has been renamed to num_initial_chunks_spilled_to_disk and indicates the number of chunks before any merging has occurred. (Bug #25733784, Bug #85487)&rdquo;.) The number of merge passes (1,917) is far less because each call to <code>merge_buffers()</code> merges several buffers (currently 7: <code>constexpr size_t MERGEBUFF = 7;</code> in <code>sql/sql_sort.h</code>). All 32 KB was used, as indicated by <code>peak_memory_used</code>.</p>
 <p>The query took 3.6s to execute.</p>
 <p><em><strong>sort_buffer_size = 10 MB (very large)</strong></em></p>
@@ -508,18 +507,18 @@ mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 | Sort_rows         | 999900 |
 | Sort_scan         | 1      |
 +-------------------+--------+
-</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;filesort_summary&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;memory_available&#34;</span>: <span style="color:#ae81ff">10485760</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;key_size&#34;</span>: <span style="color:#ae81ff">240</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;row_size&#34;</span>: <span style="color:#ae81ff">610</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;max_rows_per_buffer&#34;</span>: <span style="color:#ae81ff">17189</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_estimate&#34;</span>: <span style="color:#ae81ff">493200</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_found&#34;</span>: <span style="color:#ae81ff">999900</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_initial_chunks_spilled_to_disk&#34;</span>: <span style="color:#ae81ff">36</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;peak_memory_used&#34;</span>: <span style="color:#ae81ff">10486104</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_algorithm&#34;</span>: <span style="color:#e6db74">&#34;std::stable_sort&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_mode&#34;</span>: <span style="color:#e6db74">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
-</span></span><span style="display:flex;"><span>}
+</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="s2">&#34;filesort_summary&#34;</span><span class="err">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;memory_available&#34;</span><span class="p">:</span> <span class="mi">10485760</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;key_size&#34;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;row_size&#34;</span><span class="p">:</span> <span class="mi">610</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;max_rows_per_buffer&#34;</span><span class="p">:</span> <span class="mi">17189</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_rows_estimate&#34;</span><span class="p">:</span> <span class="mi">493200</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_rows_found&#34;</span><span class="p">:</span> <span class="mi">999900</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_initial_chunks_spilled_to_disk&#34;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;peak_memory_used&#34;</span><span class="p">:</span> <span class="mi">10486104</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;sort_algorithm&#34;</span><span class="p">:</span> <span class="s2">&#34;std::stable_sort&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;sort_mode&#34;</span><span class="p">:</span> <span class="s2">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>Yes, query response time decreased 30% to 2.49s due to a 99.7% decrease in <code>Sort_merge_passes</code>: 1917 to 6. MySQL used all 10 MB of the sort buffer.</p>
 <p><em><strong>sort_buffer_size = 32 MB (dangerous)</strong></em></p>
 <pre tabindex="0"><code>mysql&gt; SELECT c FROM sbtest1 WHERE id &gt; 100 ORDER BY c;
@@ -537,18 +536,18 @@ mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 | Sort_rows         | 999900 |
 | Sort_scan         | 1      |
 +-------------------+--------+
-</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;filesort_summary&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;memory_available&#34;</span>: <span style="color:#ae81ff">33554432</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;key_size&#34;</span>: <span style="color:#ae81ff">240</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;row_size&#34;</span>: <span style="color:#ae81ff">610</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;max_rows_per_buffer&#34;</span>: <span style="color:#ae81ff">55007</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_estimate&#34;</span>: <span style="color:#ae81ff">493200</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_found&#34;</span>: <span style="color:#ae81ff">999900</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_initial_chunks_spilled_to_disk&#34;</span>: <span style="color:#ae81ff">12</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;peak_memory_used&#34;</span>: <span style="color:#ae81ff">33557336</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_algorithm&#34;</span>: <span style="color:#e6db74">&#34;std::stable_sort&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_mode&#34;</span>: <span style="color:#e6db74">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
-</span></span><span style="display:flex;"><span>}
+</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="s2">&#34;filesort_summary&#34;</span><span class="err">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;memory_available&#34;</span><span class="p">:</span> <span class="mi">33554432</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;key_size&#34;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;row_size&#34;</span><span class="p">:</span> <span class="mi">610</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;max_rows_per_buffer&#34;</span><span class="p">:</span> <span class="mi">55007</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_rows_estimate&#34;</span><span class="p">:</span> <span class="mi">493200</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_rows_found&#34;</span><span class="p">:</span> <span class="mi">999900</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_initial_chunks_spilled_to_disk&#34;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;peak_memory_used&#34;</span><span class="p">:</span> <span class="mi">33557336</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;sort_algorithm&#34;</span><span class="p">:</span> <span class="s2">&#34;std::stable_sort&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;sort_mode&#34;</span><span class="p">:</span> <span class="s2">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>With a 32 MB sort buffer, merge passes drops to 1 but query response time remains similar to a 10 MB sort buffer: 2.24s vs. 2.49s, respectively. Not surprising: 1 merge pass vs. 6 is not a significant difference.</p>
 <p>I call a 32 MB <code>sort_buffer_size</code> &ldquo;dangerous&rdquo; for two reasons. First, sort buffers are allocated per-connection, so it can use a lot of memory on busy servers. Second, several MySQL experts recommend against large values. Granted, each server is different, so do your own analysis and use a larger <code>sort_buffer_size</code> if there is a proven need for it. As of MySQL 8.0.12, <code>sort_buffer_size</code> is allocated incrementally as needed, so it is less dangerous.</p>
 <p><em><strong>sort_buffer_size = 128 MB (insane)</strong></em></p>
@@ -567,18 +566,18 @@ mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 | Sort_rows         | 999900 |
 | Sort_scan         | 1      |
 +-------------------+--------+
-</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;filesort_summary&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;memory_available&#34;</span>: <span style="color:#ae81ff">134217728</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;key_size&#34;</span>: <span style="color:#ae81ff">240</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;row_size&#34;</span>: <span style="color:#ae81ff">610</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;max_rows_per_buffer&#34;</span>: <span style="color:#ae81ff">220029</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_estimate&#34;</span>: <span style="color:#ae81ff">493200</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_rows_found&#34;</span>: <span style="color:#ae81ff">999900</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;num_initial_chunks_spilled_to_disk&#34;</span>: <span style="color:#ae81ff">3</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;peak_memory_used&#34;</span>: <span style="color:#ae81ff">134229360</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_algorithm&#34;</span>: <span style="color:#e6db74">&#34;std::stable_sort&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;sort_mode&#34;</span>: <span style="color:#e6db74">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
-</span></span><span style="display:flex;"><span>}
+</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="s2">&#34;filesort_summary&#34;</span><span class="err">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;memory_available&#34;</span><span class="p">:</span> <span class="mi">134217728</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;key_size&#34;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;row_size&#34;</span><span class="p">:</span> <span class="mi">610</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;max_rows_per_buffer&#34;</span><span class="p">:</span> <span class="mi">220029</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_rows_estimate&#34;</span><span class="p">:</span> <span class="mi">493200</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_rows_found&#34;</span><span class="p">:</span> <span class="mi">999900</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;num_initial_chunks_spilled_to_disk&#34;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;peak_memory_used&#34;</span><span class="p">:</span> <span class="mi">134229360</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;sort_algorithm&#34;</span><span class="p">:</span> <span class="s2">&#34;std::stable_sort&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;sort_mode&#34;</span><span class="p">:</span> <span class="s2">&#34;&lt;fixed_sort_key, packed_additional_fields&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>A 128 MB <code>sort_buffer_size</code> proves an important point: <mark>performance can <em>decrease</em>  when <code>sort_buffer_size</code> is too large</mark>.</p>
 <p>Query response time was 2.52s with 128 MB compared to 2.24s with 32 MB and 2.49s with 10 MB. Why? I do not have formal proof, but I am confident that it is due to the fact that <code>Sort_merge_passes</code> is negligible (1, 1, 6, respectively) but it takes longer to allocate 128 MB since, as of MySQL 8.0.12, sort buffer memory is allocated incrementally as needed which means more overhead to allocate large amounts of memory.</p>
 <h3 id="sort_rows">Sort_rows</h3>
@@ -615,13 +614,11 @@ mysql&gt; SHOW SESSION STATUS LIKE &#39;Sort_%&#39;;
 </main>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 

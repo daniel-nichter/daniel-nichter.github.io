@@ -10,10 +10,10 @@
   <meta property="og:description" content="16 Years of Fun">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -21,7 +21,6 @@
   <link rel="canonical" href="https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -195,9 +194,9 @@ That means EXPLAIN will say &ldquo;Using filesort&rdquo;.</p>
 (Remember: an index scan on the primary is the same as a table scan because the primary key is the table.)
 Why?
 In the source code, <code>sql_select.cc</code> method <code>test_if_cheaper_ordering()</code>, a code comment explains:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>        <span style="color:#75715e">/*
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">          Switch to index that gives order if its scan time is smaller than
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">          read_time of current chosen access method.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">          Switch to index that gives order if its scan time is smaller than
+</span></span></span><span class="line"><span class="cl"><span class="cm">          read_time of current chosen access method.
 </span></span></span></code></pre></div><p><mark>Reading rows <em>in order</em> might be faster than unordered secondary index lookups plus sorting.</mark>
 With this optimization, the new query execution plan would be:</p>
 <ol>
@@ -226,36 +225,36 @@ For example, <em>before</em> the change you would see an <a href="https://dev.my
 </code></pre><p>Notice that fields <code>type</code>, <code>key</code>, <code>ref</code>, and <code>Extra</code> all change.
 Also, <code>PRIMARY</code> is not listed for <code>possible_keys</code> before, but after (when MySQL changes the execution plan) it appears as the chosen <code>key</code>.
 That&rsquo;s one telltale sign that MySQL changed the execution plan to enable this optimization, but the indisputable sign is only seen in an optimizer trace (line 10 of this snippet):</p>
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
 </span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;reconsidering_access_paths_for_index_ordering&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;clause&#34;</span>: <span style="color:#e6db74">&#34;ORDER BY&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;steps&#34;</span>: [
-</span></span><span style="display:flex;"><span>  ],
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;index_order_summary&#34;</span>: {
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;table&#34;</span>: <span style="color:#e6db74">&#34;`t`&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;index_provides_order&#34;</span>: <span style="color:#66d9ef">true</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;order_direction&#34;</span>: <span style="color:#e6db74">&#34;asc&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;index&#34;</span>: <span style="color:#e6db74">&#34;PRIMARY&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;plan_changed&#34;</span>: <span style="color:#66d9ef">true</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;access_type&#34;</span>: <span style="color:#e6db74">&#34;index&#34;</span>
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>}
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="s2">&#34;reconsidering_access_paths_for_index_ordering&#34;</span><span class="err">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;clause&#34;</span><span class="p">:</span> <span class="s2">&#34;ORDER BY&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;steps&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">  <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;index_order_summary&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;table&#34;</span><span class="p">:</span> <span class="s2">&#34;`t`&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;index_provides_order&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;order_direction&#34;</span><span class="p">:</span> <span class="s2">&#34;asc&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;index&#34;</span><span class="p">:</span> <span class="s2">&#34;PRIMARY&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;plan_changed&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;access_type&#34;</span><span class="p">:</span> <span class="s2">&#34;index&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><div class="note" style="margin-top:15px">
@@ -284,16 +283,16 @@ It contains 1M rows with values for column <code>other_id</code> repeating every
 There&rsquo;s a secondary index on columns <code>&lt;other_id, covered_column&gt;</code>.</p>
 <p>After you load the table, <code>ANALYZE TABLE t</code> to ensure the index statistics are correct.
 Then run <code>EXPLAIN ANALYZE SELECT non_covered_column FROM t WHERE other_id=555 ORDER BY id LIMIT 1</code>:</p>
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
 </span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>-&gt; Limit: <span style="color:#ae81ff">1</span> row<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span>  <span style="color:#f92672">(</span>cost<span style="color:#f92672">=</span>0.999 rows<span style="color:#f92672">=</span>0.999<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>actual time<span style="color:#f92672">=</span>1..1 rows<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> loops<span style="color:#f92672">=</span>1<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>   -&gt; Filter: <span style="color:#f92672">(</span>t.other_id <span style="color:#f92672">=</span> 555<span style="color:#f92672">)</span>  <span style="color:#f92672">(</span>cost<span style="color:#f92672">=</span>0.999 rows<span style="color:#f92672">=</span>0.999<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>actual time<span style="color:#f92672">=</span>1..1 rows<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> loops<span style="color:#f92672">=</span>1<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>      -&gt; Index scan on t using PRIMARY  <span style="color:#f92672">(</span>cost<span style="color:#f92672">=</span>0.999 rows<span style="color:#f92672">=</span>996<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>actual time<span style="color:#f92672">=</span>0.116..0.345 rows<span style="color:#f92672">=</span><span style="color:#ae81ff">555</span> loops<span style="color:#f92672">=</span>1<span style="color:#f92672">)</span>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">-&gt; Limit: <span class="m">1</span> row<span class="o">(</span>s<span class="o">)</span>  <span class="o">(</span><span class="nv">cost</span><span class="o">=</span>0.999 <span class="nv">rows</span><span class="o">=</span>0.999<span class="o">)</span> <span class="o">(</span>actual <span class="nv">time</span><span class="o">=</span>1..1 <span class="nv">rows</span><span class="o">=</span><span class="m">1</span> <span class="nv">loops</span><span class="o">=</span>1<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   -&gt; Filter: <span class="o">(</span>t.other_id <span class="o">=</span> 555<span class="o">)</span>  <span class="o">(</span><span class="nv">cost</span><span class="o">=</span>0.999 <span class="nv">rows</span><span class="o">=</span>0.999<span class="o">)</span> <span class="o">(</span>actual <span class="nv">time</span><span class="o">=</span>1..1 <span class="nv">rows</span><span class="o">=</span><span class="m">1</span> <span class="nv">loops</span><span class="o">=</span>1<span class="o">)</span>
+</span></span><span class="line"><span class="cl">      -&gt; Index scan on t using PRIMARY  <span class="o">(</span><span class="nv">cost</span><span class="o">=</span>0.999 <span class="nv">rows</span><span class="o">=</span>996<span class="o">)</span> <span class="o">(</span>actual <span class="nv">time</span><span class="o">=</span>0.116..0.345 <span class="nv">rows</span><span class="o">=</span><span class="m">555</span> <span class="nv">loops</span><span class="o">=</span>1<span class="o">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>Read my in-depth guide to <a href="/post/book-2/">EXPLAIN ANALYZE</a> if you&rsquo;re not familiar with the output—it&rsquo;s something all developers need to know.</p>
@@ -324,10 +323,10 @@ The primary key scan is about 5x faster in <em>this</em> case, but not all cases
 <p>After loading the data dump in the previous section, execute<br><code>UPDATE t SET id=id+1000000 WHERE other_id=555;</code><br>
 That moves 1,000 rows matching <code>other_id=555</code> to the end of the table.
 Then execute these queries:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> non_covered_column <span style="color:#66d9ef">FROM</span> t <span style="color:#66d9ef">WHERE</span> other_id<span style="color:#f92672">=</span><span style="color:#ae81ff">555</span> <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> id <span style="color:#66d9ef">ASC</span> <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> non_covered_column <span style="color:#66d9ef">FROM</span> t <span style="color:#66d9ef">WHERE</span> other_id<span style="color:#f92672">=</span><span style="color:#ae81ff">555</span> <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> id <span style="color:#66d9ef">ASC</span> <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">20</span>;
-</span></span></code></pre></div><p>With MySQL 5.7, 8.0, and even 8.1 you should get wildly different response times:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">non_covered_column</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">other_id</span><span class="o">=</span><span class="mi">555</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">ASC</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="n">non_covered_column</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">other_id</span><span class="o">=</span><span class="mi">555</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">ASC</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>With MySQL 5.7, 8.0, and even 8.1 you should get wildly different response times:</p>
 <pre>
 <mark># Query_time: 0.416951</mark>  Lock_time: 0.000004 Rows_sent: 1  Rows_examined: 999001 Thread_id: 226 Errno: 0 Killed: 0 Bytes_received: 82 Bytes_sent: 92 Read_first: 1 Read_last: 0 Read_key: 1 Read_next: 999000 Read_prev: 0 Read_rnd: 0 Read_rnd_next: 0 Sort_merge_passes: 0 Sort_range_count: 0 Sort_rows: 0 Sort_scan_count: 0 Created_tmp_disk_tables: 0 Created_tmp_tables: 0
 SELECT non_covered_column FROM t WHERE other_id=555 ORDER BY id ASC LIMIT 1;
@@ -479,6 +478,10 @@ When I have time, I'll debug the source code for this and write another blog pos
           </li>
 
 
+          <li class="next">
+            <a href="https://hackmysql.com/post/fallacy-of-small-functions/" data-toggle="tooltip" data-placement="top" title="The Fallacy of Small Functions"> &rarr;</a>
+          </li>
+
       </ul>
 
 
@@ -512,13 +515,11 @@ When I have time, I'll debug the source code for this and write another blog pos
 </div>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 

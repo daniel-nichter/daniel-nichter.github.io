@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Fallacy of Small Functions</title>
+  <meta property="og:title" content="The Fallacy of Small Functions" />
+  <meta name="description" content="Decades of computer programming advice, best practices, and books have taught that small functions are good. That&rsquo;s misleading at best and counterproductive at worst: increasing complexity rather than reducing it.
+For brevity, I&rsquo;m going to say things are false or wrong without explaining because you already have a fantastic explanation: A Philosophy of Software Design by John Ousterhout. Everything I&rsquo;m arguing here is explained in that book.
+Here&rsquo;s an example of bad design:">
+  <meta property="og:description" content="Decades of computer programming advice, best practices, and books have taught that small functions are good. That&rsquo;s misleading at best and counterproductive at worst: increasing complexity rather than reducing it.
+For brevity, I&rsquo;m going to say things are false or wrong without explaining because you already have a fantastic explanation: A Philosophy of Software Design by John Ousterhout. Everything I&rsquo;m arguing here is explained in that book.
+Here&rsquo;s an example of bad design:">
+
+  <meta name="author" content="Daniel Nichter"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta property="og:url" content="https://hackmysql.com/post/fallacy-of-small-functions/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hack MySQL" />
+  <meta name="generator" content="Hugo 0.119.0">
+  <link rel="canonical" href="https://hackmysql.com/post/fallacy-of-small-functions/" />
+  <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
+  <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://hackmysql.com/">Hack MySQL</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-navbar">
+<div id="Ukraine">
+<a href="https://help.unicef.org/ukraine-emergency">UNICEF</a>&mdash;<a href="https://www.icrc.org/en/donate/ukraine">ICRC</a>&mdash;<a href="https://donate.wck.org/">WCK</a>&nbsp;
+<img src="/img/Flag_of_Ukraine.svg" height="50px" style="display:inline" alt="Flag of Ukraine"></img>
+</div>
+      <ul class="nav navbar-nav navbar-left">
+
+
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Archive</a>
+              <div class="navlinks-children">
+
+                  <a href="/archive/mysqlreport/">mysqlreport</a>
+
+                  <a href="/archive/mysqlsla/">mysqlsla</a>
+
+                  <a href="/archive/mysqlsniffer/">mysqlsniffer</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Engineer</a>
+              <div class="navlinks-children">
+
+                  <a href="/benchmarking/">Benchmarking</a>
+
+                  <a href="/eng/career-advice/">Career Advice</a>
+
+                  <a href="/eng/database-operations-manual/">Database Operations Manual</a>
+
+                  <a href="/eng/write/">How to Write Well</a>
+
+                  <a href="/eng/level-up/">Level Up</a>
+
+                  <a href="/eng/percentiles/">Percentiles</a>
+
+              </div>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">go</a>
+              <div class="navlinks-children">
+
+                  <a href="/golang/go-antipatterns/">Go Antipatterns</a>
+
+                  <a href="/golang/go-single-character-names/">Go Single-character Names</a>
+
+                  <a href="/golang/idiomatic-go/">Idiomatic Go</a>
+
+              </div>
+            </li>
+
+
+
+            <li>
+              <a title="Help" href="/help/">Help</a>
+            </li>
+
+
+
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">MySQL</a>
+              <div class="navlinks-children">
+
+                  <a href="/mysql-password-rotation-lambda/">MySQL Password Rotation with AWS Secrets Manager and Lambda</a>
+
+                  <a href="/mysql-select-and-sort/">MySQL Select and Sort Status Variables</a>
+
+                  <a href="/mysql-transaction-reporting/">MySQL Transaction Reporting</a>
+
+              </div>
+            </li>
+
+
+
+
+      </ul>
+	</div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main">
+        <h1 class="post-title">The Fallacy of Small Functions</h1>
+
+        <div class="post-meta">
+
+
+  <div>Mar 24, 2024</div>
+  <div class="blog-tags">
+
+
+        <a href="/tags/software-design">#software design</a>
+
+        <a href="/tags/john-ousterhout">#John Ousterhout</a>
+
+
+  </div>
+</div>
+
+
+        <p>Decades of computer programming advice, best practices, and books have taught that small functions are good.
+That&rsquo;s misleading at best and counterproductive at worst: increasing complexity rather than reducing it.</p>
+<p>For brevity, I&rsquo;m going to say things are false or wrong without explaining because you already have a <em>fantastic</em> explanation:  <a href="https://web.stanford.edu/~ouster/cgi-bin/book.php"><em>A Philosophy of Software Design</em></a> by John Ousterhout.
+Everything I&rsquo;m arguing here is explained in that book.</p>
+<p>Here&rsquo;s an example of bad design:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">serviceName</span><span class="p">(</span><span class="nx">cluster</span> <span class="nx">rds</span><span class="p">.</span><span class="nx">DBCluster</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ret</span> <span class="o">:=</span> <span class="nf">serviceNameFromTag</span><span class="p">(</span><span class="nx">cluster</span><span class="p">.</span><span class="nx">TagList</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">ret</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">ret</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">serviceNameFromID</span><span class="p">(</span><span class="nx">cluster</span><span class="p">.</span><span class="nx">DBClusterIdentifier</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">serviceNameFromTag</span><span class="p">(</span><span class="nx">tags</span> <span class="p">[]</span><span class="o">*</span><span class="nx">rds</span><span class="p">.</span><span class="nx">Tag</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">tag</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">tags</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">ToLower</span><span class="p">(</span><span class="nx">tag</span><span class="p">.</span><span class="nx">Key</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#34;service&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">Value</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="s">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">serviceNameFromID</span><span class="p">(</span><span class="nx">clusterID</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">lastDash</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">LastIndex</span><span class="p">(</span><span class="nx">clusterID</span><span class="p">,</span> <span class="s">&#34;-&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">lastDash</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">clusterID</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">lastDash</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">clusterID</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">suffix</span> <span class="o">:=</span> <span class="nx">clusterID</span><span class="p">[</span><span class="nx">lastDash</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">suffix</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="nx">clusterID</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">clusterID</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nx">lastDash</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p class="figure"><b>Example 1</b>: Three small functions (bad design)</p>
+<p><mark>The main philosophical (and practical) problem with the three functions in example 1 is that they&rsquo;re all <em>shallow</em>: they don&rsquo;t do much.</mark>
+But let&rsquo;s put philosophy aside for the moment and critique more practical points.</p>
+<p>Some engineers will argue that the code above in example 1 is well designed because each function is small and does one thing.
+They might even cite the &ldquo;S&rdquo; in <a href="https://www.freecodecamp.org/news/solid-principles-explained-in-plain-english">SOLID</a>: single responsibility.
+But they&rsquo;re wrong: small functions are not inherently good software design.</p>
+<p>What about &ldquo;do one thing&rdquo;?
+<code>serviceName</code> doesn&rsquo;t: it starts by calling the second function, <code>serviceNameFromTag</code>.
+And if that returns an empty string, it calls the third function <code>serviceNameFromID</code>.
+So <code>serviceName</code> <em>itself</em> does nothing: it just calls other functions.
+That raises the question: what does <code>serviceName</code> <em>itself</em> do? what is its responsibly?
+Calling other functions isn&rsquo;t a responsibility, it&rsquo;s just&hellip; a program.
+All programs are functions calling functions.</p>
+<p>Another problem with relying on the fallacy that small functions are good design is that it often leads programmers to <em>not</em> write code comments.
+They argue that &ldquo;If the functions are small and do one thing, they&rsquo;re self-describing—no code comments necessary!&rdquo;
+They&rsquo;re wrong again: code is what we want the computer to do but it does not explain <em>why</em>.</p>
+<p>Furthermore, the programmer who wrote these functions failed to realize that the direction of thought in <em>writing</em> the code cannot be followed by other programmers <em>reading</em> the code.
+The writer starts with a singular problem: p = &ldquo;I need to get the service name from the databases cluster name.&rdquo;
+They arrive at a three-part solution: q, r, s.</p>
+<table>
+<thead>
+<tr>
+<th>Writer</th>
+<th>Readers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>p → q, r, s</td>
+<td>q, r, s → ? 😕</td>
+</tr>
+</tbody>
+</table>
+<p>Problem is: the writer assumes that readers can from start from the solution and arrive back at the original problem.
+Readers cannot.
+For example, a reader cannot tell in example 1 if the other two functions serve a purpose other than being called by the first.
+Is it valid / acceptable / intended that the program calls <code>serviceNameFromTag</code> or <code>serviceNameFromID</code> directly?
+Nobody knows; even the original author will eventually forget.</p>
+<hr>
+<p>Here&rsquo;s the same code but written with better design as a single function:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// serviceName returns the service name of the given cluster so we can look up
+</span></span></span><span class="line"><span class="cl"><span class="c1">// the service from the database cluster name. The db cluster should be tagged
+</span></span></span><span class="line"><span class="cl"><span class="c1">// with the service name (service=name). If not, it&#39;s parsed from the database
+</span></span></span><span class="line"><span class="cl"><span class="c1">// cluster name by dropping the &#34;-nnn&#34; cluster number suffix. It always returns
+</span></span></span><span class="line"><span class="cl"><span class="c1">// a non-empty value (because a database cluster name can&#39;t be empty).
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">serviceName</span><span class="p">(</span><span class="nx">cluster</span> <span class="nx">rds</span><span class="p">.</span><span class="nx">DBCluster</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Return name from service tag
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">tag</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">cluster</span><span class="p">.</span><span class="nx">TagList</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">ToLower</span><span class="p">(</span><span class="nx">tag</span><span class="p">.</span><span class="nx">Key</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#34;service&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">Value</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// No tag; parse service name from cluster ID. This happens becuase there
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// are some legacy databases that aren&#39;t tagged. In the future, we should
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// probably make this an error to force us to finish tagging evertything.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// Db cluster name should be like &#34;foo-001&#34;. So we find the last &#34;-&#34; and
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// return everything before that. But legacy databases might not conform,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// so we handle stuff like &#34;foo&#34; and &#34;foo-v2&#34;.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">clusterID</span> <span class="o">:=</span> <span class="nx">cluster</span><span class="p">.</span><span class="nx">DBClusterIdentifier</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">lastDash</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">LastIndex</span><span class="p">(</span><span class="nx">clusterID</span><span class="p">,</span> <span class="s">&#34;-&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">lastDash</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">clusterID</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">lastDash</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">clusterID</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">suffix</span> <span class="o">:=</span> <span class="nx">clusterID</span><span class="p">[</span><span class="nx">lastDash</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">suffix</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="nx">clusterID</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">clusterID</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nx">lastDash</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p class="figure"><b>Example 2</b>: One function, deep abstraction (good design)</p>
+<p>Example 2 is better design because function <code>serviceName</code> is <em>deep</em> and correctly code commented.
+Instead of grokking 3 small but uncommented functions, readers now have a single function that explains both what <em>and why</em> in the comments.
+For example, the previous code (example 1) doesn&rsquo;t mention the special case: legacy clusters that don&rsquo;t have standard tags or follow the naming schema.</p>
+<p>Deep doesn&rsquo;t mean big; it means the implementation does more relative to its interface.
+The interface here is the function signature, which is about as small and simple as it gets: one input arg, one return value.
+The <em>implementation</em> of that small, simple interface is <em>deep</em> because it handles (and hides) several cases: the normal case (tag) and special.
+The function does a lot, relatively speaking (it&rsquo;s a pretty simple example).</p>
+<p>It&rsquo;s deep but not complex because readers can understand the problem alongside its implementation.</p>
+<table>
+<thead>
+<tr>
+<th>Writer</th>
+<th>Readers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>p →<br>// p<br>q</td>
+<td> <br>// p<br>q</td>
+</tr>
+</tbody>
+</table>
+<p>Now that readers know <em>what</em> the code is supposed to do (and <em>why</em>), they can more easily question <em>how</em> (implementation) and more safely modify it (presuming it already has good test coverage).
+For example, why use <code>strings.LastIndex</code> rather than a regex to truncate the &ldquo;-nnn&rdquo;?
+Then you don&rsquo;t have to check for it; just truncate and return.</p>
+<br>
+<p>Small functions are not inherently good software design.
+They&rsquo;re not inherently bad, either.
+And since big functions are usually problematic, we concluded that function size is not a good guide to better software design.</p>
+<p>When you read <a href="https://web.stanford.edu/~ouster/cgi-bin/book.php"><em>A Philosophy of Software Design</em></a> you&rsquo;ll learn a better and much more effective guide: reducing (or eliminating) complexity with deep abstractions—and appropriately written code comments.</p>
+
+      </article>
+      <hr>
+      <ul class="pager blog-pager">
+
+          <li class="previous">
+            <a href="https://hackmysql.com/post/infamous-order-by-limit-query-optimizer-bug/" data-toggle="tooltip" data-placement="top" title="The Infamous ORDER BY LIMIT Query Optimizer Bug">&larr; </a>
+          </li>
+
+
+      </ul>
+
+
+
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+
+
+
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hackmongo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+</footer>
+<script src="https://hackmysql.com/js/compressed.js"></script>
+
+<script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
+
+
+  </body>
+</html>

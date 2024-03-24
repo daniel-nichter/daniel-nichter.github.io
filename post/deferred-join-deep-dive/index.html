@@ -14,10 +14,10 @@ Deferred join is simple.
 Deferred join is misunderstood.">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/post/deferred-join-deep-dive/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -25,7 +25,6 @@ Deferred join is misunderstood.">
   <link rel="canonical" href="https://hackmysql.com/post/deferred-join-deep-dive/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -202,11 +201,11 @@ Likewise, the authors note the problem with large offsets: &ldquo;Such queries c
 </blockquote>
 <p>(Emphasis mine.)</p>
 <p>The query is written with a deferred join:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">&lt;</span>cols<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">FROM</span> profiles <span style="color:#66d9ef">INNER</span> <span style="color:#66d9ef">JOIN</span> (
-</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">primary</span> <span style="color:#66d9ef">key</span> cols<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">FROM</span> profiles
-</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">WHERE</span> ... <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> rating <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">100000</span>, <span style="color:#ae81ff">10</span>
-</span></span><span style="display:flex;"><span>) <span style="color:#66d9ef">AS</span> x <span style="color:#66d9ef">USING</span>(<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">primary</span> <span style="color:#66d9ef">key</span> columns<span style="color:#f92672">&gt;</span>);
-</span></span></code></pre></div><p>The third and last mention of deferred join occurs in chapter 6 (&ldquo;Query Performance Optimization&rdquo;) section &ldquo;Optimizing LIMIT and OFFSET&rdquo;.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">&lt;</span><span class="n">cols</span><span class="o">&gt;</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">profiles</span><span class="w"> </span><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="k">SELECT</span><span class="w"> </span><span class="o">&lt;</span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">cols</span><span class="o">&gt;</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">profiles</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="k">WHERE</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">rating</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">100000</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="k">USING</span><span class="p">(</span><span class="o">&lt;</span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">columns</span><span class="o">&gt;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><p>The third and last mention of deferred join occurs in chapter 6 (&ldquo;Query Performance Optimization&rdquo;) section &ldquo;Optimizing LIMIT and OFFSET&rdquo;.
 The authors write that &ldquo;One simple technique to improve efficiency is to do the offset on a covering index, rather than the full rows. You can then join the result to the full row and retrieve the additional columns you need.&rdquo;</p>
 <p>That&rsquo;s cryptic because how does one &ldquo;do the offset on a covering index&rdquo;?
 The limit and offset are numbers not columns, but indexes cover columns?
@@ -286,32 +285,32 @@ For simplicity, I&rsquo;ll use fake queries:</p>
 <div class="sidebyside">
 <div>
 <i>Simple Query</i>
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
 </span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> t <span style="color:#66d9ef">order</span> <span style="color:#66d9ef">by</span> x <span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">500</span>, <span style="color:#ae81ff">20</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span></code></pre></td></tr></table>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div></div>
 <div class="right">
 <i>Optimized Query</i>
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
 </span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> t <span style="color:#66d9ef">join</span> (
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">select</span> pk <span style="color:#66d9ef">from</span> t <span style="color:#66d9ef">order</span> <span style="color:#66d9ef">by</span> x <span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">500</span>, <span style="color:#ae81ff">20</span>
-</span></span><span style="display:flex;"><span>) dt <span style="color:#66d9ef">using</span>(pk)
-</span></span></code></pre></td></tr></table>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">select</span><span class="w"> </span><span class="n">pk</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="k">using</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div></div>
 </div>
@@ -343,52 +342,52 @@ Plus, we have two things today that Peter didn&rsquo;t have back then: <a href="
 <div class="sidebyside">
 <div>
 <i>Simple Query</i>
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
 </span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span>
-</span></span><span style="display:flex;"><span>  i, <span style="color:#66d9ef">pad</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">from</span>
-</span></span><span style="display:flex;"><span>  fact
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">left</span> <span style="color:#66d9ef">join</span> dim <span style="color:#66d9ef">on</span> val<span style="color:#f92672">=</span>id
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">where</span>
-</span></span><span style="display:flex;"><span>  i<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">100000</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">500000</span>,<span style="color:#ae81ff">10</span>;
-</span></span></code></pre></td></tr></table>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="k">pad</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">fact</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">dim</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">val</span><span class="o">=</span><span class="n">id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">i</span><span class="o">&lt;</span><span class="mi">100000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">limit</span><span class="w"> </span><span class="mi">500000</span><span class="p">,</span><span class="mi">10</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div></div>
 <div class="right">
 <i>Optimized Query</i>
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
 </span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span>
-</span></span><span style="display:flex;"><span>  i, <span style="color:#66d9ef">pad</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">from</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#66d9ef">select</span> i, val <span style="color:#66d9ef">from</span> fact <span style="color:#66d9ef">where</span> i<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">100000</span> <span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">500000</span>,<span style="color:#ae81ff">10</span>) res
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">left</span> <span style="color:#66d9ef">join</span> dim <span style="color:#66d9ef">on</span> val<span style="color:#f92672">=</span>id;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span></code></pre></td></tr></table>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="k">pad</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">fact</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="mi">100000</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">500000</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="n">res</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">dim</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">val</span><span class="o">=</span><span class="n">id</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div></div>
 </div>
@@ -396,18 +395,18 @@ Plus, we have two things today that Peter didn&rsquo;t have back then: <a href="
 This is not a matter of pagination; it&rsquo;s a matter of facts and dimensions—data warehouse stuff that&rsquo;s not important right now.
 What&rsquo;s important is that we&rsquo;re joining two tables: <code>fact</code> and <code>dim</code>.</p>
 <p>Here are the table definitions and abridged EXPLAIN plans for each query:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#f92672">`</span>fact<span style="color:#f92672">`</span> (
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>i<span style="color:#f92672">`</span> int(<span style="color:#ae81ff">10</span>) unsigned <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>val<span style="color:#f92672">`</span> int(<span style="color:#ae81ff">10</span>) unsigned <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">KEY</span> <span style="color:#f92672">`</span>i<span style="color:#f92672">`</span> (<span style="color:#f92672">`</span>i<span style="color:#f92672">`</span>,<span style="color:#f92672">`</span>val<span style="color:#f92672">`</span>)
-</span></span><span style="display:flex;"><span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#f92672">`</span>dim<span style="color:#f92672">`</span> (
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span>id<span style="color:#f92672">`</span> int(<span style="color:#ae81ff">10</span>) unsigned <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> auto_increment,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`</span><span style="color:#66d9ef">pad</span><span style="color:#f92672">`</span> varchar(<span style="color:#ae81ff">100</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>  (<span style="color:#f92672">`</span>id<span style="color:#f92672">`</span>)
-</span></span><span style="display:flex;"><span>)
-</span></span></code></pre></div><pre tabindex="0"><code class="language-none" data-lang="none">/* Simple */
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">fact</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">i</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="n">unsigned</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">val</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="n">unsigned</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">KEY</span><span class="w"> </span><span class="o">`</span><span class="n">i</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">i</span><span class="o">`</span><span class="p">,</span><span class="o">`</span><span class="n">val</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">dim</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="n">unsigned</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="k">pad</span><span class="o">`</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w">  </span><span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></div><pre tabindex="0"><code class="language-none" data-lang="none">/* Simple */
 +----+-------------+-------+--------+---------------+---------+----------+---------+--------------------------+
 | id | select_type | table | type   | possible_keys | key     | ref      | rows    | Extra                    |
 +----+-------------+-------+--------+---------------+---------+----------+---------+--------------------------+
@@ -578,13 +577,11 @@ Usually &ldquo;less is more&rdquo;, but in this case more is more.</p>
 </div>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 

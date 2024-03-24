@@ -10,10 +10,10 @@
   <meta property="og:description" content="How to start and where to go">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/post/approaching-a-new-software-project/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -21,7 +21,6 @@
   <link rel="canonical" href="https://hackmysql.com/post/approaching-a-new-software-project/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -179,20 +178,20 @@
 <p>This is critically important. We might even make this step 2 instead of 3. (I don&rsquo;t think it can be step 1 because until you understand user and need, there&rsquo;s no &ldquo;customer experience&rdquo; to imagine.) Understanding user and need and having a domain model gives us guide lines and building blocks to begin imaging the user experience.</p>
 <p>Developers often begin with the code, the technology, and imagine how it can be made to address the user&rsquo;s need. This is not surprising and somewhat natural because they&rsquo;re developers and code is what they do. However, this is like building a house then designing the house, or designing the house while building it. Also, engineers can feel like they&rsquo;re not doing their job if they&rsquo;re not writing code. But heed the words of Steve Jobs in this case: begin with the user experience, <em>then</em> work backwards to the technology.</p>
 <p>What does this mean in practice? It means we envision how the new system will work, which depends on the type of system. For a new command line tool, for example, I begin by doing mock command and response using just plain &lsquo;ol text:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>$ es host.hostname,env app<span style="color:#f92672">=</span>foo,env<span style="color:#f92672">=</span>production
-</span></span><span style="display:flex;"><span>host1,production
-</span></span><span style="display:flex;"><span>host2,production
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>$ es --delete host host1
-</span></span><span style="display:flex;"><span>OK, deleted host1
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>$ es --delete host host1
-</span></span><span style="display:flex;"><span>OK, deleted host1 but it did not exist
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># exit 0, printed to stdout</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>$ es --delete host host1 --strict
-</span></span><span style="display:flex;"><span>host1 does not exist
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># exit 1, printed to stderr because of --strict</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">$ es host.hostname,env <span class="nv">app</span><span class="o">=</span>foo,env<span class="o">=</span>production
+</span></span><span class="line"><span class="cl">host1,production
+</span></span><span class="line"><span class="cl">host2,production
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">$ es --delete host host1
+</span></span><span class="line"><span class="cl">OK, deleted host1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">$ es --delete host host1
+</span></span><span class="line"><span class="cl">OK, deleted host1 but it did not exist
+</span></span><span class="line"><span class="cl"><span class="c1"># exit 0, printed to stdout</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">$ es --delete host host1 --strict
+</span></span><span class="line"><span class="cl">host1 does not exist
+</span></span><span class="line"><span class="cl"><span class="c1"># exit 1, printed to stderr because of --strict</span>
 </span></span></code></pre></div><p>In the example above, I&rsquo;m exploring the user experience on the command line with the tool (<code>es</code>) by simply typing out mock commands and responses, making notes like &ldquo;exit 0, printed to stdout&rdquo;. For an API, I&rsquo;ll make a list of endpoints, data in (PUT/POST), data out/response, HTTP status codes, etc. I&rsquo;ll write out the protocol and imagine using it with the API. For a web app, I&rsquo;ll use a tool like <a href="https://balsamiq.com">Balsamiq</a> to sketch out the UI and imagine how the user will click through and interact with UI elements, how the app transitions from various states, etc. In short, imagine all the basic, common, major interactions between user and system, write and sketch and do mocks, but not code at this point.</p>
 <p>Does this feel like a waste of time? or &ldquo;big upfront design&rdquo;? It&rsquo;s not. First of all, it&rsquo;s super easy to change, and it gives you something to show users and ask, &ldquo;Like this?&rdquo; If the user says, &ldquo;Yeah, like that&rdquo;, then great, but you might also get a response like, &ldquo;Oh no, that&rsquo;s not what I had in mind at all.&rdquo; Until you show the user something, you and they will never know. Second, if you have no idea what the experience will be like, then you risk wasting time, having to re-do the experience and the underlying code. Third, these mock experiences are not written in stone; they&rsquo;re merely guides and should be continually refined. Even literal guiding stars (i.e. in the sky) change position slightly.</p>
 <p>Finally: <strong>make it wonderful</strong>. Your life and your time are too valuable to spend making &ldquo;eh&rdquo;, so-so, mediocre software. It takes time and several iterations to refine a wonderful user experience. Don&rsquo;t over-engineer or use <a href="https://en.m.wikipedia.org/wiki/Gold_plating_(software_engineering)">gold plating</a>; keep it as simple and elegant as necessary to address the user&rsquo;s need. Of course, this is all easier said than done, but by imagining, drafting, and refining the user experience, you will make a wonderful one.</p>
@@ -286,13 +285,11 @@
 </div>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 

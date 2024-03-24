@@ -10,10 +10,10 @@
   <meta property="og:description" content="It&#39;s important but not special">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/post/how-to-test-the-database/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -21,7 +21,6 @@
   <link rel="canonical" href="https://hackmysql.com/post/how-to-test-the-database/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -213,29 +212,29 @@
 <p>Second reason I stress &ldquo;real&rdquo;: <em>please, do not wrap the database driver</em>. Do not attempt to escape the extra work of setting up sandbox instances and dealing with the myriad aspects of a real database by wrapping the database client driver so that you can pass code under test a mock driver that simulates database access. This is a pretty extreme measure, so if you haven&rsquo;t seen it, it&rsquo;s like:</p>
 <p><img src="/img/db-driver-wrapper.svg" alt="Database Driver Wrapper"></p>
 <p>At top, you have only the database driver with, for example, two methods: <code>Connect()</code> and <code>Query()</code>. At bottom, you have what strives to be a transparent wrapper, <code>MyDriver</code>, around the real driver. <code>MyDriver</code> has the same methods at <code>DbDriver</code> (not shown), so its code is mostly:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">my</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">MyDriver</span>) <span style="color:#a6e22e">Connect</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">my</span>.<span style="color:#a6e22e">realDriver</span>.<span style="color:#a6e22e">Connect</span>()
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">my</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">MyDriver</span>) <span style="color:#a6e22e">Query</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">my</span>.<span style="color:#a6e22e">realDriver</span>.<span style="color:#a6e22e">Query</span>()
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">my</span> <span class="o">*</span><span class="nx">MyDriver</span><span class="p">)</span> <span class="nf">Connect</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">realDriver</span><span class="p">.</span><span class="nf">Connect</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">my</span> <span class="o">*</span><span class="nx">MyDriver</span><span class="p">)</span> <span class="nf">Query</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">realDriver</span><span class="p">.</span><span class="nf">Query</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>Why do this? The intent is to define an interface that <code>MyDriver</code> implements, then pass around the interface type (instead of the low-level <code>DbDriver</code> type) which allows us to have a <code>MockDriver</code> for testing. Good intention but, in my humble opinion, 1) its <em>way</em> more work and trouble than it&rsquo;s worth especially because 2) there&rsquo;s a better, more clean design.</p>
 <blockquote>
 <p>But what about one of my favorite adages: &ldquo;Most problems in software can be solved by one more layer of abstraction.&rdquo;? Yes, this is one more layer of abstraction, but that adage doesn&rsquo;t mean &ldquo;abstract whatever, wherever.&rdquo;</p>
 </blockquote>
 <p>Take a look at the <a href="https://golang.org/pkg/database/sql/">Go SQL driver</a>. Wrapping that fully is a lot of work, and getting it right (i.e. not introducing bugs in the wrapper), is a lot of work. All that work when we don&rsquo;t even need the wrapper. Going back to <code>GetData()</code> (above), that method (with a better name) is or should be part of a package or component that provides higher-level, domain-specific functionality. Let&rsquo;s pretend it&rsquo;s a <a href="https://msdn.microsoft.com/en-us/library/ff649690.aspx">repository</a>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DataRepo</span> <span style="color:#66d9ef">interface</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">GetData</span>()
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Implementations of DataRepo
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MySQLDataRepo</span> <span style="color:#66d9ef">struct</span> {}
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FileDataRepo</span>  <span style="color:#66d9ef">struct</span> {}
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MockDataRepo</span>  <span style="color:#66d9ef">struct</span> {}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">DataRepo</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">GetData</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Implementations of DataRepo
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">MySQLDataRepo</span> <span class="kd">struct</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">FileDataRepo</span>  <span class="kd">struct</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">MockDataRepo</span>  <span class="kd">struct</span> <span class="p">{}</span>
 </span></span></code></pre></div><p>That&rsquo;s all very generic and poorly named, but you get the point. <code>MySQLDataRepo</code> uses the low-level driver whereas the other implementations do not. To test the database for real, we test <code>MySQLDataRepo</code>.</p>
 <h1 id="when-the-database-isnt-data">When the Database Isn&rsquo;t Data</h1>
 <p>Earlier I mentioned &ldquo;Programs are largely &ldquo;data in, data out&rdquo;. &hellip; when it comes to databases this is usually what&rsquo;s happening. (<em>Usually</em>, but not always, which we&rsquo;ll explore later.)&rdquo;. Let&rsquo;s explore this now.</p>
@@ -304,13 +303,11 @@ type MockMySQLConfigurator struct {}
 </div>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 

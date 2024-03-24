@@ -12,10 +12,10 @@ Programming languages have aspects which affect how we think, design, and implem
 Programming languages have aspects which affect how we think, design, and implement software with the language: syntax, documentation, features/capabilities, language type (object-oriented, functional, compiled, etc.">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/post/thinking-in-go/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -23,7 +23,6 @@ Programming languages have aspects which affect how we think, design, and implem
   <link rel="canonical" href="https://hackmysql.com/post/thinking-in-go/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -175,13 +174,13 @@ Programming languages have aspects which affect how we think, design, and implem
 <p>Like arrays, slices are always one-dimensional but may be composed to construct higher-dimensional objects.</p>
 </blockquote>
 <p>Do not worry, Go is not having an existential crisis. Since this blog is only an orientation, let&rsquo;s avoid debate and simplify by saying that the following are Go objects:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Coffee</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Origin</span> <span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Roaster</span> <span style="color:#66d9ef">interface</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Start</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Duration</span>)
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Coffee</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Origin</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Roaster</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">Start</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>In the code snippet above, we have two objects: <code>Coffee</code> and <code>Roaster</code>. Structures and interfaces are the most fundamental and common Go objects. There are more Go objects, but <code>struct</code> and <code>interface</code> are the nuts and bolts of all Go programs. Therefore, thinking in Go revolves primarily around structures and interfaces. Structures can have methods, and usually do. Interfaces are nothing but a set of methods that another object (usually a <code>struct</code>) must implement to satisfy the interface. Packages (discussed next) can have functions which are not methods of a <code>struct</code> or <code>interface</code>. To accomplish most high-level tasks in Go, first you find a relevant package, then you find functions or object methods in the package that do what you want. For example, to <a href="https://golang.org/pkg/os/#Open">open a file</a>, the <code>os</code> package has an <code>Open</code> function which returns a <code>File</code> object. With that <code>File</code> object you can do things like <a href="https://golang.org/pkg/os/#File.Chmod">Chmod</a>.</p>
 <p>All well-written, idiomatic Go works and is documented this way: objects, methods, and functions (and other things). By using various objects together, we compose solutions for any problem. The <a href="https://golang.org/pkg/">Go standard library</a> provides solutions for common system tasks. Familiarize yourself with it and use it often. When the standard library does not have a ready-made solution, search the internet and hopefully you will find a well-written package that you can <code>go get</code> and use out of the box. Failing that, or when designing and implementing application-specific code, mimic the standard library: create discrete, reusable, well-bounded and well-documented objects. This is a lot easier said than done, just as having paint and brushes does not mean one can paint masterpieces. Nonetheless, this how we think in Go: <code>struct</code>, <code>interface</code>, methods, functions, and packages. Let&rsquo;s now discuss the latter.</p>
 <p>In one sentence: a package provides a common set of functionality. Study the gold standard: the <a href="https://golang.org/pkg/">Go standard library</a>. Unsurprisingly, the <a href="https://golang.org/pkg/encoding/json/">Go json package</a> provides everything you need to encode and decode data as JSON. The standard library makes it look easy, but designing and implementing wonderful Go packages is very challenging. All of the objects and functions in a package should be related. One helpful way to achieve this is to document the package beginning with one sentence, like:</p>
@@ -197,15 +196,15 @@ Programming languages have aspects which affect how we think, design, and implem
 <p>If you find yourself avoiding or struggling with concurrency in Go, re-read the manual, blogs, tutorials, etc. and master it. Go and concurrency are inextricable.</p>
 <h2 id="channels">Channels</h2>
 <p>One cannot (or, at least, should not) think in Go without thinking about <a href="https://gobyexample.com/channels">channels</a>. They are one of Go&rsquo;s best features, and they enable all sorts of elegant designs and solutions. They are usually used with concurrency to <a href="https://blog.golang.org/share-memory-by-communicating">share data by communicating</a> or coordinate goroutines. Already thinking in terms of concurrency, you will quickly find need for these two uses of channels. The former is rather obvious: send data via a channel in one goroutine and receive it via the same channel in another goroutine. It is a lot like a Unix pipe (<code>|</code>). The latter (coordinate goroutines) is less obvious at first. The first link in this section (<a href="https://gobyexample.com/channels">channels</a>) covers this, so no need to repeat it here, but I will just call out one use:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">doneChan</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">struct</span>{})
-</span></span><span style="display:flex;"><span>close(<span style="color:#a6e22e">doneChan</span>)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">doneChan</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="nb">close</span><span class="p">(</span><span class="nx">doneChan</span><span class="p">)</span>
 </span></span></code></pre></div><p>Pass <code>doneChan</code> to N-many goroutines that need to know when something is done. That something (e.g. an external command) closes the channel when done which acts like a broadcast signal to all goroutines that check the channel like:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">doneChan</span>:
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// done
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">default</span>:
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// not done
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">doneChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// done
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// not done
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
 </span></span></code></pre></div><p>When open, the receiving on the channel blocks, so the <code>switch</code> falls through to the <code>default</code> case, making the check non-blocking. When closed, <code>case &lt;-doneChan</code> returns immediately. Or, simply waiting on <code>&lt;-doneChan</code> in a goroutine will block the goroutine until the channel is closed.</p>
 <p>Mastering Go channels is essential to thinking in Go. Keep reading and practicing until channels are an effortless part of your Go thought process and designs.</p>
 <h2 id="simplicity">Simplicity</h2>
@@ -283,13 +282,11 @@ Programming languages have aspects which affect how we think, design, and implem
 </div>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 

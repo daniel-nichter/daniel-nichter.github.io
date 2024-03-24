@@ -10,10 +10,10 @@
   <meta property="og:description" content="How to set up MySQL password rotation with AWS Secrets Manager, AWS Lambda, and Terraform">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/mysql-password-rotation-lambda/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -21,7 +21,6 @@
   <link rel="canonical" href="https://hackmysql.com/mysql-password-rotation-lambda/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -236,51 +235,51 @@
 </ol>
 <p>In essence, the error message says only, &ldquo;This rotation didn&rsquo;t work because some previous rotation didn&rsquo;t work.&rdquo;</p>
 <p>First, let&rsquo;s see the normal state of staging labels using the command line <a href="https://docs.aws.amazon.com/cli/latest/reference/secretsmanager/describe-secret.html">aws secretsmanager describe-secret</a>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;ARN&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:secretsmanager:us-west-2:123456789012:secret:mysql-user-password-X7ax21&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;Name&#34;</span>: <span style="color:#e6db74">&#34;mysql-user-password&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;Description&#34;</span>: <span style="color:#e6db74">&#34;Rotates the MySQL user password&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;RotationEnabled&#34;</span>: <span style="color:#66d9ef">true</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;RotationLambdaARN&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:lambda:us-west-2:123456789012:function:mysql-password-rotation&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;RotationRules&#34;</span>: {
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;AutomaticallyAfterDays&#34;</span>: <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>    },
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;LastRotatedDate&#34;</span>: <span style="color:#e6db74">&#34;2020-11-03T13:35:51.599000-05:00&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;LastChangedDate&#34;</span>: <span style="color:#e6db74">&#34;2020-11-03T13:35:51.607000-05:00&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;LastAccessedDate&#34;</span>: <span style="color:#e6db74">&#34;2020-11-02T19:00:00-05:00&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;Tags&#34;</span>: [],
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;VersionIdsToStages&#34;</span>: {
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;0e402657-8ed6-4ea4-b908-4dadc09e5928&#34;</span>: [
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;AWSCURRENT&#34;</span>
-</span></span><span style="display:flex;"><span>        ],
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;4bacb6fe-4753-4928-09ac-364f51b7cc0b&#34;</span>: [
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;AWSPREVIOUS&#34;</span>
-</span></span><span style="display:flex;"><span>        ]
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;ARN&#34;</span><span class="p">:</span> <span class="s2">&#34;arn:aws:secretsmanager:us-west-2:123456789012:secret:mysql-user-password-X7ax21&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;Name&#34;</span><span class="p">:</span> <span class="s2">&#34;mysql-user-password&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;Description&#34;</span><span class="p">:</span> <span class="s2">&#34;Rotates the MySQL user password&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;RotationEnabled&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;RotationLambdaARN&#34;</span><span class="p">:</span> <span class="s2">&#34;arn:aws:lambda:us-west-2:123456789012:function:mysql-password-rotation&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;RotationRules&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;AutomaticallyAfterDays&#34;</span><span class="p">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;LastRotatedDate&#34;</span><span class="p">:</span> <span class="s2">&#34;2020-11-03T13:35:51.599000-05:00&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;LastChangedDate&#34;</span><span class="p">:</span> <span class="s2">&#34;2020-11-03T13:35:51.607000-05:00&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;LastAccessedDate&#34;</span><span class="p">:</span> <span class="s2">&#34;2020-11-02T19:00:00-05:00&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;Tags&#34;</span><span class="p">:</span> <span class="p">[],</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;VersionIdsToStages&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;0e402657-8ed6-4ea4-b908-4dadc09e5928&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;AWSCURRENT&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">],</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;4bacb6fe-4753-4928-09ac-364f51b7cc0b&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;AWSPREVIOUS&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>The normal state of staging labels is having only <em>AWSCURRENT</em> and <em>AWSPREVIOUS</em>, as shown above. During rotation, the new secret version has the <em>AWSPENDING</em> staging label:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">/*</span> <span style="color:#960050;background-color:#1e0010">Other</span> <span style="color:#960050;background-color:#1e0010">output</span> <span style="color:#960050;background-color:#1e0010">removed</span> <span style="color:#960050;background-color:#1e0010">*/</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;VersionIdsToStages&#34;</span>: {
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;0e402657-8ed6-4ea4-b908-4dadc09e5928&#34;</span>: [
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;AWSCURRENT&#34;</span>
-</span></span><span style="display:flex;"><span>        ],
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;4bacb6fe-4753-4928-09ac-364f51b7cc0b&#34;</span>: [
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;AWSPREVIOUS&#34;</span>
-</span></span><span style="display:flex;"><span>        ],
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;b862db6d-8b73-4fc8-bee8-2edd74a9a527&#34;</span>: [ <span style="color:#960050;background-color:#1e0010">/*</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;AWSPENDING&#34;</span>                           <span style="color:#960050;background-color:#1e0010">*</span> <span style="color:#960050;background-color:#1e0010">New</span> <span style="color:#960050;background-color:#1e0010">secret</span>
-</span></span><span style="display:flex;"><span>        ]                                          <span style="color:#960050;background-color:#1e0010">*/</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="err">/*</span> <span class="err">Other</span> <span class="err">output</span> <span class="err">removed</span> <span class="err">*/</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;VersionIdsToStages&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;0e402657-8ed6-4ea4-b908-4dadc09e5928&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;AWSCURRENT&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">],</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;4bacb6fe-4753-4928-09ac-364f51b7cc0b&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;AWSPREVIOUS&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">],</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;b862db6d-8b73-4fc8-bee8-2edd74a9a527&#34;</span><span class="p">:</span> <span class="p">[</span> <span class="err">/*</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;AWSPENDING&#34;</span>                           <span class="err">*</span> <span class="err">New</span> <span class="err">secret</span>
+</span></span><span class="line"><span class="cl">        <span class="p">]</span>                                          <span class="err">*/</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>If rotation fails and does not remove the <em>AWSPENDING</em> version of the secret, Secrets Manager will show the unhelpful error message above.</p>
 <p><em><strong>Solution</strong></em></p>
 <p>Requirement 9, <a href="#9-handle-secrets-in-limbo">Handle secrets in limbo</a>, addresses this problem. The PRL must check for and use the pending secret (the secret with the <em>AWSPENDING</em> staging label) if its version ID matches the client request token from Secrets Manager. (This is an implementation detail that you can read about in the <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets-lambda-function-customizing.html">Lambda rotation function docs</a>.) In short, it means that the PRL must reuse its own pending secrets.</p>
 <p>Or, you can manually delete the <em>AWSPENDING</em> version:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>aws secretsmanager update-secret-version-stage <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --secret-id              mysql-user-password <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --version-stage          AWSPENDING          <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --remove-from-version-id b862db6d-8b73-4fc8-bee8-2edd74a9a527
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">aws secretsmanager update-secret-version-stage <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --secret-id              mysql-user-password <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --version-stage          AWSPENDING          <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --remove-from-version-id b862db6d-8b73-4fc8-bee8-2edd74a9a527
 </span></span></code></pre></div><p><mark>DO NOT use <code>aws secretsmanager cancel-rotate-secret</code> to fix this!</mark> I read the fine manual, but I also get busy and make some educated guesses about what a command does based on its name, so I thought <code>cancel-rotate-secret</code> would cancel &ldquo;A previous rotation&rdquo; but no: <code>cancel-rotate-secret</code> disables secret rotation, i.e. automatic rotation every N days. Like the AWS console, this command would be better named <code>disable-automatic-rotation</code>:</p>
 <p><img src="/img/aws-secrets-manager-disable-automatic-rotation.png" alt="Secrets Manager Disable Automatic Rotation"></p>
 <p><mark>You cannot see secret versions/staging labels in the AWS console.</mark> When this problem occurs, you must use the AWS CLI or your own code calling the Secrets Manager API.</p>
@@ -295,40 +294,40 @@
 <p>Like Secrets Manager, you and other systems will be clients that invoke the PRL. For example, verifying the current password is really helpful to ensure the PRL itself (apart from Secrets Manager) is working. You will find that you and others systems need to bypass Secrets Manager and invoke the lambda directly.</p>
 <p><em><strong>Solution</strong></em></p>
 <p>The lambda function code must distinguish between invocations by Secrets Manager and manual invocations by other clients. This is pretty easy:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// InvokedBySecretsManager returns true if the event is from Secrets Manager.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">InvokedBySecretsManager</span>(<span style="color:#a6e22e">event</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">bool</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">haveToken</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">event</span>[<span style="color:#e6db74">&#34;ClientRequestToken&#34;</span>]
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">haveSecretId</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">event</span>[<span style="color:#e6db74">&#34;SecretId&#34;</span>]
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">haveStep</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">event</span>[<span style="color:#e6db74">&#34;Step&#34;</span>]
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">haveToken</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">haveSecretId</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">haveStep</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// InvokedBySecretsManager returns true if the event is from Secrets Manager.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">InvokedBySecretsManager</span><span class="p">(</span><span class="nx">event</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">_</span><span class="p">,</span> <span class="nx">haveToken</span> <span class="o">:=</span> <span class="nx">event</span><span class="p">[</span><span class="s">&#34;ClientRequestToken&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">_</span><span class="p">,</span> <span class="nx">haveSecretId</span> <span class="o">:=</span> <span class="nx">event</span><span class="p">[</span><span class="s">&#34;SecretId&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">_</span><span class="p">,</span> <span class="nx">haveStep</span> <span class="o">:=</span> <span class="nx">event</span><span class="p">[</span><span class="s">&#34;Step&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">haveToken</span> <span class="o">&amp;&amp;</span> <span class="nx">haveSecretId</span> <span class="o">&amp;&amp;</span> <span class="nx">haveStep</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>As that Go function shows, the event from a Secrets Manager invocation has three fields: <em>ClientRequestToken</em>, <em>SecretId</em>, and <em>Step</em>. If all three fields are set, it&rsquo;s an invocation by Secrets Manager (or a unit test pretending to be Secrets Manager). Else, the event should be handled as a manual invocation and everything in the event is your choice, as well as the return.</p>
 <p>This distinction is made in the lambda handler function, and Lambda itself does not know or care. In fact, Lambda has no special awareness of Secrets Manager; as previously stated, Secrets Manager is simply one client that invokes the PRL in a prescribed four-step process.</p>
 <p>You can do anything inside your manual invocation handler code. You should develop conventions for the expected input and output. For example, the code snippet below returns the PRL function code version when <code>event</code> contains a <code>version</code> field:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">VERSION</span> = <span style="color:#e6db74">&#34;1.0.0&#34;</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">SHA</span> = <span style="color:#e6db74">&#34;&#34;</span> <span style="color:#75715e">// set on build
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">r</span> <span style="color:#a6e22e">rotatePassword</span>) <span style="color:#a6e22e">Handler</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">event</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Return version and SHA if event[version] is set
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">event</span>[<span style="color:#e6db74">&#34;version&#34;</span>]; <span style="color:#a6e22e">ok</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ret</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>{
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;prl-version&#34;</span>: <span style="color:#a6e22e">VERSION</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;prl-sha&#34;</span>:     <span style="color:#a6e22e">SHA</span>,
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">ret</span>, <span style="color:#66d9ef">nil</span>
-</span></span><span style="display:flex;"><span>    }
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">const</span> <span class="nx">VERSION</span> <span class="p">=</span> <span class="s">&#34;1.0.0&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">SHA</span> <span class="p">=</span> <span class="s">&#34;&#34;</span> <span class="c1">// set on build
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="nx">rotatePassword</span><span class="p">)</span> <span class="nf">Handler</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">event</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Return version and SHA if event[version] is set
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">event</span><span class="p">[</span><span class="s">&#34;version&#34;</span><span class="p">];</span> <span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ret</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s">&#34;prl-version&#34;</span><span class="p">:</span> <span class="nx">VERSION</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s">&#34;prl-sha&#34;</span><span class="p">:</span>     <span class="nx">SHA</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">ret</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span></code></pre></div><p>The client receives a JSON document like:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;prl-version&#34;</span>: <span style="color:#e6db74">&#34;1.0.0&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;prl-sha&#34;</span>: <span style="color:#e6db74">&#34;70d89cfcae18c2845e1f693aa053da394a873578&#34;</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;prl-version&#34;</span><span class="p">:</span> <span class="s2">&#34;1.0.0&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;prl-sha&#34;</span><span class="p">:</span> <span class="s2">&#34;70d89cfcae18c2845e1f693aa053da394a873578&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>To manually invoke the PRL and get that version response:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>aws lambda invoke <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --function-name arn:aws:lambda:us-east-1:123456789012:function:mysql-password-rotation <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --invocation-type RequestResponse <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --payload <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#39;{&#34;version&#34;:1}&#39;</span> | base64<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  response.json
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">aws lambda invoke <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --function-name arn:aws:lambda:us-east-1:123456789012:function:mysql-password-rotation <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --invocation-type RequestResponse <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --payload <span class="s2">&#34;</span><span class="k">$(</span><span class="nb">echo</span> <span class="s1">&#39;{&#34;version&#34;:1}&#39;</span> <span class="p">|</span> base64<span class="k">)</span><span class="s2">&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  response.json
 </span></span></code></pre></div><p>The <code>--payload</code> becomes the input <code>event</code>. The output is printed to <code>response.json</code> (for some reason, the AWS CLI requires an output file for this command, it won&rsquo;t print to STDOUT).</p>
 <p><mark>Code to handle manual invocation is separate from code to handle Secrets Manager invocation.</mark> Handling manual invocation is in addition to handling the four steps of Secrets Manager rotation.</p>
 <h3 id="lambda-concurrency">Lambda Concurrency</h3>
@@ -338,10 +337,10 @@
 <p><em><strong>Solution</strong></em></p>
 <p>Concurrency can be disabled by setting <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-concurrency.html">reserved concurrency</a> on the function to 1, but you should not do this. I suggest setting reserved concurrency for the PRL equal to the number of secrets it rotates. For example, if the same PRL rotates 5 secrets, then set reserved concurrency to 5. If it only rotates 1 secret, then set reserved concurrency to 2 minimum to ensure the PRL handles concurrency.</p>
 <p>With respect to the lambda function code, each Secrets Manager step must be treated as a completely new process. For example, on a Linux command line you can imagine running each step by running program <code>prl</code> four times on four different hosts:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ ssh host1 <span style="color:#e6db74">&#34;prl 1&#34;</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  ssh host2 <span style="color:#e6db74">&#34;prl 2&#34;</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  ssh host3 <span style="color:#e6db74">&#34;prl 3&#34;</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  ssh host4 <span style="color:#e6db74">&#34;prl 4&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ ssh host1 <span class="s2">&#34;prl 1&#34;</span> <span class="o">&amp;&amp;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  ssh host2 <span class="s2">&#34;prl 2&#34;</span> <span class="o">&amp;&amp;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  ssh host3 <span class="s2">&#34;prl 3&#34;</span> <span class="o">&amp;&amp;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  ssh host4 <span class="s2">&#34;prl 4&#34;</span>
 </span></span></code></pre></div><p>The <code>&amp;&amp;</code> ensures that step 2 only runs if step 1 exits zero, and step 3 only runs if step 2 exits zero, and step 4 only runs if step 3 exits zero. Even though all four steps run on different hosts, they always run in order.</p>
 <p>I do not advise caching anything in the PRL; but if you do, you must handle cache expiration because, for example, in the diagram above rotation 1 starts on PRL 1 but ends on PRL 3. If PRL 1 caches anything about rotation 1, how will it know when to expire the cache?</p>
 <h3 id="testing">Testing</h3>
@@ -392,11 +391,11 @@
 </ol>
 <p>In theory, that should work. But in our case, given the <a href="#separation-of-work">separation of work</a>, there are a few problems:</p>
 <p>(1) The DBA team provides a Terrafom module to app developers. This module can provision N-many identical database instances  (varying by <code>identifier</code>) using <code>for_each</code>, like:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_db_instance&#34; &#34;rds-mysql&#34;</span> {
-</span></span><span style="display:flex;"><span>  for_each <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">db_instances</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  identifier <span style="color:#f92672">=</span> <span style="color:#66d9ef">each</span>.<span style="color:#66d9ef">key</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hcl" data-lang="hcl"><span class="line"><span class="cl"><span class="k">resource</span> <span class="s2">&#34;aws_db_instance&#34; &#34;rds-mysql&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  for_each</span> <span class="o">=</span> <span class="k">var</span><span class="p">.</span><span class="k">db_instances</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">  identifier</span> <span class="o">=</span> <span class="k">each</span><span class="p">.</span><span class="k">key</span>
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></div><p>This is ideal for app developers: they can easily create many <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance">aws_db_instance</a> with the same configuration. But the problem is that <a href="https://github.com/hashicorp/terraform/issues/19932">Terraform cannot use <code>for_each</code> in a <code>provider</code></a>, so the module cannot connect to the list of RDS instances because each needs its own <a href="https://www.terraform.io/docs/providers/mysql/index.html">MySQL provider</a>. Even if that worked, there&rsquo;s another problem&hellip;</p>
 <p>(2) The <a href="https://www.terraform.io/docs/providers/mysql/index.html">MySQL provider</a> has a <code>tls</code> option, but it only enables TLS. To make a TLS connection to RDS, you must load the <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html">RDS root certificate</a>, but the <a href="https://github.com/terraform-providers/terraform-provider-mysql/blob/master/mysql/provider.go">MySQL provider source code</a> does not show any way of doing this. Since we <em>always</em> required TLS connection, this is a blocker.</p>
 <p>(3) Even if (1) and (2) could be solved, <mark>I do not advise putting MySQL users and privileges in infrastructure code</mark>. Instead, a trusted backend service should create MySQL users and grant them privileges. This allows a single source of truth and auditing, which are critical for maximum security. It also decouples MySQL users and privileges from infrastructure, which is good because they are independent. By contrast, having infra code create MySQL users and grant them privileges runs the risk of drift: MySQL users and privileges change as different versions of infra code are deployed (<a href="https://semver.org/">semver</a> the infra code). Inconsistency is the bane of security and operations. Also, access to infra code might be more permissive than access to MySQL users and privileges should be.</p>
@@ -451,84 +450,84 @@
 <p>The examples below are not a complete, working infrastructure. You will need more infra code to set up additional resources, like the RDS instances.</p>
 <h3 id="iam-role-and-policies">IAM Role and Policies</h3>
 <p>First we need to create an IAM role and policy for the PRL. Read the comments in the Terraform code below for more details.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># Trust policy: allow AWS Lambda service to assume this role while running the lambda.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># https://docs.aws.amazon.com/lambda/latest/dg/lambda-permissions.html
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">data</span> <span style="color:#e6db74">&#34;aws_iam_policy_document&#34; &#34;prl-trust&#34;</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">statement</span> {
-</span></span><span style="display:flex;"><span>    sid     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;TrustLambda&#34;</span>
-</span></span><span style="display:flex;"><span>    actions <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;sts:AssumeRole&#34;</span>]
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">principals</span> {
-</span></span><span style="display:flex;"><span>      type        <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Service&#34;</span>
-</span></span><span style="display:flex;"><span>      identifiers <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;lambda.amazonaws.com&#34;</span>]
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Execution role: the role the PRL uses when running (invoked).
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># This role must have policies (defined next) to allow the lambda
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># to do and access everything it needs.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role&#34; &#34;prl-role&#34;</span> {
-</span></span><span style="display:flex;"><span>  name               <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;mysql-password-rotation-lambda&#34;</span>
-</span></span><span style="display:flex;"><span>  assume_role_policy <span style="color:#f92672">=</span> <span style="color:#66d9ef">data</span>.<span style="color:#66d9ef">aws_iam_policy_document</span>.<span style="color:#66d9ef">prl</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">trust</span>.<span style="color:#66d9ef">json</span>
-</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Execution policy: execution role permissions. These vary depending
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># on what the PRL does. The permissions below should be the minimum
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># requirements.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">data</span> <span style="color:#e6db74">&#34;aws_iam_policy_document&#34; &#34;prl-policy&#34;</span> {<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  # PRL queries RDS API to automatically discovers all RDS instances
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  # in the same AWS account.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">statement</span> {
-</span></span><span style="display:flex;"><span>    actions   <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;rds:DescribeDBInstances&#34;</span>]
-</span></span><span style="display:flex;"><span>    resources <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;*&#34;</span>]
-</span></span><span style="display:flex;"><span>  }<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  # PRL function code is loaded from an S3 bucket. We create and
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  # upload function.zip (which contains the function code Go binary).
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">statement</span> {
-</span></span><span style="display:flex;"><span>    actions   <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;s3:GetObject&#34;</span>]
-</span></span><span style="display:flex;"><span>    resources <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;arn:aws:s3:::prl-func/function.zip&#34;</span>]
-</span></span><span style="display:flex;"><span>  }<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  # PRL reads and writes secrets which contain MySQL user passwords.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  # The condition allows Secrets Manager to use the PRL.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">statement</span> {
-</span></span><span style="display:flex;"><span>    actions <span style="color:#f92672">=</span> [
-</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;secretsmanager:DescribeSecret&#34;</span>,
-</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;secretsmanager:GetSecretValue&#34;</span>,
-</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;secretsmanager:PutSecretValue&#34;</span>,
-</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;secretsmanager:UpdateSecretVersionStage&#34;</span>,
-</span></span><span style="display:flex;"><span>    ]
-</span></span><span style="display:flex;"><span>    resources <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;*&#34;</span>]
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">condition</span> {
-</span></span><span style="display:flex;"><span>      test     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;StringLike&#34;</span>
-</span></span><span style="display:flex;"><span>      variable <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;secretsmanager:resource/AllowRotationLambdaArn&#34;</span>
-</span></span><span style="display:flex;"><span>      values   <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;arn:aws:lambda:*:123456789012:function:mysql-password-rotation&#34;</span>]
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Attach execution policy as inline policy to execution role.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Use an inline policy, not a customer-managed policy, because
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># the policy is unique and specific to the PRL. No other IAM
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># entities should use this policy.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy&#34; &#34;prl&#34;</span> {
-</span></span><span style="display:flex;"><span>  name   <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;lambda-exec&#34;</span>
-</span></span><span style="display:flex;"><span>  role   <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_iam_role</span>.<span style="color:#66d9ef">prl</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">role</span>.<span style="color:#66d9ef">id</span>
-</span></span><span style="display:flex;"><span>  policy <span style="color:#f92672">=</span> <span style="color:#66d9ef">data</span>.<span style="color:#66d9ef">aws_iam_policy_document</span>.<span style="color:#66d9ef">prl</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">policy</span>.<span style="color:#66d9ef">json</span>
-</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># PRL runs in VPC which requires the AWS-managed AWSLambdaVPCAccessExecutionRole
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># role. Attach it to the execution role. If the PRL needs other
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS-managed roles, you can add them to the for_each list.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy_attachment&#34; &#34;lambda-exec&#34;</span> {
-</span></span><span style="display:flex;"><span>  for_each <span style="color:#f92672">=</span> {
-</span></span><span style="display:flex;"><span>    vpc <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole&#34;</span>
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>  role       <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_iam_role</span>.<span style="color:#66d9ef">prl</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">role</span>.<span style="color:#66d9ef">id</span>
-</span></span><span style="display:flex;"><span>  policy_arn <span style="color:#f92672">=</span> <span style="color:#66d9ef">each</span>.<span style="color:#66d9ef">value</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hcl" data-lang="hcl"><span class="line"><span class="cl"><span class="c1"># Trust policy: allow AWS Lambda service to assume this role while running the lambda.
+</span></span></span><span class="line"><span class="cl"><span class="c1"># https://docs.aws.amazon.com/lambda/latest/dg/lambda-permissions.html
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">data</span> <span class="s2">&#34;aws_iam_policy_document&#34; &#34;prl-trust&#34;</span> {
+</span></span><span class="line"><span class="cl">  <span class="k">statement</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    sid</span>     <span class="o">=</span> <span class="s2">&#34;TrustLambda&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">    actions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;sts:AssumeRole&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">principals</span> {
+</span></span><span class="line"><span class="cl"><span class="n">      type</span>        <span class="o">=</span> <span class="s2">&#34;Service&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">      identifiers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;lambda.amazonaws.com&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># Execution role: the role the PRL uses when running (invoked).
+</span></span></span><span class="line"><span class="cl"><span class="c1"># This role must have policies (defined next) to allow the lambda
+</span></span></span><span class="line"><span class="cl"><span class="c1"># to do and access everything it needs.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;aws_iam_role&#34; &#34;prl-role&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  name</span>               <span class="o">=</span> <span class="s2">&#34;mysql-password-rotation-lambda&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  assume_role_policy</span> <span class="o">=</span> <span class="k">data</span><span class="p">.</span><span class="k">aws_iam_policy_document</span><span class="p">.</span><span class="k">prl</span><span class="err">-</span><span class="k">trust</span><span class="p">.</span><span class="k">json</span>
+</span></span><span class="line"><span class="cl">}<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># Execution policy: execution role permissions. These vary depending
+</span></span></span><span class="line"><span class="cl"><span class="c1"># on what the PRL does. The permissions below should be the minimum
+</span></span></span><span class="line"><span class="cl"><span class="c1"># requirements.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">data</span> <span class="s2">&#34;aws_iam_policy_document&#34; &#34;prl-policy&#34;</span> {<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">  # PRL queries RDS API to automatically discovers all RDS instances
+</span></span></span><span class="line"><span class="cl"><span class="c1">  # in the same AWS account.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">statement</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    actions</span>   <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;rds:DescribeDBInstances&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">    resources</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;*&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  }<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">  # PRL function code is loaded from an S3 bucket. We create and
+</span></span></span><span class="line"><span class="cl"><span class="c1">  # upload function.zip (which contains the function code Go binary).
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">statement</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    actions</span>   <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;s3:GetObject&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">    resources</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;arn:aws:s3:::prl-func/function.zip&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  }<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">  # PRL reads and writes secrets which contain MySQL user passwords.
+</span></span></span><span class="line"><span class="cl"><span class="c1">  # The condition allows Secrets Manager to use the PRL.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">statement</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    actions</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;secretsmanager:DescribeSecret&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;secretsmanager:GetSecretValue&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;secretsmanager:PutSecretValue&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;secretsmanager:UpdateSecretVersionStage&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">    resources</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;*&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">condition</span> {
+</span></span><span class="line"><span class="cl"><span class="n">      test</span>     <span class="o">=</span> <span class="s2">&#34;StringLike&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">      variable</span> <span class="o">=</span> <span class="s2">&#34;secretsmanager:resource/AllowRotationLambdaArn&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">      values</span>   <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;arn:aws:lambda:*:123456789012:function:mysql-password-rotation&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># Attach execution policy as inline policy to execution role.
+</span></span></span><span class="line"><span class="cl"><span class="c1"># Use an inline policy, not a customer-managed policy, because
+</span></span></span><span class="line"><span class="cl"><span class="c1"># the policy is unique and specific to the PRL. No other IAM
+</span></span></span><span class="line"><span class="cl"><span class="c1"># entities should use this policy.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;aws_iam_role_policy&#34; &#34;prl&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  name</span>   <span class="o">=</span> <span class="s2">&#34;lambda-exec&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  role</span>   <span class="o">=</span> <span class="k">aws_iam_role</span><span class="p">.</span><span class="k">prl</span><span class="err">-</span><span class="k">role</span><span class="p">.</span><span class="k">id</span>
+</span></span><span class="line"><span class="cl"><span class="n">  policy</span> <span class="o">=</span> <span class="k">data</span><span class="p">.</span><span class="k">aws_iam_policy_document</span><span class="p">.</span><span class="k">prl</span><span class="err">-</span><span class="k">policy</span><span class="p">.</span><span class="k">json</span>
+</span></span><span class="line"><span class="cl">}<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># PRL runs in VPC which requires the AWS-managed AWSLambdaVPCAccessExecutionRole
+</span></span></span><span class="line"><span class="cl"><span class="c1"># role. Attach it to the execution role. If the PRL needs other
+</span></span></span><span class="line"><span class="cl"><span class="c1"># AWS-managed roles, you can add them to the for_each list.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;aws_iam_role_policy_attachment&#34; &#34;lambda-exec&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  for_each</span> <span class="o">=</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    vpc</span> <span class="o">=</span> <span class="s2">&#34;arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole&#34;</span>
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl"><span class="n">  role</span>       <span class="o">=</span> <span class="k">aws_iam_role</span><span class="p">.</span><span class="k">prl</span><span class="err">-</span><span class="k">role</span><span class="p">.</span><span class="k">id</span>
+</span></span><span class="line"><span class="cl"><span class="n">  policy_arn</span> <span class="o">=</span> <span class="k">each</span><span class="p">.</span><span class="k">value</span>
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></div><p class="note"> AWS account 123456789012 is fake. Be sure to replace it with your AWS account number.</p>
 <p class="note">The IAM policy references S3 bucket name "prl-func" which is created later. The name must be changed in all Terraform code because S3 bucket names are globally unique.</p>
 <p>Once this TF code is applied, you should see the <code>mysql-password-rotation-lambda</code> IAM role and inline policy in the AWS console:</p>
@@ -537,11 +536,11 @@
 <p>First, let&rsquo;s create the Lambda function code (using Go) and an S3 bucket to hold it. After, we&rsquo;ll write the TF code to create the PRL using the function code stored in the S3 bucket.</p>
 <h4 id="function-code-and-s3-bucket">Function Code and S3 Bucket</h4>
 <p>Create an <a href="https://aws.amazon.com/s3/">S3 bucket</a> to hold the function code which we&rsquo;ll upload as <code>function.zip</code>. Be mindful of the S3 bucket access policy: Terraform needs access from wherever and however you run it. If all AWS resources are in the same account, access should not be an issue. But in this setup (i.e. given the <a href="#separation-of-work">separation of work</a>), the S3 bucket is in the DBA team&rsquo;s AWS account because, like the TF module they provide, they also provide the PRL function code. So the S3 bucket in the DBA team&rsquo;s AWS account needs an access policy to allow <em>and</em> restrict cross-account access only from other AWS accounts in the same AWS organization. S3 access policies are beyond the scope of this page, but you probably want a condition like:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;Condition&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;StringEquals&#34;</span>: {
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;aws:PrincipalOrgID&#34;</span>: <span style="color:#e6db74">&#34;o-IamNotReal&#34;</span>
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="s2">&#34;Condition&#34;</span><span class="err">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;StringEquals&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;aws:PrincipalOrgID&#34;</span><span class="p">:</span> <span class="s2">&#34;o-IamNotReal&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>Be sure the S3 bucket blocks <em>all</em> public access!</p>
 <p class="warning"><b>Be sure the S3 bucket blocks <em>all</em> public access!</b></p>
 <p>Seriously, don&rsquo;t let your PRL becomes a news story about how public access lead to being hacked. Granted, the PRL code is pretty harmless by itself, but don&rsquo;t take the risk when it&rsquo;s so easy to avoid completely. In the AWS console, the list of S3 buckets must say:</p>
@@ -553,187 +552,187 @@
 <p class="note">S3 bucket names are globally unique, so you must change "prl-func" in all Terraform code.</p>
 <p><em><strong>Function Code</strong></em></p>
 <p>Lucky you: <a href="https://github.com/square/password-rotation-lambda">square/password-rotation-lambda</a> has a ready-made working example in <code>examples/rds</code>. Clone the repo, change to that directory, build the PRL binary for Linux, and put it in a zip file:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ GOOS<span style="color:#f92672">=</span>linux GOARCH<span style="color:#f92672">=</span>amd64 go build -o prl-bin
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>$ zip <span style="color:#66d9ef">function</span>.zip prl-bin
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ <span class="nv">GOOS</span><span class="o">=</span>linux <span class="nv">GOARCH</span><span class="o">=</span>amd64 go build -o prl-bin
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">$ zip <span class="k">function</span>.zip prl-bin
 </span></span></code></pre></div><p>Upload <code>function.zip</code> to the S3 bucket.</p>
 <p>Alternatively, here is a more complex example using an HTTP proxy for the RDS API,  a VPC endpoint for the Secrets Manager API, and a custom <code>SecretSetter</code> implementation (<code>MyRandomPassword</code>) to handle <a href="#manually-invoke-lambda">manual invocation</a>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;context&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;encoding/json&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;fmt&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;log&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;net/http&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;net/url&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;time&#34;</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/lambda&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/service/rds&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/service/secretsmanager&#34;</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/square/password-rotation-lambda/v2&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/square/password-rotation-lambda/v2/db&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/square/password-rotation-lambda/v2/db/mysql&#34;</span>
-</span></span><span style="display:flex;"><span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">VERSION</span> = <span style="color:#e6db74">&#34;v1.0.0&#34;</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">SHA</span> = <span style="color:#e6db74">&#34;&#34;</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> (
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">parallel</span>  = uint(<span style="color:#ae81ff">10</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">retries</span>   = uint(<span style="color:#ae81ff">2</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">retryWait</span> = <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Duration</span>(<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
-</span></span><span style="display:flex;"><span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rotate</span>.<span style="color:#a6e22e">Debug</span> = <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Getenv</span>(<span style="color:#e6db74">&#34;DEBUG&#34;</span>) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;yes&#34;</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;prl-bin %s (%s)&#34;</span>, <span style="color:#a6e22e">VERSION</span>, <span style="color:#a6e22e">SHA</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Get proxy URL from env var and create *http.Client using it
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">proxyURL</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">url</span>.<span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Getenv</span>(<span style="color:#e6db74">&#34;HTTPS_PROXY&#34;</span>))
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;error parsing HTTPS_PROXY: %s&#34;</span>, <span style="color:#a6e22e">err</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">proxyClient</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Client</span>{
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Timeout</span>:   <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Duration</span>(<span style="color:#ae81ff">5</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>),
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Transport</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Transport</span>{<span style="color:#a6e22e">Proxy</span>: <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ProxyURL</span>(<span style="color:#a6e22e">proxyURL</span>)},
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Make AWS session for RDS API via proxy
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">rdsSess</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">NewSession</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Config</span>{
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">MaxRetries</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Int</span>(<span style="color:#ae81ff">2</span>),
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">HTTPClient</span>: <span style="color:#a6e22e">proxyClient</span>,
-</span></span><span style="display:flex;"><span>    })
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;error making AWS session for RDS: %s&#34;</span>, <span style="color:#a6e22e">err</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Make MySQL password setter to handle changing MySQL user password
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">ps</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">mysql</span>.<span style="color:#a6e22e">NewPasswordSetter</span>(<span style="color:#a6e22e">mysql</span>.<span style="color:#a6e22e">Config</span>{
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">RDSClient</span>: <span style="color:#a6e22e">rds</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">rdsSess</span>),                <span style="color:#75715e">// RDS API client
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">DbClient</span>:  <span style="color:#a6e22e">mysql</span>.<span style="color:#a6e22e">NewRDSClient</span>(<span style="color:#66d9ef">true</span>, <span style="color:#66d9ef">false</span>), <span style="color:#75715e">// RDS MySQL cilent (true=TLS, false=dry run)
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Parallel</span>:  <span style="color:#a6e22e">parallel</span>,                        <span style="color:#75715e">// rotate password on 10 RDS concurrently
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Retry</span>:     <span style="color:#a6e22e">retries</span>,                         <span style="color:#75715e">// 5 tries total
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">RetryWait</span>: <span style="color:#a6e22e">retryWait</span>,                       <span style="color:#75715e">// sleep between tries
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    })
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Make AWS session for Secrets Manager via VPC endpoint
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">smSess</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">NewSession</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Config</span>{
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">MaxRetries</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Int</span>(<span style="color:#ae81ff">2</span>),
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Endpoint</span>:   <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;...&#34;</span>), <span style="color:#75715e">// using VPC endpoint (real value not shown)
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    })
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;error making AWS session for Secrets Manager: %s&#34;</span>, <span style="color:#a6e22e">err</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sm</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">secretsmanager</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">smSess</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Make rotator to handle invocation from Secrets Manager
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">r</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rotate</span>.<span style="color:#a6e22e">NewRotator</span>(<span style="color:#a6e22e">rotate</span>.<span style="color:#a6e22e">Config</span>{
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">SecretsManager</span>: <span style="color:#a6e22e">sm</span>,
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">SecretSetter</span>:   <span style="color:#a6e22e">MyRandomPassword</span>{<span style="color:#a6e22e">SecretsManager</span>: <span style="color:#a6e22e">sm</span>},
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">PasswordSetter</span>: <span style="color:#a6e22e">ps</span>,
-</span></span><span style="display:flex;"><span>    })
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Run lambda using rotator (blocking call)
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lambda</span>.<span style="color:#a6e22e">Start</span>(<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">Handler</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// --------------------------------------------------------------------------
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MyRandomPassword</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rotate</span>.<span style="color:#a6e22e">RandomPassword</span> <span style="color:#75715e">// handles Rotate() and Credentials()
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">SecretsManager</span>        <span style="color:#f92672">*</span><span style="color:#a6e22e">secretsmanager</span>.<span style="color:#a6e22e">SecretsManager</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// MyRandomPassword.Handler() overrides rotate.RandomPassword.Handler()
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// because the latter does nothing. This func handles manual invocation.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">r</span> <span style="color:#a6e22e">MyRandomPassword</span>) <span style="color:#a6e22e">Handler</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">event</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Handle manually invoked lambda
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>{}, <span style="color:#66d9ef">nil</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;context&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;encoding/json&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;net/url&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;os&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/aws/aws-lambda-go/lambda&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/aws/aws-sdk-go/aws&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/aws/aws-sdk-go/service/rds&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/aws/aws-sdk-go/service/secretsmanager&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/square/password-rotation-lambda/v2&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/square/password-rotation-lambda/v2/db&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/square/password-rotation-lambda/v2/db/mysql&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">const</span> <span class="nx">VERSION</span> <span class="p">=</span> <span class="s">&#34;v1.0.0&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">SHA</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">parallel</span>  <span class="p">=</span> <span class="nb">uint</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">retries</span>   <span class="p">=</span> <span class="nb">uint</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">retryWait</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Duration</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">rotate</span><span class="p">.</span><span class="nx">Debug</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;DEBUG&#34;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#34;yes&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;prl-bin %s (%s)&#34;</span><span class="p">,</span> <span class="nx">VERSION</span><span class="p">,</span> <span class="nx">SHA</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Get proxy URL from env var and create *http.Client using it
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">proxyURL</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;HTTPS_PROXY&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;error parsing HTTPS_PROXY: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">proxyClient</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Client</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Timeout</span><span class="p">:</span>   <span class="nx">time</span><span class="p">.</span><span class="nf">Duration</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Transport</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Transport</span><span class="p">{</span><span class="nx">Proxy</span><span class="p">:</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ProxyURL</span><span class="p">(</span><span class="nx">proxyURL</span><span class="p">)},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Make AWS session for RDS API via proxy
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rdsSess</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">session</span><span class="p">.</span><span class="nf">NewSession</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">aws</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">MaxRetries</span><span class="p">:</span> <span class="nx">aws</span><span class="p">.</span><span class="nf">Int</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">HTTPClient</span><span class="p">:</span> <span class="nx">proxyClient</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;error making AWS session for RDS: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Make MySQL password setter to handle changing MySQL user password
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">ps</span> <span class="o">:=</span> <span class="nx">mysql</span><span class="p">.</span><span class="nf">NewPasswordSetter</span><span class="p">(</span><span class="nx">mysql</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">RDSClient</span><span class="p">:</span> <span class="nx">rds</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">rdsSess</span><span class="p">),</span>                <span class="c1">// RDS API client
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">DbClient</span><span class="p">:</span>  <span class="nx">mysql</span><span class="p">.</span><span class="nf">NewRDSClient</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="kc">false</span><span class="p">),</span> <span class="c1">// RDS MySQL cilent (true=TLS, false=dry run)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">Parallel</span><span class="p">:</span>  <span class="nx">parallel</span><span class="p">,</span>                        <span class="c1">// rotate password on 10 RDS concurrently
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">Retry</span><span class="p">:</span>     <span class="nx">retries</span><span class="p">,</span>                         <span class="c1">// 5 tries total
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">RetryWait</span><span class="p">:</span> <span class="nx">retryWait</span><span class="p">,</span>                       <span class="c1">// sleep between tries
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Make AWS session for Secrets Manager via VPC endpoint
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">smSess</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">session</span><span class="p">.</span><span class="nf">NewSession</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">aws</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">MaxRetries</span><span class="p">:</span> <span class="nx">aws</span><span class="p">.</span><span class="nf">Int</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Endpoint</span><span class="p">:</span>   <span class="nx">aws</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;...&#34;</span><span class="p">),</span> <span class="c1">// using VPC endpoint (real value not shown)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;error making AWS session for Secrets Manager: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">sm</span> <span class="o">:=</span> <span class="nx">secretsmanager</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">smSess</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Make rotator to handle invocation from Secrets Manager
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">r</span> <span class="o">:=</span> <span class="nx">rotate</span><span class="p">.</span><span class="nf">NewRotator</span><span class="p">(</span><span class="nx">rotate</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">SecretsManager</span><span class="p">:</span> <span class="nx">sm</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">SecretSetter</span><span class="p">:</span>   <span class="nx">MyRandomPassword</span><span class="p">{</span><span class="nx">SecretsManager</span><span class="p">:</span> <span class="nx">sm</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">PasswordSetter</span><span class="p">:</span> <span class="nx">ps</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Run lambda using rotator (blocking call)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">lambda</span><span class="p">.</span><span class="nf">Start</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">Handler</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// --------------------------------------------------------------------------
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">MyRandomPassword</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">rotate</span><span class="p">.</span><span class="nx">RandomPassword</span> <span class="c1">// handles Rotate() and Credentials()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">SecretsManager</span>        <span class="o">*</span><span class="nx">secretsmanager</span><span class="p">.</span><span class="nx">SecretsManager</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// MyRandomPassword.Handler() overrides rotate.RandomPassword.Handler()
+</span></span></span><span class="line"><span class="cl"><span class="c1">// because the latter does nothing. This func handles manual invocation.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="nx">MyRandomPassword</span><span class="p">)</span> <span class="nf">Handler</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">event</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Handle manually invoked lambda
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{},</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>The code above is not complete. It&rsquo;s a demonstration and starting point. You should implement <code>func (r MyRandomPassword) Handler</code> to handle manual invocation requests like APR (see <a href="#default-provision-password-dpp">Default Provision Password</a>). If you adapt the code above to work for your environment, build it as <code>prl-bin</code>, zip it into <code>function.zip</code>, and upload the zip file to the S3 bucket.</p>
 <h4 id="terraform-1">Terraform</h4>
 <p>Once the PRL code has been uploaded to S3, we can create the actual PRL in Terraform. Either TF or AWS checks/fetchs the function code from S3 on apply, so if that part is not correct, the TF apply will fail with some error.</p>
 <p>Since <a href="#4-run-in-vpc">running in a VPC</a> is a requirement, we set our VPC IDs and the <code>vpc_config</code> block with our subnet IDs. These values aren&rsquo;t shown because they will be unique to your AWS account. The TF code below supports the more complex PRL function code above (HTTP proxy for the RDS API and VPC endpoint for the Secrets Manager API).</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># Security group: allow PRL only specific egress and deny all ingress.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_security_group&#34; &#34;prl&#34;</span> {
-</span></span><span style="display:flex;"><span>  name   <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;mysql-password-rotation-lambda&#34;</span>
-</span></span><span style="display:flex;"><span>  vpc_id <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;vpc-...&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">egress</span> {
-</span></span><span style="display:flex;"><span>    description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Secrets Manager via VPC endpoint&#34;</span>
-</span></span><span style="display:flex;"><span>    from_port   <span style="color:#f92672">=</span> <span style="color:#ae81ff">443</span>
-</span></span><span style="display:flex;"><span>    to_port     <span style="color:#f92672">=</span> <span style="color:#ae81ff">443</span>
-</span></span><span style="display:flex;"><span>    protocol    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;tcp&#34;</span>
-</span></span><span style="display:flex;"><span>    cidr_blocks <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;10.0.0.0/8&#34;</span>]
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">egress</span> {
-</span></span><span style="display:flex;"><span>    description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;MySQL password rotation&#34;</span>
-</span></span><span style="display:flex;"><span>    from_port   <span style="color:#f92672">=</span> <span style="color:#ae81ff">3306</span>
-</span></span><span style="display:flex;"><span>    to_port     <span style="color:#f92672">=</span> <span style="color:#ae81ff">3306</span>
-</span></span><span style="display:flex;"><span>    protocol    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;tcp&#34;</span>
-</span></span><span style="display:flex;"><span>    cidr_blocks <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;10.0.0.0/8&#34;</span>]
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">egress</span> {
-</span></span><span style="display:flex;"><span>    description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;RDS API via proxy&#34;</span>
-</span></span><span style="display:flex;"><span>    from_port   <span style="color:#f92672">=</span> <span style="color:#ae81ff">18080</span>
-</span></span><span style="display:flex;"><span>    to_port     <span style="color:#f92672">=</span> <span style="color:#ae81ff">18080</span>
-</span></span><span style="display:flex;"><span>    protocol    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;tcp&#34;</span>
-</span></span><span style="display:flex;"><span>    cidr_blocks <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;10.0.0.0/8&#34;</span>]
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Lambda function: create the actual password rotation lambda (PRL) function.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_lambda_function&#34; &#34;prl&#34;</span> {
-</span></span><span style="display:flex;"><span>  depends_on <span style="color:#f92672">=</span> [
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">aws_security_group</span>.<span style="color:#66d9ef">prl</span>,
-</span></span><span style="display:flex;"><span>  ]
-</span></span><span style="display:flex;"><span>  s3_bucket     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;prl-func&#34;</span>
-</span></span><span style="display:flex;"><span>  s3_key        <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;function.zip&#34;</span>
-</span></span><span style="display:flex;"><span>  function_name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;mysql-password-rotation&#34;</span><span style="color:#75715e"> # Lambda func name
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  handler       <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;prl-bin&#34;</span><span style="color:#75715e">                 # Go binary name
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  role          <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_iam_role</span>.<span style="color:#66d9ef">prl</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">role</span>.<span style="color:#66d9ef">arn</span>
-</span></span><span style="display:flex;"><span>  runtime       <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;go1.x&#34;</span>
-</span></span><span style="display:flex;"><span>  memory_size   <span style="color:#f92672">=</span> <span style="color:#ae81ff">128</span>
-</span></span><span style="display:flex;"><span>  timeout       <span style="color:#f92672">=</span> <span style="color:#ae81ff">60</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">environment</span> {
-</span></span><span style="display:flex;"><span>    variables <span style="color:#f92672">=</span> {
-</span></span><span style="display:flex;"><span>      HTTP_PROXY  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://proxy:18080&#34;</span>
-</span></span><span style="display:flex;"><span>      HTTPS_PROXY <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://proxy:18080&#34;</span>
-</span></span><span style="display:flex;"><span>      NO_PROXY    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;.vpce.amazonaws.com&#34;</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">vpc_config</span> {
-</span></span><span style="display:flex;"><span>    subnet_ids         <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;subnet-...&#34;, &#34;subnet-...&#34;</span>]
-</span></span><span style="display:flex;"><span>    security_group_ids <span style="color:#f92672">=</span> [<span style="color:#66d9ef">aws_security_group</span>.<span style="color:#66d9ef">prl</span>.<span style="color:#66d9ef">id</span>]
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Change default invoke configuration to lower timeout and retries because
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># the PRL handles timeout and retries internally.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_lambda_function_event_invoke_config&#34; &#34;prl&#34;</span> {
-</span></span><span style="display:flex;"><span>  function_name                <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_lambda_function</span>.<span style="color:#66d9ef">prl</span>.<span style="color:#66d9ef">function_name</span>
-</span></span><span style="display:flex;"><span>  maximum_event_age_in_seconds <span style="color:#f92672">=</span> <span style="color:#ae81ff">300</span><span style="color:#75715e"> # 5 min
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  maximum_retry_attempts       <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Resource-based policy: allow Secrets Manager to invoke the PRL.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_lambda_permission&#34; &#34;prl-invoke-by-secretsmanager&#34;</span> {
-</span></span><span style="display:flex;"><span>  statement_id  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AllowExecutionFromSecretsManager&#34;</span>
-</span></span><span style="display:flex;"><span>  action        <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;lambda:InvokeFunction&#34;</span>
-</span></span><span style="display:flex;"><span>  function_name <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_lambda_function</span>.<span style="color:#66d9ef">prl</span>.<span style="color:#66d9ef">function_name</span>
-</span></span><span style="display:flex;"><span>  principal     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;secretsmanager.amazonaws.com&#34;</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hcl" data-lang="hcl"><span class="line"><span class="cl"><span class="c1"># Security group: allow PRL only specific egress and deny all ingress.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;aws_security_group&#34; &#34;prl&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  name</span>   <span class="o">=</span> <span class="s2">&#34;mysql-password-rotation-lambda&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  vpc_id</span> <span class="o">=</span> <span class="s2">&#34;vpc-...&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">egress</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    description</span> <span class="o">=</span> <span class="s2">&#34;Secrets Manager via VPC endpoint&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">    from_port</span>   <span class="o">=</span> <span class="m">443</span>
+</span></span><span class="line"><span class="cl"><span class="n">    to_port</span>     <span class="o">=</span> <span class="m">443</span>
+</span></span><span class="line"><span class="cl"><span class="n">    protocol</span>    <span class="o">=</span> <span class="s2">&#34;tcp&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">    cidr_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;10.0.0.0/8&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">  <span class="k">egress</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    description</span> <span class="o">=</span> <span class="s2">&#34;MySQL password rotation&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">    from_port</span>   <span class="o">=</span> <span class="m">3306</span>
+</span></span><span class="line"><span class="cl"><span class="n">    to_port</span>     <span class="o">=</span> <span class="m">3306</span>
+</span></span><span class="line"><span class="cl"><span class="n">    protocol</span>    <span class="o">=</span> <span class="s2">&#34;tcp&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">    cidr_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;10.0.0.0/8&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">  <span class="k">egress</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    description</span> <span class="o">=</span> <span class="s2">&#34;RDS API via proxy&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">    from_port</span>   <span class="o">=</span> <span class="m">18080</span>
+</span></span><span class="line"><span class="cl"><span class="n">    to_port</span>     <span class="o">=</span> <span class="m">18080</span>
+</span></span><span class="line"><span class="cl"><span class="n">    protocol</span>    <span class="o">=</span> <span class="s2">&#34;tcp&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">    cidr_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;10.0.0.0/8&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># Lambda function: create the actual password rotation lambda (PRL) function.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;aws_lambda_function&#34; &#34;prl&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  depends_on</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="k">aws_security_group</span><span class="p">.</span><span class="k">prl</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">  s3_bucket</span>     <span class="o">=</span> <span class="s2">&#34;prl-func&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  s3_key</span>        <span class="o">=</span> <span class="s2">&#34;function.zip&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  function_name</span> <span class="o">=</span> <span class="s2">&#34;mysql-password-rotation&#34;</span><span class="c1"> # Lambda func name
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">  handler</span>       <span class="o">=</span> <span class="s2">&#34;prl-bin&#34;</span><span class="c1">                 # Go binary name
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">  role</span>          <span class="o">=</span> <span class="k">aws_iam_role</span><span class="p">.</span><span class="k">prl</span><span class="err">-</span><span class="k">role</span><span class="p">.</span><span class="k">arn</span>
+</span></span><span class="line"><span class="cl"><span class="n">  runtime</span>       <span class="o">=</span> <span class="s2">&#34;go1.x&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  memory_size</span>   <span class="o">=</span> <span class="m">128</span>
+</span></span><span class="line"><span class="cl"><span class="n">  timeout</span>       <span class="o">=</span> <span class="m">60</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">environment</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    variables</span> <span class="o">=</span> {
+</span></span><span class="line"><span class="cl"><span class="n">      HTTP_PROXY</span>  <span class="o">=</span> <span class="s2">&#34;http://proxy:18080&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">      HTTPS_PROXY</span> <span class="o">=</span> <span class="s2">&#34;http://proxy:18080&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">      NO_PROXY</span>    <span class="o">=</span> <span class="s2">&#34;.vpce.amazonaws.com&#34;</span>
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">vpc_config</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    subnet_ids</span>         <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;subnet-...&#34;, &#34;subnet-...&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">    security_group_ids</span> <span class="o">=</span> <span class="p">[</span><span class="k">aws_security_group</span><span class="p">.</span><span class="k">prl</span><span class="p">.</span><span class="k">id</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># Change default invoke configuration to lower timeout and retries because
+</span></span></span><span class="line"><span class="cl"><span class="c1"># the PRL handles timeout and retries internally.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;aws_lambda_function_event_invoke_config&#34; &#34;prl&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  function_name</span>                <span class="o">=</span> <span class="k">aws_lambda_function</span><span class="p">.</span><span class="k">prl</span><span class="p">.</span><span class="k">function_name</span>
+</span></span><span class="line"><span class="cl"><span class="n">  maximum_event_age_in_seconds</span> <span class="o">=</span> <span class="m">300</span><span class="c1"> # 5 min
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">  maximum_retry_attempts</span>       <span class="o">=</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl">}<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># Resource-based policy: allow Secrets Manager to invoke the PRL.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;aws_lambda_permission&#34; &#34;prl-invoke-by-secretsmanager&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  statement_id</span>  <span class="o">=</span> <span class="s2">&#34;AllowExecutionFromSecretsManager&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  action</span>        <span class="o">=</span> <span class="s2">&#34;lambda:InvokeFunction&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  function_name</span> <span class="o">=</span> <span class="k">aws_lambda_function</span><span class="p">.</span><span class="k">prl</span><span class="p">.</span><span class="k">function_name</span>
+</span></span><span class="line"><span class="cl"><span class="n">  principal</span>     <span class="o">=</span> <span class="s2">&#34;secretsmanager.amazonaws.com&#34;</span>
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></div><p>A few important points about the TF code above:</p>
 <ul>
 <li>
@@ -761,49 +760,49 @@
 <p>Note: the four steps of Secrets Manager rotation are not shown. In this diagram, step 4 is equal to rotation step 1; step 5 is equal to rotation steps 2 and 3 (set and verify), and step 6 is equal to rotation step 4.</p>
 <h3 id="secrets-manager">Secrets Manager</h3>
 <p>The last piece of the puzzle is the secret in Secrets Manager:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># Create secret with MySQL app user password.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># This is just the secret resource, no value yet.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_secretsmanager_secret&#34; &#34;mysql-password&#34;</span> {
-</span></span><span style="display:flex;"><span>  depends_on <span style="color:#f92672">=</span> [
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">aws_lambda_permission</span>.<span style="color:#66d9ef">prl</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">invoke</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">by</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">secretsmanager</span>,
-</span></span><span style="display:flex;"><span>  ]
-</span></span><span style="display:flex;"><span>  name                    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;mysql-app-password&#34;</span>
-</span></span><span style="display:flex;"><span>  description             <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;MySQL app user password&#34;</span>
-</span></span><span style="display:flex;"><span>  recovery_window_in_days <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Initialize secret with default provision password (DPP). This sets the
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># secret value, which is JSON doc containing MySQL username and password.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_secretsmanager_secret_version&#34; &#34;mysql-password&#34;</span> {
-</span></span><span style="display:flex;"><span>  depends_on <span style="color:#f92672">=</span> [
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">aws_secretsmanager_secret</span>.<span style="color:#66d9ef">mysql</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">password</span>,
-</span></span><span style="display:flex;"><span>  ]
-</span></span><span style="display:flex;"><span>  secret_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_secretsmanager_secret</span>.<span style="color:#66d9ef">mysql</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">password</span>.<span style="color:#66d9ef">id</span>
-</span></span><span style="display:flex;"><span>  secret_string <span style="color:#f92672">=</span> <span style="color:#66d9ef">jsonencode</span>({
-</span></span><span style="display:flex;"><span>    username <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;app&#34;</span>
-</span></span><span style="display:flex;"><span>    password <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;default_provision_password&#34;</span>
-</span></span><span style="display:flex;"><span>  })
-</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Enable rotation with PRL. This causes the initial password rotation (IPR).
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_secretsmanager_secret_rotation&#34; &#34;mysql-password&#34;</span> {
-</span></span><span style="display:flex;"><span>  secret_id           <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_secretsmanager_secret</span>.<span style="color:#66d9ef">mysql</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">password</span>.<span style="color:#66d9ef">id</span>
-</span></span><span style="display:flex;"><span>  rotation_lambda_arn <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_lambda_function</span>.<span style="color:#66d9ef">prl</span>.<span style="color:#66d9ef">arn</span><span style="color:#75715e"> # ~~ PRL ~~
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">rotation_rules</span> {
-</span></span><span style="display:flex;"><span>    automatically_after_days <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Wait 20s after initial password rotation (IPR) before creating db instances.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># The PRL is async, so IPR happens in the background. The resource that
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># creates RDS instances should depend on this resource so that the instances
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># start creating 20s after IPR was started.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;time_sleep&#34; &#34;wait-for-password-rotation&#34;</span> {
-</span></span><span style="display:flex;"><span>  depends_on <span style="color:#f92672">=</span> [
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">aws_secretsmanager_secret_rotation</span>.<span style="color:#66d9ef">mysql</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">password</span>,
-</span></span><span style="display:flex;"><span>  ]
-</span></span><span style="display:flex;"><span>  create_duration <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;20s&#34;</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hcl" data-lang="hcl"><span class="line"><span class="cl"><span class="c1"># Create secret with MySQL app user password.
+</span></span></span><span class="line"><span class="cl"><span class="c1"># This is just the secret resource, no value yet.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;aws_secretsmanager_secret&#34; &#34;mysql-password&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  depends_on</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="k">aws_lambda_permission</span><span class="p">.</span><span class="k">prl</span><span class="err">-</span><span class="k">invoke</span><span class="err">-</span><span class="k">by</span><span class="err">-</span><span class="k">secretsmanager</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">  name</span>                    <span class="o">=</span> <span class="s2">&#34;mysql-app-password&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  description</span>             <span class="o">=</span> <span class="s2">&#34;MySQL app user password&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  recovery_window_in_days</span> <span class="o">=</span> <span class="m">0</span>
+</span></span><span class="line"><span class="cl">}<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># Initialize secret with default provision password (DPP). This sets the
+</span></span></span><span class="line"><span class="cl"><span class="c1"># secret value, which is JSON doc containing MySQL username and password.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;aws_secretsmanager_secret_version&#34; &#34;mysql-password&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  depends_on</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="k">aws_secretsmanager_secret</span><span class="p">.</span><span class="k">mysql</span><span class="err">-</span><span class="k">password</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">  secret_id</span> <span class="o">=</span> <span class="k">aws_secretsmanager_secret</span><span class="p">.</span><span class="k">mysql</span><span class="err">-</span><span class="k">password</span><span class="p">.</span><span class="k">id</span>
+</span></span><span class="line"><span class="cl"><span class="n">  secret_string</span> <span class="o">=</span> <span class="k">jsonencode</span><span class="p">(</span>{
+</span></span><span class="line"><span class="cl"><span class="n">    username</span> <span class="o">=</span> <span class="s2">&#34;app&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">    password</span> <span class="o">=</span> <span class="s2">&#34;default_provision_password&#34;</span>
+</span></span><span class="line"><span class="cl">  }<span class="p">)</span>
+</span></span><span class="line"><span class="cl">}<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># Enable rotation with PRL. This causes the initial password rotation (IPR).
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;aws_secretsmanager_secret_rotation&#34; &#34;mysql-password&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  secret_id</span>           <span class="o">=</span> <span class="k">aws_secretsmanager_secret</span><span class="p">.</span><span class="k">mysql</span><span class="err">-</span><span class="k">password</span><span class="p">.</span><span class="k">id</span>
+</span></span><span class="line"><span class="cl"><span class="n">  rotation_lambda_arn</span> <span class="o">=</span> <span class="k">aws_lambda_function</span><span class="p">.</span><span class="k">prl</span><span class="p">.</span><span class="k">arn</span><span class="c1"> # ~~ PRL ~~
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">rotation_rules</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    automatically_after_days</span> <span class="o">=</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}<span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># Wait 20s after initial password rotation (IPR) before creating db instances.
+</span></span></span><span class="line"><span class="cl"><span class="c1"># The PRL is async, so IPR happens in the background. The resource that
+</span></span></span><span class="line"><span class="cl"><span class="c1"># creates RDS instances should depend on this resource so that the instances
+</span></span></span><span class="line"><span class="cl"><span class="c1"># start creating 20s after IPR was started.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">resource</span> <span class="s2">&#34;time_sleep&#34; &#34;wait-for-password-rotation&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  depends_on</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="k">aws_secretsmanager_secret_rotation</span><span class="p">.</span><span class="k">mysql</span><span class="err">-</span><span class="k">password</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">  create_duration</span> <span class="o">=</span> <span class="s2">&#34;20s&#34;</span>
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></div><p>The Secrets Manager resources are pretty straightforward. Be sure to set <code>automatically_after_days</code> to your rotation requirements.</p>
 <br>
 <hr>
@@ -884,13 +883,11 @@
 </main>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 

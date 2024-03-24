@@ -10,10 +10,10 @@
   <meta property="og:description" content="Strategies for identifying and organizing data points">
 
   <meta name="author" content="Daniel Nichter"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:url" content="https://hackmysql.com/post/path-and-dimension-metrics/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hack MySQL" />
@@ -21,7 +21,6 @@
   <link rel="canonical" href="https://hackmysql.com/post/path-and-dimension-metrics/" />
   <link rel="alternate" href="https://hackmysql.com/index.xml" type="application/rss+xml" title="Hack MySQL">
   <link rel="stylesheet" href="https://hackmysql.com/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://hackmysql.com/css/atom-one-dark.css" />
   <link rel="stylesheet" href="https://hackmysql.com/css/main.css" />
 </head>
 
@@ -171,26 +170,26 @@ Ironically, the biggest challenge with path-based metrics is determining the pat
 <p>In my experience, that challenge is significant and frequent enough to avoid path-based metrics. If a system&rsquo;s metrics are <em>very</em> well defined and stable, then a suitable path layout might be possible. Even then, the metrics will probably be used by other systems, so the rigidity of the path layout is likely to impose itself on other systems—it doesn&rsquo;t play well with others. Consequently, newer metric and monitoring systems do not use path-based metrics. For the last several years, the state of the art has been dimension-based metrics.</p>
 <h2 id="dimension-based-metrics">Dimension-based Metrics</h2>
 <p>Dimension-based metrics apply N-many &ldquo;dimensions&rdquo; to a single, globally unique data point. The previous example metrics can be expressed like:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">disk-free:</span> {      <span style="color:#75715e">// data point
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">host:</span>  <span style="color:#f92672">&#34;prod1&#34;</span>  <span style="color:#75715e">// dimension
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">disk</span>:  <span style="color:#e6db74">&#34;sda&#34;</span>    <span style="color:#75715e">// dimension
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">value</span>: <span style="color:#e6db74">&#34;400g&#34;</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">disk-free:</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">host:</span>  <span style="color:#f92672">&#34;prod1&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">disk</span>:  <span style="color:#e6db74">&#34;sdb&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">value</span>: <span style="color:#e6db74">&#34;500g&#34;</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">disk-free:</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">host:</span>  <span style="color:#f92672">&#34;prod2&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">disk</span>:  <span style="color:#e6db74">&#34;sda&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">value</span>: <span style="color:#e6db74">&#34;300g&#34;</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">disk-free:</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">host:</span>  <span style="color:#f92672">&#34;prod2&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">disk</span>:  <span style="color:#e6db74">&#34;sdb&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">value</span>: <span style="color:#e6db74">&#34;1g&#34;</span>
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">disk-free:</span> <span class="p">{</span>      <span class="c1">// data point
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="err">host:</span>  <span class="nt">&#34;prod1&#34;</span>  <span class="c1">// dimension
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="err">disk</span><span class="p">:</span>  <span class="s2">&#34;sda&#34;</span>    <span class="c1">// dimension
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="err">value</span><span class="p">:</span> <span class="s2">&#34;400g&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">disk-free:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="err">host:</span>  <span class="nt">&#34;prod1&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="err">disk</span><span class="p">:</span>  <span class="s2">&#34;sdb&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="err">value</span><span class="p">:</span> <span class="s2">&#34;500g&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">disk-free:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="err">host:</span>  <span class="nt">&#34;prod2&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="err">disk</span><span class="p">:</span>  <span class="s2">&#34;sda&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="err">value</span><span class="p">:</span> <span class="s2">&#34;300g&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">disk-free:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="err">host:</span>  <span class="nt">&#34;prod2&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="err">disk</span><span class="p">:</span>  <span class="s2">&#34;sdb&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="err">value</span><span class="p">:</span> <span class="s2">&#34;1g&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>That&rsquo;s only a visual representation of dimension-based metrics. In real code, they can be expressed in structs, objects, encodings (e.g. JSON), and protocol/wire formats.</p>
 <p>The two main features of dimension-based metrics are the data point name and the dimensions attached to it. The data point name stands alone and is implicitly globally unique. It should be a simple but descriptive noun for the data it measures: disk-free, 5m-load, net-util, http-500, connected-clients, etc. (I like &ldquo;this-format&rdquo;, but &ldquo;this_format&rdquo; or &ldquo;thisFormat&rdquo; or any other format is fine; just be consistent.) The name should be globally unique. For example, do not have two &ldquo;net-util&rdquo; data points where one has a value in Mbps and the other in % utilization. Think of two different names instead.</p>
 <p>Dimension-based metrics are uniquely identified by name, not dimensions. That seems wrong at first, but the difference that makes it right is this: metric time series are uniquely identified by dimensions. Whereas path-based metrics couple data point name and MTS, dimension-based metrics decouple these. The decoupling is the purpose and power and dimension-based metrics.</p>
@@ -204,18 +203,18 @@ Ironically, the biggest challenge with path-based metrics is determining the pat
 <p>Where <code>NULL</code> (or <code>nil</code>, if you prefer) is an undefined value.</p>
 <p>The <code>value</code> is not a dimension, it&rsquo;s the data point value for that dimension. There is often a <code>ts</code> field, too. In real code, the dimensions are probably a map, not mixed in with the real value and metavalues.</p>
 <p>Dimension-based metrics are not hierarchical. The namespace is flat and global in every system I&rsquo;ve seen. Aggregation and querying by metric and monitoring systems varies widely (querying dimension-based metrics in one system can be nothing like another system), but the gist is (pseudo-SQL):</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">MIN</span>(disk<span style="color:#f92672">-</span><span style="color:#66d9ef">free</span>) <span style="color:#66d9ef">WHERE</span> <span style="color:#66d9ef">host</span><span style="color:#f92672">=*</span> <span style="color:#66d9ef">AND</span> disk<span style="color:#f92672">=*</span>
-</span></span></code></pre></div><p><strong>Pro</strong> Dimension-based metrics solve the challenges of path-based metrics. Adding new dimensions is easy and doesn&rsquo;t create a new data point, although it does create a new MTS. This flexibility is the primary benefit of dimension-based metrics, and it&rsquo;s significant because metrics, like code, tend to change often over time.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">MIN</span><span class="p">(</span><span class="n">disk</span><span class="o">-</span><span class="k">free</span><span class="p">)</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">host</span><span class="o">=*</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">disk</span><span class="o">=*</span><span class="w">
+</span></span></span></code></pre></div><p><strong>Pro</strong> Dimension-based metrics solve the challenges of path-based metrics. Adding new dimensions is easy and doesn&rsquo;t create a new data point, although it does create a new MTS. This flexibility is the primary benefit of dimension-based metrics, and it&rsquo;s significant because metrics, like code, tend to change often over time.</p>
 <p><strong>Con</strong> The biggest challenge with dimension-based metrics is being judicious with dimensions. Engineers are tempted to add a lot of dimensions because in the code it&rsquo;s just another key-value pair. That&rsquo;s fine for the source, but it complicates the sink (where metrics data is sent, stored, aggregated, queried, and visualized in charts). And if the sink is a paid service like <a href="https://www.signalfx.com/">SignalFx</a>, it can be a costly challenge.</p>
 <p>Dimension-based metrics are the modern norm. I&rsquo;m not aware of any new metric or monitoring systems within the last several years that use path-based metrics. Today, dimensions-based metrics are the best choice.</p>
 <h2 id="mts-explosion">MTS Explosion</h2>
 <p>Both strategies are susceptible to an &ldquo;MTS explosion&rdquo;: programmatically creating new metric time series by using a random or unbounded value in the path or dimensions. For example, a request UUID is added to the &ldquo;http500&rdquo; metric for tracing and debugging:</p>
 <pre tabindex="0"><code class="language-none" data-lang="none">app.myAPI.host.prod1.http500.request-id.24cffc51-b82e-431e-a3ac-f3e3f3133915
-</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">http</span><span style="color:#ae81ff">500</span><span style="color:#960050;background-color:#1e0010">:</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">app:</span>       <span style="color:#f92672">&#34;myAPI&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">host</span>:      <span style="color:#e6db74">&#34;prod1&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">requestId</span>: <span style="color:#e6db74">&#34;24cffc51-b82e-431e-a3ac-f3e3f3133915&#34;</span>
-</span></span><span style="display:flex;"><span>}
+</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">http</span><span class="mi">500</span><span class="err">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="err">app:</span>       <span class="nt">&#34;myAPI&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="err">host</span><span class="p">:</span>      <span class="s2">&#34;prod1&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="err">requestId</span><span class="p">:</span> <span class="s2">&#34;24cffc51-b82e-431e-a3ac-f3e3f3133915&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>In the first case, <code>app.myAPI.host.prod1.http500.request-id.*</code> generates countless data points and MTS. There is no solution (i.e. a way to encode the request ID with the data point) because path-based metrics tightly couple data point and MTS.</p>
 <p>In the second case, the <code>requestId</code> generates countless dimensions (but still only one data point). The solution depends on the metric systems (source and sink). Some systems allow non-dimensional key-value pairs (tags, labels, attributes—terms vary); this is what <code>requestId</code> should be.</p>
 <p>MTS explosions are common. Expect them to happen, but try hard to avoid them because in large environments that pay for hosted metrics, MTS explosions can be very expensive.
@@ -267,13 +266,11 @@ Including any kind of randomly generated ID or value in the metric path or dimen
 </div>
 
     <footer>
-  <p class="copyright text-muted">
-    Copyright 2023 Daniel Nichter
-  </p>
-  <p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
+<p class="copyright"><b>ZERO AI</b>: No AI was used to write or edit text on this website.</p>
+<p class="copyright">Copyright 2024 Daniel Nichter</p>
+<p><a href="https://github.com/daniel-nichter" alt="GitHub"><img src="https://hackmysql.com/img/mark-github.svg" alt="GitHub Invertocat logo"></a></p>
 </footer>
 <script src="https://hackmysql.com/js/compressed.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 <script src="https://cdn.usefathom.com/script.js" data-site="WJIYGVMB" data-canonical="false" defer></script>
 
